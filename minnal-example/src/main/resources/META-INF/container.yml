@@ -1,0 +1,26 @@
+# The base path of the http container
+basePath: /
+
+# Http server configuration
+server:
+# The http port to bind to
+  httpPort: 8080
+# The total number of IO worker threads to start
+  ioWorkerThreadCount: 10
+
+# The name of the container 
+name: My Container
+
+# The default http media type that this container would support. Can be overridden by applications
+defaultMediaType: application/json
+
+# The serializers to use for the supported media types
+serializers:
+  application/json: 
+    class: org.minnal.core.serializer.DefaultJsonSerializer
+  application/xml:
+    class: org.minnal.core.serializer.DefaultXmlSerializer
+mounts:
+  org.minnal.example.OrderApplication: /
+  
+    
