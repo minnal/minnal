@@ -3,6 +3,7 @@
  */
 package org.minnal.core;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
+import org.minnal.core.server.exception.BadRequestException;
 import org.minnal.core.server.exception.NotFoundException;
 
 
@@ -62,7 +64,14 @@ public class Router {
 			}
 			throw new NotFoundException("Request path not found");
 		}
-		Map<String, String> parameters = route.getRoutePattern().match(context.getRequest().getRelativePath());
+		String path = null;
+		try {
+			path = new URI(context.getRequest().getRelativePath()).getPath();
+		} catch (Exception e) {
+			throw new BadRequestException("Invalid path - " + context.getRequest().getRelativePath(), e);
+		}
+		
+		Map<String, String> parameters = route.getRoutePattern().match(path);
 		if (parameters == null) {
 			// TODO shouldn't get here as we have already resolved the route. throw a not found exception ??? 
 		}

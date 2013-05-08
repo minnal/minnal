@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import org.activejpa.entity.Model;
 import org.minnal.instrument.entity.AggregateRoot;
+import org.minnal.instrument.entity.Searchable;
 
 /**
  * @author ganeshs
@@ -38,6 +39,9 @@ public class Order extends Model {
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="orderId")
 	private Set<Payment> payments;
+	
+	@Searchable
+	private String customerEmail;
 
 	/**
 	 * @return the id
@@ -79,6 +83,20 @@ public class Order extends Model {
 	 */
 	public void setPayments(Set<Payment> payments) {
 		this.payments = payments;
+	}
+
+	/**
+	 * @return the customerEmail
+	 */
+	public String getCustomerEmail() {
+		return customerEmail;
+	}
+
+	/**
+	 * @param customerEmail the customerEmail to set
+	 */
+	public void setCustomerEmail(String customerEmail) {
+		this.customerEmail = customerEmail;
 	}
 
 }

@@ -8,6 +8,7 @@ import java.net.SocketAddress;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.minnal.core.Request;
+import org.minnal.core.util.HttpUtil;
 
 /**
  * @author ganeshs
@@ -25,6 +26,11 @@ public class ServerRequest extends ServerMessage implements Request {
 		super(request);
 		this.remoteAddress = remoteAddress;
 		this.request = request;
+		parseQueryParams();
+	}
+	
+	private void parseQueryParams() {
+		addHeaders(HttpUtil.getQueryParameters(getPath()));
 	}
 
 	/**

@@ -3,14 +3,17 @@
  */
 package org.minnal.core.route;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
+import org.minnal.core.MinnalException;
 import org.minnal.core.Request;
 import org.minnal.core.route.RoutePattern.RouteElement;
+import org.minnal.core.server.exception.BadRequestException;
 import org.minnal.core.util.Node.Visitor;
 
 /**
@@ -75,7 +78,13 @@ public class Routes {
 	 * @return
 	 */
 	public Route resolve(Request request) {
-		RouteNode node = findNode(request.getRelativePath());
+		String path = null;
+		try {
+			path = new URI(request.getRelativePath()).getPath();
+		} catch (Exception e) {
+			throw new BadRequestException("Invalid path - " + request.getRelativePath(), e);
+		}
+		RouteNode node = findNode(path);
 		if (node != null) {
 			return node.getRoutes().get(request.getHttpMethod());
 		}

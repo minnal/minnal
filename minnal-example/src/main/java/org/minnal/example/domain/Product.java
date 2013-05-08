@@ -8,7 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.activejpa.entity.Model;
 import org.minnal.instrument.entity.AggregateRoot;
+import org.minnal.instrument.entity.Searchable;
 
 /**
  * @author ganeshs
@@ -16,11 +18,14 @@ import org.minnal.instrument.entity.AggregateRoot;
  */
 @AggregateRoot
 @Entity
-public class Product {
+public class Product extends Model {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+	
+	@Searchable
+	private String name;
 
 	/**
 	 * @return the id
@@ -34,5 +39,19 @@ public class Product {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 }

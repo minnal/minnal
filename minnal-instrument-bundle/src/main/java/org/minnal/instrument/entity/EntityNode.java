@@ -4,6 +4,7 @@
 package org.minnal.instrument.entity;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.CollectionMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaDataProvider;
+import org.minnal.instrument.entity.metadata.ParameterMetaData;
 
 import com.google.common.base.CaseFormat;
 
@@ -74,6 +76,8 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 		private String bulkPath;
 		
 		private String singlePath;
+		
+		private List<String> searchParams = new ArrayList<String>();
 
 		public EntityNodePath(List<EntityNode> path) {
 			super(path);
@@ -83,16 +87,31 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 		private void init(List<EntityNode> path) {
 			StringWriter writer = new StringWriter();
 			Iterator<EntityNode> iterator = iterator();
+			String prefix = "";
+			EntityNode parent = null;
 			while (iterator.hasNext()) {
 				EntityNode node = iterator.next();
+				if (parent != null) {
+					prefix = prefix.isEmpty() ? node.getName() : prefix + "." + node.getName();
+				}
 				String name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, node.getName());
 				writer.append("/").append(name);
 				if (iterator.hasNext()) {
 					writer.append("/{" + name + "_id}");
 				}
+				
+				addSearchFields(prefix, node);
+				parent = node;
 			}
 			bulkPath = writer.toString();
 			singlePath = bulkPath + "/{id}";
+		}
+		
+		private void addSearchFields(String prefix, EntityNode node) {
+			for (ParameterMetaData meta : node.getEntityMetaData().getSearchFields()) {
+				prefix = prefix.isEmpty() ? prefix : prefix + ".";
+				searchParams.add(prefix + meta.getFieldName());
+			}
 		}
 		
 		public String getBulkPath() {
@@ -105,6 +124,13 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 		
 		public String getName() {
 			return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, get(size() - 1).getName());
+		}
+
+		/**
+		 * @return the searchParams
+		 */
+		public List<String> getSearchParams() {
+			return searchParams;
 		}
 
 	}

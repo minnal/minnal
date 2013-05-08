@@ -3,6 +3,7 @@
  */
 package org.minnal.core;
 
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -20,6 +21,8 @@ public interface Message {
 	String getHeader(String name);
 	
 	Map<String, String> getHeaders();
+	
+	Map<String, String> getHeaders(List<String> headerNames);
 	
 	boolean containsHeader(String name);
 	

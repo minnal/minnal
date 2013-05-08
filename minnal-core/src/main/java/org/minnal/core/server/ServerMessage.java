@@ -3,7 +3,9 @@
  */
 package org.minnal.core.server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -38,9 +40,18 @@ public abstract class ServerMessage implements Message {
 	}
 
 	public Map<String, String> getHeaders() {
+		return getHeaders(new ArrayList<String>(message.getHeaderNames()));
+	}
+	
+	public Map<String, String> getHeaders(List<String> headerNames) {
 		Map<String, String> headers = new HashMap<String, String>();
+		if (headerNames == null || headerNames.isEmpty()) {
+			return headers;
+		}
 		for (Entry<String, String> entry : message.getHeaders()) {
-			headers.put(entry.getKey(), entry.getValue());
+			if (headerNames.contains(entry.getKey())) {
+				headers.put(entry.getKey(), entry.getValue());
+			}
 		}
 		return headers;
 	}

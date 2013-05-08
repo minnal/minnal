@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.activejpa.entity.Model;
+import org.minnal.instrument.entity.Searchable;
 
 /**
  * @author ganeshs
@@ -32,6 +33,9 @@ public class OrderItem extends Model {
 	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="productId")
 	private Product product;
+	
+	@Searchable
+	private int quantity;
 
 	/**
 	 * @return the id
@@ -73,5 +77,19 @@ public class OrderItem extends Model {
 	 */
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+	/**
+	 * @return the quantity
+	 */
+	public int getQuantity() {
+		return quantity;
+	}
+
+	/**
+	 * @param quantity the quantity to set
+	 */
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 }

@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import javassist.CtClass;
 
 import org.activejpa.entity.EntityCollection;
+import org.activejpa.entity.Filter;
 import org.minnal.core.route.RoutePattern;
 import org.minnal.core.server.exception.NotFoundException;
 import org.minnal.instrument.entity.EntityNode;
@@ -34,7 +35,8 @@ public class ListMethodCreator extends MethodCreator {
 			"request.getHeader(\":param_name\")}); if (:field_name == null) {throw new " + NotFoundException.class.getName() + 
 			"(\":field_name with :entity_key \" + request.getHeader(\":param_name\") + \" not found\");}";
 	
-	private static final String LIST_ENTITY_TEMPLATE = "java.util.List :field_name = :model_class.all();";
+	private static final String LIST_ENTITY_TEMPLATE = Filter.class.getName() + " filter = " + ResourceUtil.class.getName() + ".getFilter(request, :search_params);" +
+			"java.util.List :field_name = :model_class.where(filter);";
 	
 	private static final String LIST_COLLECTION_TEMPLATE = EntityCollection.class.getName() + " :field_nameCollection = :parent.collection(\":field_name\");" + 
 			"java.util.List :field_name = :field_nameCollection.all();";
@@ -86,6 +88,20 @@ public class ListMethodCreator extends MethodCreator {
 		placeholders.put("entity_key", node.getEntityMetaData().getEntityKey());
 		placeholders.put("param_name", paramName);
 		placeholders.put("parent", parent);
+		List<String> searchParams = path.getSearchParams();
+		StringWriter searchParamString = new StringWriter();
+		for (int i = 0; i < searchParams.size(); i++) {
+			if (i == 0) {
+				searchParamString.append("\"").append(searchParams.get(i)).append("\"");
+			} else {
+				searchParamString.append(", \"").append(searchParams.get(i)).append("\"");
+			}
+		}
+		if (! searchParams.isEmpty()) {
+			placeholders.put("search_params", "java.util.Arrays.asList(new String[]{" + searchParamString.toString() + "})");
+		} else {
+			placeholders.put("search_params", "new java.util.ArrayList()");
+		}
 		
 		for (Entry<String, String> entry : placeholders.entrySet()) {
 			template = template.replaceAll(":" + entry.getKey(), entry.getValue());
