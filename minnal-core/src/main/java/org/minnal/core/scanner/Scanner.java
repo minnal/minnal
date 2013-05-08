@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.instrument.scanner;
+package org.minnal.core.scanner;
 
 /**
  * A generic scanner interface. 

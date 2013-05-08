@@ -1,13 +1,14 @@
 /**
  * 
  */
-package org.minnal.domain;
+package org.minnal.example.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.activejpa.entity.Model;
 import org.minnal.instrument.entity.AggregateRoot;
 
 /**
@@ -16,7 +17,7 @@ import org.minnal.instrument.entity.AggregateRoot;
  */
 @AggregateRoot
 @Entity
-public class Payment {
+public class Payment extends Model {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

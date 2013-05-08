@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.domain;
+package org.minnal.example.domain;
 
 import java.util.Set;
 
@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.activejpa.entity.Model;
 import org.minnal.instrument.entity.AggregateRoot;
@@ -23,6 +24,7 @@ import org.minnal.instrument.entity.AggregateRoot;
  */
 @AggregateRoot
 @Entity
+@Table(name="Orders")
 public class Order extends Model {
 	
 	@Id

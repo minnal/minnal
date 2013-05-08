@@ -3,7 +3,6 @@
  */
 package org.minnal.instrument.resource;
 
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,14 +11,10 @@ import java.util.Set;
 
 import javassist.ClassPool;
 import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.CtNewMethod;
 import javassist.NotFoundException;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.MinnalException;
-import org.minnal.core.Request;
-import org.minnal.core.Response;
 import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.RouteBuilder;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
@@ -74,52 +69,23 @@ public class ResourceWrapper {
 		RouteBuilder builder = null;
 		for (Entry<ResourcePath, Set<HttpMethod>> entry : paths.entrySet()) {
 			path = entry.getKey();
-			if (path.bulk) {
-				builder = resourceClass.builder(path.nodePath.getBulkPath());
+			if (path.isBulk()) {
+				builder = resourceClass.builder(path.getNodePath().getBulkPath());
 			} else {
-				builder = resourceClass.builder(path.nodePath.getSinglePath());
+				builder = resourceClass.builder(path.getNodePath().getSinglePath());
 			}
 			
 			for (HttpMethod method : entry.getValue()) {
-				builder.action(method, getMethodName(path.nodePath, path.bulk, method));
+				builder.action(method, path.getAction());
 			}
 		}
 	}
 	
-	private String getMethodName(EntityNodePath path, boolean bulk, HttpMethod httpMethod) {
-		if (bulk) {
-			if (httpMethod.equals(HttpMethod.GET)) {
-				return "list" + path.getName();
-			} else if (httpMethod.equals(HttpMethod.POST)) {
-				return "create" + path.getName();
-			}
-		} else {
-			if (httpMethod.equals(HttpMethod.GET)) {
-				return "get" + path.getName();
-			} else if (httpMethod.equals(HttpMethod.PUT)) {
-				return "update" + path.getName();
-			} else if (httpMethod.equals(HttpMethod.DELETE)) {
-				return "delete" + path.getName();
-			}
-		}
-		// Shouldn't get here
-		throw new IllegalArgumentException("Invalid http method - " + httpMethod + " for the path. Bulk - " + bulk);
-	}
-	
-	private boolean methodExists(String methodName) {
-		try {
-			wrapperClass.getDeclaredMethod(methodName, new CtClass[]{classPool.get(Request.class.getName()), classPool.get(Request.class.getName())});
-			return true;
-		} catch (NotFoundException e) {
-			return false;
-		}
-	}
-	
-	private boolean addMethodToPath(EntityNodePath path, boolean bulk, HttpMethod method) {
+	private boolean addMethodToPath(EntityNodePath path, boolean bulk, HttpMethod method, String action) {
 		if (resourceClass.hasRoute(bulk ? path.getBulkPath() : path.getSinglePath(), HttpMethod.GET)) {
 			return false;
 		}
-		ResourcePath resourcePath = new ResourcePath(path, bulk);
+		ResourcePath resourcePath = new ResourcePath(path, bulk, action);
 		Set<HttpMethod> methods = paths.get(resourcePath);
 		if (methods == null) {
 			methods = new HashSet<HttpMethod>();
@@ -130,41 +96,23 @@ public class ResourceWrapper {
 	}
 	
 	protected void addListMethod(EntityNodePath path) throws Exception {
-		createMethod(path, true, HttpMethod.GET, "");
+		ListMethodCreator creator = new ListMethodCreator(wrapperClass, path);
+		if (! addMethodToPath(path, true, HttpMethod.GET, creator.getMethodName())) {
+			return;
+		}
+		creator.create();
 	}
 	
 	protected void addReadMethod(EntityNodePath path) throws Exception {
-		createMethod(path, false, HttpMethod.GET, "");
 	}
 	
 	protected void addUpdateMethod(EntityNodePath path) throws Exception {
-		createMethod(path, false, HttpMethod.PUT, "");
 	}
 	
 	protected void addCreateMethod(EntityNodePath path) throws Exception {
-		createMethod(path, true, HttpMethod.POST, "");
 	}
 	
 	protected void addDeleteMethod(EntityNodePath path) throws Exception {
-		createMethod(path, false, HttpMethod.DELETE, "");
-	}
-	
-	private void createMethod(EntityNodePath path, boolean bulk, HttpMethod httpMethod, String body) throws Exception {
-		if (! addMethodToPath(path, bulk, httpMethod) ) {
-			return;
-		}
-		String methodName = getMethodName(path, bulk, httpMethod);
-		if (methodExists(methodName)) {
-			return;
-		}
-		if (wrapperClass.isFrozen()) {
-			wrapperClass.defrost();
-		}
-		StringWriter writer = new StringWriter();
-		writer.append("public void ").append(methodName).append("(").append(Request.class.getName()).append(" request, ");
-		writer.append(Response.class.getName()).append(" response) {").append(body).append("}");
-		CtMethod method = CtNewMethod.make(writer.toString(), wrapperClass);
-		wrapperClass.addMethod(method);
 	}
 	
 	private class ResourcePath {
@@ -172,10 +120,34 @@ public class ResourceWrapper {
 		private EntityNodePath nodePath;
 		
 		private boolean bulk;
+		
+		private String action;
 
-		public ResourcePath(EntityNodePath nodePath, boolean bulk) {
+		public ResourcePath(EntityNodePath nodePath, boolean bulk, String action) {
 			this.nodePath = nodePath;
 			this.bulk = bulk;
+			this.action = action;
+		}
+
+		/**
+		 * @return the nodePath
+		 */
+		public EntityNodePath getNodePath() {
+			return nodePath;
+		}
+
+		/**
+		 * @return the bulk
+		 */
+		public boolean isBulk() {
+			return bulk;
+		}
+
+		/**
+		 * @return the action
+		 */
+		public String getAction() {
+			return action;
 		}
 
 		@Override

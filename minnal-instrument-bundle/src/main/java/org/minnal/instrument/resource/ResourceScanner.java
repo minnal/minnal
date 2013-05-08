@@ -4,7 +4,7 @@
 package org.minnal.instrument.resource;
 
 import org.minnal.core.resource.Resource;
-import org.minnal.instrument.scanner.AbstractScanner;
+import org.minnal.core.scanner.AbstractScanner;
 
 /**
  * @author ganeshs

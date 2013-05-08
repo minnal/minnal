@@ -14,7 +14,7 @@ public class EntityMetaData {
 
 	private Class<?> entityClass;
 	
-	private String entityKey;
+	private String entityKey = "id";
 	
 	private Set<ParameterMetaData> searchFields = new HashSet<ParameterMetaData>();
 	

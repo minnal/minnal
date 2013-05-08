@@ -3,6 +3,7 @@
  */
 package org.minnal.instrument;
 
+import org.activejpa.enhancer.ActionJpaAgentLoader;
 import org.minnal.core.Application;
 import org.minnal.core.Bundle;
 import org.minnal.core.Container;
@@ -16,6 +17,7 @@ import org.minnal.core.config.ApplicationConfiguration;
 public class InstrumentationBundle extends ContainerAdapter implements Bundle {
 	
 	public void init(Container container) {
+		ActionJpaAgentLoader.loadAgent();
 		container.registerListener(this);
 	}
 

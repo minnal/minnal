@@ -13,6 +13,10 @@
   		<groupId>org.minnal</groupId>
   		<artifactId>minnal-core</artifactId>
   	</dependency>
+  	<dependency>
+  		<groupId>com.jolbox</groupId>
+  		<artifactId>bonecp</artifactId>
+  	</dependency>
   </dependencies>
   <dependencyManagement>
   	<dependencies>
@@ -25,6 +29,11 @@
   			<groupId>org.minnal</groupId>
   			<artifactId>minnal-core</artifactId>
   			<version>0.0.1-SNAPSHOT</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>com.jolbox</groupId>
+  			<artifactId>bonecp</artifactId>
+  			<version>0.8.0-rc1</version>
   		</dependency>
   	</dependencies>
   </dependencyManagement>

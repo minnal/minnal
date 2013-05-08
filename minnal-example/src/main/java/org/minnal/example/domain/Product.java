@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.domain;
+package org.minnal.example.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

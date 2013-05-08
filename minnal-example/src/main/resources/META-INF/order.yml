@@ -1,2 +1,15 @@
 # The name of the container 
-name: Hello World    
+name: Hello World
+db:
+  driverClass: org.hsqldb.jdbcDriver
+  url: jdbc:hsqldb:mem:.
+  username: sa
+  providerProperties:
+    hibernate.ejb.naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    hibernate.show_sql: true
+    hibernate.format_sql: false
+    hibernate.current_session_context_class: thread
+    hibernate.dialect: org.hibernate.dialect.HSQLDialect
+    hibernate.hbm2ddl.auto: create-drop
+  packagesToScan: 
+    - org.minnal.example

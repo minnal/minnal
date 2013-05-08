@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.domain;
+package org.minnal.example.domain;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -12,12 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.activejpa.entity.Model;
+
 /**
  * @author ganeshs
  *
  */
 @Entity
-public class OrderItem {
+public class OrderItem extends Model {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

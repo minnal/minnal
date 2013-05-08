@@ -7,6 +7,7 @@ import org.minnal.core.Application;
 import org.minnal.core.MinnalException;
 import org.minnal.core.server.exception.InternalServerErrorException;
 import org.minnal.example.resource.OrderResource;
+import org.minnal.jpa.JPAPlugin;
 
 /**
  * @author ganeshs
@@ -15,7 +16,7 @@ import org.minnal.example.resource.OrderResource;
 public class OrderApplication extends Application<OrderConfiguration> {
 	
 	public OrderApplication() {
-		System.out.println();
+		registerPlugin(new JPAPlugin());
 	}
 
 	@Override

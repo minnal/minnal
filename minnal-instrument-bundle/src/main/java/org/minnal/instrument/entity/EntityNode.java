@@ -27,7 +27,11 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 	private EntityMetaData entityMetaData;
 	
 	public EntityNode(Class<?> entityClass) {
-		this.name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, English.plural(entityClass.getSimpleName()));
+		this(entityClass, CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, English.plural(entityClass.getSimpleName())));
+	}
+	
+	public EntityNode(Class<?> entityClass, String name) {
+		this.name = name;
 		this.entityMetaData = EntityMetaDataProvider.instance().getEntityMetaData(entityClass);
 		populateChildren();
 	}
@@ -37,7 +41,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 			if (! collection.isEntity()) {
 				continue;
 			}
-			addChild(new EntityNode(collection.getElementType()));
+			addChild(new EntityNode(collection.getElementType(), collection.getName()));
 		}
 	}
 	
@@ -81,9 +85,10 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 			Iterator<EntityNode> iterator = iterator();
 			while (iterator.hasNext()) {
 				EntityNode node = iterator.next();
-				writer.append("/").append(node.getName());
+				String name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, node.getName());
+				writer.append("/").append(name);
 				if (iterator.hasNext()) {
-					writer.append("/{" + node.getName() + "_id}");
+					writer.append("/{" + name + "_id}");
 				}
 			}
 			bulkPath = writer.toString();
@@ -99,7 +104,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 		}
 		
 		public String getName() {
-			return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, get(size() - 1).getName());
+			return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, get(size() - 1).getName());
 		}
 
 	}

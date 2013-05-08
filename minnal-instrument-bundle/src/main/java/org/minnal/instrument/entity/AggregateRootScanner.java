@@ -3,7 +3,7 @@
  */
 package org.minnal.instrument.entity;
 
-import org.minnal.instrument.scanner.AbstractScanner;
+import org.minnal.core.scanner.AbstractScanner;
 
 /**
  * @author ganeshs
