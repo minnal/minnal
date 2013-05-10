@@ -28,7 +28,7 @@ public class ServerResponseTest {
 	
 	@Test
 	public void shouldVerifyDelegation() {
-		ServerResponse response = new ServerResponse(httpResponse);
+		ServerResponse response = new ServerResponse(mock(ServerRequest.class), httpResponse);
 		response.setContent(mock(ChannelBuffer.class));
 		response.addHeader("name", "value");
 		Map<String, String> headers = new HashMap<String, String>();

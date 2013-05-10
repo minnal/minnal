@@ -47,7 +47,7 @@ public class UpdateMethodCreator extends MethodCreator {
 
 	@Override
 	public String getMethodName() {
-		return "create" + getPath().getName();
+		return "update" + getPath().getName();
 	}
 
 }

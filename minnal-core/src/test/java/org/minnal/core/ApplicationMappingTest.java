@@ -3,11 +3,18 @@
  */
 package org.minnal.core;
 
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
 
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.server.ServerRequest;
+import org.minnal.core.util.HttpUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -87,7 +94,7 @@ public class ApplicationMappingTest {
 		applicationMapping.addApplication(application1, "/app1");
 		applicationMapping.addApplication(application2, "/app2");
 		ServerRequest request = mock(ServerRequest.class);
-		when(request.getUri().getPath()).thenReturn("/test/app1/test123");
+		when(request.getUri()).thenReturn(HttpUtil.createURI("/test/app1/test123"));
 		assertEquals(applicationMapping.resolve(request), application1);
 	}
 	
@@ -95,7 +102,7 @@ public class ApplicationMappingTest {
 	public void shouldNotResolveRequestToApplication() {
 		applicationMapping.addApplication(application1, "/app1");
 		ServerRequest request = mock(ServerRequest.class);
-		when(request.getUri().getPath()).thenReturn("/test/invalidapp/test123");
+		when(request.getUri()).thenReturn(HttpUtil.createURI("/test/invalidapp/test123"));
 		assertNull(applicationMapping.resolve(request));
 	}
 		

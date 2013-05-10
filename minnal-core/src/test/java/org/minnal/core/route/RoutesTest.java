@@ -6,16 +6,19 @@ package org.minnal.core.route;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
+import org.minnal.core.config.RouteConfiguration;
 import org.minnal.core.server.ServerRequest;
+import org.minnal.core.server.exception.MethodNotAllowedException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.net.MediaType;
 
 /**
  * @author ganeshs
@@ -37,7 +40,10 @@ public class RoutesTest {
 	public void setup() {
 		builder = mock(RouteBuilder.class);
 		request = mock(ServerRequest.class);
+		when(request.getContentType()).thenReturn(MediaType.JSON_UTF_8);
 		routes = new Routes();
+		RouteConfiguration configuration = new RouteConfiguration("test");
+		configuration.setDefaultMediaType(MediaType.JSON_UTF_8);
 		route1 = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.GET, null, null, null);
 		route2 = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.PUT, null, null, null);
 		when(builder.build()).thenReturn(Arrays.asList(route1, route2));
@@ -71,11 +77,11 @@ public class RoutesTest {
 		assertEquals(routes.resolve(request), route2);
 	}
 	
-	@Test
+	@Test(expectedExceptions=MethodNotAllowedException.class)
 	public void shouldNotResolveRequestForNonExistingPath() {
 		when(request.getRelativePath()).thenReturn("/orders/1");
 		when(request.getHttpMethod()).thenReturn(HttpMethod.PUT);
 		routes.addRoute(builder);
-		assertNull(routes.resolve(request));
+		routes.resolve(request);
 	}
 }

@@ -3,6 +3,7 @@
  */
 package org.minnal.core.server;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,8 @@ public abstract class ServerMessage implements Message {
 	private HttpMessage message;
 	
 	private Route resolvedRoute;
+	
+	protected static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 	
 	public ServerMessage(HttpMessage message) {
 		this.message = message;

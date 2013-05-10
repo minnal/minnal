@@ -5,7 +5,6 @@ package org.minnal.core.server;
 
 import java.net.SocketAddress;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Set;
 
@@ -61,7 +60,7 @@ public class ServerRequest extends ServerMessage implements Request {
 			public MediaType apply(String input) {
 				MediaType type = MediaType.parse(input.trim());
 				if (! type.parameters().containsKey("UTF-8")) {
-					return type.withoutParameters().withCharset(Charset.forName("UTF-8"));
+					return type.withoutParameters().withCharset(DEFAULT_CHARSET);
 				}
 				return type;
 			}
