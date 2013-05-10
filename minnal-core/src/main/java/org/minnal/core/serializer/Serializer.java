@@ -8,6 +8,7 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.google.common.net.MediaType;
 
 /**
  * @author ganeshs
@@ -23,5 +24,15 @@ public abstract class Serializer {
 	public abstract ChannelBuffer serialize(Object object);
 	
 	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);
+	
+	public static Serializer getSerializer(MediaType mediaType) {
+		if (mediaType.equals(MediaType.JSON_UTF_8)) {
+			return DEFAULT_JSON_SERIALIZER;
+		}
+		if (mediaType.equals(MediaType.XML_UTF_8)) {
+			return DEFAULT_XML_SERIALIZER;
+		}
+		return null;
+	}
 	
 }

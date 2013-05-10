@@ -87,7 +87,7 @@ public class ApplicationMappingTest {
 		applicationMapping.addApplication(application1, "/app1");
 		applicationMapping.addApplication(application2, "/app2");
 		ServerRequest request = mock(ServerRequest.class);
-		when(request.getPath()).thenReturn("/test/app1/test123");
+		when(request.getUri().getPath()).thenReturn("/test/app1/test123");
 		assertEquals(applicationMapping.resolve(request), application1);
 	}
 	
@@ -95,7 +95,7 @@ public class ApplicationMappingTest {
 	public void shouldNotResolveRequestToApplication() {
 		applicationMapping.addApplication(application1, "/app1");
 		ServerRequest request = mock(ServerRequest.class);
-		when(request.getPath()).thenReturn("/test/invalidapp/test123");
+		when(request.getUri().getPath()).thenReturn("/test/invalidapp/test123");
 		assertNull(applicationMapping.resolve(request));
 	}
 		

@@ -29,7 +29,7 @@ import org.minnal.instrument.entity.Searchable;
 public class Order extends Model {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)

@@ -29,9 +29,9 @@ public class Action {
 		this.method = method;
 	}
 	
-	public void invoke(Request request, Response response) {
+	public Object invoke(Request request, Response response) {
 		try {
-			method.invoke(resource, request, response);
+			return method.invoke(resource, request, response);
 		} catch (ApplicationException e) {
 			throw e;
 		} catch (Exception e) {

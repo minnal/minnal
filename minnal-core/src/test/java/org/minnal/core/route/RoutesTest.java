@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.minnal.core.Request;
+import org.minnal.core.server.ServerRequest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -25,7 +25,7 @@ public class RoutesTest {
 	
 	private RouteBuilder builder;
 	
-	private Request request;
+	private ServerRequest request;
 	
 	private Routes routes;
 	
@@ -36,7 +36,7 @@ public class RoutesTest {
 	@BeforeMethod
 	public void setup() {
 		builder = mock(RouteBuilder.class);
-		request = mock(Request.class);
+		request = mock(ServerRequest.class);
 		routes = new Routes();
 		route1 = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.GET, null, null, null);
 		route2 = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.PUT, null, null, null);

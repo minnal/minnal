@@ -4,10 +4,8 @@
 package org.minnal.instrument.resource;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -29,7 +27,7 @@ public class ResourceWrapper {
 	
 	private CtClass wrapperClass;
 	
-	private Map<ResourcePath, Set<HttpMethod>> paths = new HashMap<ResourcePath, Set<HttpMethod>>();
+	private Map<ResourcePath, Map<HttpMethod, String>> paths = new HashMap<ResourcePath, Map<HttpMethod, String>>();
 	
 	private ClassPool classPool = ClassPool.getDefault();
 	
@@ -45,14 +43,30 @@ public class ResourceWrapper {
 	
 	public void addPath(EntityNodePath path) {
 		try {
-			addListMethod(path);
-			addReadMethod(path);
-			addCreateMethod(path);
-			addUpdateMethod(path);
-			addDeleteMethod(path);
+			addMethod(new ResourcePath(path, true), HttpMethod.GET);
+			addMethod(new ResourcePath(path, true), HttpMethod.POST);
+//			addMethod(new ResourcePath(path, false), HttpMethod.PUT);
+			addMethod(new ResourcePath(path, false), HttpMethod.GET);
+//			addMethod(new ResourcePath(path, false), HttpMethod.DELETE);
 		} catch (Exception e) {
 			throw new MinnalException(e);
 		}
+	}
+	
+	protected void addMethod(ResourcePath resourcePath, HttpMethod method) throws Exception {
+		MethodCreator creator = MethodCreator.getMethodCreator(wrapperClass, resourcePath, method);
+		if (creator == null) {
+			// TODO Can't get here. Handle if it still gets here
+			return;
+		}
+		
+		if (resourceClass.hasRoute(resourcePath.isBulk() ? resourcePath.getNodePath().getBulkPath() : 
+			resourcePath.getNodePath().getSinglePath(), HttpMethod.GET)) {
+			return;
+		}
+		
+		creator.create();
+		addMethodToPath(resourcePath, method, creator.getMethodName());
 	}
 	
 	public void wrap() {
@@ -67,7 +81,7 @@ public class ResourceWrapper {
 	protected void createRoutes() {
 		ResourcePath path = null;
 		RouteBuilder builder = null;
-		for (Entry<ResourcePath, Set<HttpMethod>> entry : paths.entrySet()) {
+		for (Entry<ResourcePath, Map<HttpMethod, String>> entry : paths.entrySet()) {
 			path = entry.getKey();
 			if (path.isBulk()) {
 				builder = resourceClass.builder(path.getNodePath().getBulkPath());
@@ -75,58 +89,32 @@ public class ResourceWrapper {
 				builder = resourceClass.builder(path.getNodePath().getSinglePath());
 			}
 			
-			for (HttpMethod method : entry.getValue()) {
-				builder.action(method, path.getAction());
+			for (Entry<HttpMethod, String> method : entry.getValue().entrySet()) {
+				builder.action(method.getKey(), method.getValue());
 			}
 		}
 	}
 	
-	private boolean addMethodToPath(EntityNodePath path, boolean bulk, HttpMethod method, String action) {
-		if (resourceClass.hasRoute(bulk ? path.getBulkPath() : path.getSinglePath(), HttpMethod.GET)) {
-			return false;
-		}
-		ResourcePath resourcePath = new ResourcePath(path, bulk, action);
-		Set<HttpMethod> methods = paths.get(resourcePath);
+	private boolean addMethodToPath(ResourcePath resourcePath, HttpMethod method, String action) {
+		Map<HttpMethod, String> methods = paths.get(resourcePath);
 		if (methods == null) {
-			methods = new HashSet<HttpMethod>();
+			methods = new HashMap<HttpMethod, String>();
 			paths.put(resourcePath, methods);
 		}
-		methods.add(method);
+		methods.put(method, action);
 		return true;
 	}
 	
-	protected void addListMethod(EntityNodePath path) throws Exception {
-		ListMethodCreator creator = new ListMethodCreator(wrapperClass, path);
-		if (! addMethodToPath(path, true, HttpMethod.GET, creator.getMethodName())) {
-			return;
-		}
-		creator.create();
-	}
 	
-	protected void addReadMethod(EntityNodePath path) throws Exception {
-	}
-	
-	protected void addUpdateMethod(EntityNodePath path) throws Exception {
-	}
-	
-	protected void addCreateMethod(EntityNodePath path) throws Exception {
-	}
-	
-	protected void addDeleteMethod(EntityNodePath path) throws Exception {
-	}
-	
-	private class ResourcePath {
+	public class ResourcePath {
 		
 		private EntityNodePath nodePath;
 		
 		private boolean bulk;
 		
-		private String action;
-
-		public ResourcePath(EntityNodePath nodePath, boolean bulk, String action) {
+		public ResourcePath(EntityNodePath nodePath, boolean bulk) {
 			this.nodePath = nodePath;
 			this.bulk = bulk;
-			this.action = action;
 		}
 
 		/**
@@ -141,13 +129,6 @@ public class ResourceWrapper {
 		 */
 		public boolean isBulk() {
 			return bulk;
-		}
-
-		/**
-		 * @return the action
-		 */
-		public String getAction() {
-			return action;
 		}
 
 		@Override

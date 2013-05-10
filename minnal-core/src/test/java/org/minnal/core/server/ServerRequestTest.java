@@ -47,7 +47,7 @@ public class ServerRequestTest {
 		assertEquals(request.getHttpMethod(), HttpMethod.HEAD);
 		assertEquals(request.getContent(), httpRequest.getContent());
 		assertEquals(request.getHeader("test"), "dummy");
-		assertEquals(request.getPath(), httpRequest.getUri());
+		assertEquals(request.getUri(), httpRequest.getUri());
 		request.getHeaders();
 		request.addHeader("name", "value");
 		Map<String, String> headers = new HashMap<String, String>();

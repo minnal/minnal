@@ -7,27 +7,25 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 
-import javassist.CtClass;
-
-import org.activejpa.entity.EntityCollection;
-import org.activejpa.entity.Filter;
 import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
+
+import javassist.CtClass;
 
 /**
  * @author ganeshs
  *
  */
-public class ListMethodCreator extends MethodCreator {
+public class CreateMethodCreator extends MethodCreator {
 	
-	private static final String LIST_ENTITY_TEMPLATE = Filter.class.getName() + " filter = " + ResourceUtil.class.getName() + ".getFilter(request, :search_params);" +
-			"java.util.List :field_name = :model_class.where(filter);";
+	private static final String CREATE_ENTITY_TEMPLATE = ":model_class :field_name = request.getContentAs(:model_class.class);" +
+			":field_name.persist();";
 	
-	private static final String LIST_COLLECTION_TEMPLATE = EntityCollection.class.getName() + " :field_nameCollection = :parent.collection(\":field_name\");" + 
-			"java.util.List :field_name = :field_nameCollection.all();";
-
-	public ListMethodCreator(CtClass ctClass, EntityNodePath path) {
+	private static final String CREATE_COLLECTION_ITEM_TEMPLATE = ":model_class :field_name = request.getContentAs(:model_class.class);" +
+			":parent.collection(\":field_name\").add(:field_name); :parent.persist();";
+	
+	public CreateMethodCreator(CtClass ctClass, EntityNodePath path) {
 		super(ctClass, path);
 	}
 
@@ -36,7 +34,7 @@ public class ListMethodCreator extends MethodCreator {
 		StringWriter writer = new StringWriter();
 		Iterator<EntityNode> iterator = getPath().iterator();
 		String parent = null;
-		List<String> paramNames = new RoutePattern(getPath().getBulkPath()).getParameterNames();
+		List<String> paramNames = new RoutePattern(getPath().getSinglePath()).getParameterNames();
 		int i = 0;
 		EntityNode node = null;
 		String param = null;
@@ -47,7 +45,7 @@ public class ListMethodCreator extends MethodCreator {
 				template = null;
 				node = iterator.next();
 				if (! iterator.hasNext()) {
-					template = LIST_COLLECTION_TEMPLATE;
+					template = CREATE_COLLECTION_ITEM_TEMPLATE;
 					param = null;
 				} else {
 					template = parent == null ? FIND_ENTITY_TEMPLATE : FIND_COLLECTION_ITEM_TEMPLATE;
@@ -57,17 +55,17 @@ public class ListMethodCreator extends MethodCreator {
 				parent = node.getName();
 			}
 		} else {
-			template = LIST_ENTITY_TEMPLATE;
+			template = CREATE_ENTITY_TEMPLATE;
 			node = iterator.next();
 			resolveTemplate(writer, template, node, param, parent);
 		}
-		
 		writer.append("return ").append(node.getName()).append(";");
 		return writer.toString();
 	}
-	
+
 	@Override
 	public String getMethodName() {
-		return "list" + getPath().getName();
+		return "create" + getPath().getName();
 	}
+
 }

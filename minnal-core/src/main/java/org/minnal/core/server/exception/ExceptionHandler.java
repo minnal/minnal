@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.minnal.core.Request;
 import org.minnal.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author ganeshs
@@ -17,8 +19,11 @@ public class ExceptionHandler {
 	
 	private Map<Class<? extends Exception>, Class<? extends ApplicationException>> exceptionMap = 
 			new HashMap<Class<? extends Exception>, Class<? extends ApplicationException>>();
+	
+	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
 	public void handle(Request request, Response response, Throwable throwable) {
+		logger.error("Handling the exception - ", throwable);
 		ApplicationException e = null;
 		if (throwable instanceof ApplicationException) {
 			e = (ApplicationException) throwable;
@@ -28,7 +33,7 @@ public class ExceptionHandler {
 		if (e == null) {
 			e = new InternalServerErrorException(throwable.getMessage(), throwable);
 		}
-		response.setStatus(e.getStatus());
+		e.handle(response);
 	}
 	
 	public void mapException(Class<? extends Exception> from, Class<? extends ApplicationException> to) {

@@ -16,14 +16,14 @@ import com.google.common.net.MediaType;
  * @author ganeshs
  *
  */
-public class UnsupportedMediaTypeException extends ApplicationException {
+public class NotAcceptableException extends ApplicationException {
 	
 	private Set<MediaType> expectedTypes;
 
 	private static final long serialVersionUID = 1L;
 	
-	public UnsupportedMediaTypeException(Set<MediaType> expectedTypes) {
-		super(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE);
+	public NotAcceptableException(Set<MediaType> expectedTypes) {
+		super(HttpResponseStatus.NOT_ACCEPTABLE);
 		this.expectedTypes = expectedTypes;
 	}
 

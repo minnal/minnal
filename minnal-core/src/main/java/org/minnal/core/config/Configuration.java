@@ -3,16 +3,17 @@
  */
 package org.minnal.core.config;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.minnal.core.serializer.Serializer;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.net.MediaType;
 
 /**
@@ -27,7 +28,6 @@ public abstract class Configuration {
 	
 	private String name;
 	
-	@JsonProperty
 	private Map<MediaType, Serializer> serializers = new HashMap<MediaType, Serializer>();
 
 	private MediaType defaultMediaType;
@@ -96,7 +96,7 @@ public abstract class Configuration {
 	 * @param defaultMediaType the defaultMediaType to set
 	 */
 	public void setDefaultMediaType(MediaType defaultMediaType) {
-		this.defaultMediaType = defaultMediaType;
+		this.defaultMediaType = fixMediaType(defaultMediaType);
 	}
 
 	/**
@@ -131,7 +131,7 @@ public abstract class Configuration {
 	 * @param mediaType
 	 * @return
 	 */
-	public boolean supportsMediaType(MediaType mediaType) {
+	public boolean supportsMediaType(final MediaType mediaType) {
 		return getSupportedMediaTypes().contains(mediaType);
 	}
 
@@ -157,5 +157,25 @@ public abstract class Configuration {
 			}
 		}
 		return serializers.get(mediaType);
+	}
+
+	Map<MediaType, Serializer> getSerializers() {
+		return serializers;
+	}
+
+	/**
+	 * @param serializers the serializers to set
+	 */
+	void setSerializers(Map<MediaType, Serializer> serializers) {
+		for (Entry<MediaType, Serializer> entry : serializers.entrySet()) {
+			this.serializers.put(fixMediaType(entry.getKey()), entry.getValue());
+		}
+	}
+	
+	private MediaType fixMediaType(MediaType mediaType) {
+		if (! mediaType.charset().isPresent()) {
+			return mediaType.withCharset(Charset.forName("UTF-8"));
+		}
+		return mediaType;
 	}
 }

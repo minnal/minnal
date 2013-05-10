@@ -80,7 +80,7 @@ public class ApplicationMapping {
 	 * @return the application that this request resolves to
 	 */
 	public Application<ApplicationConfiguration> resolve(Request request) {
-		String path = request.getPath();
+		String path = request.getUri().getPath();
 		for (Entry<String, Application<ApplicationConfiguration>> entry : applications.entrySet()) {
 			if (path.startsWith(entry.getKey())) {
 				return entry.getValue();

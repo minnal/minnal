@@ -3,17 +3,19 @@
  */
 package org.minnal.core.route;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.minnal.core.MinnalException;
 import org.minnal.core.Request;
 import org.minnal.core.route.RoutePattern.RouteElement;
-import org.minnal.core.server.exception.BadRequestException;
+import org.minnal.core.server.ServerRequest;
+import org.minnal.core.server.exception.MethodNotAllowedException;
+import org.minnal.core.server.exception.NotAcceptableException;
+import org.minnal.core.server.exception.NotFoundException;
+import org.minnal.core.server.exception.UnsupportedMediaTypeException;
 import org.minnal.core.util.Node.Visitor;
 
 /**
@@ -72,23 +74,38 @@ public class Routes {
 	}
 	
 	/**
-	 * Resolves the request by looking up the route tree and returns a route matching the request path and method. If no route matches, returns null
+	 * Resolves the request by looking up the route tree and returns a route matching the request path and method.
+	 * <ul>
+	 * <li> If no route matches, throws {@link NotFoundException}. 
+	 * <li> If http method doesn't match, throws {@link MethodNotAllowedException}. 
+	 * <li> If Content-Type is not provided/supported (for POST and PUT methods), throws {@link UnsupportedMediaTypeException}. 
+	 * <li> If response format is not acceptable to client, throws {@link NotAcceptableException}
+	 * </ul>
 	 * 
 	 * @param request
 	 * @return
 	 */
-	public Route resolve(Request request) {
-		String path = null;
-		try {
-			path = new URI(request.getRelativePath()).getPath();
-		} catch (Exception e) {
-			throw new BadRequestException("Invalid path - " + request.getRelativePath(), e);
+	public Route resolve(ServerRequest request) {
+		RouteNode node = findNode(request.getRelativePath());
+		if (node == null) {
+			throw new NotFoundException();
 		}
-		RouteNode node = findNode(path);
-		if (node != null) {
-			return node.getRoutes().get(request.getHttpMethod());
+		Route route = node.getRoutes().get(request.getHttpMethod());
+		if (route == null) {
+			throw new MethodNotAllowedException(node.getRoutes().keySet());
 		}
-		return null;
+		if (shouldCheckContentType(request) && (request.getContentType() == null || ! route.getConfiguration().supportsMediaType(request.getContentType()))) {
+			throw new UnsupportedMediaTypeException(route.getConfiguration().getSupportedMediaTypes());
+		}
+		request.setResolvedRoute(route);
+		if (request.getSupportedAccepts().isEmpty()) {
+			throw new NotAcceptableException(route.getConfiguration().getSupportedMediaTypes());
+		}
+		return route;
+	}
+	
+	private boolean shouldCheckContentType(Request request) {
+		return request.getHttpMethod() == HttpMethod.POST || request.getHttpMethod().equals(HttpMethod.PUT); 
 	}
 	
 	/**

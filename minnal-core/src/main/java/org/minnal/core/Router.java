@@ -3,16 +3,12 @@
  */
 package org.minnal.core;
 
-import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
-import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
-import org.minnal.core.server.exception.BadRequestException;
 import org.minnal.core.server.exception.NotFoundException;
 
 
@@ -31,7 +27,8 @@ public class Router {
 	public void route(MessageContext context) {
 		try {
 			Route route = resolve(context);
-			route.getAction().invoke(context.getRequest(), context.getResponse());
+			Object result = route.getAction().invoke(context.getRequest(), context.getResponse());
+			context.getResponse().setContent(result);
 		} catch (Exception e) {
 			context.getApplication().getExceptionHandler().handle(context.getRequest(), context.getResponse(), e);
 		} finally {
@@ -57,24 +54,13 @@ public class Router {
 		context.getRequest().setApplicationPath(application.getPath()); // NOTE: This should be done before resolving the action
 		
 		Route route = application.getRoutes().resolve(context.getRequest());
-		if (route == null) {
-			Set<HttpMethod> allowedMethods = application.getRoutes().getAllowedMethods(context.getRequest());
-			if (! allowedMethods.isEmpty()) {
-				throw new NotFoundException("Unsupported http method. Expected - " + allowedMethods);
-			}
-			throw new NotFoundException("Request path not found");
-		}
-		String path = null;
-		try {
-			path = new URI(context.getRequest().getRelativePath()).getPath();
-		} catch (Exception e) {
-			throw new BadRequestException("Invalid path - " + context.getRequest().getRelativePath(), e);
-		}
+		context.getResponse().setResolvedRoute(route);
 		
-		Map<String, String> parameters = route.getRoutePattern().match(path);
+		Map<String, String> parameters = route.getRoutePattern().match(context.getRequest().getRelativePath());
 		if (parameters == null) {
 			// TODO shouldn't get here as we have already resolved the route. throw a not found exception ??? 
 		}
+		
 		context.getRequest().addHeaders(parameters);
 		context.setRoute(route);
 		return route;

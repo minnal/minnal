@@ -19,13 +19,7 @@ import com.google.common.base.Strings;
  */
 public class HttpUtil {
 
-	public static Map<String, String> getQueryParameters(String path) {
-		URI uri = null;
-		try {
-			uri = new URI(path);
-		} catch (Exception e) {
-			throw new MinnalException("Invalid uri - " + path);
-		}
+	public static Map<String, String> getQueryParameters(URI uri) {
 		String query = uri.getQuery();
 		Map<String, String> params = new HashMap<String, String>();
 		if (! Strings.isNullOrEmpty(query)) {
@@ -36,5 +30,13 @@ public class HttpUtil {
 			}
 		}
 		return params;
+	}
+	
+	public static URI createURI(String uri) {
+		try {
+			return new URI(uri);
+		} catch (Exception e) {
+			throw new MinnalException("Invalid uri - " + uri);
+		}
 	}
 }

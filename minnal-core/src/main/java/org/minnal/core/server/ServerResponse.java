@@ -3,14 +3,16 @@
  */
 package org.minnal.core.server;
 
-import java.nio.charset.Charset;
-
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.Response;
+import org.minnal.core.route.Route;
+
+import com.google.common.collect.FluentIterable;
+import com.google.common.net.MediaType;
 
 /**
  * @author ganeshs
@@ -19,9 +21,12 @@ import org.minnal.core.Response;
 public class ServerResponse extends ServerMessage implements Response {
 	
 	private HttpResponse response;
+	
+	private ServerRequest request;
 
-	public ServerResponse(HttpResponse response) {
+	public ServerResponse(ServerRequest request, HttpResponse response) {
 		super(response);
+		this.request = request;
 		this.response = response;
 	}
 
@@ -30,8 +35,9 @@ public class ServerResponse extends ServerMessage implements Response {
 	}
 	
 	public void setContent(Object content) {
-		// TODO serialize content
-		ChannelBuffers.copiedBuffer(content.toString(), Charset.defaultCharset());
+		MediaType type = FluentIterable.from(request.getSupportedAccepts()).first().or(getResolvedRoute().getConfiguration().getDefaultMediaType());
+		setContentType(type);
+		setContent(getSerializer(type).serialize(content));
 	}
 	
 	public ChannelFuture write(Channel channel) {
@@ -40,5 +46,9 @@ public class ServerResponse extends ServerMessage implements Response {
 	
 	public HttpResponseStatus getStatus() {
 		return response.getStatus();
+	}
+	
+	public void setContentType(MediaType type) {
+		response.addHeader(HttpHeaders.Names.CONTENT_TYPE, type.toString());
 	}
 }

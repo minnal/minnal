@@ -5,6 +5,7 @@ package org.minnal.core.server.exception;
 
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.MinnalException;
+import org.minnal.core.Response;
 
 /**
  * @author ganeshs
@@ -38,6 +39,10 @@ public class ApplicationException extends MinnalException {
 	 */
 	public HttpResponseStatus getStatus() {
 		return status;
+	}
+	
+	public void handle(Response response) {
+		response.setStatus(status);
 	}
 
 }

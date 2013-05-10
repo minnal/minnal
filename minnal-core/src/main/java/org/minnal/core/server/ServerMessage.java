@@ -12,6 +12,10 @@ import java.util.Map.Entry;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.handler.codec.http.HttpMessage;
 import org.minnal.core.Message;
+import org.minnal.core.route.Route;
+import org.minnal.core.serializer.Serializer;
+
+import com.google.common.net.MediaType;
 
 /**
  * @author ganeshs
@@ -20,6 +24,8 @@ import org.minnal.core.Message;
 public abstract class ServerMessage implements Message {
 
 	private HttpMessage message;
+	
+	private Route resolvedRoute;
 	
 	public ServerMessage(HttpMessage message) {
 		this.message = message;
@@ -37,6 +43,10 @@ public abstract class ServerMessage implements Message {
 
 	public String getHeader(String name) {
 		return message.getHeader(name);
+	}
+	
+	public List<String> getHeaders(String name) {
+		return message.getHeaders(name);
 	}
 
 	public Map<String, String> getHeaders() {
@@ -67,4 +77,23 @@ public abstract class ServerMessage implements Message {
 	public void setContent(ChannelBuffer content) {
 		message.setContent(content);
 	}
+	
+	/**
+	 * @return the resolvedRoute
+	 */
+	public Route getResolvedRoute() {
+		return resolvedRoute;
+	}
+
+	/**
+	 * @param resolvedRoute the resolvedRoute to set
+	 */
+	public void setResolvedRoute(Route resolvedRoute) {
+		this.resolvedRoute = resolvedRoute;
+	}
+	
+	protected Serializer getSerializer(MediaType type) {
+		return resolvedRoute.getConfiguration().getSerializer(type);
+	}
+	
 }

@@ -14,6 +14,6 @@ public abstract class MediaTypeMixin {
 
 	@JsonCreator
 	public static MediaType parse(String input) {
-		return MediaType.parse(input);
+		return null;
 	}
 }

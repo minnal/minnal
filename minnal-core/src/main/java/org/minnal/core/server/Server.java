@@ -70,7 +70,7 @@ public class Server extends SimpleChannelUpstreamHandler implements Bundle {
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
 		ServerRequest request = new ServerRequest((HttpRequest) e.getMessage(), e.getRemoteAddress());
-		ServerResponse response = new ServerResponse(new DefaultHttpResponse(((HttpRequest) e.getMessage()).getProtocolVersion(), 
+		ServerResponse response = new ServerResponse(request, new DefaultHttpResponse(((HttpRequest) e.getMessage()).getProtocolVersion(), 
 				HttpResponseStatus.PROCESSING)); // Setting temp response. Will override while serializing response
 		MessageContext context = new MessageContext(request, response);
 		ctx.setAttachment(context);
