@@ -7,17 +7,21 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 
+import javassist.CtClass;
+
 import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
-
-import javassist.CtClass;
+import org.minnal.instrument.util.DynaBean;
 
 /**
  * @author ganeshs
  *
  */
 public class UpdateMethodCreator extends MethodCreator {
+	
+	private static final String UPDATE_ENTITY_TEMPLATE = DynaBean.class.getName() + " dynaBean = request.getContentAs(" + DynaBean.class.getName() + ".class);" +
+			":parent.updateAttributes(dynaBean.getAttributes());";
 	
 	public UpdateMethodCreator(CtClass ctClass, EntityNodePath path) {
 		super(ctClass, path);
@@ -41,13 +45,18 @@ public class UpdateMethodCreator extends MethodCreator {
 			resolveTemplate(writer, template, node, param, parent);
 			parent = node.getName();
 		}
-		writer.append("return ").append(node.getName()).append(";");
+		resolveTemplate(writer, UPDATE_ENTITY_TEMPLATE, node, param, parent);
 		return writer.toString();
 	}
 
 	@Override
 	public String getMethodName() {
 		return "update" + getPath().getName();
+	}
+	
+	@Override
+	protected boolean returnVoid() {
+		return true;
 	}
 
 }

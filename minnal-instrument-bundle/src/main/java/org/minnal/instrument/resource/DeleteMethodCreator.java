@@ -19,6 +19,8 @@ import javassist.CtClass;
  */
 public class DeleteMethodCreator extends MethodCreator {
 	
+	private static final String DELETE_ENTITY_TEMPLATE = ":parent.delete();";
+	
 	public DeleteMethodCreator(CtClass ctClass, EntityNodePath path) {
 		super(ctClass, path);
 	}
@@ -41,13 +43,18 @@ public class DeleteMethodCreator extends MethodCreator {
 			resolveTemplate(writer, template, node, param, parent);
 			parent = node.getName();
 		}
-		writer.append("return ").append(node.getName()).append(";");
+		resolveTemplate(writer, DELETE_ENTITY_TEMPLATE, node, param, parent);
 		return writer.toString();
 	}
 
 	@Override
 	public String getMethodName() {
-		return "create" + getPath().getName();
+		return "delete" + getPath().getName();
+	}
+	
+	@Override
+	protected boolean returnVoid() {
+		return true;
 	}
 
 }

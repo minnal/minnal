@@ -45,9 +45,9 @@ public class ResourceWrapper {
 		try {
 			addMethod(new ResourcePath(path, true), HttpMethod.GET);
 			addMethod(new ResourcePath(path, true), HttpMethod.POST);
-//			addMethod(new ResourcePath(path, false), HttpMethod.PUT);
+			addMethod(new ResourcePath(path, false), HttpMethod.PUT);
 			addMethod(new ResourcePath(path, false), HttpMethod.GET);
-//			addMethod(new ResourcePath(path, false), HttpMethod.DELETE);
+			addMethod(new ResourcePath(path, false), HttpMethod.DELETE);
 		} catch (Exception e) {
 			throw new MinnalException(e);
 		}

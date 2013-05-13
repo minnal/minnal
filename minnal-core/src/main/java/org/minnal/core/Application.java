@@ -150,4 +150,9 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	public void registerPlugin(Plugin plugin) {
 		plugins.add(plugin);
 	}
+	
+	@Override
+	public String toString() {
+		return configuration.getName();
+	}
 }

@@ -33,4 +33,11 @@ public class NotAcceptableException extends ApplicationException {
 		response.addHeader(HttpHeaders.Names.ACCEPT, Joiner.on(", ").join(expectedTypes));
 	}
 
+	/**
+	 * @return the expectedTypes
+	 */
+	public Set<MediaType> getExpectedTypes() {
+		return expectedTypes;
+	}
+
 }

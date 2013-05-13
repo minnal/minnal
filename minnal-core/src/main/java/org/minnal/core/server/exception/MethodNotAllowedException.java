@@ -32,5 +32,12 @@ public class MethodNotAllowedException extends ApplicationException {
 		super.handle(response);
 		response.addHeader(HttpHeaders.Names.ALLOW, Joiner.on(", ").join(allowedMethods));
 	}
+
+	/**
+	 * @return the allowedMethods
+	 */
+	public Set<HttpMethod> getAllowedMethods() {
+		return allowedMethods;
+	}
 	
 }

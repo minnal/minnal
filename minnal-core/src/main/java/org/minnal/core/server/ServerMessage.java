@@ -98,5 +98,5 @@ public abstract class ServerMessage implements Message {
 	protected Serializer getSerializer(MediaType type) {
 		return resolvedRoute.getConfiguration().getSerializer(type);
 	}
-	
+
 }

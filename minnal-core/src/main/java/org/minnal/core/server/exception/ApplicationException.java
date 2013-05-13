@@ -43,6 +43,7 @@ public class ApplicationException extends MinnalException {
 	
 	public void handle(Response response) {
 		response.setStatus(status);
+		response.setContent(getMessage());
 	}
 
 }

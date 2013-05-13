@@ -36,7 +36,7 @@ public abstract class MethodCreator {
 			"request.getHeader(\":param_name\")}); if (:field_name == null) {throw new " + NotFoundException.class.getName() + 
 			"(\":field_name with :entity_key \" + request.getHeader(\":param_name\") + \" not found\");}";
 	
-	protected static final String FIND_COLLECTION_ITEM_TEMPLATE = ":model_class :field_name = :parent.collection(\":field_name\").first(new Object[]{\":entity_key\", " +
+	protected static final String FIND_COLLECTION_ITEM_TEMPLATE = ":model_class :field_name = :parent.collection(\":field_name\").first(new Object[]{\":collection_entity_key\", " +
 			"request.getHeader(\":param_name\")}); if (:field_name == null) {throw new " + NotFoundException.class.getName() + 
 			"(\":field_name with :entity_key \" + request.getHeader(\":param_name\") + \" not found\");}";
 	
@@ -80,6 +80,10 @@ public abstract class MethodCreator {
 	
 	protected abstract String createBody();
 	
+	protected boolean returnVoid() {
+		return false;
+	}
+	
 	protected void createMethod(String body) throws Exception {
 		String methodName = getMethodName();
 		if (methodExists(methodName)) {
@@ -89,7 +93,7 @@ public abstract class MethodCreator {
 			ctClass.defrost();
 		}
 		StringWriter writer = new StringWriter();
-		writer.append("public Object ").append(methodName).append("(").append(Request.class.getName()).append(" request, ");
+		writer.append("public ").append(returnVoid() ? "void " : "Object ").append(methodName).append("(").append(Request.class.getName()).append(" request, ");
 		writer.append(Response.class.getName()).append(" response) {").append(body).append("}");
 		CtMethod method = CtNewMethod.make(writer.toString(), ctClass);
 		ctClass.addMethod(method);
@@ -112,6 +116,7 @@ public abstract class MethodCreator {
 		placeholders.put("model_class", node.getEntityMetaData().getEntityClass().getName());
 		placeholders.put("field_name", node.getName());
 		placeholders.put("entity_key", node.getEntityMetaData().getEntityKey());
+		placeholders.put("collection_entity_key", node.getName() + "." + node.getEntityMetaData().getEntityKey());
 		placeholders.put("param_name", paramName);
 		placeholders.put("parent", parent);
 		List<String> searchParams = getPath().getSearchParams();

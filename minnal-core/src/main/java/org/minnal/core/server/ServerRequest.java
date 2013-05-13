@@ -5,7 +5,6 @@ package org.minnal.core.server;
 
 import java.net.SocketAddress;
 import java.net.URI;
-import java.util.Collections;
 import java.util.Set;
 
 import org.jboss.netty.handler.codec.http.HttpHeaders;
@@ -16,15 +15,17 @@ import org.minnal.core.Request;
 import org.minnal.core.route.Route;
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.util.HttpUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 /**
+ * The incoming http request. This wraps the netty http request underneath and exposes additional utility method to deserialize the content.
+ * 
  * @author ganeshs
  *
  */
@@ -44,6 +45,8 @@ public class ServerRequest extends ServerMessage implements Request {
 	
 	private MediaType contentType;
 	
+	private static final Logger logger = LoggerFactory.getLogger(ServerRequest.class);
+	
 	public ServerRequest(HttpRequest request, SocketAddress remoteAddress) {
 		super(request);
 		this.remoteAddress = remoteAddress;
@@ -51,6 +54,7 @@ public class ServerRequest extends ServerMessage implements Request {
 	}
 	
 	private void init(HttpRequest request) {
+		logger.trace("Initializing the request {}", request);
 		this.request = request;
 		uri = HttpUtil.createURI(request.getUri());
 		if (containsHeader(HttpHeaders.Names.CONTENT_TYPE)) {
@@ -122,16 +126,6 @@ public class ServerRequest extends ServerMessage implements Request {
 	
 	@Override
 	public void setResolvedRoute(Route resolvedRoute) {
-		supportedAccepts = Collections.unmodifiableSet(Sets.filter(resolvedRoute.getConfiguration().getSupportedMediaTypes(), new Predicate<MediaType>() {
-			public boolean apply(MediaType input) {
-				for (MediaType mediaType : getAccepts()) {
-					if (input.is(mediaType)) {
-						return true;
-					}
-				}
-				return false;
-			}
-		}));
 		super.setResolvedRoute(resolvedRoute);
 	}
 
@@ -140,5 +134,25 @@ public class ServerRequest extends ServerMessage implements Request {
 	 */
 	public Set<MediaType> getSupportedAccepts() {
 		return supportedAccepts;
+	}
+
+	/**
+	 * @param supportedAccepts the supportedAccepts to set
+	 */
+	public void setSupportedAccepts(Set<MediaType> supportedAccepts) {
+		this.supportedAccepts = supportedAccepts;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ServerRequest [applicationPath=")
+				.append(applicationPath).append(", request=").append(request)
+				.append(", remoteAddress=").append(remoteAddress)
+				.append(", uri=").append(uri).append(", accepts=")
+				.append(accepts).append(", supportedAccepts=")
+				.append(supportedAccepts).append(", contentType=")
+				.append(contentType).append("]");
+		return builder.toString();
 	}
 }

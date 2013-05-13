@@ -73,4 +73,14 @@ public class MessageContext {
 		this.route = route;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MessageContext [request=").append(request)
+				.append(", response=").append(response)
+				.append(", application=").append(application)
+				.append(", route=").append(route).append("]");
+		return builder.toString();
+	}
+
 }

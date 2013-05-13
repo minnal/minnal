@@ -3,6 +3,7 @@
  */
 package org.minnal.core.route;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.minnal.core.Request;
@@ -32,6 +33,13 @@ public class Action {
 	public Object invoke(Request request, Response response) {
 		try {
 			return method.invoke(resource, request, response);
+		} catch (InvocationTargetException e) {
+			Throwable throwable = e.getCause();
+			if (throwable instanceof ApplicationException) {
+				throw (ApplicationException) throwable;
+			} else {
+				throw new InternalServerErrorException(throwable);
+			}
 		} catch (ApplicationException e) {
 			throw e;
 		} catch (Exception e) {

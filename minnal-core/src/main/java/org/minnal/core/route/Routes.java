@@ -17,6 +17,12 @@ import org.minnal.core.server.exception.NotAcceptableException;
 import org.minnal.core.server.exception.NotFoundException;
 import org.minnal.core.server.exception.UnsupportedMediaTypeException;
 import org.minnal.core.util.Node.Visitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
+import com.google.common.net.MediaType;
 
 /**
  * Manages all the routes in the application. Constructs a route tree for from the available routes for efficient resolution
@@ -27,6 +33,8 @@ import org.minnal.core.util.Node.Visitor;
 public class Routes {
 
 	private RouteNode root = new RouteNode("/");
+	
+	private static final Logger logger = LoggerFactory.getLogger(Routes.class);
 	
 	/**
 	 * Constructs an instance with default root
@@ -85,7 +93,8 @@ public class Routes {
 	 * @param request
 	 * @return
 	 */
-	public Route resolve(ServerRequest request) {
+	public Route resolve(final ServerRequest request) {
+		logger.trace("Resolving the route for the request {}", request);
 		RouteNode node = findNode(request.getRelativePath());
 		if (node == null) {
 			throw new NotFoundException();
@@ -97,10 +106,23 @@ public class Routes {
 		if (shouldCheckContentType(request) && (request.getContentType() == null || ! route.getConfiguration().supportsMediaType(request.getContentType()))) {
 			throw new UnsupportedMediaTypeException(route.getConfiguration().getSupportedMediaTypes());
 		}
-		request.setResolvedRoute(route);
-		if (request.getSupportedAccepts().isEmpty()) {
+		Set<MediaType> supportedAccepts = Collections.unmodifiableSet(Sets.filter(route.getConfiguration().getSupportedMediaTypes(), new Predicate<MediaType>() {
+			public boolean apply(MediaType input) {
+				if (request.getAccepts().isEmpty()) {
+					return true;
+				}
+				for (MediaType mediaType : request.getAccepts()) {
+					if (input.is(mediaType)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}));
+		if (supportedAccepts.isEmpty()) {
 			throw new NotAcceptableException(route.getConfiguration().getSupportedMediaTypes());
 		}
+		request.setSupportedAccepts(supportedAccepts);
 		return route;
 	}
 	
@@ -124,7 +146,10 @@ public class Routes {
 				return null;
 			}
 		}
-		return node;
+		if (! node.getRoutes().isEmpty()) {
+			return node;
+		}
+		return null;
 	}
 
 	/**

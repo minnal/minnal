@@ -3,7 +3,6 @@
  */
 package org.minnal.example.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,6 +13,8 @@ import javax.persistence.ManyToOne;
 
 import org.activejpa.entity.Model;
 import org.minnal.instrument.entity.Searchable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author ganeshs
@@ -26,11 +27,12 @@ public class OrderItem extends Model {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JsonIgnore
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="orderId")
 	private Order order;
 	
-	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="productId")
 	private Product product;
 	

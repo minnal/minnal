@@ -10,7 +10,8 @@ import java.util.ServiceLoader;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.ConfigurationProvider;
 import org.minnal.core.config.ContainerConfiguration;
-import org.minnal.core.config.DefaultConfigurationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author ganeshs
@@ -29,6 +30,8 @@ public class Container implements Lifecycle {
 	private List<Bundle> bundles = new ArrayList<Bundle>();
 	
 	private static ConfigurationProvider configurationProvider = ConfigurationProvider.getDefault();
+	
+	private static final Logger logger = LoggerFactory.getLogger(Container.class);
 	
 	public Container(String configPath) {
 		this(configurationProvider.provide(ContainerConfiguration.class, configPath));
@@ -88,7 +91,7 @@ public class Container implements Lifecycle {
 	 * @param mountUrl
 	 */
 	protected void unMount(String mountUrl) {
-		Application<ApplicationConfiguration> application = router.getApplicationMapping().removeApplication(mountUrl);
+		Application<ApplicationConfiguration> application = applicationMapping.removeApplication(mountUrl);
 		application.stop();
 		for (ContainerLifecycleListener listener : listeners) {
 			listener.onUnMount(application, mountUrl);
