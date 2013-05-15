@@ -19,10 +19,10 @@ import javassist.CtClass;
  */
 public class CreateMethodCreator extends MethodCreator {
 	
-	private static final String CREATE_ENTITY_TEMPLATE = ":model_class :field_name = request.getContentAs(:model_class.class);" +
+	private static final String CREATE_ENTITY_TEMPLATE = ":model_class :field_name = (:model_class) request.getContentAs(:model_class.class);" +
 			":field_name.persist();";
 	
-	private static final String CREATE_COLLECTION_ITEM_TEMPLATE = ":model_class :field_name = request.getContentAs(:model_class.class);" +
+	private static final String CREATE_COLLECTION_ITEM_TEMPLATE = ":model_class :field_name = (:model_class) request.getContentAs(:model_class.class);" +
 			":parent.collection(\":field_name\").add(:field_name); :parent.persist();";
 	
 	public CreateMethodCreator(CtClass ctClass, EntityNodePath path) {

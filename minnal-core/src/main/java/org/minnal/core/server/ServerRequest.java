@@ -60,15 +60,17 @@ public class ServerRequest extends ServerMessage implements Request {
 		if (containsHeader(HttpHeaders.Names.CONTENT_TYPE)) {
 			contentType = MediaType.parse(getHeader(HttpHeaders.Names.CONTENT_TYPE));
 		}
-		accepts = FluentIterable.from(Splitter.on(",").split(getHeader(HttpHeaders.Names.ACCEPT))).transform(new Function<String, MediaType>() {
-			public MediaType apply(String input) {
-				MediaType type = MediaType.parse(input.trim());
-				if (! type.parameters().containsKey("UTF-8")) {
-					return type.withoutParameters().withCharset(DEFAULT_CHARSET);
+		if (containsHeader(HttpHeaders.Names.ACCEPT)) {
+			accepts = FluentIterable.from(Splitter.on(",").split(getHeader(HttpHeaders.Names.ACCEPT))).transform(new Function<String, MediaType>() {
+				public MediaType apply(String input) {
+					MediaType type = MediaType.parse(input.trim());
+					if (! type.parameters().containsKey("UTF-8")) {
+						return type.withoutParameters().withCharset(DEFAULT_CHARSET);
+					}
+					return type;
 				}
-				return type;
-			}
-		}).toSet();
+			}).toSet();
+		}
 		addHeaders(HttpUtil.getQueryParameters(uri));
 	}
 

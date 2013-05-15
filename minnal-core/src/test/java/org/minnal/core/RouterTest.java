@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
+import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.route.Action;
 import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
@@ -21,6 +22,8 @@ import org.minnal.core.server.exception.ExceptionHandler;
 import org.minnal.core.server.exception.NotFoundException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author ganeshs
@@ -42,6 +45,8 @@ public class RouterTest {
 	
 	private Route route;
 	
+	private Application<ApplicationConfiguration> application;
+	
 	@BeforeMethod
 	public void setup() {
 		resolver = mock(RouteResolver.class);
@@ -51,8 +56,11 @@ public class RouterTest {
 		when(response.isContentSet()).thenReturn(false);
 		router = new Router(resolver);
 		context = mock(MessageContext.class);
+		application = mock(Application.class);
+		when(application.getFilters()).thenReturn(Lists.<Filter>newArrayList());
 		when(context.getRequest()).thenReturn(request);
 		when(context.getResponse()).thenReturn(response);
+		when(context.getApplication()).thenReturn(application);
 		route = mock(Route.class);
 		action = mock(Action.class);
 		when(action.invoke(request, response)).thenReturn(null);
@@ -72,23 +80,6 @@ public class RouterTest {
 	public void shouldSetResponseCodeTo204IfBodyIsEmpty() {
 		router.route(context);
 		verify(response).setStatus(HttpResponseStatus.NO_CONTENT);
-	}
-	
-	@Test
-	public void shouldSetContentIfNotSetAlready() {
-		Object body = Arrays.asList("test");
-		when(action.invoke(request, response)).thenReturn(body);
-		router.route(context);
-		verify(response).setContent(body);
-	}
-	
-	@Test
-	public void shouldNotSetContentIfAlreadySet() {
-		Object body = Arrays.asList("test");
-		when(response.isContentSet()).thenReturn(true);
-		when(action.invoke(request, response)).thenReturn(body);
-		router.route(context);
-		verify(response, never()).setContent(body);
 	}
 	
 	@Test

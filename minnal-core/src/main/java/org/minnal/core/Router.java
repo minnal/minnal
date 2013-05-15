@@ -32,10 +32,8 @@ public class Router {
 		logger.trace("Routing the context {}", context);
 		try {
 			Route route = resolver.resolve(context);
-			Object result = route.getAction().invoke(context.getRequest(), context.getResponse());
-			if (result != null && ! context.getResponse().isContentSet()) {
-				context.getResponse().setContent(result);
-			}
+			FilterChain chain = new FilterChain(context.getApplication().getFilters(), route);
+			chain.doFilter(context.getRequest(), context.getResponse());
 		} catch (Exception e) {
 			context.getApplication().getExceptionHandler().handle(context.getRequest(), context.getResponse(), e);
 		} finally {

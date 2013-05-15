@@ -67,7 +67,7 @@ public class DefaultJsonSerializer extends Serializer {
 		try {
 			return mapper.readValue(is, targetClass);
 		} catch (Exception e) {
-			throw new MinnalException("Failed while serializing the buffer to type - " + targetClass, e);
+			throw new MinnalException("Failed while deserializing the buffer to type - " + targetClass, e);
 		}
 	}
 }

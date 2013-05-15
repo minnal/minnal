@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.minnal.core.route.Route;
+import org.minnal.core.server.ServerResponse;
 
 /**
  * @author ganeshs
@@ -32,7 +33,10 @@ public class FilterChain {
 		if (iterator.hasNext()) {
 			iterator.next().doFilter(request, response, this);
 		} else {
-//			action.invoke(request, response);
+			Object result = route.getAction().invoke(request, response);
+			if (result != null && ! ((ServerResponse)response).isContentSet()) {
+				response.setContent(result);
+			}
 		}
 	}
 }

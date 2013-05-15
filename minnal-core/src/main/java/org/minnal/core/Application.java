@@ -5,6 +5,7 @@ package org.minnal.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,6 +152,13 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		plugins.add(plugin);
 	}
 	
+	/**
+	 * @return the filters
+	 */
+	public List<Filter> getFilters() {
+		return Collections.unmodifiableList(filters);
+	}
+
 	@Override
 	public String toString() {
 		return configuration.getName();

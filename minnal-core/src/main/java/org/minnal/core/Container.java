@@ -50,6 +50,7 @@ public class Container implements Lifecycle {
 	}
 	
 	protected void loadApplications() {
+		logger.info("Loading the applications");
 		for (Application<ApplicationConfiguration> application : ServiceLoader.load(Application.class)) {
 			String mountPath = configuration.getMounts().get(application.getClass().getName());
 			if (mountPath == null) {
@@ -63,6 +64,7 @@ public class Container implements Lifecycle {
 	 * Loads all the bundles using SPI.
 	 */
 	protected void loadBundles() {
+		logger.info("Loading the bundles from service loader");
 		ServiceLoader<Bundle> loader = ServiceLoader.load(Bundle.class);
 		for (Bundle bundle : loader) {
 			bundle.init(this);
@@ -77,6 +79,7 @@ public class Container implements Lifecycle {
 	 * @param mountUrl
 	 */
 	protected void mount(Application<ApplicationConfiguration> application, String mountUrl) {
+		logger.info("Mounting the application {} on the mount path {}", application, mountUrl);
 		application.getConfiguration().setParent(configuration);
 		application.init();
 		applicationMapping.addApplication(application, mountUrl);
@@ -91,6 +94,7 @@ public class Container implements Lifecycle {
 	 * @param mountUrl
 	 */
 	protected void unMount(String mountUrl) {
+		logger.info("Unmounting the mount path {}", mountUrl);
 		Application<ApplicationConfiguration> application = applicationMapping.removeApplication(mountUrl);
 		application.stop();
 		for (ContainerLifecycleListener listener : listeners) {
@@ -99,6 +103,7 @@ public class Container implements Lifecycle {
 	}
 
 	public void start() {
+		logger.info("Starting the container");
 		for (Application<ApplicationConfiguration> application : applicationMapping.getApplications()) {
 			application.start();
 		}
@@ -115,6 +120,7 @@ public class Container implements Lifecycle {
 	}
 
 	public void stop() {
+		logger.info("Stopping the container");
 		for (ContainerLifecycleListener listener : listeners) {
 			listener.beforeStop(this);
 		}
@@ -131,6 +137,7 @@ public class Container implements Lifecycle {
 	}
 
 	public void registerListener(ContainerLifecycleListener listener) {
+		logger.trace("Registering the life cycle listener {}", listener.getClass());
 		listeners.add(listener);
 	}
 

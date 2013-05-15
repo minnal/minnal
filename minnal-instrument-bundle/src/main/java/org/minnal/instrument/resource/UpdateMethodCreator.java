@@ -20,7 +20,7 @@ import org.minnal.instrument.util.DynaBean;
  */
 public class UpdateMethodCreator extends MethodCreator {
 	
-	private static final String UPDATE_ENTITY_TEMPLATE = DynaBean.class.getName() + " dynaBean = request.getContentAs(" + DynaBean.class.getName() + ".class);" +
+	private static final String UPDATE_ENTITY_TEMPLATE = DynaBean.class.getName() + " dynaBean = (" + DynaBean.class.getName()  + ") request.getContentAs(" + DynaBean.class.getName() + ".class);" +
 			":parent.updateAttributes(dynaBean.getAttributes());";
 	
 	public UpdateMethodCreator(CtClass ctClass, EntityNodePath path) {
