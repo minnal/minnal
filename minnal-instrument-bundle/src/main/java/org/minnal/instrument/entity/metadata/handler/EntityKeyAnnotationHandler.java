@@ -23,7 +23,7 @@ public class EntityKeyAnnotationHandler extends AbstractAnnotationHandler {
 		if (key == null) {
 			throw new IllegalArgumentException("Method - " + method.getName() + " is not a getter");
 		}
-		metaData.setEntityKey(key);
+		metaData.setEntityKey(toLowerCamelCase(key));
 	}
 
 	@Override

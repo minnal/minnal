@@ -12,6 +12,8 @@ import java.util.ServiceLoader;
 
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 
+import com.google.common.base.CaseFormat;
+
 /**
  * @author ganeshs
  *
@@ -36,5 +38,9 @@ public abstract class AbstractAnnotationHandler {
 	public abstract void handle(EntityMetaData metaData, Annotation annotation, Method method);
 	
 	public abstract void handle(EntityMetaData metaData, Annotation annotation, Field field);
+	
+	protected String toLowerCamelCase(String name) {
+		return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name);
+	}
 	
 }

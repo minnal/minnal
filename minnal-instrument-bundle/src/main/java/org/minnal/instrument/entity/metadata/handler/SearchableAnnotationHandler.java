@@ -11,6 +11,8 @@ import org.minnal.instrument.entity.Searchable;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.instrument.entity.metadata.ParameterMetaData;
 
+import com.google.common.base.Strings;
+
 /**
  * @author ganeshs
  *
@@ -25,7 +27,7 @@ public class SearchableAnnotationHandler extends AbstractAnnotationHandler {
 		if (key == null) {
 			throw new IllegalArgumentException("Method - " + method.getName() + " is not a getter");
 		}
-		value = value.isEmpty() ? key : value;
+		value = Strings.isNullOrEmpty(value) ? toLowerCamelCase(key) : value;
 		ParameterMetaData parameterMetaData = new ParameterMetaData(value, value, method.getReturnType());
 		metaData.addSearchField(parameterMetaData);
 	}
@@ -33,7 +35,7 @@ public class SearchableAnnotationHandler extends AbstractAnnotationHandler {
 	@Override
 	public void handle(EntityMetaData metaData, Annotation annotation, Field field) {
 		String value = ((Searchable)annotation).value();
-		if (value.isEmpty()) {
+		if (Strings.isNullOrEmpty(value)) {
 			value = field.getName();
 		}
 		ParameterMetaData parameterMetaData = new ParameterMetaData(value, field.getName(), field.getType());

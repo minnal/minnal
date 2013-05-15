@@ -27,7 +27,7 @@ public class OneToManyAnnotationHandler extends AbstractAnnotationHandler {
 	public void handle(EntityMetaData metaData, Annotation annotation, Method method) {
 		String name = method.getName().startsWith("get") ? method.getName().substring(3) : method.getName();
 		Class<?> elementType = getElementType(method.getGenericReturnType());
-		CollectionMetaData collectionMetaData = new CollectionMetaData(name, elementType, method.getReturnType(), isEntity(elementType));
+		CollectionMetaData collectionMetaData = new CollectionMetaData(toLowerCamelCase(name), elementType, method.getReturnType(), isEntity(elementType));
 		metaData.addCollection(collectionMetaData);
 	}
 

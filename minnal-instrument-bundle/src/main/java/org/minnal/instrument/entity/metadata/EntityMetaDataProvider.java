@@ -26,9 +26,13 @@ public class EntityMetaDataProvider {
 	public EntityMetaData getEntityMetaData(Class<?> entityClass) {
 		EntityMetaData metaData = metaDataMap.get(entityClass);
 		if (metaData == null) {
-			metaData = new EntityMetaDataBuilder(entityClass).build();
+			metaData = getEntityMetaDataBuilder(entityClass).build();
 			metaDataMap.put(entityClass, metaData);
 		}
 		return metaData;
+	}
+	
+	protected EntityMetaDataBuilder getEntityMetaDataBuilder(Class<?> clazz) {
+		return new EntityMetaDataBuilder(clazz);
 	}
 }

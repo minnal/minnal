@@ -13,6 +13,8 @@ import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.instrument.entity.metadata.ParameterMetaData;
 import org.minnal.instrument.util.ParameterNameDiscoverer;
 
+import com.google.common.base.Strings;
+
 /**
  * @author ganeshs
  *
@@ -22,7 +24,7 @@ public class ActionAnnotationHandler extends AbstractAnnotationHandler {
 	@Override
 	public void handle(EntityMetaData metaData, Annotation annotation, Method method) {
 		String value = ((Action)annotation).value();
-		if (value.isEmpty()) {
+		if (Strings.isNullOrEmpty(value)) {
 			value = method.getName();
 		}
 		ActionMetaData actionMetaData = new ActionMetaData(value, method);
@@ -32,11 +34,12 @@ public class ActionAnnotationHandler extends AbstractAnnotationHandler {
 			ParameterMetaData parameterMetaData = new ParameterMetaData(parameterNames[i], parameterNames[i], parameterTypes[i]);
 			actionMetaData.addParameter(parameterMetaData);
 		}
+		metaData.addActionMethod(actionMetaData);
 	}
 
 	@Override
 	public void handle(EntityMetaData metaData, Annotation annotation, Field field) {
-		throw new IllegalStateException("@Action should be annotated only over methods");
+		throw new IllegalArgumentException("@Action should be annotated only over methods");
 	}
 
 	@Override
