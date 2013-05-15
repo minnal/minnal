@@ -1,3 +1,4 @@
 org.minnal.instrument.entity.metadata.handler.SearchableAnnotationHandler
 org.minnal.instrument.entity.metadata.handler.ActionAnnotationHandler
 org.minnal.instrument.entity.metadata.handler.OneToManyAnnotationHandler
+org.minnal.instrument.entity.metadata.handler.EntityKeyAnnotationHandler
