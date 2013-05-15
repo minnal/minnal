@@ -3,9 +3,10 @@
  */
 package org.minnal.jpa.entity;
 
-import java.io.Serializable;
-
-import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 import org.activejpa.entity.Model;
 
@@ -13,11 +14,15 @@ import org.activejpa.entity.Model;
  * @author ganeshs
  *
  */
-@Entity
+@MappedSuperclass
 public class BaseDomain extends Model {
+	
+	private Long id;
 
 	@Override
-	public Serializable getId() {
-		return null;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	public Long getId() {
+		return id;
 	}
 }

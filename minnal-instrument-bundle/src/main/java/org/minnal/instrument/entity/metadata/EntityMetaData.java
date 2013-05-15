@@ -57,4 +57,11 @@ public class EntityMetaData {
 	public Set<CollectionMetaData> getCollections() {
 		return collections;
 	}
+
+	/**
+	 * @param entityKey the entityKey to set
+	 */
+	public void setEntityKey(String entityKey) {
+		this.entityKey = entityKey;
+	}
 }
