@@ -7,7 +7,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.minnal.instrument.entity.Searchable;
+import org.minnal.instrument.entity.EntityKey;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 
 /**
@@ -33,7 +33,7 @@ public class EntityKeyAnnotationHandler extends AbstractAnnotationHandler {
 
 	@Override
 	public Class<?> getAnnotationType() {
-		return Searchable.class;
+		return EntityKey.class;
 	}
 
 }
