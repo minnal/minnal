@@ -8,7 +8,6 @@
   	<dependency>
   		<groupId>org.minnal</groupId>
   		<artifactId>minnal-core</artifactId>
-  		<scope>runtime</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.minnal</groupId>
