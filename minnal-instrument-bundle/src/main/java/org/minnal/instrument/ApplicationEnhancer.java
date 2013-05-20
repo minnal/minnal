@@ -22,10 +22,11 @@ public class ApplicationEnhancer {
 	
 	public void enhance() {
 		for (ResourceClass resource : application.getResources()) {
-			ResourceEnhancer enhancer = new ResourceEnhancer(resource);
-			enhancer.enhance();
+			createEnhancer(resource).enhance();
 		}
-		
 	}
-
+	
+	protected ResourceEnhancer createEnhancer(ResourceClass resourceClass) {
+		return new ResourceEnhancer(resourceClass);
+	}
 }

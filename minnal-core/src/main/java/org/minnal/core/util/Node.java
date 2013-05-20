@@ -13,11 +13,52 @@ import java.util.Stack;
  * @author ganeshs
  *
  */
-public abstract class Node<T extends Node<T, P>, P extends Node<T, P>.NodePath> {
+public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.NodePath, V> {
 
 	private T parent;
 	
+	private V value;
+	
 	private LinkedList<T> children = new LinkedList<T>();
+	
+	public Node(V value) {
+		this.value = value;
+	}
+	
+	public V getValue() {
+		return value;
+	}
+	
+	/**
+	 * Checks if the value is already visited in the tree. Override this method to handle cycles
+	 * 
+	 * @param value
+	 * @return
+	 */
+	protected boolean visited(V value) {
+		return false;
+	}
+	
+	private boolean checkVisited(T node, V value) {
+		if (node == null) {
+			return false;
+		}
+		if (node.visited(value)) {
+			return true;
+		}
+		if (node.parent != null) {
+			return node.parent.visited(value);
+		}
+		return false;
+	}
+	
+	/**
+	 * Marks the value as visited in the tree. Override this method to handle cycles
+	 * 
+	 * @param value
+	 */
+	protected void markVisited(V value) {
+	}
 	
 	protected abstract T getThis();
 	
@@ -26,17 +67,27 @@ public abstract class Node<T extends Node<T, P>, P extends Node<T, P>.NodePath> 
 	}
 	
 	public T addChild(T child, boolean first) {
+		if (checkVisited(parent, child.value)) {
+			return null;
+		}
 		child.parent = getThis();
 		if (first) {
 			children.addFirst(child);
 		} else {
 			children.addLast(child);
 		}
+		if (parent != null) {
+			parent.markVisited(child.value);
+		}
 		return child;
 	}
 	
 	public boolean hasChildren() {
 		return !children.isEmpty();
+	}
+	
+	public boolean hasNode() {
+		return false;
 	}
 	
 	/**

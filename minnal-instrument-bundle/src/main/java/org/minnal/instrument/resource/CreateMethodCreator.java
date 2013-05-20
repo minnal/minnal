@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 
+import org.javalite.common.Inflector;
 import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
@@ -65,7 +66,7 @@ public class CreateMethodCreator extends MethodCreator {
 
 	@Override
 	public String getMethodName() {
-		return "create" + getPath().getName();
+		return "create" + Inflector.capitalize(getPath().getName());
 	}
 
 }

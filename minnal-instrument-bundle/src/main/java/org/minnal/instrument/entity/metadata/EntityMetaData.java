@@ -22,6 +22,8 @@ public class EntityMetaData {
 	
 	private Set<CollectionMetaData> collections = new HashSet<CollectionMetaData>();
 	
+	private Set<AssociationMetaData> associations = new HashSet<AssociationMetaData>();
+	
 	public EntityMetaData(Class<?> entityClass) {
 		this.entityClass = entityClass;
 	}
@@ -63,5 +65,16 @@ public class EntityMetaData {
 	 */
 	public void setEntityKey(String entityKey) {
 		this.entityKey = entityKey;
+	}
+
+	public void addAssociation(AssociationMetaData associationMetaData) {
+		associations.add(associationMetaData);
+	}
+
+	/**
+	 * @return the associations
+	 */
+	public Set<AssociationMetaData> getAssociations() {
+		return associations;
 	}
 }

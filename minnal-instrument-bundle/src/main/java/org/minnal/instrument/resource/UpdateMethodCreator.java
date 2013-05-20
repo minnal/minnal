@@ -9,6 +9,7 @@ import java.util.List;
 
 import javassist.CtClass;
 
+import org.javalite.common.Inflector;
 import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
@@ -51,7 +52,7 @@ public class UpdateMethodCreator extends MethodCreator {
 
 	@Override
 	public String getMethodName() {
-		return "update" + getPath().getName();
+		return "update" + Inflector.capitalize(getPath().getName());
 	}
 	
 	@Override

@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.activejpa.entity.Filter;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.javalite.common.Inflector;
 import org.minnal.core.Request;
 
 /**
@@ -35,7 +36,7 @@ public class ResourceUtil {
 		Filter filter = getFilter(request);
 		Map<String, String> params = request.getHeaders(paramNames);
 		for (Entry<String, String> entry : params.entrySet()) {
-			filter.addCondition(entry.getKey(), entry.getValue());
+			filter.addCondition(Inflector.camelize(entry.getKey(), false), entry.getValue());
 		}
 		return filter;
 	}

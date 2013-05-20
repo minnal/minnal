@@ -61,6 +61,10 @@
 			<artifactId>testng</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.javalite</groupId>
+			<artifactId>javalite-common</artifactId>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -80,6 +84,11 @@
 				<artifactId>testng</artifactId>
 				<version>6.8.1</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.javalite</groupId>
+				<artifactId>javalite-common</artifactId>
+				<version>1.4.6</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

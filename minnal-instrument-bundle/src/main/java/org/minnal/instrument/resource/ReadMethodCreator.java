@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 
+import org.javalite.common.Inflector;
 import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
@@ -47,7 +48,7 @@ public class ReadMethodCreator extends MethodCreator {
 
 	@Override
 	public String getMethodName() {
-		return "read" + getPath().getName();
+		return "read" + Inflector.capitalize(getPath().getName());
 	}
 
 }

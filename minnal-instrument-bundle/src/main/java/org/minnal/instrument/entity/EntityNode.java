@@ -8,43 +8,64 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.atteo.evo.inflector.English;
+import org.javalite.common.Inflector;
 import org.minnal.core.util.Node;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
+import org.minnal.instrument.entity.metadata.AssociationMetaData;
 import org.minnal.instrument.entity.metadata.CollectionMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaDataProvider;
 import org.minnal.instrument.entity.metadata.ParameterMetaData;
 
-import com.google.common.base.CaseFormat;
-
 /**
  * @author ganeshs
  *
  */
-public class EntityNode extends Node<EntityNode, EntityNodePath> {
+public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData> {
 
 	private String name;
 	
-	private EntityMetaData entityMetaData;
+	private String resourceName;
+	
+	private List<Class<?>> visitedEntities = new ArrayList<Class<?>>();
 	
 	public EntityNode(Class<?> entityClass) {
-		this(entityClass, CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, English.plural(entityClass.getSimpleName())));
+		this(entityClass, Inflector.camelize(Inflector.underscore(entityClass.getSimpleName()), false));
 	}
 	
 	public EntityNode(Class<?> entityClass, String name) {
+		super(EntityMetaDataProvider.instance().getEntityMetaData(entityClass));
 		this.name = name;
-		this.entityMetaData = EntityMetaDataProvider.instance().getEntityMetaData(entityClass);
-		populateChildren();
+		this.resourceName = Inflector.tableize(name);
 	}
-
-	private void populateChildren() {
-		for (CollectionMetaData collection : entityMetaData.getCollections()) {
+	
+	public void construct() {
+		for (CollectionMetaData collection : getValue().getCollections()) {
 			if (! collection.isEntity()) {
 				continue;
 			}
-			addChild(new EntityNode(collection.getElementType(), collection.getName()));
+			EntityNode child = new EntityNode(collection.getElementType(), Inflector.singularize(collection.getName()));
+			if (addChild(child) != null) {
+				child.construct();
+			}
 		}
+	}
+
+	/**
+	 * @return the resourceName
+	 */
+	public String getResourceName() {
+		return resourceName;
+	}
+
+	@Override
+	protected boolean visited(EntityMetaData value) {
+		return visitedEntities.contains(value.getEntityClass());
+	}
+	
+	@Override
+	protected void markVisited(EntityMetaData value) {
+		visitedEntities.add(value.getEntityClass());
 	}
 	
 	/**
@@ -58,7 +79,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 	 * @return the entityMetaData
 	 */
 	public EntityMetaData getEntityMetaData() {
-		return entityMetaData;
+		return getValue();
 	}
 
 	@Override
@@ -71,7 +92,14 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 		return new EntityNodePath(path);
 	}
 	
-	public class EntityNodePath extends Node<EntityNode, EntityNodePath>.NodePath {
+	/**
+	 * A path from the root node to a leaf node in the entity hierarchy. The path will be used to construct the uris for single and bulk resources.
+	 * It also identifies all the search fields marked using {@link Searchable} annotation in the entity hierarchy.
+	 * 
+	 * @author ganeshs
+	 *
+	 */
+	public class EntityNodePath extends Node<EntityNode, EntityNodePath, EntityMetaData>.NodePath {
 		
 		private String bulkPath;
 		
@@ -91,13 +119,14 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 			EntityNode parent = null;
 			while (iterator.hasNext()) {
 				EntityNode node = iterator.next();
+				String name = node.getResourceName();
 				if (parent != null) {
-					prefix = prefix.isEmpty() ? node.getName() : prefix + "." + node.getName();
+					prefix = prefix.isEmpty() ? name : prefix + "." + name;
 				}
-				String name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, node.getName());
+				
 				writer.append("/").append(name);
 				if (iterator.hasNext()) {
-					writer.append("/{" + name + "_id}");
+					writer.append("/{" + node.getName() + "_id}");
 				}
 				
 				addSearchFields(prefix, node);
@@ -108,9 +137,18 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 		}
 		
 		private void addSearchFields(String prefix, EntityNode node) {
+			prefix = prefix.isEmpty() ? prefix : prefix + ".";
 			for (ParameterMetaData meta : node.getEntityMetaData().getSearchFields()) {
-				prefix = prefix.isEmpty() ? prefix : prefix + ".";
-				searchParams.add(prefix + meta.getFieldName());
+				searchParams.add(prefix + Inflector.underscore(meta.getFieldName()));
+			}
+			for (AssociationMetaData meta : node.getEntityMetaData().getAssociations()) {
+				if (meta.isEntity()) {
+					String assocPrefix = prefix + Inflector.underscore(meta.getName()) + ".";
+					EntityMetaData data = EntityMetaDataProvider.instance().getEntityMetaData(meta.getType());
+					for (ParameterMetaData paramMeta : data.getSearchFields()) {
+						searchParams.add(assocPrefix + Inflector.underscore(paramMeta.getFieldName()));
+					}
+				}
 			}
 		}
 		
@@ -123,7 +161,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 		}
 		
 		public String getName() {
-			return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, get(size() - 1).getName());
+			return get(size() - 1).getName();
 		}
 
 		/**
@@ -131,6 +169,39 @@ public class EntityNode extends Node<EntityNode, EntityNodePath> {
 		 */
 		public List<String> getSearchParams() {
 			return searchParams;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result
+					+ ((singlePath == null) ? 0 : singlePath.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (!super.equals(obj))
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			EntityNodePath other = (EntityNodePath) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (singlePath == null) {
+				if (other.singlePath != null)
+					return false;
+			} else if (!singlePath.equals(other.singlePath))
+				return false;
+			return true;
+		}
+
+		private EntityNode getOuterType() {
+			return EntityNode.this;
 		}
 
 	}

@@ -53,15 +53,37 @@ public class ResourceWrapper {
 		}
 	}
 	
+	protected MethodCreator getMethodCreator(CtClass resourceWrapper, ResourcePath resourcePath, HttpMethod method) {
+		if (resourcePath.isBulk()) {
+			if (method.equals(HttpMethod.GET)) {
+				return new ListMethodCreator(resourceWrapper, resourcePath.getNodePath());
+			}
+			if (method.equals(HttpMethod.POST)) {
+				return new CreateMethodCreator(resourceWrapper, resourcePath.getNodePath());
+			}
+		} else {
+			if (method.equals(HttpMethod.GET)) {
+				return new ReadMethodCreator(resourceWrapper, resourcePath.getNodePath());
+			}
+			if (method.equals(HttpMethod.PUT)) {
+				return new UpdateMethodCreator(resourceWrapper, resourcePath.getNodePath());
+			}
+			if (method.equals(HttpMethod.DELETE)) {
+				return new DeleteMethodCreator(resourceWrapper, resourcePath.getNodePath());
+			}
+		}
+		return null;
+	}
+	
 	protected void addMethod(ResourcePath resourcePath, HttpMethod method) throws Exception {
-		MethodCreator creator = MethodCreator.getMethodCreator(wrapperClass, resourcePath, method);
+		MethodCreator creator = getMethodCreator(wrapperClass, resourcePath, method);
 		if (creator == null) {
 			// TODO Can't get here. Handle if it still gets here
 			return;
 		}
 		
 		if (resourceClass.hasRoute(resourcePath.isBulk() ? resourcePath.getNodePath().getBulkPath() : 
-			resourcePath.getNodePath().getSinglePath(), HttpMethod.GET)) {
+			resourcePath.getNodePath().getSinglePath(), method)) {
 			return;
 		}
 		
@@ -105,8 +127,14 @@ public class ResourceWrapper {
 		return true;
 	}
 	
-	
-	public class ResourcePath {
+	/**
+	 * @return the resourceClass
+	 */
+	public ResourceClass getResourceClass() {
+		return resourceClass;
+	}
+
+	public static class ResourcePath {
 		
 		private EntityNodePath nodePath;
 		
@@ -135,7 +163,6 @@ public class ResourceWrapper {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
 			result = prime * result + (bulk ? 1231 : 1237);
 			result = prime * result
 					+ ((nodePath == null) ? 0 : nodePath.hashCode());
@@ -151,8 +178,6 @@ public class ResourceWrapper {
 			if (getClass() != obj.getClass())
 				return false;
 			ResourcePath other = (ResourcePath) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
 			if (bulk != other.bulk)
 				return false;
 			if (nodePath == null) {
@@ -162,10 +187,5 @@ public class ResourceWrapper {
 				return false;
 			return true;
 		}
-
-		private ResourceWrapper getOuterType() {
-			return ResourceWrapper.this;
-		}
-		
 	}
 }

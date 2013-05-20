@@ -52,9 +52,7 @@ import org.minnal.core.util.Node;
  * @author ganeshs
  *
  */
-public class RouteNode extends Node<RouteNode, RouteNodePath> {
-	
-	private RouteElement element;
+public class RouteNode extends Node<RouteNode, RouteNodePath, RouteElement> {
 	
 	private Map<HttpMethod, Route> routes = new HashMap<HttpMethod, Route>();
 	
@@ -73,7 +71,7 @@ public class RouteNode extends Node<RouteNode, RouteNodePath> {
 	 * @param element
 	 */
 	public RouteNode(RouteElement element) {
-		this.element = element;
+		super(element);
 	}
 	
 	/**
@@ -129,7 +127,7 @@ public class RouteNode extends Node<RouteNode, RouteNodePath> {
 	 * @return the element
 	 */
 	public RouteElement getElement() {
-		return element;
+		return getValue();
 	}
 
 	/**
@@ -149,7 +147,7 @@ public class RouteNode extends Node<RouteNode, RouteNodePath> {
 		return new RouteNodePath(path);
 	}
 	
-	public class RouteNodePath extends Node<RouteNode, RouteNodePath>.NodePath {
+	public class RouteNodePath extends Node<RouteNode, RouteNodePath, RouteElement>.NodePath {
 
 		public RouteNodePath(List<RouteNode> path) {
 			super(path);

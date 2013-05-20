@@ -11,6 +11,7 @@ import javassist.CtClass;
 
 import org.activejpa.entity.EntityCollection;
 import org.activejpa.entity.Filter;
+import org.javalite.common.Inflector;
 import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
@@ -68,6 +69,6 @@ public class ListMethodCreator extends MethodCreator {
 	
 	@Override
 	public String getMethodName() {
-		return "list" + getPath().getName();
+		return "list" + Inflector.capitalize(getPath().getName());
 	}
 }

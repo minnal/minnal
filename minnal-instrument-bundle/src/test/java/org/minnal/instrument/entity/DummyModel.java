@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  * @author ganeshs
@@ -29,6 +30,9 @@ public class DummyModel {
 	
 	@ManyToOne
 	private DummyModel parent;
+	
+	@OneToOne
+	private DummyModel spouse;
 
 	/**
 	 * @return the id
@@ -108,6 +112,19 @@ public class DummyModel {
 	}
 	
 	public void dummyAction(String param1, Long param2) {
-		
+	}
+
+	/**
+	 * @return the spouse
+	 */
+	public DummyModel getSpouse() {
+		return spouse;
+	}
+
+	/**
+	 * @param spouse the spouse to set
+	 */
+	public void setSpouse(DummyModel spouse) {
+		this.spouse = spouse;
 	}
 }

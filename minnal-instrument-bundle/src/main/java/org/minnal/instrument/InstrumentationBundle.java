@@ -3,7 +3,7 @@
  */
 package org.minnal.instrument;
 
-import org.activejpa.enhancer.ActionJpaAgentLoader;
+import org.activejpa.enhancer.ActiveJpaAgentLoader;
 import org.minnal.core.Application;
 import org.minnal.core.Bundle;
 import org.minnal.core.Container;
@@ -17,8 +17,12 @@ import org.minnal.core.config.ApplicationConfiguration;
 public class InstrumentationBundle extends ContainerAdapter implements Bundle {
 	
 	public void init(Container container) {
-		ActionJpaAgentLoader.loadAgent();
+		getActiveJpaAgentLoader().loadAgent();
 		container.registerListener(this);
+	}
+	
+	protected ActiveJpaAgentLoader getActiveJpaAgentLoader() {
+		return ActiveJpaAgentLoader.instance();
 	}
 
 	public void start() {
@@ -28,7 +32,10 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle {
 	}
 
 	public void onMount(Application<ApplicationConfiguration> application, String mountPath) {
-		ApplicationEnhancer enhancer = new ApplicationEnhancer(application);
-		enhancer.enhance();
+		createApplicationEnhancer(application).enhance();
+	}
+	
+	protected ApplicationEnhancer createApplicationEnhancer(Application<ApplicationConfiguration> application) {
+		return new ApplicationEnhancer(application);
 	}
 }
