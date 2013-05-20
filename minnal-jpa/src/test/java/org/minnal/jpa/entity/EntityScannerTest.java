@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.instrument.resource;
+package org.minnal.jpa.entity;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -14,52 +14,44 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import org.activejpa.entity.Model;
-import org.minnal.core.resource.Resource;
 import org.minnal.core.scanner.Scanner.Listener;
+import org.minnal.jpa.entity.EntityScanner;
 import org.testng.annotations.Test;
 
 /**
  * @author ganeshs
  *
  */
-public class ResourceScannerTest {
-	
+public class EntityScannerTest {
+
 	@Test
-	public void shouldScanResourcesFromASinglePackage() {
-		ResourceScanner scanner = new ResourceScanner("org.minnal.instrument.resource");
+	public void shouldScanEntitiesFromASinglePackage() {
+		EntityScanner scanner = new EntityScanner("org.minnal.jpa.entity");
 		Listener<Class<?>> listener = mock(Listener.class);
 		scanner.scan(listener);
-		verify(listener).handle(Resource1.class);
-		verify(listener).handle(Resource2.class);
+		verify(listener).handle(Model1.class);
+		verify(listener).handle(Model2.class);
 	}
 	
 	@Test
-	public void shouldScanResourcesFromMultiplePackage() {
-		ResourceScanner scanner = new ResourceScanner("org.minnal.instrument.resource", "org.minnal.instrument.entity");
+	public void shouldScanEntitiesFromMultiplePackage() {
+		EntityScanner scanner = new EntityScanner("org.minnal.jpa.entity", "org.minnal.instrument.entity");
 		Listener<Class<?>> listener = mock(Listener.class);
 		scanner.scan(listener);
 		verify(listener, times(2)).handle(any(Class.class));
-		verify(listener).handle(Resource1.class);
-		verify(listener).handle(Resource2.class);
+		verify(listener).handle(Model1.class);
+		verify(listener).handle(Model2.class);
 	}
 	
 	@Test
-	public void shouldScanResourcesRecursivelyInAPackage() {
-		ResourceScanner scanner = new ResourceScanner("org.minnal.instrument");
+	public void shouldScanEntitiesRecursivelyInAPackage() {
+		EntityScanner scanner = new EntityScanner("org.minnal.jpa");
 		Listener<Class<?>> listener = mock(Listener.class);
 		scanner.scan(listener);
 		verify(listener, times(2)).handle(any(Class.class));
-		verify(listener).handle(Resource1.class);
-		verify(listener).handle(Resource2.class);
+		verify(listener).handle(Model1.class);
+		verify(listener).handle(Model2.class);
 	}
-}
-
-@Resource(value=Model1.class)
-class Resource1 {
-}
-
-@Resource(value=Model2.class)
-class Resource2 {
 }
 
 @Entity

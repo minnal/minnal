@@ -17,7 +17,7 @@ import org.minnal.core.Response;
 public class OpenSessionInViewFilter implements Filter {
 
 	public void doFilter(Request request, Response response, FilterChain chain) {
-		JPAContext context = JPA.instance.getDefaultConfig().getContext();
+		JPAContext context = getContext();
 		context.beginTxn();
 		try {
 			chain.doFilter(request, response);
@@ -27,6 +27,10 @@ public class OpenSessionInViewFilter implements Filter {
 			}
 			context.close();
 		}
+	}
+	
+	protected JPAContext getContext() {
+		return JPA.instance.getDefaultConfig().getContext();
 	}
 
 }
