@@ -10,8 +10,10 @@ import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.Response;
+import org.minnal.core.serializer.Serializer;
 
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 /**
@@ -38,9 +40,17 @@ public class ServerResponse extends ServerMessage implements Response {
 	
 	public void setContent(Object content) {
 		if (! contentSet) {
-			MediaType type = FluentIterable.from(request.getSupportedAccepts()).first().or(getResolvedRoute().getConfiguration().getDefaultMediaType());
+			MediaType type = null;
+			Serializer serializer = null;
+			if (request.getSupportedAccepts() != null) {
+				type = FluentIterable.from(request.getSupportedAccepts()).first().or(getResolvedRoute().getConfiguration().getDefaultMediaType());
+				serializer = getSerializer(type);
+			} else {
+				type = MediaType.PLAIN_TEXT_UTF_8;
+				serializer = Serializer.DEFAULT_TEXT_SERIALIZER;
+			}
 			setContentType(type);
-			setContent(getSerializer(type).serialize(content));
+			setContent(serializer.serialize(content));
 		}
 	}
 	

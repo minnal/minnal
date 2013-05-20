@@ -24,7 +24,7 @@ public class CreateMethodCreator extends MethodCreator {
 			":field_name.persist();";
 	
 	private static final String CREATE_COLLECTION_ITEM_TEMPLATE = ":model_class :field_name = (:model_class) request.getContentAs(:model_class.class);" +
-			":parent.collection(\":field_name\").add(:field_name); :parent.persist();";
+			":parent.collection(\":resource_name\").add(:field_name); :parent.persist();";
 	
 	public CreateMethodCreator(CtClass ctClass, EntityNodePath path) {
 		super(ctClass, path);

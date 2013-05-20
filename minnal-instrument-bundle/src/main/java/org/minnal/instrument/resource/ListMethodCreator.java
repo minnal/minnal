@@ -25,7 +25,7 @@ public class ListMethodCreator extends MethodCreator {
 	private static final String LIST_ENTITY_TEMPLATE = Filter.class.getName() + " filter = " + ResourceUtil.class.getName() + ".getFilter(request, :search_params);" +
 			"java.util.List :field_name = :model_class.where(filter);";
 	
-	private static final String LIST_COLLECTION_TEMPLATE = EntityCollection.class.getName() + " :field_nameCollection = :parent.collection(\":field_name\");" + 
+	private static final String LIST_COLLECTION_TEMPLATE = EntityCollection.class.getName() + " :field_nameCollection = :parent.collection(\":resource_name\");" + 
 			"java.util.List :field_name = :field_nameCollection.all();";
 
 	public ListMethodCreator(CtClass ctClass, EntityNodePath path) {

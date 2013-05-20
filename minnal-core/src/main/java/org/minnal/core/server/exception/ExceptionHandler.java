@@ -23,7 +23,7 @@ public class ExceptionHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
 	public void handle(Request request, Response response, Throwable throwable) {
-		logger.error("Handling the exception - ", throwable);
+		logger.trace("Handling the exception - ", throwable);
 		ApplicationException e = null;
 		if (throwable instanceof ApplicationException) {
 			e = (ApplicationException) throwable;

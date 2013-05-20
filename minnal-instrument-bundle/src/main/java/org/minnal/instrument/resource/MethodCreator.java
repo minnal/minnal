@@ -14,6 +14,7 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 
+import org.javalite.common.Inflector;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.core.server.exception.NotFoundException;
@@ -34,7 +35,7 @@ public abstract class MethodCreator {
 			"request.getHeader(\":param_name\")}); if (:field_name == null) {throw new " + NotFoundException.class.getName() + 
 			"(\":field_name with :entity_key \" + request.getHeader(\":param_name\") + \" not found\");}";
 	
-	protected static final String FIND_COLLECTION_ITEM_TEMPLATE = ":model_class :field_name = :parent.collection(\":field_name\").first(new Object[]{\":collection_entity_key\", " +
+	protected static final String FIND_COLLECTION_ITEM_TEMPLATE = ":model_class :field_name = :parent.collection(\":resource_name\").first(new Object[]{\":collection_entity_key\", " +
 			"request.getHeader(\":param_name\")}); if (:field_name == null) {throw new " + NotFoundException.class.getName() + 
 			"(\":field_name with :entity_key \" + request.getHeader(\":param_name\") + \" not found\");}";
 	
@@ -91,8 +92,10 @@ public abstract class MethodCreator {
 		Map<String, String> placeholders = new HashMap<String, String>();
 		placeholders.put("model_class", node.getEntityMetaData().getEntityClass().getName());
 		placeholders.put("field_name", node.getName());
+		String resourceName = Inflector.camelize(node.getResourceName(), false);
+		placeholders.put("resource_name", resourceName);
 		placeholders.put("entity_key", node.getEntityMetaData().getEntityKey());
-		placeholders.put("collection_entity_key", node.getName() + "." + node.getEntityMetaData().getEntityKey());
+		placeholders.put("collection_entity_key", resourceName + "." + node.getEntityMetaData().getEntityKey());
 		placeholders.put("param_name", paramName);
 		placeholders.put("parent", parent);
 		List<String> searchParams = getPath().getSearchParams();

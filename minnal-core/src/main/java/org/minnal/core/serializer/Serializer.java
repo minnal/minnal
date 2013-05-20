@@ -21,6 +21,8 @@ public abstract class Serializer {
 	
 	public static final Serializer DEFAULT_XML_SERIALIZER = new DefaultXmlSerializer();
 	
+	public static final Serializer DEFAULT_TEXT_SERIALIZER = new DefaultTextSerializer();
+	
 	public abstract ChannelBuffer serialize(Object object);
 	
 	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);
@@ -31,6 +33,9 @@ public abstract class Serializer {
 		}
 		if (mediaType.equals(MediaType.XML_UTF_8)) {
 			return DEFAULT_XML_SERIALIZER;
+		}
+		if (mediaType.equals(MediaType.PLAIN_TEXT_UTF_8)) {
+			return DEFAULT_TEXT_SERIALIZER;
 		}
 		return null;
 	}
