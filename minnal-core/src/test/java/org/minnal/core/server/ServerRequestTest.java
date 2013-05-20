@@ -20,6 +20,8 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Lists;
+
 /**
  * @author ganeshs
  *
@@ -47,13 +49,13 @@ public class ServerRequestTest {
 		assertEquals(request.getHttpMethod(), HttpMethod.HEAD);
 		assertEquals(request.getContent(), httpRequest.getContent());
 		assertEquals(request.getHeader("test"), "dummy");
-		assertEquals(request.getUri(), httpRequest.getUri());
-		request.getHeaders();
+		assertEquals(request.getUri().getPath(), httpRequest.getUri());
 		request.addHeader("name", "value");
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("name1", "value1");
 		headers.put("name2", "value2");
 		request.addHeaders(headers);
+		request.getHeaders(Lists.newLinkedList(headers.keySet()));
 		verify(httpRequest).getHeaders();
 		verify(httpRequest).addHeader("name", "value");
 		verify(httpRequest).addHeader("name1", "value1");
