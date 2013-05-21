@@ -16,6 +16,7 @@ import org.minnal.core.Container;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.route.Route;
 import org.minnal.core.route.Routes;
+import org.minnal.core.server.exception.NotFoundException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -53,7 +54,7 @@ public class AdminBundleTest {
 		assertNotNull(ApplicationRoutes.instance.getRoutes("admin"));
 	}
 	
-	@Test
+	@Test(expectedExceptions=NotFoundException.class)
 	public void shouldRemoveApplicationOnUnMount() {
 		AdminBundle bundle = new AdminBundle();
 		bundle.onMount(application, "/admin");
