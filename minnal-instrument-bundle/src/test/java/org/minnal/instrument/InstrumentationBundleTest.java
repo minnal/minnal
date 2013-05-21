@@ -5,8 +5,10 @@ package org.minnal.instrument;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.activejpa.enhancer.ActiveJpaAgentLoader;
 import org.minnal.core.Application;
@@ -44,8 +46,18 @@ public class InstrumentationBundleTest {
 	public void shouldEnhanceApplicationOnMount() {
 		ApplicationEnhancer enhancer = mock(ApplicationEnhancer.class);
 		Application<ApplicationConfiguration> application = mock(Application.class);
+		when(application.shouldInstrument()).thenReturn(true);
 		doReturn(enhancer).when(bundle).createApplicationEnhancer(application);
 		bundle.onMount(application, "/");
 		verify(enhancer).enhance();
+	}
+	
+	@Test
+	public void shouldNotEnhanceApplicationIfInstrumentationIsDisabled() {
+		ApplicationEnhancer enhancer = mock(ApplicationEnhancer.class);
+		Application<ApplicationConfiguration> application = mock(Application.class);
+		doReturn(enhancer).when(bundle).createApplicationEnhancer(application);
+		bundle.onMount(application, "/");
+		verify(enhancer, never()).enhance();
 	}
 }

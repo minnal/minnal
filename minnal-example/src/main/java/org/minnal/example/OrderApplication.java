@@ -34,5 +34,10 @@ public class OrderApplication extends Application<OrderConfiguration> {
 		addExceptionMapping(MinnalException.class, InternalServerErrorException.class);
 		super.mapExceptions();
 	}
+	
+	@Override
+	public boolean shouldInstrument() {
+		return true;
+	}
 
 }

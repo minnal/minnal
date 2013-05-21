@@ -4,11 +4,14 @@
 package org.minnal.core;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.minnal.core.config.ApplicationConfiguration;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Manages the mapping between mount path and application. Resolves the application mount paths to absolute path of the container.
@@ -22,11 +25,22 @@ import org.minnal.core.config.ApplicationConfiguration;
  */
 public class ApplicationMapping {
 
-	private Map<String, Application<ApplicationConfiguration>> applications = new HashMap<String, Application<ApplicationConfiguration>>();
+	private Map<String, Application<ApplicationConfiguration>> applications;
 	
 	private String basePath;
 	
 	private static final String SEPARATOR = "/";
+	
+	private ApplicationMapping() {
+		applications = new TreeMap<String, Application<ApplicationConfiguration>>(
+				new Comparator<String>() {
+					public int compare(String o1, String o2) {
+						Preconditions.checkNotNull(o1);
+						Preconditions.checkNotNull(o2);
+						return o1.length() == o2.length() ? 0 : o1.length() < o2.length() ? 1 : -1;
+					}
+				});
+	}
 	
 	/**
 	 * Constructor with base path of the container. Expects a path starting with '/' character. Defaults to '/' if path is null or empty. 
@@ -35,6 +49,7 @@ public class ApplicationMapping {
 	 * @param basePath the base path of the container
 	 */
 	public ApplicationMapping(String basePath) {
+		this();
 		this.basePath = structureUrl(basePath);
 	}
 	

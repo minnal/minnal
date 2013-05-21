@@ -9,6 +9,8 @@ import java.util.Map;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.config.RouteConfiguration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author ganeshs
  *
@@ -19,8 +21,10 @@ public class Route {
 	
 	private HttpMethod method;
 	
+	@JsonIgnore
 	private Action action;
 	
+	@JsonIgnore
 	private RouteConfiguration configuration;
 	
 	private Map<String, String> attributes = new HashMap<String, String>();

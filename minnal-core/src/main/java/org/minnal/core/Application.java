@@ -158,6 +158,10 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	public List<Filter> getFilters() {
 		return Collections.unmodifiableList(filters);
 	}
+	
+	public boolean shouldInstrument() {
+		return false;
+	}
 
 	@Override
 	public String toString() {

@@ -21,6 +21,7 @@ serializers:
   application/xml:
     class: org.minnal.core.serializer.DefaultXmlSerializer
 mounts:
+  org.minnal.admin.AdminApplication: /admin
   org.minnal.example.OrderApplication: /
   
     

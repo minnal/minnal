@@ -47,7 +47,7 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 			return true;
 		}
 		if (node.parent != null) {
-			return node.parent.visited(value);
+			return checkVisited(node.parent, value);
 		}
 		return false;
 	}

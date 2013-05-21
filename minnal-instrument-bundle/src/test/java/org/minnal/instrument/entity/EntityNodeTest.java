@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import org.activejpa.entity.Model;
@@ -58,7 +59,15 @@ public class EntityNodeTest {
 	@Test
 	public void shouldPopulateEntityMetaDataWithoutLooping() {
 		entityNode = new EntityNode(CompositeModel.class);
+		entityNode.construct();
 		assertEquals(entityNode.getEntityMetaData(), EntityMetaDataProvider.instance().getEntityMetaData(CompositeModel.class));
+	}
+	
+	@Test
+	public void shouldPopulateEntityMetaDataWithBidirectionalAssociation() {
+		entityNode = new EntityNode(Employee.class);
+		entityNode.construct();
+		assertEquals(entityNode.getEntityMetaData(), EntityMetaDataProvider.instance().getEntityMetaData(Employee.class));
 	}
 	
 	@Test
@@ -90,6 +99,28 @@ public class EntityNodeTest {
 		@Override
 		public Serializable getId() {
 			return null;
+		}
+	}
+	
+	private class Employee extends Model {
+		@Id
+		private Long id;
+		@ManyToMany
+		private Set<Department> departments;
+		@Override
+		public Serializable getId() {
+			return id;
+		}
+	}
+	
+	private class Department extends Model {
+		@Id
+		private Long id;
+		@ManyToMany
+		private Set<Employee> employees;
+		@Override
+		public Serializable getId() {
+			return id;
 		}
 	}
 	

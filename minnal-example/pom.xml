@@ -46,6 +46,10 @@
   		<artifactId>minnal-test</artifactId>
   		<scope>test</scope>
   	</dependency>
+  	<dependency>
+  		<groupId>org.minnal</groupId>
+  		<artifactId>minnal-admin</artifactId>
+  	</dependency>
   </dependencies>
   <dependencyManagement>
   	<dependencies>
@@ -87,6 +91,11 @@
   		<dependency>
   			<groupId>org.minnal</groupId>
   			<artifactId>minnal-test</artifactId>
+  			<version>0.0.1-SNAPSHOT</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.minnal</groupId>
+  			<artifactId>minnal-admin</artifactId>
   			<version>0.0.1-SNAPSHOT</version>
   		</dependency>
   	</dependencies>

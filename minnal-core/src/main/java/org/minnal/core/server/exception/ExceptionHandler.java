@@ -31,6 +31,7 @@ public class ExceptionHandler {
 			e = getMappedException(throwable);
 		}
 		if (e == null) {
+			logger.error("Couldn't resolve the exception. throwing internal server error", throwable);
 			e = new InternalServerErrorException(throwable.getMessage(), throwable);
 		}
 		e.handle(response);

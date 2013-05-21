@@ -1,5 +1,5 @@
 # The name of the container 
-name: Hello World
+name: order
 db:
   driverClass: org.hsqldb.jdbcDriver
   url: jdbc:hsqldb:mem:.

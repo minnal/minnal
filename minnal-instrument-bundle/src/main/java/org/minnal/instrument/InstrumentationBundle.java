@@ -32,7 +32,9 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle {
 	}
 
 	public void onMount(Application<ApplicationConfiguration> application, String mountPath) {
-		createApplicationEnhancer(application).enhance();
+		if (application.shouldInstrument()) {
+			createApplicationEnhancer(application).enhance();
+		}
 	}
 	
 	protected ApplicationEnhancer createApplicationEnhancer(Application<ApplicationConfiguration> application) {
