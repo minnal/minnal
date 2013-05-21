@@ -35,19 +35,19 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	 * @param value
 	 * @return
 	 */
-	protected boolean visited(V value) {
+	protected boolean visited(T node) {
 		return false;
 	}
 	
-	private boolean checkVisited(T node, V value) {
+	private boolean checkVisited(T node, T child) {
 		if (node == null) {
 			return false;
 		}
-		if (node.visited(value)) {
+		if (node.visited(child)) {
 			return true;
 		}
 		if (node.parent != null) {
-			return checkVisited(node.parent, value);
+			return checkVisited(node.parent, child);
 		}
 		return false;
 	}
@@ -57,7 +57,7 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	 * 
 	 * @param value
 	 */
-	protected void markVisited(V value) {
+	protected void markVisited(T node) {
 	}
 	
 	protected abstract T getThis();
@@ -67,7 +67,7 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	}
 	
 	public T addChild(T child, boolean first) {
-		if (checkVisited(parent, child.value)) {
+		if (checkVisited(getThis(), child)) {
 			return null;
 		}
 		child.parent = getThis();
@@ -76,9 +76,7 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 		} else {
 			children.addLast(child);
 		}
-		if (parent != null) {
-			parent.markVisited(child.value);
-		}
+		markVisited(child);
 		return child;
 	}
 	

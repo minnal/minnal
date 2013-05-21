@@ -95,7 +95,7 @@ public class EntityNodeTest {
 		@OneToMany
 		private Set<CompositeModel> children;
 		@OneToMany
-		private List<CompositeModel> siblings;
+		private Set<CompositeModel> siblings;
 		@Override
 		public Serializable getId() {
 			return null;

@@ -5,8 +5,10 @@ package org.minnal.instrument.entity;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.javalite.common.Inflector;
 import org.minnal.core.util.Node;
@@ -27,7 +29,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	
 	private String resourceName;
 	
-	private List<Class<?>> visitedEntities = new ArrayList<Class<?>>();
+	private Map<Class<?>, List<String>> visitedEntities = new HashMap<Class<?>, List<String>>();
 	
 	public EntityNode(Class<?> entityClass) {
 		this(entityClass, Inflector.camelize(Inflector.underscore(entityClass.getSimpleName()), false));
@@ -59,13 +61,22 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	}
 
 	@Override
-	protected boolean visited(EntityMetaData value) {
-		return visitedEntities.contains(value.getEntityClass());
+	protected boolean visited(EntityNode node) {
+		List<String> associations = visitedEntities.get(node.getValue().getEntityClass());
+		if (associations == null) {
+			return false;
+		}
+		return associations.contains(node.getName());
 	}
 	
 	@Override
-	protected void markVisited(EntityMetaData value) {
-		visitedEntities.add(value.getEntityClass());
+	protected void markVisited(EntityNode node) {
+		List<String> associations = visitedEntities.get(node.getValue().getEntityClass());
+		if (associations == null) {
+			associations = new ArrayList<String>();
+			visitedEntities.put(node.getValue().getEntityClass(), associations);
+		}
+		associations.add(node.getName());
 	}
 	
 	/**

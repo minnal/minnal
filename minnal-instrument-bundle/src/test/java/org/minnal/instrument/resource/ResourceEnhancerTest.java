@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -18,7 +17,6 @@ import javax.persistence.OneToMany;
 
 import org.activejpa.entity.Model;
 import org.minnal.core.resource.ResourceClass;
-import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -45,10 +43,7 @@ public class ResourceEnhancerTest {
 	public void shouldEnhanceResource() {
 		ResourceEnhancer enhancer = new ResourceEnhancer(wrapper);
 		enhancer.enhance();
-		EntityNode node = new EntityNode(Parent.class);
-		node.construct();
-		EntityNodePath path = node.new EntityNodePath(Arrays.asList(node));
-		verify(wrapper, times(3)).addPath(any(EntityNodePath.class));
+		verify(wrapper, times(2)).addPath(any(EntityNodePath.class));
 		verify(wrapper).wrap();
 	}
 	

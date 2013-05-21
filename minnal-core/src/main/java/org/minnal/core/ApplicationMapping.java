@@ -5,6 +5,7 @@ package org.minnal.core;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -25,22 +26,11 @@ import com.google.common.base.Preconditions;
  */
 public class ApplicationMapping {
 
-	private Map<String, Application<ApplicationConfiguration>> applications;
+	private Map<String, Application<ApplicationConfiguration>> applications = new HashMap<String, Application<ApplicationConfiguration>>();
 	
 	private String basePath;
 	
 	private static final String SEPARATOR = "/";
-	
-	private ApplicationMapping() {
-		applications = new TreeMap<String, Application<ApplicationConfiguration>>(
-				new Comparator<String>() {
-					public int compare(String o1, String o2) {
-						Preconditions.checkNotNull(o1);
-						Preconditions.checkNotNull(o2);
-						return o1.length() == o2.length() ? 0 : o1.length() < o2.length() ? 1 : -1;
-					}
-				});
-	}
 	
 	/**
 	 * Constructor with base path of the container. Expects a path starting with '/' character. Defaults to '/' if path is null or empty. 
@@ -49,7 +39,6 @@ public class ApplicationMapping {
 	 * @param basePath the base path of the container
 	 */
 	public ApplicationMapping(String basePath) {
-		this();
 		this.basePath = structureUrl(basePath);
 	}
 	
@@ -96,7 +85,7 @@ public class ApplicationMapping {
 	 */
 	public Application<ApplicationConfiguration> resolve(Request request) {
 		String path = request.getUri().getPath();
-		for (Entry<String, Application<ApplicationConfiguration>> entry : applications.entrySet()) {
+		for (Entry<String, Application<ApplicationConfiguration>> entry : getSortedApplications().entrySet()) {
 			if (path.startsWith(entry.getKey())) {
 				return entry.getValue();
 			}
@@ -147,5 +136,18 @@ public class ApplicationMapping {
 			url = url.substring(0, url.length() - 1);
 		}
 		return url;
+	}
+	
+	private Map<String, Application<ApplicationConfiguration>> getSortedApplications() {
+		Map<String, Application<ApplicationConfiguration>> applications = new TreeMap<String, Application<ApplicationConfiguration>>(
+				new Comparator<String>() {
+					public int compare(String o1, String o2) {
+						Preconditions.checkNotNull(o1);
+						Preconditions.checkNotNull(o2);
+						return o1.length() == o2.length() ? 1 : o1.length() < o2.length() ? 1 : -1;
+					}
+				});
+		applications.putAll(this.applications);
+		return applications;
 	}
 }
