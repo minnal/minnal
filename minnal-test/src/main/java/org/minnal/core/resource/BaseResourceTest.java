@@ -22,8 +22,9 @@ import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;
-import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 
 import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
@@ -38,18 +39,28 @@ public abstract class BaseResourceTest {
 	
 	protected Serializer serializer;
 	
+	private static Container container = new Container();
+	
+	@BeforeSuite
+	public void beforeSuite() {
+		container.start();
+	}
+	
 	@BeforeMethod
 	public void beforeMethod() {
-		Container container = new Container();
-		container.start();
 		serializer = container.getConfiguration().getSerializer(container.getConfiguration().getDefaultMediaType());
 		router = container.getRouter();
 		setup();
 	}
 	
-	@AfterMethod
+	@BeforeMethod
 	public void afterMethod() {
 		destroy();
+	}
+	
+	@AfterSuite
+	public void afterSuite() {
+		container.stop();
 	}
 	
 	protected void setup() {

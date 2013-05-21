@@ -67,6 +67,9 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	}
 	
 	public T addChild(T child, boolean first) {
+		if (parent == null) {
+			markVisited(getThis());
+		}
 		if (checkVisited(getThis(), child)) {
 			return null;
 		}

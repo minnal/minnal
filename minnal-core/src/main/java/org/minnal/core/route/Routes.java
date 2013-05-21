@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
@@ -138,6 +139,9 @@ public class Routes {
 	 * @return
 	 */
 	protected RouteNode findNode(String path) {
+		if (Strings.isNullOrEmpty(path)) {
+			path = "/";
+		}
 		String[] pathElements = path.substring(1).split("/");
 		RouteNode node = root;
 		for (String element : pathElements) {

@@ -33,10 +33,14 @@ public class HttpUtil {
 	}
 	
 	public static URI createURI(String uri) {
+		if (uri.endsWith("/") && uri.length() > 1) {
+			uri = uri.substring(0, uri.length() - 1);
+		}
 		try {
 			return new URI(uri);
 		} catch (Exception e) {
 			throw new MinnalException("Invalid uri - " + uri);
 		}
 	}
+	
 }
