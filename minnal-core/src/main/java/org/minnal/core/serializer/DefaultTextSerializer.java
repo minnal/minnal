@@ -3,6 +3,8 @@
  */
 package org.minnal.core.serializer;
 
+import java.util.Collection;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBufferOutputStream;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -39,5 +41,10 @@ public class DefaultTextSerializer extends Serializer {
 		} catch (Exception e) {
 			throw new MinnalException("Failed while deserializing the buffer to type - " + targetClass, e);
 		}
+	}
+	
+	@Override
+	public <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType) {
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 }

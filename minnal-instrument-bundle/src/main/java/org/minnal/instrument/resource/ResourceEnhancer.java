@@ -20,15 +20,10 @@ public class ResourceEnhancer implements PathVisitor<EntityNodePath, EntityNode>
 
 	public ResourceEnhancer(ResourceClass resource) {
 		this.resource = resource;
-		this.resourceWrapper = new ResourceWrapper(resource);
-	}
-	
-	public ResourceEnhancer(ResourceWrapper wrapper) {
-		this.resourceWrapper = wrapper;
-		this.resource = wrapper.getResourceClass();
 	}
 	
 	public void enhance() {
+		resourceWrapper = createResourceWrapper(resource);
 		EntityNode tree = new EntityNode(resource.getEntityClass());
 		tree.construct();
 		tree.traverse(this);
@@ -37,5 +32,9 @@ public class ResourceEnhancer implements PathVisitor<EntityNodePath, EntityNode>
 	
 	public void visit(EntityNodePath path) {
 		resourceWrapper.addPath(path);
+	}
+	
+	protected ResourceWrapper createResourceWrapper(ResourceClass resourceClass) {
+		return new ResourceWrapper(resourceClass);
 	}
 }

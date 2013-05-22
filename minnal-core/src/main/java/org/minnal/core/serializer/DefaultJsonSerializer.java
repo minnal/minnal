@@ -3,6 +3,8 @@
  */
 package org.minnal.core.serializer;
 
+import java.util.Collection;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBufferInputStream;
 import org.jboss.netty.buffer.ChannelBufferOutputStream;
@@ -11,6 +13,7 @@ import org.minnal.core.MinnalException;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,6 +71,17 @@ public class DefaultJsonSerializer extends Serializer {
 			return mapper.readValue(is, targetClass);
 		} catch (Exception e) {
 			throw new MinnalException("Failed while deserializing the buffer to type - " + targetClass, e);
+		}
+	}
+	
+	@Override
+	public <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType) {
+		ChannelBufferInputStream is = new ChannelBufferInputStream(buffer);
+		JavaType javaType = mapper.getTypeFactory().constructCollectionType(collectionType, elementType);
+		try {
+			return mapper.readValue(is, javaType);
+		} catch (Exception e) {
+			throw new MinnalException("Failed while deserializing the buffer to type - " + javaType, e);
 		}
 	}
 }

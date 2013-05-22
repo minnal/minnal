@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import javassist.ClassPool;
 import javassist.CtClass;
-import javassist.NotFoundException;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.MinnalException;
@@ -23,21 +22,32 @@ import org.minnal.instrument.entity.EntityNode.EntityNodePath;
  */
 public class ResourceWrapper {
 	
-	private ResourceClass resourceClass;
-	
-	private CtClass wrapperClass;
+	private CtClass generatedClass;
 	
 	private Map<ResourcePath, Map<HttpMethod, String>> paths = new HashMap<ResourcePath, Map<HttpMethod, String>>();
 	
 	private ClassPool classPool = ClassPool.getDefault();
 	
+	private ResourceClass resourceClass;
+	
 	public ResourceWrapper(ResourceClass resourceClass) {
 		this.resourceClass = resourceClass;
-		try {
-			CtClass superClass = classPool.get(resourceClass.getResourceClass().getName());
-			wrapperClass = classPool.makeClass(resourceClass.getResourceClass().getName() + "Wrapper", superClass);
-		} catch (NotFoundException e) {
-			throw new MinnalException(e);
+		generatedClass = createGeneratedClass();
+	}
+	
+	protected CtClass createGeneratedClass() {
+		if (resourceClass.getResourceClass() != null) {
+			try {
+				CtClass superClass = classPool.get(resourceClass.getResourceClass().getName());
+				return classPool.makeClass(resourceClass.getResourceClass().getName() + "Wrapper", superClass);
+			} catch (Exception e) {
+				throw new MinnalException("Failed while creating the generated class");
+			}
+		} else {
+			if (resourceClass.getEntityClass() == null) {
+				throw new MinnalException("Entity Class not defined in the resource class");
+			}
+			return classPool.makeClass(resourceClass.getEntityClass().getName() + "Resource");
 		}
 	}
 	
@@ -76,14 +86,13 @@ public class ResourceWrapper {
 	}
 	
 	protected void addMethod(ResourcePath resourcePath, HttpMethod method) throws Exception {
-		MethodCreator creator = getMethodCreator(wrapperClass, resourcePath, method);
+		MethodCreator creator = getMethodCreator(generatedClass, resourcePath, method);
 		if (creator == null) {
 			// TODO Can't get here. Handle if it still gets here
 			return;
 		}
 		
-		if (resourceClass.hasRoute(resourcePath.isBulk() ? resourcePath.getNodePath().getBulkPath() : 
-			resourcePath.getNodePath().getSinglePath(), method)) {
+		if (! shouldCreateMethod(resourcePath, method)) {
 			return;
 		}
 		
@@ -91,9 +100,20 @@ public class ResourceWrapper {
 		addMethodToPath(resourcePath, method, creator.getMethodName());
 	}
 	
+	protected boolean shouldCreateMethod(ResourcePath path, HttpMethod method) {
+		if (resourceClass.getResourceClass() != null) {
+			if (resourceClass.hasRoute(path.isBulk() ? path.getNodePath().getBulkPath() : 
+				path.getNodePath().getSinglePath(), method)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public void wrap() {
 		try {
-			resourceClass.setResourceClass(wrapperClass.toClass());
+			Class<?> clazz = generatedClass.toClass();
+			resourceClass.setResourceClass(clazz);
 		} catch (Exception e) {
 			throw new MinnalException(e);
 		}
@@ -127,13 +147,6 @@ public class ResourceWrapper {
 		return true;
 	}
 	
-	/**
-	 * @return the resourceClass
-	 */
-	public ResourceClass getResourceClass() {
-		return resourceClass;
-	}
-
 	public static class ResourcePath {
 		
 		private EntityNodePath nodePath;

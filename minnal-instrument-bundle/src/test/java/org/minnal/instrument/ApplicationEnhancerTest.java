@@ -3,6 +3,7 @@
  */
 package org.minnal.instrument;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -38,7 +39,12 @@ public class ApplicationEnhancerTest {
 		rc1 = mock(ResourceClass.class);
 		rc2 = mock(ResourceClass.class);
 		when(application.getResources()).thenReturn(Arrays.asList(rc1, rc2));
+		ApplicationConfiguration configuration = mock(ApplicationConfiguration.class);
+		when(configuration.getPackagesToScan()).thenReturn(Arrays.asList("org.minnal.instrument"));
+		when(application.getConfiguration()).thenReturn(configuration);
 		enhancer = spy(new ApplicationEnhancer(application));
+		ResourceEnhancer resEnhancer = mock(ResourceEnhancer.class);
+		doReturn(resEnhancer).when(enhancer).createEnhancer(any(ResourceClass.class));
 	}
 
 	@Test

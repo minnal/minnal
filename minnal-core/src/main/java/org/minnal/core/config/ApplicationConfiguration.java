@@ -3,6 +3,7 @@
  */
 package org.minnal.core.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ApplicationConfiguration extends Configuration {
 	
-	private List<String> packagesToScan;
+	private List<String> packagesToScan = new ArrayList<String>();
 	
 	private DatabaseConfiguration databaseConfiguration;
 

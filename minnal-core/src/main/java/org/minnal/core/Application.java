@@ -99,8 +99,12 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	
 	protected void addResource(Class<?> resourceClass, ResourceConfiguration resourceConfiguration) {
 		resourceConfiguration.setParent(configuration);
-		ResourceClass resource = new ResourceClass(resourceClass, resourceConfiguration);
-		resources.put(resourceClass, resource);
+		ResourceClass resource = new ResourceClass(resourceConfiguration, resourceClass);
+		addResource(resource);
+	}
+	
+	public void addResource(ResourceClass resourceClass) {
+		resources.put(resourceClass.getResourceClass(), resourceClass);
 	}
 
 	/**

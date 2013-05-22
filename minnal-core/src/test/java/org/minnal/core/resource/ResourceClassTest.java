@@ -27,13 +27,13 @@ public class ResourceClassTest {
 
 	@Test
 	public void shouldCreateResourceClass() {
-		ResourceClass resourceClass = new ResourceClass(DummyResource.class, config);
+		ResourceClass resourceClass = new ResourceClass(config, DummyResource.class);
 		assertEquals(resourceClass.getConfiguration(), config);
 	}
 	
 	@Test
 	public void shouldCreateRouteBuilder() {
-		ResourceClass resourceClass = new ResourceClass(DummyResource.class, config);
+		ResourceClass resourceClass = new ResourceClass(config, DummyResource.class);
 		RouteBuilder builder = resourceClass.builder("/orders");
 		builder.action(HttpMethod.GET, "methodWithValidParameters");
 		Route route = builder.build().get(0);

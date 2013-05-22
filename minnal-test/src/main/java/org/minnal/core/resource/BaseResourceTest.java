@@ -17,6 +17,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.minnal.core.Container;
+import org.minnal.core.Response;
 import org.minnal.core.Router;
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.MessageContext;
@@ -104,6 +105,13 @@ public abstract class BaseResourceTest {
 			throw new RuntimeException(e);
 		}
 		return buffer;
+	}
+	
+	protected Response makeRestCall(ServerRequest request) {
+		ServerResponse response = createResponse(request);
+		MessageContext context = new MessageContext(request, response);
+		route(context);
+		return response;
 	}
 	
 }

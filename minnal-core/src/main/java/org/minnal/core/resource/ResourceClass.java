@@ -25,10 +25,15 @@ public class ResourceClass {
 	
 	private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
 	
-	public ResourceClass(Class<?> resourceClass, ResourceConfiguration configuration) {
-		validate(resourceClass);
-		this.resourceClass = resourceClass;
+	public ResourceClass(ResourceConfiguration configuration, Class<?> resourceClass) {
 		this.configuration = configuration;
+		this.resourceClass = resourceClass;
+		validate(resourceClass);
+	}
+	
+	public ResourceClass(Class<?> entityClass, ResourceConfiguration configuration) {
+		this.configuration = configuration;
+		this.entityClass = entityClass;
 	}
 	
 	private void validate(Class<?> resourceClass) {

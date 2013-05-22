@@ -3,6 +3,8 @@
  */
 package org.minnal.core.serializer;
 
+import java.util.Collection;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 
 /**
@@ -12,11 +14,16 @@ import org.jboss.netty.buffer.ChannelBuffer;
 public class DefaultXmlSerializer extends Serializer {
 
 	public ChannelBuffer serialize(Object object) {
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass) {
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+	
+	@Override
+	public <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType) {
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 }

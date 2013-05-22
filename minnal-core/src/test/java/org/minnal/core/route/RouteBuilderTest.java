@@ -35,7 +35,7 @@ public class RouteBuilderTest {
 	@BeforeMethod
 	public void setup() {
 		resource = mock(DummyResource.class);
-		resourceClass = new ResourceClass(resource.getClass(), new ResourceConfiguration("dummy"));
+		resourceClass = new ResourceClass(new ResourceConfiguration("dummy"), resource.getClass());
 		builder = new RouteBuilder(resourceClass, "/orders/{order_id}/order_items/{id}");
 	}
 	

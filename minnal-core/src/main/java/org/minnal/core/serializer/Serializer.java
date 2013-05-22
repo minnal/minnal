@@ -3,6 +3,8 @@
  */
 package org.minnal.core.serializer;
 
+import java.util.Collection;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -26,6 +28,8 @@ public abstract class Serializer {
 	public abstract ChannelBuffer serialize(Object object);
 	
 	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);
+	
+	public abstract <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType);
 	
 	public static Serializer getSerializer(MediaType mediaType) {
 		if (mediaType.equals(MediaType.JSON_UTF_8)) {
