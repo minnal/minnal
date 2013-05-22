@@ -21,7 +21,6 @@ public class Route {
 	
 	private HttpMethod method;
 	
-	@JsonIgnore
 	private Action action;
 	
 	@JsonIgnore

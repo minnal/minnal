@@ -13,6 +13,8 @@ import org.minnal.core.server.exception.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * @author ganeshs
  *
@@ -78,5 +80,11 @@ public class Action {
 		} else if (!resource.getClass().equals(other.resource.getClass()))
 			return false;
 		return true;
+	}
+	
+	@JsonValue
+	@Override
+	public String toString() {
+		return resource.getClass().getName() + "." + method.getName();
 	}
 }
