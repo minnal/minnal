@@ -87,13 +87,13 @@ public class EntityNodePathTest {
 		EntityNode child = node.getChildren().iterator().next();
 		EntityNode grandChild = child.getChildren().iterator().next();
 		EntityNodePath path = node.createNodePath(Arrays.asList(node, child, grandChild));
-		assertEquals(path.getName(), grandChild.getName());
+		assertEquals(path.getName(), "ParentChildChild");
 	}
 	
 	@Test
 	public void shouldGetNameForPathWithSingleNode() {
 		EntityNodePath path = node.createNodePath(Arrays.asList(node));
-		assertEquals(path.getName(), node.getName());
+		assertEquals(path.getName(), "Parent");
 	}
 	
 	@Entity

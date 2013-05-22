@@ -50,7 +50,7 @@ public class DeleteMethodCreator extends MethodCreator {
 
 	@Override
 	public String getMethodName() {
-		return "delete" + Inflector.capitalize(getPath().getName());
+		return "delete" + getPath().getName();
 	}
 	
 	@Override

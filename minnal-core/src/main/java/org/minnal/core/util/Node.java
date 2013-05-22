@@ -9,6 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author ganeshs
  *
@@ -20,6 +23,8 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	private V value;
 	
 	private LinkedList<T> children = new LinkedList<T>();
+	
+	private static final Logger logger = LoggerFactory.getLogger(Node.class);
 	
 	public Node(V value) {
 		this.value = value;
@@ -40,13 +45,16 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	}
 	
 	private boolean checkVisited(T node, T child) {
+		logger.debug("Checking if the node {} is visited by {}", child, node);
 		if (node == null) {
 			return false;
 		}
 		if (node.visited(child)) {
+			logger.debug("Node {} is visited by {}", child, node);
 			return true;
 		}
 		if (node.parent != null) {
+			logger.debug("Checking if the node {} is visited by the parent of {}", child, node);
 			return checkVisited(node.parent, child);
 		}
 		return false;
@@ -63,14 +71,17 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	protected abstract T getThis();
 	
 	public T addChild(T child) {
+		logger.debug("Attempting to add the child {} to the node {}", child, getThis());
 		return addChild(child, false);
 	}
 	
 	public T addChild(T child, boolean first) {
 		if (parent == null) {
+			logger.debug("Marking the current node {} as visited as this is the root", getThis());
 			markVisited(getThis());
 		}
 		if (checkVisited(getThis(), child)) {
+			logger.debug("Node {} is already visited by this node {} or one of its ancestors", child, getThis());
 			return null;
 		}
 		child.parent = getThis();

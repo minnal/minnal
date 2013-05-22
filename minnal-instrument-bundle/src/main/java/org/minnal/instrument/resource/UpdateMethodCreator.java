@@ -52,7 +52,7 @@ public class UpdateMethodCreator extends MethodCreator {
 
 	@Override
 	public String getMethodName() {
-		return "update" + Inflector.capitalize(getPath().getName());
+		return "update" + getPath().getName();
 	}
 	
 	@Override

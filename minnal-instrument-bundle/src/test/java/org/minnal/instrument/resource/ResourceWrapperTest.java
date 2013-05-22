@@ -121,8 +121,8 @@ public class ResourceWrapperTest {
 		wrapper.addPath(path);
 		wrapper.wrap();
 		verify(resourceClass).setResourceClass(Class.forName(DummyResource.class.getName() + "Wrapper"));
-		verify(builder).action(HttpMethod.GET, "readChild");
-		verify(builder).action(HttpMethod.PUT, "updateChild");
+		verify(builder).action(HttpMethod.GET, "readParentChild");
+		verify(builder).action(HttpMethod.PUT, "updateParentChild");
 		verify(builder).action(HttpMethod.DELETE, deleteMethodCreator.getMethodName());
 	}
 }

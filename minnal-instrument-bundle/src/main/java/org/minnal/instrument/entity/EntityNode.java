@@ -18,6 +18,8 @@ import org.minnal.instrument.entity.metadata.CollectionMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaDataProvider;
 import org.minnal.instrument.entity.metadata.ParameterMetaData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author ganeshs
@@ -30,6 +32,8 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	private String resourceName;
 	
 	private Map<Class<?>, List<String>> visitedEntities = new HashMap<Class<?>, List<String>>();
+	
+	private static final Logger logger = LoggerFactory.getLogger(EntityNode.class);
 	
 	public EntityNode(Class<?> entityClass) {
 		this(entityClass, Inflector.camelize(Inflector.underscore(entityClass.getSimpleName()), false));
@@ -71,6 +75,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	
 	@Override
 	protected void markVisited(EntityNode node) {
+		logger.debug("Marking the node {} as visited in this node {}", node, this);
 		List<String> associations = visitedEntities.get(node.getValue().getEntityClass());
 		if (associations == null) {
 			associations = new ArrayList<String>();
@@ -103,6 +108,11 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		return new EntityNodePath(path);
 	}
 	
+	@Override
+	public String toString() {
+		return "EntityNode [name=" + name + ", resourceName=" + resourceName + "]";
+	}
+
 	/**
 	 * A path from the root node to a leaf node in the entity hierarchy. The path will be used to construct the uris for single and bulk resources.
 	 * It also identifies all the search fields marked using {@link Searchable} annotation in the entity hierarchy.
@@ -116,6 +126,8 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		
 		private String singlePath;
 		
+		private String name;
+		
 		private List<String> searchParams = new ArrayList<String>();
 
 		public EntityNodePath(List<EntityNode> path) {
@@ -128,6 +140,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 			Iterator<EntityNode> iterator = iterator();
 			String prefix = "";
 			EntityNode parent = null;
+			StringWriter pathName = new StringWriter();
 			while (iterator.hasNext()) {
 				EntityNode node = iterator.next();
 				String name = node.getResourceName();
@@ -135,9 +148,11 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 					prefix = prefix.isEmpty() ? name : prefix + "." + name;
 				}
 				
+				pathName.append(node.getName());
 				writer.append("/").append(name);
 				if (iterator.hasNext()) {
 					writer.append("/{" + node.getName() + "_id}");
+					pathName.append("_");
 				}
 				
 				addSearchFields(prefix, node);
@@ -145,6 +160,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 			}
 			bulkPath = writer.toString();
 			singlePath = bulkPath + "/{id}";
+			name = Inflector.camelize(pathName.toString());
 		}
 		
 		private void addSearchFields(String prefix, EntityNode node) {
@@ -172,7 +188,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		}
 		
 		public String getName() {
-			return get(size() - 1).getName();
+			return name;
 		}
 
 		/**

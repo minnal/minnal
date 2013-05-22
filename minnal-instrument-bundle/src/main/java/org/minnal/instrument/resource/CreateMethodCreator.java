@@ -66,7 +66,7 @@ public class CreateMethodCreator extends MethodCreator {
 
 	@Override
 	public String getMethodName() {
-		return "create" + Inflector.capitalize(getPath().getName());
+		return "create" + getPath().getName();
 	}
 
 }

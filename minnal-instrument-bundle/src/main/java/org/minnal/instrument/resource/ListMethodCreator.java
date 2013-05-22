@@ -69,6 +69,6 @@ public class ListMethodCreator extends MethodCreator {
 	
 	@Override
 	public String getMethodName() {
-		return "list" + Inflector.capitalize(getPath().getName());
+		return "list" + Inflector.pluralize(getPath().getName());
 	}
 }

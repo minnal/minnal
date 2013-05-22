@@ -23,6 +23,7 @@ import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -54,7 +55,7 @@ public abstract class BaseResourceTest {
 		setup();
 	}
 	
-	@BeforeMethod
+	@AfterMethod
 	public void afterMethod() {
 		destroy();
 	}

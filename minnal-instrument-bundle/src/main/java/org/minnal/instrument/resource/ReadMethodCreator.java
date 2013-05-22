@@ -48,7 +48,7 @@ public class ReadMethodCreator extends MethodCreator {
 
 	@Override
 	public String getMethodName() {
-		return "read" + Inflector.capitalize(getPath().getName());
+		return "read" + getPath().getName();
 	}
 
 }
