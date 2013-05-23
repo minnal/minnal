@@ -4,6 +4,7 @@
 package org.minnal.instrument.resource;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,9 +81,15 @@ public abstract class MethodCreator {
 	
 	protected boolean methodExists(String methodName) {
 		try {
-			ctClass.getDeclaredMethod(methodName, new CtClass[]{ClassPool.getDefault().get(Request.class.getName()), 
-					ClassPool.getDefault().get(Request.class.getName())});
-			return true;
+			CtMethod[] methods = ctClass.getMethods();
+			CtClass[] params = new CtClass[]{ClassPool.getDefault().get(Request.class.getName()), 
+					ClassPool.getDefault().get(Response.class.getName())};
+			for (CtMethod method : methods) {
+				if (method.getName().equals(methodName) && Arrays.equals(method.getParameterTypes(), params)) {
+					return true;
+				}
+			}
+			return false;
 		} catch (javassist.NotFoundException e) {
 			return false;
 		}
