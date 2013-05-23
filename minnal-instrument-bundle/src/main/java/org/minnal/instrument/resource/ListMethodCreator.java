@@ -22,11 +22,12 @@ import org.minnal.instrument.entity.EntityNode.EntityNodePath;
  */
 public class ListMethodCreator extends MethodCreator {
 	
-	private static final String LIST_ENTITY_TEMPLATE = Filter.class.getName() + " filter = " + ResourceUtil.class.getName() + ".getFilter(request, :search_params);" +
-			"java.util.List :field_name = :model_class.where(filter);";
+	private static final String FILTER_TEMPLATE = Filter.class.getName() + " filter = " + ResourceUtil.class.getName() + ".getFilter(request, :search_params);";
 	
-	private static final String LIST_COLLECTION_TEMPLATE = EntityCollection.class.getName() + " :field_nameCollection = :parent.collection(\":resource_name\");" + 
-			"java.util.List :field_name = :field_nameCollection.all();";
+	private static final String LIST_ENTITY_TEMPLATE = FILTER_TEMPLATE + "java.util.List :field_name = :model_class.where(filter);";
+	
+	private static final String LIST_COLLECTION_TEMPLATE = FILTER_TEMPLATE + EntityCollection.class.getName() + 
+			" :field_nameCollection = :parent.collection(\":resource_name\");" + "java.util.List :field_name = :field_nameCollection.where(filter);";
 
 	public ListMethodCreator(CtClass ctClass, EntityNodePath path) {
 		super(ctClass, path);

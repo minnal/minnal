@@ -144,9 +144,6 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 			while (iterator.hasNext()) {
 				EntityNode node = iterator.next();
 				String name = node.getResourceName();
-				if (parent != null) {
-					prefix = prefix.isEmpty() ? name : prefix + "." + name;
-				}
 				
 				pathName.append(node.getName());
 				writer.append("/").append(name);
@@ -155,7 +152,12 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 					pathName.append("_");
 				}
 				
-				addSearchFields(prefix, node);
+				if (! iterator.hasNext()) {
+					if (parent != null) {
+						prefix = prefix.isEmpty() ? name : prefix + "." + name;
+					}
+					addSearchFields(prefix, node);
+				}
 				parent = node;
 			}
 			bulkPath = writer.toString();
@@ -176,6 +178,10 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 						searchParams.add(assocPrefix + Inflector.underscore(paramMeta.getFieldName()));
 					}
 				}
+			}
+			for (EntityNode child : node.getChildren()) {
+				String collectionPrefix = prefix + child.getResourceName();
+				addSearchFields(collectionPrefix, child);
 			}
 		}
 		

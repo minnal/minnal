@@ -6,6 +6,7 @@ package org.minnal.core;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
+import org.minnal.core.server.exception.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,9 @@ public class Router {
 			FilterChain chain = new FilterChain(context.getApplication().getFilters(), route);
 			chain.doFilter(context.getRequest(), context.getResponse());
 		} catch (Exception e) {
+			if (! (e instanceof ApplicationException)) {
+				logger.error("Failed while processing the request");
+			}
 			context.getApplication().getExceptionHandler().handle(context.getRequest(), context.getResponse(), e);
 		} finally {
 			if (context.getResponse().getStatus() == HttpResponseStatus.PROCESSING) {

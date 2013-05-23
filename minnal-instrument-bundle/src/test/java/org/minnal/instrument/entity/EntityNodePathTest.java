@@ -64,14 +64,14 @@ public class EntityNodePathTest {
 	@Test
 	public void shouldGetSearchParamsForPathWithSingleNode() {
 		EntityNodePath path = node.createNodePath(Arrays.asList(node));
-		assertEquals(path.getSearchParams(), Arrays.asList("code", "id"));
+		assertEquals(path.getSearchParams(), Arrays.asList("code", "id", "children.code", "children.children.code", "children.children.root.code", "children.children.root.id"));
 	}
 	
 	@Test
 	public void shouldGetSearchParamsForPathWithMultipleNodes() {
 		EntityNode child = node.getChildren().iterator().next();
 		EntityNodePath path = node.createNodePath(Arrays.asList(node, child));
-		assertEquals(path.getSearchParams(), Arrays.asList("code", "id", "children.code"));
+		assertEquals(path.getSearchParams(), Arrays.asList("children.code", "children.children.code", "children.children.root.code", "children.children.root.id"));
 	}
 	
 	@Test
@@ -79,7 +79,7 @@ public class EntityNodePathTest {
 		EntityNode child = node.getChildren().iterator().next();
 		EntityNode grandChild = child.getChildren().iterator().next();
 		EntityNodePath path = node.createNodePath(Arrays.asList(node, child, grandChild));
-		assertEquals(path.getSearchParams(), Arrays.asList("code", "id", "children.code", "children.children.code", "children.children.root.code", "children.children.root.id"));
+		assertEquals(path.getSearchParams(), Arrays.asList("children.code", "children.root.code", "children.root.id"));
 	}
 	
 	@Test
