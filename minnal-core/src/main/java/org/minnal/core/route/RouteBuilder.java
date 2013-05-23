@@ -69,7 +69,7 @@ public class RouteBuilder {
 	protected RouteBuilder action(HttpMethod httpMethod, String methodName, Class<?>... parameterTypes) {
 		Method method = null;
 		try {
-			method = resourceClass.getResourceClass().getDeclaredMethod(methodName, parameterTypes);
+			method = resourceClass.getResourceClass().getMethod(methodName, parameterTypes);
 		} catch (Exception e) {
 			logger.error("Error while getting the method " + methodName + " for the class " + resourceClass.getResourceClass(), e);
 			throw new MinnalException(e);
