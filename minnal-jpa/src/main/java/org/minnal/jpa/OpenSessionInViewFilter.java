@@ -18,12 +18,12 @@ public class OpenSessionInViewFilter implements Filter {
 
 	public void doFilter(Request request, Response response, FilterChain chain) {
 		JPAContext context = getContext();
-		context.beginTxn();
+		context.getEntityManager(); // Initialize an entity manager for this request
 		try {
 			chain.doFilter(request, response);
 		} finally {
 			if (context.isTxnOpen()) {
-				context.closeTxn(true);
+				context.closeTxn(false);
 			}
 			context.close();
 		}
