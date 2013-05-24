@@ -37,6 +37,7 @@ public class Action {
 			return method.invoke(resource, request, response);
 		} catch (InvocationTargetException e) {
 			Throwable throwable = e.getCause();
+			logger.error("Failed while invoking the action - " + this, throwable);
 			if (throwable instanceof ApplicationException) {
 				throw (ApplicationException) throwable;
 			} else {

@@ -11,6 +11,8 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.Response;
 import org.minnal.core.serializer.Serializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
@@ -27,6 +29,8 @@ public class ServerResponse extends ServerMessage implements Response {
 	private ServerRequest request;
 	
 	private boolean contentSet;
+	
+	private static Logger logger = LoggerFactory.getLogger(ServerResponse.class);
 
 	public ServerResponse(ServerRequest request, HttpResponse response) {
 		super(response);
