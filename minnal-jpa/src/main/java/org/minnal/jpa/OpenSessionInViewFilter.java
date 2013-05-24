@@ -23,7 +23,7 @@ public class OpenSessionInViewFilter implements Filter {
 			chain.doFilter(request, response);
 		} finally {
 			if (context.isTxnOpen()) {
-				context.closeTxn(false);
+				context.closeTxn(true);
 			}
 			context.close();
 		}

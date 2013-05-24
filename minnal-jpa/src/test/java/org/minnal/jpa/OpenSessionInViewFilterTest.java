@@ -39,10 +39,10 @@ public class OpenSessionInViewFilterTest {
 	}
 	
 	@Test
-	public void shouldBeginTransactionBeforeForwarding() {
+	public void shouldInitializeEntityManagerBeforeForwading() {
 		filter.doFilter(request, response, chain);
 		inOrder(context, chain);
-		verify(context).beginTxn();
+		verify(context).getEntityManager();
 		verify(chain).doFilter(request, response);
 	}
 	
