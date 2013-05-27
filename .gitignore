@@ -1,0 +1,19 @@
+*.class
+.idea
+target
+atlassian-ide-plugin.xml
+logs
+*.iml
+*.ipr
+test-output
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Eclipse Files
+.classpath
+.project
+.settings/
+.factorypath
