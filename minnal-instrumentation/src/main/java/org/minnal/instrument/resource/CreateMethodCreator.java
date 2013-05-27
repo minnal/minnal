@@ -7,12 +7,11 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 
-import org.javalite.common.Inflector;
+import javassist.CtClass;
+
 import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
-
-import javassist.CtClass;
 
 /**
  * @author ganeshs

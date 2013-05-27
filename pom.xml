@@ -13,7 +13,7 @@
     <module>minnal-example</module>
 		<module>minnal-jpa</module>
 		<module>minnal-test</module>
-		<module>minnal-instrument-bundle</module>
+		<module>minnal-instrumentation</module>
 	</modules>
 
 	<properties>
