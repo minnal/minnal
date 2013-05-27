@@ -3,8 +3,11 @@
  */
 package org.minnal.core.server;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -17,10 +20,13 @@ import java.util.Map.Entry;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.minnal.core.serializer.Serializer;
+import org.minnal.core.server.exception.BadRequestException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
+import com.google.common.net.MediaType;
 
 /**
  * @author ganeshs
@@ -67,5 +73,27 @@ public class ServerRequestTest {
 		ServerRequest request = new ServerRequest(httpRequest, null);
 		request.setApplicationPath("/app");
 		assertEquals(request.getRelativePath(), "/resource");
+	}
+	
+	@Test
+	public void shouldGetContentAsGivenType() {
+		ServerRequest request = spy(new ServerRequest(httpRequest, null));
+		ChannelBuffer buffer = mock(ChannelBuffer.class);
+		doReturn(buffer).when(request).getContent();
+		Serializer serializer = mock(Serializer.class);
+		doReturn(serializer).when(request).getSerializer(any(MediaType.class));
+		request.getContentAs(Object.class);
+		verify(serializer).deserialize(buffer, Object.class);
+	}
+	
+	@Test(expectedExceptions=BadRequestException.class)
+	public void shouldThrowBadRequestIfSerializationFails() {
+		ServerRequest request = spy(new ServerRequest(httpRequest, null));
+		ChannelBuffer buffer = mock(ChannelBuffer.class);
+		doReturn(buffer).when(request).getContent();
+		Serializer serializer = mock(Serializer.class);
+		doReturn(serializer).when(request).getSerializer(any(MediaType.class));
+		when(serializer.deserialize(buffer, Object.class)).thenThrow(new IllegalStateException());
+		request.getContentAs(Object.class);
 	}
 }

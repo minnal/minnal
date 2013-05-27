@@ -52,8 +52,8 @@ public class RoutesTest {
 		routes = new Routes();
 		configuration = new RouteConfiguration("test");
 		configuration.setDefaultMediaType(MediaType.JSON_UTF_8);
-		route1 = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.GET, null, configuration, null);
-		route2 = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.PUT, null, configuration, null);
+		route1 = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.GET, null, configuration, null, null);
+		route2 = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.PUT, null, configuration, null, null);
 		when(builder.build()).thenReturn(Arrays.asList(route1, route2));
 	}
 
@@ -172,7 +172,7 @@ public class RoutesTest {
 	
 	@Test
 	public void shouldResolveRouteWithoutContentTypeForDeleteHttpMethod() {
-		Route route = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.DELETE, null, configuration, null);
+		Route route = new Route(new RoutePattern("/orders/{order_id}/order_items/{id}"), HttpMethod.DELETE, null, configuration, null, null);
 		when(builder.build()).thenReturn(Arrays.asList(route));
 		when(request.getRelativePath()).thenReturn("/orders/1/order_items/1");
 		when(request.getHttpMethod()).thenReturn(HttpMethod.DELETE);

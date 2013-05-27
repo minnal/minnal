@@ -4,7 +4,9 @@
 package org.minnal.core.route;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.config.RouteConfiguration;
@@ -28,13 +30,16 @@ public class Route {
 	
 	private Map<String, String> attributes = new HashMap<String, String>();
 	
+	private Set<QueryParam> queryParams = new HashSet<QueryParam>();
+	
 	public Route(RoutePattern routePattern, HttpMethod method, Action action,
-			RouteConfiguration configuration, Map<String, String> attributes) {
+			RouteConfiguration configuration, Map<String, String> attributes, Set<QueryParam> queryParams) {
 		this.routePattern = routePattern;
 		this.method = method;
 		this.action = action;
 		this.configuration = configuration;
 		this.attributes = attributes;
+		this.queryParams = queryParams;
 	}
 
 	/**
@@ -70,5 +75,12 @@ public class Route {
 	 */
 	public Map<String, String> getAttributes() {
 		return attributes;
+	}
+
+	/**
+	 * @return the queryParams
+	 */
+	public Set<QueryParam> getQueryParams() {
+		return queryParams;
 	}
 }

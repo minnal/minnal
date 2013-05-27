@@ -6,6 +6,7 @@ package org.minnal.core.route;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +18,7 @@ import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.core.config.RouteConfiguration;
 import org.minnal.core.resource.ResourceClass;
+import org.minnal.core.route.QueryParam.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +39,8 @@ public class RouteBuilder {
 	private RouteConfiguration configuration;
 	
 	private Map<HttpMethod, Action> actions = new HashMap<HttpMethod, Action>();
+	
+	private Set<QueryParam> queryParams = new HashSet<QueryParam>();
 	
 	private static Logger logger = LoggerFactory.getLogger(RouteBuilder.class);
 	
@@ -95,13 +99,37 @@ public class RouteBuilder {
 		}
 		List<Route> routes = new ArrayList<Route>();
 		for (Entry<HttpMethod, Action> entry : actions.entrySet()) {
-			routes.add(new Route(pattern, entry.getKey(), entry.getValue(), configuration, attributes));
+			routes.add(new Route(pattern, entry.getKey(), entry.getValue(), configuration, attributes, queryParams));
 		}
 		return routes;
 	}
 	
 	public Set<HttpMethod> supportedMethods() {
 		return actions.keySet();
+	}
+	
+	public RouteBuilder queryParam(QueryParam param) {
+		queryParams.add(param);
+		return this;
+	}
+	
+	public RouteBuilder queryParam(String name) {
+		return queryParam(name, "");
+	}
+	
+	public RouteBuilder queryParam(String name, String description) {
+		return queryParam(name, Type.string, description);
+	}
+	
+	public RouteBuilder queryParam(String name, QueryParam.Type type, String description) {
+		return queryParam(new QueryParam(name, type, description));
+	}
+
+	/**
+	 * @return the queryParams
+	 */
+	public Set<QueryParam> getQueryParams() {
+		return queryParams;
 	}
 
 	@Override

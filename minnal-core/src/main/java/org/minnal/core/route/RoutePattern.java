@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Defines the pattern of a path. Incoming requests will be matched against the route pattern to determine the route.
  * <p/>
@@ -133,6 +135,7 @@ public class RoutePattern {
 	 * 
 	 * @return the elements
 	 */
+	@JsonIgnore
 	public List<RouteElement> getElements() {
 		List<RouteElement> elements = new ArrayList<RoutePattern.RouteElement>();
 		for (String element : pathPattern.split("/")) {

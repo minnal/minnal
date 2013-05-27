@@ -13,6 +13,7 @@ import javassist.CtClass;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.MinnalException;
 import org.minnal.core.resource.ResourceClass;
+import org.minnal.core.route.QueryParam;
 import org.minnal.core.route.RouteBuilder;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 
@@ -133,6 +134,10 @@ public class ResourceWrapper {
 			
 			for (Entry<HttpMethod, String> method : entry.getValue().entrySet()) {
 				builder.action(method.getKey(), method.getValue());
+			}
+			
+			for (QueryParam param : entry.getKey().getNodePath().getQueryParams()) {
+				builder.queryParam(param);
 			}
 		}
 	}

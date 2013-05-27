@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.javalite.common.Inflector;
+import org.minnal.core.route.QueryParam;
+import org.minnal.core.route.QueryParam.Type;
 import org.minnal.core.util.Node;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.AssociationMetaData;
@@ -128,7 +130,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		
 		private String name;
 		
-		private List<String> searchParams = new ArrayList<String>();
+		private List<QueryParam> queryParams = new ArrayList<QueryParam>();
 
 		public EntityNodePath(List<EntityNode> path) {
 			super(path);
@@ -166,16 +168,19 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		}
 		
 		private void addSearchFields(String prefix, EntityNode node) {
+			QueryParam param = null;
 			prefix = prefix.isEmpty() ? prefix : prefix + ".";
 			for (ParameterMetaData meta : node.getEntityMetaData().getSearchFields()) {
-				searchParams.add(prefix + Inflector.underscore(meta.getFieldName()));
+				param = new QueryParam(prefix + Inflector.underscore(meta.getFieldName()), Type.typeOf(meta.getType()));
+				queryParams.add(param);
 			}
 			for (AssociationMetaData meta : node.getEntityMetaData().getAssociations()) {
 				if (meta.isEntity()) {
 					String assocPrefix = prefix + Inflector.underscore(meta.getName()) + ".";
 					EntityMetaData data = EntityMetaDataProvider.instance().getEntityMetaData(meta.getType());
 					for (ParameterMetaData paramMeta : data.getSearchFields()) {
-						searchParams.add(assocPrefix + Inflector.underscore(paramMeta.getFieldName()));
+						param = new QueryParam(assocPrefix + Inflector.underscore(paramMeta.getFieldName()), Type.typeOf(paramMeta.getType()));
+						queryParams.add(param);
 					}
 				}
 			}
@@ -198,10 +203,10 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		}
 
 		/**
-		 * @return the searchParams
+		 * @return the queryParams
 		 */
-		public List<String> getSearchParams() {
-			return searchParams;
+		public List<QueryParam> getQueryParams() {
+			return queryParams;
 		}
 
 		@Override

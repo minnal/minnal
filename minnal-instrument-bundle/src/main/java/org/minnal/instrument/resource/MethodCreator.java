@@ -18,6 +18,7 @@ import javassist.CtNewMethod;
 import org.javalite.common.Inflector;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
+import org.minnal.core.route.QueryParam;
 import org.minnal.core.server.exception.NotFoundException;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
@@ -105,13 +106,13 @@ public abstract class MethodCreator {
 		placeholders.put("collection_entity_key", resourceName + "." + node.getEntityMetaData().getEntityKey());
 		placeholders.put("param_name", paramName);
 		placeholders.put("parent", parent);
-		List<String> searchParams = getPath().getSearchParams();
+		List<QueryParam> searchParams = getPath().getQueryParams();
 		StringWriter searchParamString = new StringWriter();
 		for (int i = 0; i < searchParams.size(); i++) {
 			if (i == 0) {
-				searchParamString.append("\"").append(searchParams.get(i)).append("\"");
+				searchParamString.append("\"").append(searchParams.get(i).getName()).append("\"");
 			} else {
-				searchParamString.append(", \"").append(searchParams.get(i)).append("\"");
+				searchParamString.append(", \"").append(searchParams.get(i).getName()).append("\"");
 			}
 		}
 		if (! searchParams.isEmpty()) {

@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.activejpa.entity.Model;
+import org.minnal.core.route.QueryParam;
+import org.minnal.core.route.QueryParam.Type;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -64,14 +66,17 @@ public class EntityNodePathTest {
 	@Test
 	public void shouldGetSearchParamsForPathWithSingleNode() {
 		EntityNodePath path = node.createNodePath(Arrays.asList(node));
-		assertEquals(path.getSearchParams(), Arrays.asList("code", "id", "children.code", "children.children.code", "children.children.root.code", "children.children.root.id"));
+		assertEquals(path.getQueryParams(), Arrays.asList(queryParam("code", Type.string), queryParam("id", Type.integer), 
+				queryParam("children.code", Type.string), queryParam("children.children.code", Type.string), 
+				queryParam("children.children.root.code", Type.string), queryParam("children.children.root.id", Type.integer)));
 	}
 	
 	@Test
 	public void shouldGetSearchParamsForPathWithMultipleNodes() {
 		EntityNode child = node.getChildren().iterator().next();
 		EntityNodePath path = node.createNodePath(Arrays.asList(node, child));
-		assertEquals(path.getSearchParams(), Arrays.asList("children.code", "children.children.code", "children.children.root.code", "children.children.root.id"));
+		assertEquals(path.getQueryParams(), Arrays.asList(queryParam("children.code", Type.string), queryParam("children.children.code", Type.string), 
+				queryParam("children.children.root.code", Type.string), queryParam("children.children.root.id", Type.integer)));
 	}
 	
 	@Test
@@ -79,7 +84,8 @@ public class EntityNodePathTest {
 		EntityNode child = node.getChildren().iterator().next();
 		EntityNode grandChild = child.getChildren().iterator().next();
 		EntityNodePath path = node.createNodePath(Arrays.asList(node, child, grandChild));
-		assertEquals(path.getSearchParams(), Arrays.asList("children.code", "children.root.code", "children.root.id"));
+		assertEquals(path.getQueryParams(), Arrays.asList(queryParam("children.code", Type.string), 
+				queryParam("children.root.code", Type.string), queryParam("children.root.id", Type.integer)));
 	}
 	
 	@Test
@@ -94,6 +100,10 @@ public class EntityNodePathTest {
 	public void shouldGetNameForPathWithSingleNode() {
 		EntityNodePath path = node.createNodePath(Arrays.asList(node));
 		assertEquals(path.getName(), "Parent");
+	}
+	
+	private QueryParam queryParam(String name, Type type) {
+		return new QueryParam(name, type);
 	}
 	
 	@Entity

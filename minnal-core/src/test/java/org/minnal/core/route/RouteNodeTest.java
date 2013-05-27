@@ -62,8 +62,8 @@ public class RouteNodeTest {
 	@Test
 	public void shouldAddRouteToANode() {
 		RouteNode node = new RouteNode("/");
-		node.addRoute(new Route(new RoutePattern("/dummy"), HttpMethod.GET, null, null, null));
-		node.addRoute(new Route(new RoutePattern("/dummy"), HttpMethod.POST, null, null, null));
+		node.addRoute(new Route(new RoutePattern("/dummy"), HttpMethod.GET, null, null, null, null));
+		node.addRoute(new Route(new RoutePattern("/dummy"), HttpMethod.POST, null, null, null, null));
 		assertEquals(node.getRoutes().size(), 2);
 	}
 	

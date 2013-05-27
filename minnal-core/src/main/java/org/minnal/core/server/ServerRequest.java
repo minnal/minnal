@@ -14,6 +14,7 @@ import org.minnal.core.MinnalException;
 import org.minnal.core.Request;
 import org.minnal.core.route.Route;
 import org.minnal.core.serializer.Serializer;
+import org.minnal.core.server.exception.BadRequestException;
 import org.minnal.core.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,7 +124,11 @@ public class ServerRequest extends ServerMessage implements Request {
 		if (serializer == null) {
 			throw new MinnalException("Serializer not found for the content type - " + getContentType());
 		}
-		return serializer.deserialize(getContent(), clazz);
+		try {
+			return serializer.deserialize(getContent(), clazz);
+		} catch (Exception e) {
+			throw new BadRequestException("Failed while deserializing the content", e);
+		}
 	}
 	
 	@Override

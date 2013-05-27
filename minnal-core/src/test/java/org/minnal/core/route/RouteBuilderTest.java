@@ -17,6 +17,7 @@ import org.minnal.core.Response;
 import org.minnal.core.config.ResourceConfiguration;
 import org.minnal.core.config.RouteConfiguration;
 import org.minnal.core.resource.ResourceClass;
+import org.minnal.core.route.QueryParam.Type;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -109,6 +110,29 @@ public class RouteBuilderTest {
 		assertEquals(routes.get(0).getAttributes().get("testKey1"), "testValue1");
 		assertEquals(routes.get(0).getAttributes().get("testKey2"), "testValue2");
 		assertEquals(routes.get(0).getAttributes().get("testKey3"), "testValue3");
+	}
+	
+	@Test
+	public void shouldAddQueryParamsWithName() {
+		builder.queryParam("param1");
+		assertEquals(builder.getQueryParams().iterator().next().getName(), "param1");
+		assertEquals(builder.getQueryParams().iterator().next().getType(), Type.string);
+	}
+	
+	@Test
+	public void shouldAddQueryParamsWithNameAndType() {
+		builder.queryParam("param1", Type.integer, "test param");
+		assertEquals(builder.getQueryParams().iterator().next().getName(), "param1");
+		assertEquals(builder.getQueryParams().iterator().next().getType(), Type.integer);
+		assertEquals(builder.getQueryParams().iterator().next().getDescription(), "test param");
+	}
+	
+	@Test
+	public void shouldAddQueryParamsWithNameAndDescription() {
+		builder.queryParam("param1", "test param");
+		assertEquals(builder.getQueryParams().iterator().next().getName(), "param1");
+		assertEquals(builder.getQueryParams().iterator().next().getType(), Type.string);
+		assertEquals(builder.getQueryParams().iterator().next().getDescription(), "test param");
 	}
 	
 	private interface DummyResource {
