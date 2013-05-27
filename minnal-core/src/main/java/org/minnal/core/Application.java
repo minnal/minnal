@@ -20,6 +20,8 @@ import org.minnal.core.server.exception.ApplicationException;
 import org.minnal.core.server.exception.ExceptionHandler;
 import org.minnal.core.util.Generics;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * @author ganeshs
  *
@@ -133,6 +135,9 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	}
 	
 	protected ResourceClass resource(Class<?> clazz) {
+		if (! resources.containsKey(clazz)) {
+			throw new MinnalException("Resource - " + clazz.getName() + " not found");
+		}
 		return resources.get(clazz);
 	}
 	
@@ -167,6 +172,7 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		return false;
 	}
 
+	@JsonValue
 	@Override
 	public String toString() {
 		return configuration.getName();

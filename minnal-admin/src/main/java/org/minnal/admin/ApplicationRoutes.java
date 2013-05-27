@@ -3,6 +3,7 @@
  */
 package org.minnal.admin;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,5 +38,9 @@ public class ApplicationRoutes {
 			throw new NotFoundException("Application " + applicationName + " is not found");
 		}
 		return application.getRoutes();
+	}
+	
+	public Collection<Application<ApplicationConfiguration>> getApplications() {
+		return applications.values();
 	}
 }
