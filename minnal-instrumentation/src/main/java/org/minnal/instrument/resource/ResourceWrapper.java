@@ -3,13 +3,21 @@
  */
 package org.minnal.instrument.resource;
 
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtMethod;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.javalite.common.Inflector;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.MinnalException;
 import org.minnal.core.resource.ResourceClass;
@@ -22,6 +30,27 @@ import org.minnal.instrument.entity.EntityNode.EntityNodePath;
  *
  */
 public class ResourceWrapper {
+	
+	private static Template createMethodTemplate;
+	
+	private static Template readMethodTemplate;
+	
+	private static Template deleteMethodTemplate;
+	
+	private static Template updateMethodTemplate;
+	
+	private static Template listMethodTemplate;
+	
+	static {
+		VelocityEngine ve = new VelocityEngine();
+		ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
+		ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		readMethodTemplate = ve.getTemplate("META-INF/templates/read_method.vm");
+		createMethodTemplate = ve.getTemplate("META-INF/templates/create_method.vm");
+		updateMethodTemplate = ve.getTemplate("META-INF/templates/update_method.vm");
+		deleteMethodTemplate = ve.getTemplate("META-INF/templates/delete_method.vm");
+		listMethodTemplate = ve.getTemplate("META-INF/templates/list_method.vm");
+	}
 	
 	private CtClass generatedClass;
 	
@@ -64,31 +93,31 @@ public class ResourceWrapper {
 		}
 	}
 	
-	protected MethodCreator getMethodCreator(CtClass resourceWrapper, ResourcePath resourcePath, HttpMethod method) {
+	protected Template getMethodTemplate(CtClass resourceWrapper, ResourcePath resourcePath, HttpMethod method) {
 		if (resourcePath.isBulk()) {
 			if (method.equals(HttpMethod.GET)) {
-				return new ListMethodCreator(resourceWrapper, resourcePath.getNodePath());
+				return listMethodTemplate;
 			}
 			if (method.equals(HttpMethod.POST)) {
-				return new CreateMethodCreator(resourceWrapper, resourcePath.getNodePath());
+				return createMethodTemplate;
 			}
 		} else {
 			if (method.equals(HttpMethod.GET)) {
-				return new ReadMethodCreator(resourceWrapper, resourcePath.getNodePath());
+				return readMethodTemplate;
 			}
 			if (method.equals(HttpMethod.PUT)) {
-				return new UpdateMethodCreator(resourceWrapper, resourcePath.getNodePath());
+				return updateMethodTemplate;
 			}
 			if (method.equals(HttpMethod.DELETE)) {
-				return new DeleteMethodCreator(resourceWrapper, resourcePath.getNodePath());
+				return deleteMethodTemplate;
 			}
 		}
 		return null;
 	}
 	
 	protected void addMethod(ResourcePath resourcePath, HttpMethod method) throws Exception {
-		MethodCreator creator = getMethodCreator(generatedClass, resourcePath, method);
-		if (creator == null) {
+		Template template = getMethodTemplate(generatedClass, resourcePath, method);
+		if (template == null) {
 			// TODO Can't get here. Handle if it still gets here
 			return;
 		}
@@ -97,8 +126,21 @@ public class ResourceWrapper {
 			return;
 		}
 		
-		creator.create();
-		addMethodToPath(resourcePath, method, creator.getMethodName());
+		VelocityContext context = new VelocityContext();
+		context.put("inflector", Inflector.class);
+		context.put("generator", this);
+		context.put("path", resourcePath.getNodePath());
+		
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+		String methodName = makeMethod(writer);
+		addMethodToPath(resourcePath, method, methodName);
+	}
+	
+	protected String makeMethod(StringWriter writer) throws Exception {
+		CtMethod ctMethod = CtMethod.make(writer.toString(), generatedClass);
+		generatedClass.addMethod(ctMethod);
+		return ctMethod.getName();
 	}
 	
 	protected boolean shouldCreateMethod(ResourcePath path, HttpMethod method) {

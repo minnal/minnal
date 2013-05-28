@@ -65,6 +65,10 @@
 			<groupId>org.javalite</groupId>
 			<artifactId>javalite-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -89,6 +93,11 @@
 				<groupId>org.javalite</groupId>
 				<artifactId>javalite-common</artifactId>
 				<version>1.4.6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.velocity</groupId>
+				<artifactId>velocity</artifactId>
+				<version>1.7</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

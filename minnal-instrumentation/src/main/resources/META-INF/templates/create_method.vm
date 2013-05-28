@@ -1,0 +1,56 @@
+#set($method_name = "create$path.getName()")
+public Object $method_name(org.minnal.core.Request request, org.minnal.core.Response response) {
+#set($i = 0)
+#set($search_params = "new java.util.ArrayList()")
+#if ($path.getQueryParams().size() > 0)
+	#set($search_params = "new java.util.ArrayList(new String[]{")
+	#set($j = 0)
+	#foreach($queryParam in $path.getQueryParams())
+		#if ($j == 0)
+			#set($search_params = ${search_params} + '"' + $queryParam.getName() + '"')
+		#else
+			#set($search_params = ${search_params} + ', "' + $queryParam.getName() + '"')
+		#end
+		#set($j = $j + 1)
+	#end
+	#set($search_params = ${search_params} + '})')
+#end
+#if ($path.size() > 1)
+	#foreach($node in $path)
+		#set($param_name = $param_names.get($i))
+		#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
+		#set($field_name = $node.getName())
+		
+		#set($resource_name = $inflector.camelize($node.getResourceName(), false))
+		#if($i == $path.size() - 1)
+			$model_class $field_name = ($model_class) request.getContentAs(${model_class}.class);
+			${parent}.collection("$resource_name").add($field_name);
+			${parent}.persist();
+		#else
+			#if ($parent)
+				#set($collection_entity_key = "$resource_name" + "." + "$node.getEntityMetaData().getEntityKey()")
+				$model_class $field_name = ($model_class) ${parent}.collection("$resource_name").first(new Object[]{"$collection_entity_key", request.getHeader("$param_name")});
+				if ($field_name == null) {
+					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $collection_entity_key " + request.getHeader("$param_name") + " not found");
+				}
+			#else
+				$model_class $field_name = ($model_class) ${model_class}.first(new Object[] {"$node.getEntityMetaData().getEntityKey()", request.getHeader("$param_name")});
+				if ($field_name == null) {
+					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $node.getEntityMetaData().getEntityKey() " + request.getHeader("$param_name") + " not found");
+				}
+			#end
+		#end
+		#set($parent = $field_name)
+		#set($i = $i + 1)
+	#end
+#else
+	#set($node = $path.get($i))
+	#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
+	#set($field_name = $node.getName())
+
+	$model_class $field_name = ($model_class) request.getContentAs(${model_class}.class); 
+	${field_name}.persist();
+#end
+return $field_name;
+#set ($parent = false)
+}

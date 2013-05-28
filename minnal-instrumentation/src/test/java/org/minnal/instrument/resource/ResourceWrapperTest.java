@@ -3,9 +3,9 @@
  */
 package org.minnal.instrument.resource;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.*;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -13,22 +13,29 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javassist.CtClass;
+import javassist.CtMethod;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import org.activejpa.entity.Model;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.RouteBuilder;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -45,7 +52,7 @@ public class ResourceWrapperTest {
 	private EntityNodePath path;
 	
 	@BeforeMethod
-	public void setup() {
+	public void setup() throws Exception {
 		resourceClass = mock(ResourceClass.class);
 		when(resourceClass.getResourceClass()).thenReturn((Class)DummyResource.class);
 		wrapper = spy(new ResourceWrapper(resourceClass));
@@ -57,73 +64,84 @@ public class ResourceWrapperTest {
 	
 	@Test
 	public void shouldCreateListMethodForAPath() throws Exception {
-		MethodCreator listMethodCreator = mock(ListMethodCreator.class);
-		when(listMethodCreator.getMethodName()).thenReturn("listChild");
-		doReturn(listMethodCreator).when(wrapper).getMethodCreator(any(CtClass.class), eq(new ResourcePath(path, true)), eq(HttpMethod.GET));
+		Template listMethodCreator = mock(Template.class);
+		doReturn(listMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, true)), eq(HttpMethod.GET));
+		doReturn("listMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
-		verify(listMethodCreator).create();
+		verify(listMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
 	}
 	
 	@Test
 	public void shouldCreateCreateMethodForAPath() throws Exception {
-		MethodCreator createMethodCreator = mock(CreateMethodCreator.class);
-		when(createMethodCreator.getMethodName()).thenReturn("createChild");
-		doReturn(createMethodCreator).when(wrapper).getMethodCreator(any(CtClass.class), eq(new ResourcePath(path, true)), eq(HttpMethod.POST));
+		Template createMethodCreator = mock(Template.class);
+		doReturn(createMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, true)), eq(HttpMethod.POST));
+		doReturn("createMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
-		verify(createMethodCreator).create();
+		verify(createMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
 	}
 	
 	@Test
 	public void shouldCreateReadMethodForAPath() throws Exception {
-		MethodCreator readMethodCreator = mock(ReadMethodCreator.class);
-		when(readMethodCreator.getMethodName()).thenReturn("readChild");
-		doReturn(readMethodCreator).when(wrapper).getMethodCreator(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.GET));
+		Template readMethodCreator = mock(Template.class);
+		doReturn(readMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.GET));
+		doReturn("readMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
-		verify(readMethodCreator).create();
+		verify(readMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
 	}
 	
 	@Test
 	public void shouldCreateUpdateMethodForAPath() throws Exception {
-		MethodCreator updateMethodCreator = mock(UpdateMethodCreator.class);
-		when(updateMethodCreator.getMethodName()).thenReturn("updateChild");
-		doReturn(updateMethodCreator).when(wrapper).getMethodCreator(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.PUT));
+		Template updateMethodCreator = mock(Template.class);
+		doReturn(updateMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.PUT));
+		doReturn("updateMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
-		verify(updateMethodCreator).create();
+		verify(updateMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
 	}
 	
 	@Test
 	public void shouldCreateDeleteMethodForAPath() throws Exception {
-		MethodCreator deleteMethodCreator = mock(DeleteMethodCreator.class);
-		when(deleteMethodCreator.getMethodName()).thenReturn("deleteChild");
-		doReturn(deleteMethodCreator).when(wrapper).getMethodCreator(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
+		Template deleteMethodCreator = mock(Template.class);
+		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
+		doReturn("deleteMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
-		verify(deleteMethodCreator).create();
+		verify(deleteMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
 	}
 	
 	@Test
 	public void shouldNotCreateMethodIfAlreadyFoundInResource() throws Exception {
-		MethodCreator deleteMethodCreator = mock(DeleteMethodCreator.class);
-		when(deleteMethodCreator.getMethodName()).thenReturn("deleteChild");
+		Template deleteMethodCreator = mock(Template.class);
 		when(resourceClass.hasRoute(path.getSinglePath(), HttpMethod.DELETE)).thenReturn(true);
-		doReturn(deleteMethodCreator).when(wrapper).getMethodCreator(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
+		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
+		doReturn("deleteMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
-		verify(deleteMethodCreator, never()).create();
+		verify(deleteMethodCreator, never()).merge(any(VelocityContext.class), any(StringWriter.class));
 	}
 	
 	@Test
 	public void shouldWrapResourceClass() throws Exception {
-		MethodCreator deleteMethodCreator = mock(DeleteMethodCreator.class);
-		when(deleteMethodCreator.getMethodName()).thenReturn("deleteChild");
-		doReturn(deleteMethodCreator).when(wrapper).getMethodCreator(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
+		Template deleteMethodCreator = mock(Template.class);
+		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
 		RouteBuilder builder = mock(RouteBuilder.class);
 		when(resourceClass.builder(path.getSinglePath())).thenReturn(builder);
 		when(resourceClass.builder(path.getBulkPath())).thenReturn(mock(RouteBuilder.class));
+		final AtomicInteger integer = new AtomicInteger(0);
+		doAnswer(new Answer<String>() {
+			public String answer(InvocationOnMock invocation) throws Throwable {
+				int val = integer.incrementAndGet();
+				if (val == 4) {
+					return "readParentChild";
+				} else if (val == 3) {
+					return "updateParentChild";
+				} else {
+					return "dummy";
+				}
+			}
+		}).when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
 		wrapper.wrap();
 		verify(resourceClass).setResourceClass(Class.forName(DummyResource.class.getName() + "Wrapper"));
 		verify(builder).action(HttpMethod.GET, "readParentChild");
 		verify(builder).action(HttpMethod.PUT, "updateParentChild");
-		verify(builder).action(HttpMethod.DELETE, deleteMethodCreator.getMethodName());
 	}
 }
 

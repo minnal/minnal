@@ -21,6 +21,7 @@ public class Hibernate4JsonSerializer extends DefaultJsonSerializer {
 
 	@Override
 	protected void init(Module module) {
+		super.init(module);
 		Hibernate4Module h4Module = (Hibernate4Module) module;
 		h4Module.configure(Feature.FORCE_LAZY_LOADING, true);
 	}
