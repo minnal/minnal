@@ -4,6 +4,7 @@
 package org.minnal.instrument.resource;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,6 +21,8 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.javalite.common.Inflector;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.MinnalException;
+import org.minnal.core.Request;
+import org.minnal.core.Response;
 import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.QueryParam;
 import org.minnal.core.route.RouteBuilder;
@@ -123,6 +126,10 @@ public class ResourceWrapper {
 			return;
 		}
 		
+		if (resourcePath.getNodePath().getBulkPath().equals("/facilities/{facility_id}/station_mappings")) {
+			System.out.println();
+		}
+		
 		if (! shouldCreateMethod(resourcePath, method)) {
 			return;
 		}
@@ -143,9 +150,27 @@ public class ResourceWrapper {
 		addMethodToPath(resourcePath, method, methodName);
 	}
 	
+	protected boolean methodExists(String methodName) {
+		try {
+			CtMethod[] methods = generatedClass.getMethods();
+			CtClass[] params = new CtClass[]{ClassPool.getDefault().get(Request.class.getName()), 
+					ClassPool.getDefault().get(Response.class.getName())};
+			for (CtMethod method : methods) {
+				if (method.getName().equals(methodName) && Arrays.equals(method.getParameterTypes(), params)) {
+					return true;
+				}
+			}
+			return false;
+		} catch (javassist.NotFoundException e) {
+			return false;
+		}
+	}
+	
 	protected String makeMethod(StringWriter writer) throws Exception {
 		CtMethod ctMethod = CtMethod.make(writer.toString(), generatedClass);
-		generatedClass.addMethod(ctMethod);
+		if (! methodExists(ctMethod.getName())) {
+			generatedClass.addMethod(ctMethod);
+		}
 		return ctMethod.getName();
 	}
 	
