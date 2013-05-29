@@ -23,6 +23,7 @@ import org.minnal.core.MinnalException;
 import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.QueryParam;
 import org.minnal.core.route.RouteBuilder;
+import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 
 /**
@@ -130,6 +131,11 @@ public class ResourceWrapper {
 		context.put("inflector", Inflector.class);
 		context.put("generator", this);
 		context.put("path", resourcePath.getNodePath());
+		if (resourcePath.isBulk()) {
+			context.put("param_names", new RoutePattern(resourcePath.getNodePath().getBulkPath()).getParameterNames());
+		} else {
+			context.put("param_names", new RoutePattern(resourcePath.getNodePath().getSinglePath()).getParameterNames());
+		}
 		
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);

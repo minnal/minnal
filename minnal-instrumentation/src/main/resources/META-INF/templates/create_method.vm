@@ -17,7 +17,9 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 #end
 #if ($path.size() > 1)
 	#foreach($node in $path)
-		#set($param_name = $param_names.get($i))
+		#if ($param_names.size() > $i)
+			#set($param_name = $param_names.get($i))
+		#end
 		#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
 		#set($field_name = $node.getName())
 		
