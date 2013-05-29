@@ -4,6 +4,8 @@
 package org.minnal.instrument;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.minnal.core.Application;
@@ -29,8 +31,8 @@ public class ApplicationEnhancer {
 	}
 	
 	public void enhance() {
-		List<Class<?>> entities = getScannedClasses(new AggregateRootScanner(application.getConfiguration().getPackagesToScan().toArray(new String[0])));
-		List<Class<?>> resources = getScannedClasses(new ResourceScanner(application.getConfiguration().getPackagesToScan().toArray(new String[0])));
+		List<Class> entities = getScannedClasses(new AggregateRootScanner(application.getConfiguration().getPackagesToScan().toArray(new String[0])));
+		List<Class> resources = getScannedClasses(new ResourceScanner(application.getConfiguration().getPackagesToScan().toArray(new String[0])));
 		
 		for (ResourceClass resource : application.getResources()) {
 			if (resource.getEntityClass() != null) {
@@ -60,8 +62,8 @@ public class ApplicationEnhancer {
 		return new ResourceEnhancer(resourceClass);
 	}
 	
-	protected List<Class<?>> getScannedClasses(Scanner<Class<?>> scanner) {
-		final List<Class<?>> classes = new ArrayList<Class<?>>();
+	protected List<Class> getScannedClasses(Scanner<Class<?>> scanner) {
+		final List<Class> classes = new ArrayList<Class>();
 		if (! application.getConfiguration().getPackagesToScan().isEmpty()) {
 			scanner.scan(new Listener<Class<?>>() {
 				public void handle(Class<?> t) {
@@ -69,6 +71,11 @@ public class ApplicationEnhancer {
 				}
 			});
 		}
+		Collections.sort(classes, new Comparator<Class>() {
+			public int compare(Class o1, Class o2) {
+				return o1.getSimpleName().compareTo(o2.getSimpleName());
+			}
+		});
 		return classes;
 	}
 }

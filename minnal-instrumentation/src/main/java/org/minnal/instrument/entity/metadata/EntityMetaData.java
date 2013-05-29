@@ -5,12 +5,13 @@ package org.minnal.instrument.entity.metadata;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author ganeshs
  *
  */
-public class EntityMetaData {
+public class EntityMetaData extends MetaData {
 
 	private Class<?> entityClass;
 	
@@ -25,6 +26,7 @@ public class EntityMetaData {
 	private Set<AssociationMetaData> associations = new HashSet<AssociationMetaData>();
 	
 	public EntityMetaData(Class<?> entityClass) {
+		super(entityClass.getSimpleName());
 		this.entityClass = entityClass;
 	}
 	
@@ -49,15 +51,21 @@ public class EntityMetaData {
 	}
 
 	public Set<ParameterMetaData> getSearchFields() {
-		return searchFields;
+		TreeSet<ParameterMetaData> treeSet = new TreeSet<ParameterMetaData>(new MetaDataComparator());
+		treeSet.addAll(searchFields);
+		return treeSet;
 	}
 
 	public Set<ActionMetaData> getActionMethods() {
-		return actionMethods;
+		TreeSet<ActionMetaData> treeSet = new TreeSet<ActionMetaData>(new MetaDataComparator());
+		treeSet.addAll(actionMethods);
+		return treeSet;
 	}
 
 	public Set<CollectionMetaData> getCollections() {
-		return collections;
+		TreeSet<CollectionMetaData> treeSet = new TreeSet<CollectionMetaData>(new MetaDataComparator());
+		treeSet.addAll(collections);
+		return treeSet;
 	}
 
 	/**
@@ -75,6 +83,8 @@ public class EntityMetaData {
 	 * @return the associations
 	 */
 	public Set<AssociationMetaData> getAssociations() {
-		return associations;
+		TreeSet<AssociationMetaData> treeSet = new TreeSet<AssociationMetaData>(new MetaDataComparator());
+		treeSet.addAll(associations);
+		return treeSet;
 	}
 }

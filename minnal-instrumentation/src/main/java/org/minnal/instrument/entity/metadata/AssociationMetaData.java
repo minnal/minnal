@@ -7,10 +7,8 @@ package org.minnal.instrument.entity.metadata;
  * @author ganeshs
  *
  */
-public class AssociationMetaData {
+public class AssociationMetaData extends MetaData {
 
-	private String name;
-	
 	private Class<?> type;
 	
 	private boolean entity;
@@ -21,23 +19,9 @@ public class AssociationMetaData {
 	 * @param entity
 	 */
 	public AssociationMetaData(String name, Class<?> type, boolean entity) {
-		this.name = name;
+		super(name);
 		this.type = type;
 		this.entity = entity;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	/**
@@ -73,7 +57,7 @@ public class AssociationMetaData {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (entity ? 1231 : 1237);
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -89,10 +73,10 @@ public class AssociationMetaData {
 		AssociationMetaData other = (AssociationMetaData) obj;
 		if (entity != other.entity)
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (getName() == null) {
+			if (other.getName() != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!getName().equals(other.getName()))
 			return false;
 		if (type == null) {
 			if (other.type != null)

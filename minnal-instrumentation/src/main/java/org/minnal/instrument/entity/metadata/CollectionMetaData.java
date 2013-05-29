@@ -7,10 +7,8 @@ package org.minnal.instrument.entity.metadata;
  * @author ganeshs
  *
  */
-public class CollectionMetaData {
+public class CollectionMetaData extends MetaData {
 
-	private String name;
-	
 	private Class<?> elementType;
 	
 	private Class<?> type;
@@ -18,14 +16,10 @@ public class CollectionMetaData {
 	private boolean entity;
 	
 	public CollectionMetaData(String name, Class<?> elementType, Class<?> type, boolean entity) {
-		this.name = name;
+		super(name);
 		this.elementType = elementType;
 		this.type = type;
 		this.entity = entity;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public Class<?> getElementType() {
@@ -50,7 +44,7 @@ public class CollectionMetaData {
 		result = prime * result
 				+ ((elementType == null) ? 0 : elementType.hashCode());
 		result = prime * result + (entity ? 1231 : 1237);
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -71,10 +65,10 @@ public class CollectionMetaData {
 			return false;
 		if (entity != other.entity)
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (getName() == null) {
+			if (other.getName() != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!getName().equals(other.getName()))
 			return false;
 		if (type == null) {
 			if (other.type != null)

@@ -12,21 +12,15 @@ import java.util.Set;
  * @author ganeshs
  *
  */
-public class ActionMetaData {
-	
-	private String name;
+public class ActionMetaData extends MetaData {
 	
 	private Set<ParameterMetaData> parameters = new HashSet<ParameterMetaData>();
 	
 	private Method method;
 	
 	public ActionMetaData(String name, Method method) {
-		this.name = name;
+		super(name);
 		this.method = method;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public Set<ParameterMetaData> getParameters() {
@@ -46,7 +40,7 @@ public class ActionMetaData {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		result = prime * result
 				+ ((parameters == null) ? 0 : parameters.hashCode());
 		return result;
@@ -66,10 +60,10 @@ public class ActionMetaData {
 				return false;
 		} else if (!method.equals(other.method))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (getName() == null) {
+			if (other.getName() != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!getName().equals(other.getName()))
 			return false;
 		if (parameters == null) {
 			if (other.parameters != null)

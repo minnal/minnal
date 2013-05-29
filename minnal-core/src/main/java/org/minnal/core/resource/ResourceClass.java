@@ -5,6 +5,7 @@ package org.minnal.core.resource;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
@@ -133,4 +134,12 @@ public class ResourceClass {
 		return true;
 	}
 
+	public static class ResourceClassComparator implements Comparator<ResourceClass> {
+		
+		public int compare(ResourceClass o1, ResourceClass o2) {
+			String name1 = o1.getResourceClass() != null ? o1.getResourceClass().getSimpleName() : o1.getEntityClass().getSimpleName();
+			String name2 = o2.getResourceClass() != null ? o2.getResourceClass().getSimpleName() : o2.getEntityClass().getSimpleName();
+			return name1.compareTo(name2);
+		}
+	}
 }
