@@ -9,8 +9,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.activejpa.entity.Model;
-
 /**
  * Marks the type as a resource and associates it with a root entity
  * 
@@ -27,5 +25,5 @@ public @interface Resource {
 	 * 
 	 * @return
 	 */
-	Class<? extends Model> value();
+	Class<?> value();
 }
