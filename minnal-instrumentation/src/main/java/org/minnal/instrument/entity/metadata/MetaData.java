@@ -3,7 +3,6 @@
  */
 package org.minnal.instrument.entity.metadata;
 
-import java.util.Comparator;
 
 /**
  * @author ganeshs
@@ -57,13 +56,5 @@ public abstract class MetaData {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
-	}
-	
-	public static class MetaDataComparator implements Comparator<MetaData> {
-
-		public int compare(MetaData o1, MetaData o2) {
-			return o1.getName().compareTo(o2.getName());
-		}
-		
 	}
 }

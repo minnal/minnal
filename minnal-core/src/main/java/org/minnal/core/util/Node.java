@@ -140,7 +140,9 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 					stack.push(child);
 				}
 			} else {
-				list.removeLast();
+				while(! list.isEmpty() && ! list.getLast().hasChildren()) {
+					list.removeLast();
+				}
 			}
 		}
 	}

@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,13 +49,20 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	}
 	
 	public void construct() {
-		for (CollectionMetaData collection : getValue().getCollections()) {
-			if (! collection.isEntity()) {
-				continue;
-			}
-			EntityNode child = new EntityNode(collection.getElementType(), Inflector.singularize(collection.getName()));
-			if (addChild(child) != null) {
-				child.construct();
+		LinkedList<EntityNode> queue = new LinkedList<EntityNode>();
+		queue.offer(this);
+		
+		while (! queue.isEmpty()) {
+			EntityNode node = queue.poll();
+			
+			for (CollectionMetaData collection : node.getValue().getCollections()) {
+				if (! collection.isEntity()) {
+					continue;
+				}
+				EntityNode child = new EntityNode(collection.getElementType(), Inflector.singularize(collection.getName()));
+				if (node.addChild(child) != null) {
+					queue.offer(child);
+				}
 			}
 		}
 	}
@@ -150,7 +158,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 				pathName.append(node.getName());
 				writer.append("/").append(name);
 				if (iterator.hasNext()) {
-					writer.append("/{" + node.getName() + "_id}");
+					writer.append("/{" + Inflector.underscore(node.getName()) + "_id}");
 					pathName.append("_");
 				}
 				

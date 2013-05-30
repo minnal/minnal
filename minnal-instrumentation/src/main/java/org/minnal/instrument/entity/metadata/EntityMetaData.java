@@ -5,7 +5,6 @@ package org.minnal.instrument.entity.metadata;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * @author ganeshs
@@ -51,21 +50,15 @@ public class EntityMetaData extends MetaData {
 	}
 
 	public Set<ParameterMetaData> getSearchFields() {
-		TreeSet<ParameterMetaData> treeSet = new TreeSet<ParameterMetaData>(new MetaDataComparator());
-		treeSet.addAll(searchFields);
-		return treeSet;
+		return searchFields;
 	}
 
 	public Set<ActionMetaData> getActionMethods() {
-		TreeSet<ActionMetaData> treeSet = new TreeSet<ActionMetaData>(new MetaDataComparator());
-		treeSet.addAll(actionMethods);
-		return treeSet;
+		return actionMethods;
 	}
 
 	public Set<CollectionMetaData> getCollections() {
-		TreeSet<CollectionMetaData> treeSet = new TreeSet<CollectionMetaData>(new MetaDataComparator());
-		treeSet.addAll(collections);
-		return treeSet;
+		return collections;
 	}
 
 	/**
@@ -83,8 +76,6 @@ public class EntityMetaData extends MetaData {
 	 * @return the associations
 	 */
 	public Set<AssociationMetaData> getAssociations() {
-		TreeSet<AssociationMetaData> treeSet = new TreeSet<AssociationMetaData>(new MetaDataComparator());
-		treeSet.addAll(associations);
-		return treeSet;
+		return associations;
 	}
 }
