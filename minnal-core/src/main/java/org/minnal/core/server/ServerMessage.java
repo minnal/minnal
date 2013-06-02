@@ -16,6 +16,10 @@ import org.minnal.core.Message;
 import org.minnal.core.route.Route;
 import org.minnal.core.serializer.Serializer;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 /**
@@ -99,4 +103,21 @@ public abstract class ServerMessage implements Message {
 		return resolvedRoute.getConfiguration().getSerializer(type);
 	}
 
+	public String getCookie(String name) {
+		return getCookies().get(name);
+	}
+	
+	protected abstract String getCookieHeaderName();
+	
+	public Map<String, String> getCookies() {
+		String cookies = getHeader(getCookieHeaderName());
+		if (Strings.isNullOrEmpty(cookies)) {
+			return Maps.newHashMap();
+		}
+		return Splitter.on(";").omitEmptyStrings().trimResults().withKeyValueSeparator("=").split(cookies);
+	}
+	
+	public void addCookies(Map<String, String> cookies) {
+		addHeader(getCookieHeaderName(), Joiner.on(";").withKeyValueSeparator("=").join(cookies));
+	}
 }

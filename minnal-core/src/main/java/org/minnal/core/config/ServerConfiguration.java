@@ -3,49 +3,42 @@
  */
 package org.minnal.core.config;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author ganeshs
  *
  */
 public class ServerConfiguration {
 
-	private int ioWorkerThreadCount;
-	
-	private int httpPort = 3000;
+	@JsonProperty("connectors")
+	private List<ConnectorConfiguration> connectorConfigurations;
 	
 	public ServerConfiguration() {
 	}
 
-	public ServerConfiguration(int httpPort, int ioWorkerThreadCount) {
-		this.ioWorkerThreadCount = ioWorkerThreadCount;
-		this.httpPort = httpPort;
+	/**
+	 * @param connectorConfigurations
+	 */
+	public ServerConfiguration(List<ConnectorConfiguration> connectorConfigurations) {
+		this.connectorConfigurations = connectorConfigurations;
 	}
 
 	/**
-	 * @return the httpPort
+	 * @return the connectorConfigurations
 	 */
-	public int getHttpPort() {
-		return httpPort;
+	public List<ConnectorConfiguration> getConnectorConfigurations() {
+		return connectorConfigurations;
 	}
 
 	/**
-	 * @param httpPort the httpPort to set
+	 * @param connectorConfigurations the connectorConfigurations to set
 	 */
-	public void setHttpPort(int httpPort) {
-		this.httpPort = httpPort;
+	public void setConnectorConfigurations(
+			List<ConnectorConfiguration> connectorConfigurations) {
+		this.connectorConfigurations = connectorConfigurations;
 	}
 
-	/**
-	 * @return the ioWorkerThreadCount
-	 */
-	public int getIoWorkerThreadCount() {
-		return ioWorkerThreadCount;
-	}
-
-	/**
-	 * @param ioWorkerThreadCount the ioWorkerThreadCount to set
-	 */
-	public void setIoWorkerThreadCount(int ioWorkerThreadCount) {
-		this.ioWorkerThreadCount = ioWorkerThreadCount;
-	}
 }

@@ -62,6 +62,8 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	}
 	
 	public void init() {
+		registerPlugins();
+		addFilters();
 		defineResources();
 		defineRoutes();
 		
@@ -83,6 +85,10 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 			plugin.destroy();
 		}
 	}
+	
+	protected abstract void registerPlugins();
+	
+	protected abstract void addFilters();
 	
 	protected abstract void defineRoutes();
 	

@@ -3,83 +3,55 @@
  */
 package org.minnal.core.server;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.channel.ChannelFutureListener;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
-import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
-import org.jboss.netty.handler.codec.http.HttpContentCompressor;
-import org.jboss.netty.handler.codec.http.HttpContentDecompressor;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
-import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.jboss.netty.handler.stream.ChunkedWriteHandler;
+import org.jboss.netty.logging.InternalLoggerFactory;
+import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.minnal.core.Bundle;
 import org.minnal.core.Container;
 import org.minnal.core.Router;
+import org.minnal.core.config.ConnectorConfiguration;
+import org.minnal.core.config.ConnectorConfiguration.Scheme;
 import org.minnal.core.config.ServerConfiguration;
 
 /**
+ * A simple http server over netty that deletes all the incoming requests to {@link Router}
+ * 
  * @author ganeshs
  *
  */
-public class Server extends SimpleChannelUpstreamHandler implements Bundle {
+public class Server implements Bundle {
 
-	private ServerBootstrap bootstrap;
-	
-	private Router router;
-	
 	private ServerConfiguration configuration;
+	
+	private List<AbstractHttpConnector> connectors = new ArrayList<AbstractHttpConnector>();
 	
 	public void init(Container container) {
 		configuration = container.getConfiguration().getServerConfiguration();
-		router = container.getRouter();
-		if (configuration.getIoWorkerThreadCount() > 0) {
-			bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newCachedThreadPool(),
-					Executors.newCachedThreadPool(), configuration.getIoWorkerThreadCount()));
-		} else {
-			bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newCachedThreadPool(),
-					Executors.newCachedThreadPool()));
-		}
-		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-			public ChannelPipeline getPipeline() throws Exception {
-				return Channels.pipeline(new HttpRequestDecoder(), new HttpResponseEncoder(), new ChunkedWriteHandler(), 
-						new HttpContentDecompressor(), new HttpContentCompressor(), Server.this);
+		AbstractHttpConnector connector = null;
+		
+		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
+		for (ConnectorConfiguration connectorConfig : configuration.getConnectorConfigurations()) {
+			if (connectorConfig.getScheme() == Scheme.https) {
+				connector = new HttpsConnector(connectorConfig, container.getRouter());
+			} else {
+				connector = new HttpConnector(connectorConfig, container.getRouter());
 			}
-		});
+			connector.initialize();
+			connectors.add(connector);
+		}
 	}
 	
 	public void start() {
-		bootstrap.bind(new InetSocketAddress(configuration.getHttpPort()));
+		for (AbstractHttpConnector connector : connectors) {
+			connector.start();
+		}
 	}
 	
 	public void stop() {
-		bootstrap.shutdown();
-	}
-	
-	@Override
-	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
-		ServerRequest request = new ServerRequest((HttpRequest) e.getMessage(), e.getRemoteAddress());
-		ServerResponse response = new ServerResponse(request, new DefaultHttpResponse(((HttpRequest) e.getMessage()).getProtocolVersion(), 
-				HttpResponseStatus.PROCESSING)); // Setting temp response. Will override while serializing response
-		MessageContext context = new MessageContext(request, response);
-		ctx.setAttachment(context);
-		router.route(context);
-		context.getResponse().write(ctx.getChannel()).addListener(ChannelFutureListener.CLOSE);
-	}
-	
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
-		super.exceptionCaught(ctx, e);
+		for (AbstractHttpConnector connector : connectors) {
+			connector.stop();
+		}
 	}
 }

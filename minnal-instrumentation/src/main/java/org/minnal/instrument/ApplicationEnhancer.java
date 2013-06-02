@@ -33,11 +33,11 @@ public class ApplicationEnhancer {
 		List<Class<?>> resources = getScannedClasses(new ResourceScanner(application.getConfiguration().getPackagesToScan().toArray(new String[0])));
 		
 		for (ResourceClass resource : application.getResources()) {
+			resources.remove(resource.getResourceClass());
 			if (resource.getEntityClass() != null) {
 				entities.remove(resource.getEntityClass());
+				createEnhancer(resource).enhance();
 			}
-			resources.remove(resource.getResourceClass());
-			createEnhancer(resource).enhance();
 		}
 		
 		for (Class<?> resource : resources) {

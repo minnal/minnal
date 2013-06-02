@@ -25,5 +25,13 @@ public class AdminApplication extends Application<AdminConfiguration> {
 		addResource(RouteResource.class);
 		addResource(ApplicationResource.class);
 	}
+	
+	@Override
+	protected void addFilters() {
+	}
+	
+	@Override
+	protected void registerPlugins() {
+	}
 
 }

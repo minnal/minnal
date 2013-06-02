@@ -6,7 +6,6 @@ package org.minnal.example;
 import org.minnal.core.Application;
 import org.minnal.core.MinnalException;
 import org.minnal.core.server.exception.InternalServerErrorException;
-import org.minnal.example.resource.OrderResource;
 import org.minnal.jpa.JPAPlugin;
 
 /**
@@ -21,12 +20,18 @@ public class OrderApplication extends Application<OrderConfiguration> {
 
 	@Override
 	protected void defineRoutes() {
-//		resource(OrderResource.class).builder("/hello").action(HttpMethod.GET, "hello");
 	}
 
 	@Override
 	protected void defineResources() {
-//		addResource(OrderResource.class);
+	}
+	
+	@Override
+	protected void addFilters() {
+	}
+	
+	@Override
+	protected void registerPlugins() {
 	}
 	
 	@Override

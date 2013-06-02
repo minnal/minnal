@@ -35,4 +35,9 @@ public interface Message {
 	
 	Route getResolvedRoute();
 	
+	Map<String, String> getCookies();
+	
+	String getCookie(String name);
+	
+	void addCookies(Map<String, String> cookies);
 }

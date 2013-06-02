@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 /**
@@ -78,6 +77,11 @@ public class ServerResponse extends ServerMessage implements Response {
 	
 	public boolean isContentSet() {
 		return contentSet;
+	}
+	
+	@Override
+	protected String getCookieHeaderName() {
+		return HttpHeaders.Names.SET_COOKIE;
 	}
 
 	@Override

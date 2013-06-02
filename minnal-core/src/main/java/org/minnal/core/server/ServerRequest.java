@@ -48,16 +48,16 @@ public class ServerRequest extends ServerMessage implements Request {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ServerRequest.class);
 	
-	public ServerRequest(HttpRequest request, SocketAddress remoteAddress) {
+	public ServerRequest(HttpRequest request, String scheme, SocketAddress remoteAddress) {
 		super(request);
 		this.remoteAddress = remoteAddress;
-		init(request);
+		init(request, scheme);
 	}
 	
-	private void init(HttpRequest request) {
+	private void init(HttpRequest request, String scheme) {
 		logger.trace("Initializing the request {}", request);
 		this.request = request;
-		uri = HttpUtil.createURI(request.getUri());
+		uri = HttpUtil.createURI(scheme, getHeader(HttpHeaders.Names.HOST), request.getUri());
 		if (containsHeader(HttpHeaders.Names.CONTENT_TYPE)) {
 			contentType = MediaType.parse(getHeader(HttpHeaders.Names.CONTENT_TYPE));
 		}
@@ -149,7 +149,12 @@ public class ServerRequest extends ServerMessage implements Request {
 	public void setSupportedAccepts(Set<MediaType> supportedAccepts) {
 		this.supportedAccepts = supportedAccepts;
 	}
-
+	
+	@Override
+	protected String getCookieHeaderName() {
+		return HttpHeaders.Names.COOKIE;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
