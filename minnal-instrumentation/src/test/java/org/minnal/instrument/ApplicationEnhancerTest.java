@@ -15,6 +15,7 @@ import java.util.Arrays;
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.resource.ResourceClass;
+import org.minnal.instrument.entity.DummyModel;
 import org.minnal.instrument.resource.ResourceEnhancer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -38,6 +39,8 @@ public class ApplicationEnhancerTest {
 		application = mock(Application.class);
 		rc1 = mock(ResourceClass.class);
 		rc2 = mock(ResourceClass.class);
+		when(rc1.getEntityClass()).thenReturn((Class) DummyModel.class);
+		when(rc2.getEntityClass()).thenReturn((Class) DummyModel.class);
 		when(application.getResources()).thenReturn(Arrays.asList(rc1, rc2));
 		ApplicationConfiguration configuration = mock(ApplicationConfiguration.class);
 		when(configuration.getPackagesToScan()).thenReturn(Arrays.asList("org.minnal.instrument"));

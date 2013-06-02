@@ -48,6 +48,10 @@ public class ServerRequest extends ServerMessage implements Request {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ServerRequest.class);
 	
+	public ServerRequest(HttpRequest request, SocketAddress remoteAddress) {
+		this(request, "http", remoteAddress);
+	}
+	
 	public ServerRequest(HttpRequest request, String scheme, SocketAddress remoteAddress) {
 		super(request);
 		this.remoteAddress = remoteAddress;
