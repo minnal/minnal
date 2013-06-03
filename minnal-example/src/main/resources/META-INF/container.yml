@@ -3,10 +3,10 @@ basePath: /
 
 # Http server configuration
 server:
-# The http port to bind to
-  httpPort: 8080
-# The total number of IO worker threads to start
-  ioWorkerThreadCount: 10
+  connectors:
+    - port: 8080
+      scheme: http
+      ioWorkerThreadCount: 10
 
 # The name of the container 
 name: My Container

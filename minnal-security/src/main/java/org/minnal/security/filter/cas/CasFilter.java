@@ -19,15 +19,18 @@ import org.slf4j.LoggerFactory;
  */
 public class CasFilter extends AbstractAuthenticationFilter<CasCredential, CasUser, CasAuthenticator> {
 	
+	private CasAuthenticator authenticator;
+	
 	private static final Logger logger = LoggerFactory.getLogger(CasFilter.class);
 	
 	public CasFilter(SecurityConfiguration configuration) {
 		super(configuration);
+		authenticator = new CasAuthenticator(configuration.getCasConfiguration());
 	}
 	
 	@Override
 	protected CasAuthenticator getAuthenticator() {
-		return new CasAuthenticator(getConfiguration().getCasConfiguration());
+		return authenticator;
 	}
 
 	@Override
