@@ -10,6 +10,7 @@
 
 	<modules>
 		<module>minnal-core</module>
+		<module>minnal-admin</module>
     <module>minnal-example</module>
 		<module>minnal-jpa</module>
 		<module>minnal-test</module>
