@@ -39,6 +39,8 @@ public class JpaSession extends Model implements Session {
 	
 	private String data;
 	
+	private String serviceTicket;
+	
 	private Timestamp createdAt;
 	
 	public JpaSession() {
@@ -120,6 +122,20 @@ public class JpaSession extends Model implements Session {
 		return new Timestamp(System.currentTimeMillis() - timeoutInSecs * 1000).after(createdAt);
 	}
 	
+	/**
+	 * @return the serviceTicket
+	 */
+	public String getServiceTicket() {
+		return serviceTicket;
+	}
+
+	/**
+	 * @param serviceTicket the serviceTicket to set
+	 */
+	public void setServiceTicket(String serviceTicket) {
+		this.serviceTicket = serviceTicket;
+	}
+
 	@Override
 	public void persist() {
 		encodeData();

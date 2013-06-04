@@ -5,6 +5,7 @@ package org.minnal.core.server;
 
 import java.net.SocketAddress;
 import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.netty.handler.codec.http.HttpHeaders;
@@ -64,19 +65,29 @@ public class ServerRequest extends ServerMessage implements Request {
 		uri = HttpUtil.createURI(scheme, getHeader(HttpHeaders.Names.HOST), request.getUri());
 		if (containsHeader(HttpHeaders.Names.CONTENT_TYPE)) {
 			contentType = MediaType.parse(getHeader(HttpHeaders.Names.CONTENT_TYPE));
+			if (! contentType.parameters().containsKey(DEFAULT_CHARSET)) {
+				contentType = contentType.withoutParameters().withCharset(DEFAULT_CHARSET);
+			}
 		}
 		if (containsHeader(HttpHeaders.Names.ACCEPT)) {
 			accepts = FluentIterable.from(Splitter.on(",").split(getHeader(HttpHeaders.Names.ACCEPT))).transform(new Function<String, MediaType>() {
 				public MediaType apply(String input) {
 					MediaType type = MediaType.parse(input.trim());
-					if (! type.parameters().containsKey("UTF-8")) {
+					if (! type.parameters().containsKey(DEFAULT_CHARSET)) {
 						return type.withoutParameters().withCharset(DEFAULT_CHARSET);
 					}
 					return type;
 				}
 			}).toSet();
 		}
+		populateRequestParameters();
+	}
+	
+	private void populateRequestParameters() {
 		addHeaders(HttpUtil.getQueryParameters(uri));
+		if (contentType != null && contentType.is(MediaType.FORM_DATA)) {
+			addHeaders(Serializer.getSerializer(contentType).deserialize(getContent(), Map.class));
+		}
 	}
 
 	/**

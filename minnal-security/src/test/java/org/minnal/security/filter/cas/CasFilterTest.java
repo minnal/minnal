@@ -11,14 +11,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import static org.testng.Assert.*;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 
 import org.activejpa.entity.testng.BaseModelTest;
 import org.activejpa.jpa.JPA;
-import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
 import org.jasig.cas.client.ssl.AnyHostnameVerifier;
 import org.minnal.core.FilterChain;
 import org.minnal.core.Request;
@@ -31,6 +29,7 @@ import org.minnal.security.auth.cas.CasCredential;
 import org.minnal.security.auth.cas.CasUser;
 import org.minnal.security.config.CasConfiguration;
 import org.minnal.security.config.SecurityConfiguration;
+import org.minnal.security.session.JpaSession;
 import org.minnal.security.session.Session;
 import org.minnal.security.session.SessionStore;
 import org.testng.annotations.BeforeClass;
@@ -58,7 +57,7 @@ public class CasFilterTest extends BaseModelTest {
 	
 	private CasAuthenticator authenticator;
 	
-	private Session session;
+	private JpaSession session;
 	
 	private CasUser user;
 	
@@ -72,7 +71,7 @@ public class CasFilterTest extends BaseModelTest {
 		sessionStore = mock(SessionStore.class);
 		CasConfiguration casConfiguration = new CasConfiguration("https://localhost:8443", "https://localhost:443/proxyCallback", mock(AbstractPgtTicketStorage.class), new AnyHostnameVerifier());
 		configuration = new SecurityConfiguration(casConfiguration, sessionStore, 100);
-		session = mock(Session.class);
+		session = mock(JpaSession.class);
 		user = mock(CasUser.class);
 		request = mock(Request.class);
 		when(request.getUri()).thenReturn(new URI("http://localhost:8080/orders"));
@@ -87,7 +86,7 @@ public class CasFilterTest extends BaseModelTest {
 	@Test
 	public void shouldRedirectUserToCasServerIfTicketIsMissing() {
 		when(request.getHeader("ticket")).thenReturn(null);
-		Session session = mock(Session.class);
+		Session session = mock(JpaSession.class);
 		when(sessionStore.createSession(anyString())).thenReturn(session);
 		when(authenticator.authenticate(any(CasCredential.class))).thenReturn(null);
 		try {
@@ -123,6 +122,15 @@ public class CasFilterTest extends BaseModelTest {
 		when(authenticator.authenticate(any(CasCredential.class))).thenReturn(user);
 		filter.doFilter(request, response, chain);
 		verify(chain).doFilter(request, response);
+	}
+	
+	@Test
+	public void shouldSetServiceTicketOnSuccessfulAuth() {
+		when(session.getId()).thenReturn("test123");
+		when(sessionStore.createSession(anyString())).thenReturn(session);
+		when(authenticator.authenticate(any(CasCredential.class))).thenReturn(user);
+		filter.doFilter(request, response, chain);
+		verify(session).setServiceTicket("test1234");
 	}
 
 	@Test

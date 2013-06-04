@@ -22,12 +22,16 @@ import org.minnal.core.MinnalException;
 import org.minnal.core.Router;
 import org.minnal.core.config.ConnectorConfiguration;
 import org.minnal.core.config.SSLConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author ganeshs
  *
  */
 public class HttpsConnector extends AbstractHttpConnector {
+	
+	private static final Logger logger = LoggerFactory.getLogger(HttpsConnector.class);
 	
 	/**
 	 * @param configuration
@@ -36,12 +40,14 @@ public class HttpsConnector extends AbstractHttpConnector {
 	public HttpsConnector(ConnectorConfiguration configuration, Router router) {
 		super(configuration, router);
 		if (configuration.getSslConfiguration() == null) {
+			logger.error("SSL configuration is missing for https connector");
 			throw new MinnalException("SSL configuration is missing for https scheme");
 		}
 	}
 
 	@Override
 	protected void addChannelHandlers(ChannelPipeline pipeline) {
+		logger.debug("Adding ssl handler to the pipeline");
 		SSLEngine engine = createSslEngine();
 		engine.setUseClientMode(false);
 		pipeline.addFirst("ssl", new SslHandler(engine));
@@ -49,11 +55,8 @@ public class HttpsConnector extends AbstractHttpConnector {
 	
 	@Override
 	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-		// Get the SslHandler in the current pipeline.
-		// We added it in SecureChatPipelineFactory.
+		logger.trace("Performing a handshake on channel connect");
 		final SslHandler sslHandler = ctx.getPipeline().get(SslHandler.class);
-		
-		// Get notified when SSL handshake is done.
 		ChannelFuture future = sslHandler.handshake();
 		future.addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
 	}
@@ -62,9 +65,11 @@ public class HttpsConnector extends AbstractHttpConnector {
 	 * @return
 	 */
 	protected SSLEngine createSslEngine() {
+		logger.debug("Creating a SSL engine from the SSL context");
 		String algorithm = Security.getProperty("ssl.KeyManagerFactory.algorithm");
 		if (algorithm == null) {
 			algorithm = "SunX509";
+			logger.trace("ssl.KeyManagerFactory.algorithm algorithm is not set. Defaulting to {}", algorithm);
 		}
 		SSLContext serverContext = null;
 		SSLConfiguration configuration = getConfiguration().getSslConfiguration();
@@ -81,6 +86,7 @@ public class HttpsConnector extends AbstractHttpConnector {
 			serverContext = SSLContext.getInstance(configuration.getProtocol());
 			serverContext.init(kmf.getKeyManagers(), null, null);
 		} catch (Exception e) {
+			logger.error("Failed while initializing the ssl context", e);
 			throw new MinnalException("Failed to initialize the ssl context", e);
 		}
 		return serverContext.createSSLEngine();

@@ -25,6 +25,8 @@ public abstract class Serializer {
 	
 	public static final Serializer DEFAULT_TEXT_SERIALIZER = new DefaultTextSerializer();
 	
+	public static final Serializer DEFAULT_FORM_SERIALIZER = new DefaultFormSerializer();
+	
 	public abstract ChannelBuffer serialize(Object object);
 	
 	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);
@@ -32,14 +34,17 @@ public abstract class Serializer {
 	public abstract <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType);
 	
 	public static Serializer getSerializer(MediaType mediaType) {
-		if (mediaType.equals(MediaType.JSON_UTF_8)) {
+		if (mediaType.is(MediaType.JSON_UTF_8)) {
 			return DEFAULT_JSON_SERIALIZER;
 		}
-		if (mediaType.equals(MediaType.XML_UTF_8)) {
+		if (mediaType.is(MediaType.XML_UTF_8)) {
 			return DEFAULT_XML_SERIALIZER;
 		}
-		if (mediaType.equals(MediaType.PLAIN_TEXT_UTF_8)) {
+		if (mediaType.is(MediaType.PLAIN_TEXT_UTF_8)) {
 			return DEFAULT_TEXT_SERIALIZER;
+		}
+		if (mediaType.is(MediaType.FORM_DATA)) {
+			return DEFAULT_FORM_SERIALIZER;
 		}
 		return null;
 	}

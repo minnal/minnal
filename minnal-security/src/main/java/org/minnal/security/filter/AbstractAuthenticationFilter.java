@@ -46,10 +46,11 @@ public abstract class AbstractAuthenticationFilter<C extends Credential, P exten
 		if (! alreadyAuthenticated) {
 			P principal = getAuthenticator().authenticate(getCredential(request));
 			if (principal == null) {
-				throw new UnauthorizedException();
+				handleAuthFailure(request, response, session);
+			} else {
+				session.addAttribute(PRINCIPAL, principal);
+				handleAuthSuccess(request, response, session);
 			}
-			session.addAttribute(PRINCIPAL, principal);
-			configuration.getSessionStore().save(session);
 		}
 		chain.doFilter(request, response);
 		
@@ -58,6 +59,14 @@ public abstract class AbstractAuthenticationFilter<C extends Credential, P exten
 			map.put(AUTH_COOKIE, session.getId());
 			response.addCookies(map);
 		}
+	}
+	
+	protected void handleAuthSuccess(Request request, Response response, Session session) {
+		configuration.getSessionStore().save(session);
+	}
+	
+	protected void handleAuthFailure(Request request, Response response, Session session) {
+		throw new UnauthorizedException();
 	}
 
 	protected abstract C getCredential(Request request);

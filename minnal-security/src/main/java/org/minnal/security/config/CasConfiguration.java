@@ -7,7 +7,6 @@ import javax.net.ssl.HostnameVerifier;
 
 import org.jasig.cas.client.ssl.AnyHostnameVerifier;
 import org.minnal.security.auth.cas.AbstractPgtTicketStorage;
-import org.minnal.security.auth.cas.JpaPgtStorage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,6 +24,10 @@ public class CasConfiguration {
 	
 	@JsonProperty(required=true)
 	private AbstractPgtTicketStorage ticketStorage;
+	
+	private boolean enableSingleSignout = true;
+	
+	private String logoutParameterName = "logoutRequest";
 	
 	private HostnameVerifier hostnameVerifier = new AnyHostnameVerifier();
 	
@@ -84,7 +87,7 @@ public class CasConfiguration {
 	/**
 	 * @param ticketStorage the ticketStorage to set
 	 */
-	public void setTicketStorage(JpaPgtStorage ticketStorage) {
+	public void setTicketStorage(AbstractPgtTicketStorage ticketStorage) {
 		this.ticketStorage = ticketStorage;
 	}
 
@@ -101,4 +104,33 @@ public class CasConfiguration {
 	public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
 		this.hostnameVerifier = hostnameVerifier;
 	}
+
+	/**
+	 * @return the enableSingleSignout
+	 */
+	public boolean isEnableSingleSignout() {
+		return enableSingleSignout;
+	}
+
+	/**
+	 * @param enableSingleSignout the enableSingleSignout to set
+	 */
+	public void setEnableSingleSignout(boolean enableSingleSignout) {
+		this.enableSingleSignout = enableSingleSignout;
+	}
+
+	/**
+	 * @return the logoutParameterName
+	 */
+	public String getLogoutParameterName() {
+		return logoutParameterName;
+	}
+
+	/**
+	 * @param logoutParameterName the logoutParameterName to set
+	 */
+	public void setLogoutParameterName(String logoutParameterName) {
+		this.logoutParameterName = logoutParameterName;
+	}
+
 }

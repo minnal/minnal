@@ -22,4 +22,6 @@ public interface SessionStore {
 	void deleteSession(String id);
 	
 	void save(Session session);
+	
+	Session findSessionBy(String key, String value);
 }

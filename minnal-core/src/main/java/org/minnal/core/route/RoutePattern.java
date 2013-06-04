@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Splitter;
 
 /**
  * Defines the pattern of a path. Incoming requests will be matched against the route pattern to determine the route.
@@ -138,8 +139,11 @@ public class RoutePattern {
 	@JsonIgnore
 	public List<RouteElement> getElements() {
 		List<RouteElement> elements = new ArrayList<RoutePattern.RouteElement>();
-		for (String element : pathPattern.split("/")) {
+		for (String element : Splitter.on("/").split(pathPattern)) {
 			elements.add(new RouteElement(element, PLACEHOLDER_PATTERN.matcher(element).matches()));
+		}
+		if (elements.isEmpty()) {
+			System.out.println("");
 		}
 		elements.remove(0); // Remove the root
 		return elements;

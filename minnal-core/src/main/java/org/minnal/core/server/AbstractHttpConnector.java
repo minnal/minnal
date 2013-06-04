@@ -27,6 +27,8 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.Lifecycle;
 import org.minnal.core.Router;
 import org.minnal.core.config.ConnectorConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author ganeshs
@@ -40,6 +42,8 @@ public abstract class AbstractHttpConnector extends SimpleChannelUpstreamHandler
 	
 	private ConnectorConfiguration configuration;
 	
+	private static final Logger logger = LoggerFactory.getLogger(AbstractHttpConnector.class);
+	
 	/**
 	 * @param configuration
 	 * @param router
@@ -50,10 +54,13 @@ public abstract class AbstractHttpConnector extends SimpleChannelUpstreamHandler
 	}
 	
 	public void initialize() {
+		logger.info("Initializing the connector");
 		if (configuration.getIoWorkerThreadCount() > 0) {
+			logger.trace("Creating a server bootstrap with {} io worker threads", configuration.getIoWorkerThreadCount());
 			bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newCachedThreadPool(),
 					Executors.newCachedThreadPool(), configuration.getIoWorkerThreadCount()));
 		} else {
+			logger.trace("Creating a server bootstrap with default io worker threads");
 			bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(Executors.newCachedThreadPool(),
 					Executors.newCachedThreadPool()));
 		}
@@ -70,22 +77,25 @@ public abstract class AbstractHttpConnector extends SimpleChannelUpstreamHandler
 	protected abstract void addChannelHandlers(ChannelPipeline pipeline);
 
 	public void start() {
+		logger.info("Starting the connector on the port {}", configuration.getPort());
 		bootstrap.bind(new InetSocketAddress(configuration.getPort()));
 	}
 
 	public void stop() {
+		logger.info("Stopping the connector on the port {}", configuration.getPort());
 		bootstrap.shutdown();
 	}
 
 	/**
 	 * @return the configuration
 	 */
-	public ConnectorConfiguration getConfiguration() {
+	protected ConnectorConfiguration getConfiguration() {
 		return configuration;
 	}
 	
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
+		logger.trace("Received a {} message {} from the remote address {}", configuration.getScheme().name(), e.getMessage(), e.getRemoteAddress());
 		ServerRequest request = new ServerRequest((HttpRequest) e.getMessage(), configuration.getScheme().name(), e.getRemoteAddress());
 		ServerResponse response = new ServerResponse(request, new DefaultHttpResponse(((HttpRequest) e.getMessage()).getProtocolVersion(), 
 				HttpResponseStatus.PROCESSING)); // Setting temp response. Will override while serializing response
@@ -97,6 +107,7 @@ public abstract class AbstractHttpConnector extends SimpleChannelUpstreamHandler
 	
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
+		logger.error("Exception caught in the http connector", e);
 		super.exceptionCaught(ctx, e);
 	}
 }
