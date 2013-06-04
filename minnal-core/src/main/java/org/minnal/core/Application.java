@@ -44,9 +44,9 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	
 	private ExceptionHandler exceptionHandler = new ExceptionHandler();
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Application() {
-		this.configuration = (T) configurationProvider.provide(Generics.getTypeParameter(getClass(), ApplicationConfiguration.class));
+		this.configuration = (T) configurationProvider.provide((Class)Generics.getTypeParameter(getClass(), ApplicationConfiguration.class));
 	}
 	
 	public Application(T configuration) {
