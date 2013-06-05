@@ -22,12 +22,27 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<github.global.server>github</github.global.server>
-		<project.deploymentType>snapshots</project.deploymentType>
 	</properties>
 
 	<scm>
 		<developerConnection>scm:git:https://github.com/minnal/minnal.git</developerConnection>
 	</scm>
+
+	<developers>
+		<developer>
+			<id>ganeshs</id>
+			<name>Ganesh Subramanian</name>
+			<email>subramanian.ganesh@gmail.com</email>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<build>
 		<plugins>
@@ -43,7 +58,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -70,7 +85,7 @@
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
-					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo/${project.deploymentType}</altDeploymentRepository>
+					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo/${profile.deploymentType}</altDeploymentRepository>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -95,7 +110,7 @@
 					<merge>true</merge>
 				</configuration>
 				<executions>
-					<!-- run site-maven-plugin's 'site' target as part of the build's normal 
+					<!-- run site-maven-plugin's 'site' target as part of the build's normal
 						'deploy' phase -->
 					<execution>
 						<goals>
@@ -107,6 +122,37 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>snapshots</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<profile.deploymentType>snapshots</profile.deploymentType>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>releases</id>
+			<properties>
+				<profile.deploymentType>releases</profile.deploymentType>
+			</properties>
+		</profile>
+	</profiles>
+
+	<repositories>
+		<repository>
+			<id>github-snapshots-repo</id>
+			<url>https://raw.github.com/ActiveJpa/activejpa/mvn-repo/releases</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<distributionManagement>
 		<repository>
 			<id>github-releases-repo</id>

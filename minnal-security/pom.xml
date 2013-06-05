@@ -83,7 +83,7 @@
 			<dependency>
 				<groupId>org.activejpa</groupId>
 				<artifactId>activejpa-test</artifactId>
-				<version>0.0.3</version>
+				<version>0.0.7</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

@@ -9,7 +9,7 @@
 		<groupId>org.minnal</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.activejpa</groupId>
@@ -44,7 +44,7 @@
 			<dependency>
 				<groupId>org.activejpa</groupId>
 				<artifactId>activejpa-core</artifactId>
-				<version>0.0.3</version>
+				<version>0.0.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>
