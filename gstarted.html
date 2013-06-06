@@ -258,6 +258,60 @@
                   }
                 }
               </pre>
+              <p>If you are wondering where the base class Model come from, it's coming from <a href="https://github.com/ActiveJpa/activejpa">ActiveJpa</a>. <i>ActiveJpa is a java library that attempts to implement the active record pattern on top of JPA. It eliminates the need to create DAO or Repository classes and make programming DAL a lot more simpler</i>. Minnal recommends using JPA for DB access and provides a JPA plugin module with ActiveJpa integration.</p>
+              <p>We should include the minnal-jpa module to the classpath to resolve the compilation errors in the Product class. Lets add them to our pom file,</p>
+              <pre class="brush: xml">
+                <dependencies>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-core</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-jpa</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+               </dependencies>
+
+               <repositories>
+                 <repository>
+                   <id>minnal-repo</id>
+                   <url>https://raw.github.com/minnal/minnal/mvn-repo/snapshots</url>
+                   <snapshots>
+                     <enabled>true</enabled>
+                     <updatePolicy>always</updatePolicy>
+                   </snapshots>
+                 </repository>
+                 <repository>
+                   <id>activejpa-repo</id>
+                   <url>https://raw.github.com/ActiveJpa/activejpa/mvn-repo/releases</url>
+                   <snapshots>
+                     <enabled>true</enabled>
+                     <updatePolicy>always</updatePolicy>
+                   </snapshots>
+                 </repository>
+               </repositories>
+              </pre>
+              <p>Lets create the other domain classes for our application. We will need ShoppingCart and ShoppingCartItem classes to represent a shopping cart,
+              <pre class="brush: java">
+                package org.minnal.examples.shoppingcart.domain;
+
+                import org.activejpa.entity.Model;
+                import javax.persistence.*;
+                import java.util.Set;
+
+                @Entity
+                @Table(name="shopping_carts")
+                public class ShoppingCart extends Model {
+
+                  private Long id;
+
+                  private String customerId;
+
+                  private Set<ShoppingCartItem> cartItems;
+                }
+              </pre>
             </div>
         </div>
       </div>
