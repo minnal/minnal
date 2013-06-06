@@ -233,6 +233,7 @@
 
                   @Override
                   @Id
+                  @GeneratedValue(strategy=GenerationType.IDENTITY)
                   public Long getId() {
                     return id;
                   }
@@ -309,7 +310,127 @@
 
                   private String customerId;
 
-                  private Set<ShoppingCartItem> cartItems;
+                  private Set&lt;ShoppingCartItem&gt; cartItems;
+
+                  @Override
+                  @Id
+                  @GeneratedValue(strategy=GenerationType.IDENTITY)
+                  public Long getId() {
+                    return id;
+                  }
+
+                  public void setId(Long id) {
+                    this.id = id;
+                  }
+
+                  public String getCustomerId() {
+                    return customerId;
+                  }
+
+                  public void setCustomerId(String customerId) {
+                    this.customerId = customerId;
+                  }
+
+                  @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+                  @JoinColumn(name="shopping_cart_id")
+                  public Set&lt;ShoppingCartItem&gt; getCartItems() {
+                    return this.cartItems;
+                  }
+
+                  public void setCartItems(Set&lt;ShoppingCartItem&gt; cartItems) {
+                    this.cartItems = cartItems;
+                  }
+                }
+
+                @Entity
+                @Table(name="shopping_cart_items")
+                public class ShoppingCartItem extends Model {
+
+                  private Long id;
+
+                  private Product product;
+
+                  private Integer quantity;
+
+                  private ShoppingCart cart;
+
+                  @Override
+                  @Id
+                  @GeneratedValue(strategy=GenerationType.IDENTITY)
+                  public Long getId() {
+                    return id;
+                  }
+
+                  public void setId(Long id) {
+                    this.id = id;
+                  }
+
+                  public Integer getQuantity() {
+                    return quantity;
+                  }
+
+                  public void setQuantity(Integer quantity) {
+                    this.quantity = quantity;
+                  }
+
+                  @ManyToOne(fetch=FetchType.LAZY)
+                  @JoinColumn(name="shopping_cart_id")
+                  public ShoppingCart getCart() {
+                    return this.cart;
+                  }
+
+                  public void setCart(ShoppingCart cart) {
+                    this.cart = cart;
+                  }
+
+                  @ManyToOne(fetch=FetchType.LAZY)
+                  @JoinColumn(name="product_id")
+                  public Product getProduct() {
+                    return this.product;
+                  }
+
+                  public void setProduct(Product product) {
+                    this.product = product;
+                  }
+                }
+              </pre>
+              <p>Our domain classes are created sans any domain operations. We will add domain methods later in the tutorial but now lets set up the db configuration and create the db migrations.</p>
+              <h4>Configuring JPA</h4>
+              <p>We will be using <a href="http://www.hsqldb.org/">hsqldb</a>, an inmemory database and hibernate as JPA provider in our application. We have to configure our application with these settings. Lets add them to shoppingcart.yml,</p>
+              <pre class="brush: js">
+                name: shoppingCart
+
+                # Database configuration
+                db:
+                  driverClass: org.hsqldb.jdbcDriver
+                  url: jdbc:hsqldb:mem:.
+                  username: sa
+                  providerProperties:
+                    hibernate.ejb.naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+                    hibernate.show_sql: false
+                    hibernate.format_sql: false
+                    hibernate.current_session_context_class: thread
+                    hibernate.dialect: org.hibernate.dialect.HSQLDialect
+
+                  # The list of packages to scan for the entity classes. 
+                  # It recursively checks the sub directories as well
+                  packagesToScan:
+                    - org.minnal.examples.shoppingcart.domain
+              </pre>
+              <p>We should also regiter the minnal-jpa plugin in our application. The minnal-jpa plugin, creates an entity manager factory and initalizes ActiveJpa library. You can read more about the usage of ActiveJpa <a href="https://github.com/ActiveJpa/activejpa">here</a></p>
+              <pre class="brush: java">
+                import org.minnal.jpa.JPAPlugin;
+                
+                public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
+
+                  ....
+
+                  @Override
+                  protected void registerPlugins() {
+                    registerPlugin(new JPAPlugin());
+                  }
+
+                  ....
                 }
               </pre>
             </div>
