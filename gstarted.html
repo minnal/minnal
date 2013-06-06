@@ -37,6 +37,7 @@
     <script src="javascripts/shBrushJava.js"></script>
     <script src="javascripts/shBrushJScript.js"></script>
     <script src="javascripts/shBrushXml.js"></script>
+    <script src="javascripts/shBrushSql.js"></script>
     <script src="javascripts/jquery.toc.min.js"></script>
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -420,7 +421,7 @@
               <p>We should also regiter the minnal-jpa plugin in our application. The minnal-jpa plugin, creates an entity manager factory and initalizes ActiveJpa library. You can read more about the usage of ActiveJpa <a href="https://github.com/ActiveJpa/activejpa">here</a></p>
               <pre class="brush: java">
                 import org.minnal.jpa.JPAPlugin;
-                
+
                 public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
 
                   ....
@@ -432,6 +433,98 @@
 
                   ....
                 }
+              </pre>
+              <h4>Create DB migrations</h4>
+              <p>To create the database and migrations, we will be using FlywayDB. Read more about Flyway migrations <a href="http://flywaydb.org/getstarted/firststeps/index.html">here</a>. The migrations will be put into <i>src/main/resources/db/migration/</i> folder. Lets create the migration files for creating products, shopping_carts and shopping_cart_items tables</p>
+
+              <pre class="brush: sql">
+                -- file: V1__create_products.sql
+                create table products (
+                  id integer not null primary key auto_increment,
+                  title varchar(50) not null,
+                  price decimal(10, 2) not null
+                );
+
+                -- file: V2__create_shopping_carts.sql
+                create table shopping_carts (
+                  id integer not null primary key auto_increment,
+                  customer_id varchar(50) not null
+                );
+
+                -- file: V3__create_shopping_cart_items.sql
+                create table shopping_cart_items (
+                  id integer not null primary key auto_increment,
+                  product_id integer not null,
+                  cart_id integer not null,
+                  quantity integer not null
+                );
+              </pre>
+
+              <p>We can either run the migrations standalone using Flyway library or let the application run them during startup. For this tutorial, we will run the migrations during the startup of the application. We will just have to call Flyway migrate in while loading the application,</p>
+              <pre class="brush: java">
+                public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
+
+                  public ShoppingCartApplication() {
+                    // Consider moving this code to a plugin and register it with the application
+
+                    DatabaseConfiguration dbConfig = getConfiguration().getDatabaseConfiguration();
+                    Flyway flyway = new Flyway();
+                    flyway.setDataSource(dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword());
+                    flyway.migrate();
+                  }
+                }
+              </pre>
+              <p> Now when the application is mounted on the container, the migrations will run and create the tables in the database</p>
+
+              <h4>Generating the REST API's</h4>
+              <p>Just a recap, we have create an Application class, domain classes, configured container/application, added JPA plugin and created migrations. We will have to identify the aggregate roots in our domain and enable instrumentation for our application. With that we will be all set to run our simple shopping cart application.</p>
+              <p>We recommend you to read <a href="http://www.infoq.com/minibooks/domain-driven-design-quickly">Domain Driven Design Quickly</a>, a free ebook that explains in detail about identifying the aggregate roots in a domain. <i>"Aggregates are groups of entities that belong together and Aggregate Root is the entity that holds them all together. With out an aggregate root, other entities can't exist"</i>. With this definition, we can identify two Aggregate roots in our domain, Product and ShoppingCart. ShoppingCartItem belongs to ShoppingCart, without the cart, cart item can't exist. Product can be regarded as an aggregate root although it doesn't have any children under it as it can exist without a ShoppingCart and ShoppingCartItem.</p>
+              <p>To mark an entity as aggregate root, you will have to annotate the entity with @AggregateRoot. This annotation comes from the minnal-instrumentation bundle which is resposible for generating the API's at runtime. The instrumentation bundle looks for applications in the container that has <i>enableInstrumentation</i> set to true.</p>
+              <pre class="brush: java">
+                import org.minnal.instrument.entity.AggregateRoot;
+
+                @AggregateRoot
+                public class Product extends Model {
+
+                }
+
+                @AggregateRoot
+                public class ShoppingCart extends Model {
+
+                }
+              </pre>
+              <p>We should enable instrumentation for our shopping cart application, so minnal can generate the API's for us.</p>
+              <pre class="brush: java">
+                public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
+                  ....
+
+                  @Override
+                  public boolean shouldInstrument() {
+                    return true;
+                  }
+
+                  ....
+                }
+              </pre>
+              <p>At this juncture, you should see some compilation errors in your models due to the missing AggregateRoot class. We haven't added the minnal-instrumentation library yet to our dependencies, lets add it to the pom file</p>
+              <pre class="brush: xml">
+                <dependencies>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-core</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-jpa</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-instrumentation</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+               </dependencies>
               </pre>
             </div>
         </div>
@@ -452,7 +545,8 @@
 <script type="text/javascript">
   SyntaxHighlighter.all();
   $('#toc').toc({
-    'selectors': 'h1,h2,h3,h4,h5'
+    'selectors': 'h1,h2,h3,h4,h5',
+    'highlightOnScroll': false
   });
   
 </script>
