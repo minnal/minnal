@@ -459,6 +459,16 @@
                   quantity integer not null
                 );
               </pre>
+              <p>We should also add the FlywayDB as a dependency in our pom file.</p>
+              <pre class="brush: xml">
+                <dependencies>
+                  <dependency>
+                    <groupId>com.googlecode.flyway</groupId>
+                    <artifactId>flyway-core</artifactId>
+                    <version>2.1.1</version>
+                  </dependency>
+                </dependencies>
+              </pre>
 
               <p>We can either run the migrations standalone using Flyway library or let the application run them during startup. For this tutorial, we will run the migrations during the startup of the application. We will just have to call Flyway migrate in while loading the application,</p>
               <pre class="brush: java">
@@ -526,6 +536,49 @@
                  </dependency>
                </dependencies>
               </pre>
+              <h4>Where are the Generated API's?</h4>
+              <p>The API's are not generated yet. They will be generated during the startup on the application and will be available only during the application lifetime. Minnal generates the API's at runtime using bytecode enhancement techniques and doesn't generate the source code for you purposefully. Minnal has intentionally kept away from code generation as managing the generated code will be a mess. From our past experience, we have seem developers trying to modify the generated code and mess them up. Another reason why minnal doesn't generate code is to make the application look simpler with just domain code in it.</p>
+              <h4>Viewing the generated API's</h4>
+              <p>How do I view the API's if the code is not generated? Minnal provides an admin application that can list down all the applications running in the container and the API's they expose. Just add minnal-admin to the dependency.</p>
+              <pre class="brush: xml">
+                <dependencies>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-core</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-jpa</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-instrumentation</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-admin</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+               </dependencies>
+              </pre>
+              <p>We should also add org.minnal.admin.AdminApplication to SPI implementations under <i>META-INF/services/org.minnal.core.Application</i> file</p>
+              <pre class="brush: js">
+                org.minnal.examples.shoppingcart.ShoppingCartApplication
+                org.minnal.admin.AdminApplication
+
+              </pre>
+              <p>and mount the admin application to /admin in the container.yml</p>
+              <pre class="brush: js">
+                # The mount points for the applications
+                mounts:
+                  org.minnal.examples.shoppingcart.ShoppingCartApplication: /
+                  org.minnal.admin.AdminApplication: /admin
+              </pre>
+              <p>Lets restart the application now. Hit the url GET http://localhost:8080/admin/routes/shoppingCart</p>
+
             </div>
         </div>
       </div>
