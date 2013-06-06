@@ -8,6 +8,8 @@
     <meta name="author" content="subramanian.ganesh@gmail.com">
 
     <link rel="stylesheet" href="stylesheets/bootstrap.css">
+    <link rel="stylesheet" href="stylesheets/shCore.css">
+    <link rel="stylesheet" href="stylesheets/shThemeDefault.css">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -27,7 +29,15 @@
       }
     </style>
     <link href="stylesheets/bootstrap-responsive.css" rel="stylesheet">
+    <link href="stylesheets/toc.css" rel="stylesheet">
+
+    <script src="javascripts/jquery.min.js"></script>
     <script src="javascripts/bootstrap.min.js"></script>
+    <script src="javascripts/shCore.js"></script>
+    <script src="javascripts/shBrushJava.js"></script>
+    <script src="javascripts/shBrushJScript.js"></script>
+    <script src="javascripts/shBrushXml.js"></script>
+    <script src="javascripts/jquery.toc.min.js"></script>
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -44,10 +54,10 @@
           <a class="brand" href="index.html">Minnal</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="index.html">Home</a></li>
+              <li><a href="index.html">Home</a></li>
               <li><a href="gstarted.html">Getting Started</a></li>
               <li><a href="userdoc.html">User Documentation</a></li>
-              <li><a href="faq.html">FAQ</a></li>
+              <li class="active"><a href="faq.html">FAQ</a></li>
               <li><a href="contact.html">Contact</a></li>
             </ul>
           </div><!--/.nav-collapse -->
@@ -60,13 +70,15 @@
         <img style="position: absolute; top: 0; right: 0; border: 0;z-index: 2000;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub">
       </a>
       <div class="row-fluid">
-        <div class="hero-unit">
-            <h2>Minnal is a highly scalabale and productive REST framework that helps you eliminate boiler plate code and build applications faster</h2>
-            <p>Minnal is a <i>Tamil</i> noun, meaning "lightning". It allows you to build restful applications at lightning speed through its powerful instrumentation module. It generates the API's for your resources at runtime and eliminates the need to write controller and data access layers for your application leaving you to concentrate on enriching your domain</p>
-            <p>Minnal is extremely powerful for applications that are mostly CRUD centric but doesn't restrict you from using it for business interfaces as well</p>
-            <span><a href="getting-started.html" class="btn btn-primary btn-large">Getting Started &raquo;</a></span>
-            <span><a href="userdoc.html" class="btn btn-primary btn-large">User Documentation &raquo;</a></span>
-          </div>
+        <div class="span3">
+          <div id="toc"></div>
+        </div><!--/span-->
+        <div class="span9">
+          <div class="row-fluid">
+            <div id="content">
+              Work In Progress
+            </div>
+        </div>
       </div>
 
       <hr>
@@ -79,4 +91,14 @@
 
 
   </body>
+
+  <!-- Finally, to actually run the highlighter, you need to include this JS on your page -->
+<script type="text/javascript">
+  SyntaxHighlighter.all();
+  $('#toc').toc({
+    'selectors': 'h1,h2,h3,h4,h5'
+  });
+  
+</script>
+
 </html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Minnal - REST framework that helps you eliminate boiler plate code and build applications faster</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="subramanian.ganesh@gmail.com">
+
+    <link rel="stylesheet" href="stylesheets/bootstrap.css">
+    <link rel="stylesheet" href="stylesheets/shCore.css">
+    <link rel="stylesheet" href="stylesheets/shThemeDefault.css">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+
+      @media (max-width: 980px) {
+        /* Enable use of floated navbar text */
+        .navbar-text.pull-right {
+          float: none;
+          padding-left: 5px;
+          padding-right: 5px;
+        }
+      }
+    </style>
+    <link href="stylesheets/bootstrap-responsive.css" rel="stylesheet">
+    <link href="stylesheets/toc.css" rel="stylesheet">
+
+    <script src="javascripts/jquery.min.js"></script>
+    <script src="javascripts/bootstrap.min.js"></script>
+    <script src="javascripts/shCore.js"></script>
+    <script src="javascripts/shBrushJava.js"></script>
+    <script src="javascripts/shBrushJScript.js"></script>
+    <script src="javascripts/shBrushXml.js"></script>
+    <script src="javascripts/jquery.toc.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="index.html">Minnal</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a href="index.html">Home</a></li>
+              <li class="active"><a href="gstarted.html">Getting Started</a></li>
+              <li><a href="userdoc.html">User Documentation</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <a href="https://github.com/minnal/minnal">
+        <img style="position: absolute; top: 0; right: 0; border: 0;z-index: 2000;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub">
+      </a>
+      <div class="row-fluid">
+        <div class="span3">
+          <div id="toc"></div>
+        </div><!--/span-->
+        <div class="span9">
+          <div class="row-fluid">
+            <div id="content">
+              <h1>Getting Started</h1>
+              <h2>Overview</h2>
+              <p>Minnal is a highly scalabale and productive REST framework that helps you eliminate boilerplate code and build applications faster. Minnal is a <i>Tamil</i> noun, meaning "lightning". It allows you to build restful applications at lightning speed through its powerful instrumentation module. It generates the API's for your resources at runtime and eliminates the need to write controller and data access layers for your application leaving you to concentrate on enriching your domain</p>
+              <p>Minnal is extremely powerful for applications that are mostly CRUD centric but doesn't restrict you from using it for business interfaces as well. It requires the application to identify the <a href="http://en.wikipedia.org/wiki/Domain-driven_design">aggregate roots</a> in your domain, uses that information to create entity trees and traverses down the tree to create CRUD api's.</p>
+              <p>A typical rest application (service) will have a controller layer that handles the incoming request, optionally delegates them to a application layer which inturn call the domain layer and repository/DAO layer. Most of these are boilerplate code and the really work happens in the domain layer and application layer. However good is the REST framework, it may not help you avoid writing the boilerplate code and you will have spend your effort in testing and managing these code. This is what Minnal is attempting to solve. It eliminates the DAL and Controller from your application, so you can focus on enriching your domain.</p>
+              <p>The framework has a modular design that makes every functionality easily pluggable. If you wish Minnal not to generate the API's for you, you can exclude the <i>instrumentation</i> module from you application. If you wish to write your own DAL, you could do well so by excluding the <i>jpa</i> module. The framework exposes hooks at different stages of the application lifecycle and can be easily extended to support custom functionalities.</p>
+              <p>Minnal uses <a href="http://netty.io/">Netty</a>, a NIO client-server framework, underneath to achieve high scalability. <a href="http://jackson.codehaus.org/">Jackson</a> is used for serializing json/xml and <a href="https://code.google.com/p/snakeyaml/">Snakeyaml</a> for serializing yaml. Minnal recommends JPA for all DB access and uses <a href="http://flywaydb.org/">FlywayDB</a> for running db migrations.
+            </div>
+            <div id="tutorial">
+              <h2>Tutorial</h2>
+              <p>In this section, we will build a simple shopping cart application and in the process learn the core concepts of Minnal Framework.</p>
+              <h3>Shopping Cart Application</h3>
+              Our shopping cart application will expose the below API's,
+              <ul>
+                <li>Create a new product</li>
+                <li>Get all the available products</li>
+                <li>Search the available products by title</li>
+                <li>Create a new shopping cart</li>
+                <li>Add items to shopping cart</li>
+                <li>Update items in the shopping cart</li>
+                <li>Delete items in shopping cart</li>
+                <li>Search for items in shopping cart</li>
+              </ul>
+              <h4>Setting Up Maven</h4>
+              <p>To get a hello world app to work, we just need to add minnal-core library to our maven dependecies,</p>
+              <pre class="brush: xml">
+                <dependencies>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-core</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+               </dependencies>
+
+               <repositories>
+                 <repository>
+                   <id>minnal-repo</id>
+                   <url>https://raw.github.com/minnal/minnal/mvn-repo/snapshots</url>
+                   <snapshots>
+                     <enabled>true</enabled>
+                     <updatePolicy>always</updatePolicy>
+                   </snapshots>
+                 </repository>
+               </repositories>
+              </pre>
+              <p>The minnal-core library has the rest application server to which we can deploy multiple applications and bundles. If your application doesn't want to generate automated API's, you should be good with just minnal-core library.</p>
+              <h4>Creating Application Configuration</h4>
+              Lets a create the Shopping Cart Application Configuration under the package <i>org.minnal.examples.shoppingcart</i>
+              <pre class="brush: java">
+                package org.minnal.examples.shoppingcart;
+
+                import org.minnal.core.config.ApplicationConfiguration;
+
+                public class ShoppingCartConfiguration extends ApplicationConfiguration {
+
+                }
+              </pre>
+              <p>We don't have any properties to configure yet but have inherited some from the super class ApplicationConfiguration. If the application needs custom properties to be defined, just add getters and setters to this class. The configuration class will be loaded from a yaml config file with the lower case name of of the configuration classname. In our case, minnal will look for a file named shoppingcart.yaml under the META-INF/ folder in the classpath.</p>
+              Lets create the shoppingcart.yaml file under the <i>src/main/resources/META-INF/</i> folder,
+              <pre class="brush: js">
+                name: shoppingCart
+                # We don't have any entities created yet. We will come back later to add db configuration 
+              </pre>
+              <p>You can also specify jackson-json annotations to the properies or getters for custom deserialization.</p>
+              <h4>Creating the Application</h4>
+              Now that we have <i>ShoppingCartConfiguration</i> created, lets create the ShoppingCartApplication class,
+              <pre class="brush: java">
+                package org.minnal.examples.shoppingcart;
+
+                import org.minnal.core.Application;
+                
+                public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
+
+                  @Override
+                  protected void defineRoutes() {
+                  }
+
+                  @Override
+                  protected void defineResources() {
+                  }
+
+                  @Override
+                  protected void addFilters() {
+                  }
+
+                  @Override
+                  protected void registerPlugins() {
+                  }
+                }
+              </pre>
+              We have just created a shopping cart application without any route defintions. The application is not yet deployed to the minnal server yet. In the next section, we will see how we can deploy and start the server.
+              <h4>Deploying the application</h4>
+              <p>Minnal server is modeled as a container that can run multiple applications within the same JVM. Don't get confused with the tomcat container where every application deployed will be having its own classloader. With minnal all the deployed applications will share the same classloader to make it make it simple and easier. The minnal container needs to be configured first and then applications be mounted over the container.</p>
+              <p>Lets create a <i>container.yaml</i> file under <i>src/main/resources/META-INF/container.yaml</i>,</p>
+              <pre class="brush: js">
+                # The name of the container
+                name: My Container
+
+                # The base path to use for the routes from all the applications
+                basePath: /
+
+                # Http server configuration
+                server:
+                  connectors:
+                    - port: 8080
+                      scheme: http
+                
+                # The default http media type that this container would support. Can be overridden by applications
+                defaultMediaType: application/json
+
+                # The serializers to use for the supported media types
+                serializers:
+                  application/json:
+                    class: org.minnal.core.serializer.DefaultJsonSerializer
+
+                # The mount points for the applications
+                mounts:
+                  org.minnal.examples.shoppingcart.ShoppingCartApplication: /
+              </pre>
+
+              <p>We have configured the container to accept http requests at the port 8080 and accept json requests from the cients. Note that our shopping cart application is mounted on the root path '/'</p>
+
+              <p>We are almost done, its just that we have to let the container know where to look for the ShoppingCartApplication. Minnal exposes a SPI for Application class and looks for the implementation classes under the file <p>META-INF/services/org.minnal.core.Application</p>.
+
+              <pre class="brush: js">
+                org.minnal.example.OrderApplication
+
+              </pre>
+
+              <p>If you plan to deploy more than one application, add the fully qualified names of all the applications one in each line. Minnal will mount them all as per the mount configuration in the container.yaml</p>
+              <p>Note: Do remember to leave a blank line in the end of file. </p>
+            </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+
+      </footer>
+
+    </div>
+
+
+  </body>
+
+  <!-- Finally, to actually run the highlighter, you need to include this JS on your page -->
+<script type="text/javascript">
+  SyntaxHighlighter.all();
+  $('#toc').toc({
+    'selectors': 'h1,h2,h3,h4,h5'
+  });
+  
+</script>
+
+</html>
