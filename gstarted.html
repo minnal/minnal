@@ -418,6 +418,22 @@
                   packagesToScan:
                     - org.minnal.examples.shoppingcart.domain
               </pre>
+              <p>The hibernate and hsqldb libraries should be added to the pom dependencies as well</p>
+              <pre class="brush: xml">
+                <dependencies>
+                  <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-entitymanager</artifactId>
+                    <version>4.2.1.Final</version>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>2.2.9</version>
+                  </dependency>
+                </dependencies>
+              </pre>
+
               <p>We should also regiter the minnal-jpa plugin in our application. The minnal-jpa plugin, creates an entity manager factory and initalizes ActiveJpa library. You can read more about the usage of ActiveJpa <a href="https://github.com/ActiveJpa/activejpa">here</a></p>
               <pre class="brush: java">
                 import org.minnal.jpa.JPAPlugin;
@@ -440,20 +456,20 @@
               <pre class="brush: sql">
                 -- file: V1__create_products.sql
                 create table products (
-                  id integer not null primary key auto_increment,
+                  id integer not null primary key identity,
                   title varchar(50) not null,
                   price decimal(10, 2) not null
                 );
 
                 -- file: V2__create_shopping_carts.sql
                 create table shopping_carts (
-                  id integer not null primary key auto_increment,
+                  id integer not null primary key identity,
                   customer_id varchar(50) not null
                 );
 
                 -- file: V3__create_shopping_cart_items.sql
                 create table shopping_cart_items (
-                  id integer not null primary key auto_increment,
+                  id integer not null primary key identity,
                   product_id integer not null,
                   cart_id integer not null,
                   quantity integer not null
@@ -576,6 +592,12 @@
                 mounts:
                   org.minnal.examples.shoppingcart.ShoppingCartApplication: /
                   org.minnal.admin.AdminApplication: /admin
+              </pre>
+              <p>and lastly mention the packages to scan for resources within the application in the shoppingCart.yml. This will be used by instrumentation module to look for aggregate roots and resource classes that we will be covering later in this tutorial</p>
+              <pre class="brush: js">
+                name: shoppingCart
+                packagesToScan:
+                  - org.minnal.examples.shoppingcart
               </pre>
               <p>Lets restart the application now. Hit the url GET http://localhost:8080/admin/routes/shoppingCart</p>
 
