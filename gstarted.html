@@ -133,8 +133,8 @@
 
                 }
               </pre>
-              <p>We don't have any properties to configure yet but have inherited some from the super class ApplicationConfiguration. If the application needs custom properties to be defined, just add getters and setters to this class. The configuration class will be loaded from a yaml config file with the lower case name of of the configuration classname. In our case, minnal will look for a file named shoppingcart.yaml under the META-INF/ folder in the classpath.</p>
-              Lets create the shoppingcart.yaml file under the <i>src/main/resources/META-INF/</i> folder,
+              <p>We don't have any properties to configure yet but have inherited some from the super class ApplicationConfiguration. If the application needs custom properties to be defined, just add getters and setters to this class. The configuration class will be loaded from a yaml config file with the lowercase name of the configuration classname. In our case, minnal will look for a file named shoppingcart.yml under the META-INF/ folder in the classpath.</p>
+              Lets create the shoppingcart.yml file under the <i>src/main/resources/META-INF/</i> folder,
               <pre class="brush: js">
                 name: shoppingCart
                 # We don't have any entities created yet. We will come back later to add db configuration 
@@ -167,9 +167,9 @@
                 }
               </pre>
               We have just created a shopping cart application without any route defintions. The application is not yet deployed to the minnal server yet. In the next section, we will see how we can deploy and start the server.
-              <h4>Deploying the application</h4>
+              <h4>Deploying the Application</h4>
               <p>Minnal server is modeled as a container that can run multiple applications within the same JVM. Don't get confused with the tomcat container where every application deployed will be having its own classloader. With minnal all the deployed applications will share the same classloader to make it make it simple and easier. The minnal container needs to be configured first and then applications be mounted over the container.</p>
-              <p>Lets create a <i>container.yaml</i> file under <i>src/main/resources/META-INF/container.yaml</i>,</p>
+              <p>Lets create a <i>container.yml</i> file under <i>src/main/resources/META-INF/container.yml</i>,</p>
               <pre class="brush: js">
                 # The name of the container
                 name: My Container
@@ -198,15 +198,66 @@
 
               <p>We have configured the container to accept http requests at the port 8080 and accept json requests from the cients. Note that our shopping cart application is mounted on the root path '/'</p>
 
-              <p>We are almost done, its just that we have to let the container know where to look for the ShoppingCartApplication. Minnal exposes a SPI for Application class and looks for the implementation classes under the file <p>META-INF/services/org.minnal.core.Application</p>.
+              <p>We are almost done, its just that we have to let the container know where to look for the ShoppingCartApplication. Minnal exposes a SPI for Application class and looks for the implementation classes under the file <i>META-INF/services/org.minnal.core.Application</i>.
 
               <pre class="brush: js">
-                org.minnal.example.OrderApplication
+                org.minnal.examples.shoppingcart.ShoppingCartApplication
 
               </pre>
 
-              <p>If you plan to deploy more than one application, add the fully qualified names of all the applications one in each line. Minnal will mount them all as per the mount configuration in the container.yaml</p>
+              <p>If you plan to deploy more than one application, add the fully qualified names of all the applications one in each line. Minnal will mount them all as per the mount configuration in the container.yml</p>
               <p>Note: Do remember to leave a blank line in the end of file. </p>
+              <h4>Starting the Server</h4>
+              <p>We don't need to write a main class to start our application. Just package the application with the META-INF/ folder and add it to the classpath alongside minnal-core.jar and its dependencies,</p>
+              <pre>
+                java -cp shopping-cart.jar:minnal-core.jar org.minnal.Bootstrap
+              </pre>
+              <p>The application is up and will respond to port 8080 now. Since there aren't any routes defined yet, you will get 404 when you try to hit the url <a href="http://localhost:8080/">http://localhost:8080/</a></p>
+              <h4>Creating the Domain Classes</h4>
+              <p>Lets create the domain classes to the application to make it worth enough. The users of our application should be able to search the products, so lets start from there.</p>
+              <pre class="brush: java">
+                package org.minnal.examples.shoppingcart.domain;
+
+                import org.activejpa.entity.Model;
+                import javax.persistence.*;
+                
+                @Entity
+                @Table(name="products")
+                public class Product extends Model {
+
+                  private Long id;
+
+                  private String title;
+
+                  private Double price;
+
+                  @Override
+                  @Id
+                  public Long getId() {
+                    return id;
+                  }
+
+                  public void setId(Long id) {
+                    this.id = id;
+                  }
+
+                  public String getTitle() {
+                    return this.title;
+                  }
+
+                  public void setTitle(String title) {
+                    this.title = title;
+                  }
+
+                  public Double getPrice() {
+                    return this.price;
+                  }
+
+                  public void setPrice(Double price) {
+                    this.price = price;
+                  }
+                }
+              </pre>
             </div>
         </div>
       </div>
