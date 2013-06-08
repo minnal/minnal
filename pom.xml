@@ -16,6 +16,7 @@
 		<module>minnal-test</module>
 		<module>minnal-instrumentation</module>
 		<module>minnal-security</module>
+		<module>minnal-migrations</module>
 	</modules>
 
 	<properties>
