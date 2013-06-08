@@ -35,7 +35,7 @@ public class MigrationsPluginTest {
 		plugin = new MigrationsPlugin(flyway);
 		application = mock(Application.class);
 		dbConfig = mock(DatabaseConfiguration.class);
-		when(dbConfig.getUrl()).thenReturn("jdbc:hsqldb:mem:.");
+		when(dbConfig.getUrl()).thenReturn("jdbc:mysql://localhost/test");
 		when(dbConfig.getUsername()).thenReturn("test");
 		when(dbConfig.getPassword()).thenReturn("");
 		ApplicationConfiguration appConfig = mock(ApplicationConfiguration.class);
