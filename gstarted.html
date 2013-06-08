@@ -138,7 +138,7 @@
               Lets create the shoppingcart.yml file under the <i>src/main/resources/META-INF/</i> folder,
               <pre class="brush: js">
                 name: shoppingCart
-                # We don't have any entities created yet. We will come back later to add db configuration 
+                # We don't have any entities created yet. We will come back later to add db configuration
               </pre>
               <p>You can also specify jackson-json annotations to the properies or getters for custom deserialization.</p>
               <h4>Creating the Application</h4>
@@ -147,7 +147,7 @@
                 package org.minnal.examples.shoppingcart;
 
                 import org.minnal.core.Application;
-                
+
                 public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
 
                   @Override
@@ -183,7 +183,7 @@
                   connectors:
                     - port: 8080
                       scheme: http
-                
+
                 # The default http media type that this container would support. Can be overridden by applications
                 defaultMediaType: application/json
 
@@ -221,7 +221,7 @@
 
                 import org.activejpa.entity.Model;
                 import javax.persistence.*;
-                
+
                 @Entity
                 @Table(name="products")
                 public class Product extends Model {
@@ -413,7 +413,7 @@
                     hibernate.current_session_context_class: thread
                     hibernate.dialect: org.hibernate.dialect.HSQLDialect
 
-                  # The list of packages to scan for the entity classes. 
+                  # The list of packages to scan for the entity classes.
                   # It recursively checks the sub directories as well
                   packagesToScan:
                     - org.minnal.examples.shoppingcart.domain
@@ -623,7 +623,17 @@
     'selectors': 'h1,h2,h3,h4,h5',
     'highlightOnScroll': false
   });
-  
+
 </script>
 
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-41566886-1', 'minnal.github.io');
+                ga('send', 'pageview');
+
+              </script>
 </html>
