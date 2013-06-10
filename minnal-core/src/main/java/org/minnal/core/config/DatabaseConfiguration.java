@@ -36,6 +36,8 @@ public class DatabaseConfiguration {
 	private List<String> packagesToScan = new ArrayList<String>();
 	
 	private Map<String, String> providerProperties = new HashMap<String, String>();
+	
+	private boolean readOnly = false;
 
 	/**
 	 * @return the url
@@ -162,4 +164,19 @@ public class DatabaseConfiguration {
 	public void setPackagesToScan(List<String> packagesToScan) {
 		this.packagesToScan = packagesToScan;
 	}
+
+	/**
+	 * @return the readOnly
+	 */
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	/**
+	 * @param readOnly the readOnly to set
+	 */
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
 }

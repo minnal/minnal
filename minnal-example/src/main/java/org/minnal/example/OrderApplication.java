@@ -30,7 +30,7 @@ public class OrderApplication extends Application<OrderConfiguration> {
 	
 	@Override
 	protected void addFilters() {
-		addFilter(new OpenSessionInViewFilter());
+		addFilter(new OpenSessionInViewFilter(getConfiguration().getDatabaseConfiguration()));
 	}
 	
 	@Override

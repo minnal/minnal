@@ -9,6 +9,7 @@ import org.activejpa.jpa.JPAContext;
 import org.minnal.core.FilterChain;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
+import org.minnal.core.config.DatabaseConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -27,10 +28,13 @@ public class OpenSessionInViewFilterTest {
 	private FilterChain chain;
 	
 	private JPAContext context;
+	
+	private DatabaseConfiguration configuration;
 
 	@BeforeMethod
 	public void setup() {
-		filter = spy(new OpenSessionInViewFilter());
+		configuration = mock(DatabaseConfiguration.class);
+		filter = spy(new OpenSessionInViewFilter(configuration));
 		context = mock(JPAContext.class);
 		request = mock(Request.class);
 		response = mock(Response.class);

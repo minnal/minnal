@@ -9,12 +9,19 @@ import org.minnal.core.Filter;
 import org.minnal.core.FilterChain;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
+import org.minnal.core.config.DatabaseConfiguration;
 
 /**
  * @author ganeshs
  *
  */
 public class OpenSessionInViewFilter implements Filter {
+	
+	private DatabaseConfiguration configuration;
+	
+	public OpenSessionInViewFilter(DatabaseConfiguration configuration) {
+		this.configuration = configuration;
+	}
 
 	public void doFilter(Request request, Response response, FilterChain chain) {
 		JPAContext context = getContext();
@@ -30,7 +37,7 @@ public class OpenSessionInViewFilter implements Filter {
 	}
 	
 	protected JPAContext getContext() {
-		return JPA.instance.getDefaultConfig().getContext();
+		return JPA.instance.getDefaultConfig().getContext(configuration.isReadOnly());
 	}
 
 }

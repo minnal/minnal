@@ -5,8 +5,8 @@ package org.minnal.core.config;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +28,7 @@ public abstract class Configuration {
 	
 	private String name;
 	
-	private Map<MediaType, Serializer> serializers = new HashMap<MediaType, Serializer>();
+	private Map<MediaType, Serializer> serializers = new LinkedHashMap<MediaType, Serializer>();
 
 	private MediaType defaultMediaType;
 	

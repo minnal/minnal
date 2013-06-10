@@ -16,13 +16,17 @@ import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
+import org.minnal.core.Application;
 import org.minnal.core.Container;
+import org.minnal.core.ContainerAdapter;
 import org.minnal.core.Response;
 import org.minnal.core.Router;
+import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;
+import org.minnal.migrations.plugin.CleanableMigrationsPlugin;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
@@ -45,6 +49,14 @@ public abstract class BaseResourceTest {
 	
 	@BeforeSuite
 	public void beforeSuite() {
+		container.registerListener(new ContainerAdapter() {
+			@Override
+			public void onMount(Application<ApplicationConfiguration> application, String mountUrl) {
+				if (application.getConfiguration().getDatabaseConfiguration() != null) {
+					application.registerPlugin(new CleanableMigrationsPlugin());
+				}
+			}
+		});
 		container.start();
 	}
 	
@@ -75,17 +87,17 @@ public abstract class BaseResourceTest {
 		router.route(context);
 	}
 	
-	protected ServerRequest createRequest(String uri, HttpMethod method, String content) {
-		return createRequest(uri, method, content, MediaType.JSON_UTF_8);
+	protected ServerRequest request(String uri, HttpMethod method, String content) {
+		return request(uri, method, content, MediaType.JSON_UTF_8);
 	}
 
-	protected ServerRequest createRequest(String uri, HttpMethod method, String content, MediaType contentType) {
-		return createRequest(uri, method, content, contentType, Maps.<String, String>newHashMap());
+	protected ServerRequest request(String uri, HttpMethod method, String content, MediaType contentType) {
+		return request(uri, method, content, contentType, Maps.<String, String>newHashMap());
 	}
 	
-	protected ServerRequest createRequest(String uri, HttpMethod method, String content, MediaType contentType, Map<String, String> headers) {
+	protected ServerRequest request(String uri, HttpMethod method, String content, MediaType contentType, Map<String, String> headers) {
 		HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, uri);
-		request.setContent(createBuffer(content));
+		request.setContent(buffer(content));
 		request.setHeader(HttpHeaders.Names.CONTENT_TYPE, contentType.toString());
 		request.setHeader(HttpHeaders.Names.ACCEPT, MediaType.ANY_TYPE);
 		ServerRequest serverRequest = new ServerRequest(request, InetSocketAddress.createUnresolved("localhost", 80));
@@ -93,11 +105,11 @@ public abstract class BaseResourceTest {
 		return serverRequest;
 	}
 	
-	protected ServerResponse createResponse(ServerRequest request) {
+	protected ServerResponse response(ServerRequest request) {
 		return new ServerResponse(request, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.PROCESSING));
 	}
 	
-	protected ChannelBuffer createBuffer(String content ) {
+	protected ChannelBuffer buffer(String content) {
 		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
 		ChannelBufferOutputStream os = new ChannelBufferOutputStream(buffer);
 		try {
@@ -108,8 +120,8 @@ public abstract class BaseResourceTest {
 		return buffer;
 	}
 	
-	protected Response makeRestCall(ServerRequest request) {
-		ServerResponse response = createResponse(request);
+	protected Response call(ServerRequest request) {
+		ServerResponse response = response(request);
 		MessageContext context = new MessageContext(request, response);
 		route(context);
 		return response;

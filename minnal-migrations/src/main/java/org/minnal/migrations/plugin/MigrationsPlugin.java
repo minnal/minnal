@@ -20,7 +20,7 @@ import com.googlecode.flyway.core.Flyway;
  */
 public class MigrationsPlugin implements Plugin {
 	
-	private Flyway flyway;
+	protected Flyway flyway;
 	
 	public MigrationsPlugin() {
 		flyway = new Flyway();
