@@ -16,17 +16,13 @@ import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
-import org.minnal.core.Application;
 import org.minnal.core.Container;
-import org.minnal.core.ContainerAdapter;
 import org.minnal.core.Response;
 import org.minnal.core.Router;
-import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;
-import org.minnal.migrations.plugin.CleanableMigrationsPlugin;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
@@ -47,19 +43,8 @@ public abstract class BaseResourceTest {
 	
 	private static Container container = new Container();
 	
-	private static CleanableMigrationsPlugin plugin;
-	
 	@BeforeSuite
 	public void beforeSuite() {
-		container.registerListener(new ContainerAdapter() {
-			@Override
-			public void onMount(Application<ApplicationConfiguration> application, String mountUrl) {
-				if (application.getConfiguration().getDatabaseConfiguration() != null) {
-					plugin = new CleanableMigrationsPlugin();
-					application.registerPlugin(plugin);
-				}
-			}
-		});
 		container.init();
 		container.start();
 	}
@@ -68,7 +53,6 @@ public abstract class BaseResourceTest {
 	public void beforeMethod() {
 		serializer = container.getConfiguration().getSerializer(container.getConfiguration().getDefaultMediaType());
 		router = container.getRouter();
-//		plugin.destroy();
 		setup();
 	}
 	
