@@ -23,6 +23,7 @@ public class Bootstrap {
 			} else {
 				container = containerClass.newInstance();
 			}
+			containerClass.getMethod("init").invoke(container);
 			containerClass.getMethod("start").invoke(container);
 		} catch (Exception e) {
 			logger.error("Failed while starting the container", e);

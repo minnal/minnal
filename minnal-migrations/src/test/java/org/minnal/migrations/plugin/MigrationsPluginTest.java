@@ -46,7 +46,8 @@ public class MigrationsPluginTest {
 	@Test
 	public void shouldSetDataSourceOnInit() {
 		plugin.init(application);
-		verify(flyway).setDataSource(dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword());
+		verify(flyway).setDataSource("jdbc:mysql://localhost", dbConfig.getUsername(), dbConfig.getPassword());
+		verify(flyway).setSchemas("test");
 	}
 	
 	@Test

@@ -28,8 +28,8 @@ public class OrderResourceTest extends BaseResourceTest {
 	
 	@Test
 	public void shouldCreateOrder() {
-		request = createRequest("/orders", HttpMethod.POST, "{\"customer_email\":\"ganeshs@flipkart.com\"}");
-		response = createResponse(request);
+		request = request("/orders", HttpMethod.POST, "{\"customer_email\":\"ganeshs@flipkart.com\"}");
+		response = response(request);
 		MessageContext context = new MessageContext(request, response);
 		route(context);
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);

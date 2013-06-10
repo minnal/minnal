@@ -45,8 +45,11 @@ public class Container implements Lifecycle {
 		this.configuration = configuration;
 		this.applicationMapping = new ApplicationMapping(configuration.getBasePath());
 		router = new Router(applicationMapping);
+	}
+	
+	public void init() {
 		loadBundles();
-		loadApplications();
+		loadApplications();	
 	}
 	
 	protected void loadApplications() {
@@ -81,11 +84,11 @@ public class Container implements Lifecycle {
 	protected void mount(Application<ApplicationConfiguration> application, String mountUrl) {
 		logger.info("Mounting the application {} on the mount path {}", application, mountUrl);
 		application.getConfiguration().setParent(configuration);
-		application.init();
-		applicationMapping.addApplication(application, mountUrl);
 		for (ContainerLifecycleListener listener : listeners) {
 			listener.onMount(application, mountUrl);
 		}
+		application.init();
+		applicationMapping.addApplication(application, mountUrl);
 	}
 	
 	/**

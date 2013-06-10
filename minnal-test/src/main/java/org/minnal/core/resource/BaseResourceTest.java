@@ -47,16 +47,20 @@ public abstract class BaseResourceTest {
 	
 	private static Container container = new Container();
 	
+	private static CleanableMigrationsPlugin plugin;
+	
 	@BeforeSuite
 	public void beforeSuite() {
 		container.registerListener(new ContainerAdapter() {
 			@Override
 			public void onMount(Application<ApplicationConfiguration> application, String mountUrl) {
 				if (application.getConfiguration().getDatabaseConfiguration() != null) {
-					application.registerPlugin(new CleanableMigrationsPlugin());
+					plugin = new CleanableMigrationsPlugin();
+					application.registerPlugin(plugin);
 				}
 			}
 		});
+		container.init();
 		container.start();
 	}
 	
@@ -64,6 +68,7 @@ public abstract class BaseResourceTest {
 	public void beforeMethod() {
 		serializer = container.getConfiguration().getSerializer(container.getConfiguration().getDefaultMediaType());
 		router = container.getRouter();
+//		plugin.destroy();
 		setup();
 	}
 	
