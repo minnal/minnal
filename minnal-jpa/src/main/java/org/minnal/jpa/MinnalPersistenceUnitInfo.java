@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
@@ -23,8 +22,7 @@ import org.minnal.core.config.DatabaseConfiguration;
 import org.minnal.core.scanner.Scanner.Listener;
 import org.minnal.jpa.entity.EntityScanner;
 
-import com.jolbox.bonecp.BoneCPConfig;
-import com.jolbox.bonecp.BoneCPDataSource;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
  * @author ganeshs
@@ -135,21 +133,19 @@ public class MinnalPersistenceUnitInfo implements PersistenceUnitInfo {
 	}
 	
 	public void createDataSource() {
-		BoneCPConfig config = null;
+		ComboPooledDataSource ds = new ComboPooledDataSource();
 		try {
 			Class.forName(configuration.getDriverClass());
-			config = new BoneCPConfig();
-			config.setJdbcUrl(configuration.getUrl());
-			config.setUser(configuration.getUsername());
-			config.setPassword(configuration.getPassword());
-			config.setIdleConnectionTestPeriod(configuration.getIdleConnectionTestPeriod(), TimeUnit.SECONDS);
-			config.setPartitionCount(2);
-			config.setMaxConnectionsPerPartition(configuration.getMaxSize() / 2);
-			config.setMinConnectionsPerPartition(configuration.getMinSize() / 2);
+			ds.setJdbcUrl(configuration.getUrl());
+			ds.setUser(configuration.getUsername());
+			ds.setPassword(configuration.getPassword());
+			ds.setIdleConnectionTestPeriod(configuration.getIdleConnectionTestPeriod());
+			ds.setInitialPoolSize(configuration.getMinSize());
+			ds.setMaxPoolSize(configuration.getMaxSize());
 		} catch (Exception e) {
 			throw new MinnalException("Failed while configuring the data source", e);
-		} 
-		dataSource = new BoneCPDataSource(config);
+		}
+		dataSource = ds;
 	}
 
 }

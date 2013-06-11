@@ -23,6 +23,8 @@ import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
@@ -36,6 +38,26 @@ import com.google.common.net.MediaType;
  *
  */
 public abstract class BaseResourceTest {
+	
+	private static final Logger logger = LoggerFactory.getLogger(BaseResourceTest.class);
+	
+	static {
+		Class<?> clazz = null;
+		try {
+			clazz = Class.forName("org.activejpa.enhancer.ActiveJpaAgentLoader");
+		} catch (ClassNotFoundException e) {
+			logger.debug("org.activejpa.enhancer.ActiveJpaAgentLoader is not found. Not loading the agent");
+		}
+		
+		if (clazz != null) {
+			try {
+				Object instance = clazz.getMethod("instance").invoke(null);
+				clazz.getMethod("loadAgent").invoke(instance);
+			} catch (Exception e) {
+				throw new Error("Failed while loading the activejpa agent");
+			}
+		}
+	}
 	
 	private Router router;
 	

@@ -3,8 +3,6 @@
  */
 package org.minnal.core.scanner;
 
-import java.io.IOException;
-
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 
@@ -32,13 +30,13 @@ public abstract class AbstractScanner implements Scanner<Class<?>> {
 			ClassPath path = ClassPath.from(classLoader);
 			for (String packageName : packages) {
 				for (ClassInfo classInfo : path.getTopLevelClassesRecursive(packageName)) {
-					Class<?> clazz = classInfo.load();
+					Class<?> clazz = classLoader.loadClass(classInfo.getName());
 					if (match(clazz)) {
 						listener.handle(clazz);
 					}
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			// TODO Handle exception
 		}
