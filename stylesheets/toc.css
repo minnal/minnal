@@ -3,19 +3,20 @@
     top: 0;
     height: 100%;
     position: fixed;
+    padding: 0;
     background: #333;
     width: 300px;
-    padding-top: 40px;
     color: #fff;
-    font-size: 16px;
+    font-size: 14px;
     font-family: 'Voces',sans-serif;
     box-shadow: -5px 0 5px 0 #000000 inset;
-    overflow-y: auto;
+    overflow: auto;
 }
 
 #toc ul {
     margin: 0;
-    padding-top: 20px;
+    padding-top: 60px;
+    list-style: none;
 }
 
 #toc li {
