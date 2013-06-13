@@ -3,6 +3,9 @@
  */
 package org.minnal.security.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.minnal.security.session.SessionStore;
 
 /**
@@ -16,6 +19,8 @@ public class SecurityConfiguration {
 	private SessionStore sessionStore;
 	
 	private long sessionExpiryTimeInSecs;
+	
+	private List<String> whiteListedUrls = new ArrayList<String>();
 	
 	public SecurityConfiguration() {
 	}
@@ -72,5 +77,19 @@ public class SecurityConfiguration {
 	 */
 	public void setSessionExpiryTimeInSecs(long sessionExpiryTimeInSecs) {
 		this.sessionExpiryTimeInSecs = sessionExpiryTimeInSecs;
+	}
+
+	/**
+	 * @return the whiteListedUrls
+	 */
+	public List<String> getWhiteListedUrls() {
+		return whiteListedUrls;
+	}
+
+	/**
+	 * @param whiteListedUrls the whiteListedUrls to set
+	 */
+	public void setWhiteListedUrls(List<String> whitelistedUrls) {
+		this.whiteListedUrls = whitelistedUrls;
 	}
 }

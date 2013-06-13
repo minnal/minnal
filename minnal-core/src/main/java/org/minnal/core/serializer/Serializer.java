@@ -27,6 +27,8 @@ public abstract class Serializer {
 	
 	public static final Serializer DEFAULT_FORM_SERIALIZER = new DefaultFormSerializer();
 	
+	public static final Serializer DEFAULT_YAML_SERIALIZER = new DefaultYamlSerializer();
+	
 	public abstract ChannelBuffer serialize(Object object);
 	
 	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);

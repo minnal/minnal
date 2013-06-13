@@ -37,28 +37,46 @@ public abstract class AbstractAuthenticationFilter<C extends Credential, P exten
 	}
 
 	public void doFilter(Request request, Response response, FilterChain chain) {
-		Session session = getSession(request, true);
+		boolean whiteListed = isWhiteListed(request);
 		boolean alreadyAuthenticated = false;
-		if (session.containsAttribute(PRINCIPAL)) {
-			alreadyAuthenticated = true;
-		}
 		
-		if (! alreadyAuthenticated) {
-			P principal = getAuthenticator().authenticate(getCredential(request));
-			if (principal == null) {
-				handleAuthFailure(request, response, session);
-			} else {
-				session.addAttribute(PRINCIPAL, principal);
-				handleAuthSuccess(request, response, session);
+		Session session = null;
+		if (! whiteListed) {
+			session = getSession(request, true);
+			
+			if (session.containsAttribute(PRINCIPAL)) {
+				alreadyAuthenticated = true;
+			}
+			
+			if (! alreadyAuthenticated) {
+				P principal = getAuthenticator().authenticate(getCredential(request));
+				if (principal == null) {
+					handleAuthFailure(request, response, session);
+				} else {
+					session.addAttribute(PRINCIPAL, principal);
+					handleAuthSuccess(request, response, session);
+				}
 			}
 		}
+		
 		chain.doFilter(request, response);
 		
-		if (! alreadyAuthenticated) {
-			Map<String, String> map = Maps.newHashMap();
-			map.put(AUTH_COOKIE, session.getId());
-			response.addCookies(map);
+		if (! whiteListed) {
+			if (! alreadyAuthenticated) {
+				Map<String, String> map = Maps.newHashMap();
+				map.put(AUTH_COOKIE, session.getId());
+				response.addCookies(map);
+			}
 		}
+	}
+	
+	protected boolean isWhiteListed(Request request) {
+		for (String url : configuration.getWhiteListedUrls()) {
+			if (request.getUri().getPath().startsWith(url)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	protected void handleAuthSuccess(Request request, Response response, Session session) {

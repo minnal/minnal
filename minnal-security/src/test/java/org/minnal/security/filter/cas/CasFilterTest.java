@@ -14,6 +14,8 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Map;
 
 import org.activejpa.entity.testng.BaseModelTest;
 import org.activejpa.jpa.JPA;
@@ -166,5 +168,15 @@ public class CasFilterTest extends BaseModelTest {
 			fail("Expected UnAuthorized Exception but didn't get one");
 		} catch (UnauthorizedException e) {
 		}
+	}
+	
+	@Test
+	public void shouldSkipAuthenticationIfUrlIsWhiteListed() throws Exception {
+		configuration.setWhiteListedUrls(Arrays.asList("/skipauth"));
+		when(request.getUri()).thenReturn(new URI("http://localhost:8080/skipauth/test123"));
+		filter.doFilter(request, response, chain);
+		verify(authenticator, never()).authenticate(any(CasCredential.class));
+		verify(response, never()).addCookies(any(Map.class));
+		verify(chain).doFilter(request, response);
 	}
 }
