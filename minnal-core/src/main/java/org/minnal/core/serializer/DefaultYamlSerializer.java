@@ -3,6 +3,7 @@
  */
 package org.minnal.core.serializer;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -12,9 +13,15 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.minnal.core.MinnalException;
 import org.minnal.core.config.MediaTypeMixin;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.net.MediaType;
@@ -28,11 +35,11 @@ public class DefaultYamlSerializer extends Serializer {
 	private ObjectMapper mapper;
 	
 	public DefaultYamlSerializer() {
-		this(new SimpleModule());
+		this(createSimpleModule());
 	}
 	
 	public DefaultYamlSerializer(ObjectMapper mapper) {
-		this(mapper, new SimpleModule());
+		this(mapper, createSimpleModule());
 	}
 	
 	public DefaultYamlSerializer(Module module) {
@@ -44,9 +51,23 @@ public class DefaultYamlSerializer extends Serializer {
 		init(module);
 	}
 	
+	private static Module createSimpleModule() {
+		SimpleModule module = new SimpleModule();
+		module.addKeySerializer(MediaType.class, new JsonSerializer<MediaType>() {
+			@Override
+			public void serialize(MediaType value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+				jgen.writeFieldName(String.valueOf(value.withoutParameters().toString()));
+			}
+		});;
+		return module;
+	}
+	
 	protected void init(Module module) {
 		mapper.addMixInAnnotations(MediaType.class, MediaTypeMixin.class);
 		mapper.registerModule(module);
+		mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		mapper.setSerializationInclusion(Include.NON_EMPTY);
+		mapper.setSerializationInclusion(Include.NON_NULL);
 	}
 	
 	public ChannelBuffer serialize(Object object) {

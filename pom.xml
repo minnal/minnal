@@ -17,6 +17,7 @@
 		<module>minnal-instrumentation</module>
 		<module>minnal-security</module>
 		<module>minnal-migrations</module>
+		<module>minnal-generator</module>
 	</modules>
 
 	<properties>

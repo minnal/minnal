@@ -3,6 +3,7 @@
  */
 package org.minnal.core.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ServerConfiguration {
 
 	@JsonProperty("connectors")
-	private List<ConnectorConfiguration> connectorConfigurations;
+	private List<ConnectorConfiguration> connectorConfigurations = new ArrayList<ConnectorConfiguration>();
 	
 	public ServerConfiguration() {
 	}
@@ -41,4 +42,7 @@ public class ServerConfiguration {
 		this.connectorConfigurations = connectorConfigurations;
 	}
 
+	public void addConnectorConfiguration(ConnectorConfiguration configuration) {
+		this.connectorConfigurations.add(configuration);
+	}
 }

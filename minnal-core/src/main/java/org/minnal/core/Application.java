@@ -174,6 +174,7 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		return Collections.unmodifiableList(filters);
 	}
 	
+	@Deprecated
 	public boolean shouldInstrument() {
 		return false;
 	}

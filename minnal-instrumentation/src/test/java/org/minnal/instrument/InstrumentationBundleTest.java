@@ -46,7 +46,9 @@ public class InstrumentationBundleTest {
 	public void shouldEnhanceApplicationOnMount() {
 		ApplicationEnhancer enhancer = mock(ApplicationEnhancer.class);
 		Application<ApplicationConfiguration> application = mock(Application.class);
-		when(application.shouldInstrument()).thenReturn(true);
+		ApplicationConfiguration configuration = mock(ApplicationConfiguration.class);
+		when(application.getConfiguration()).thenReturn(configuration);
+		when(configuration.isInstrumentationEnabled()).thenReturn(true);
 		doReturn(enhancer).when(bundle).createApplicationEnhancer(application);
 		bundle.onMount(application, "/");
 		verify(enhancer).enhance();
@@ -56,6 +58,8 @@ public class InstrumentationBundleTest {
 	public void shouldNotEnhanceApplicationIfInstrumentationIsDisabled() {
 		ApplicationEnhancer enhancer = mock(ApplicationEnhancer.class);
 		Application<ApplicationConfiguration> application = mock(Application.class);
+		ApplicationConfiguration configuration = mock(ApplicationConfiguration.class);
+		when(application.getConfiguration()).thenReturn(configuration);
 		doReturn(enhancer).when(bundle).createApplicationEnhancer(application);
 		bundle.onMount(application, "/");
 		verify(enhancer, never()).enhance();

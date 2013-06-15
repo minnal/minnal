@@ -18,6 +18,8 @@ public class ApplicationConfiguration extends Configuration {
 	private List<String> packagesToScan = new ArrayList<String>();
 	
 	private DatabaseConfiguration databaseConfiguration;
+	
+	private boolean instrumentationEnabled;
 
 	public ApplicationConfiguration() {
 	}
@@ -53,6 +55,20 @@ public class ApplicationConfiguration extends Configuration {
 	 */
 	public void setDatabaseConfiguration(DatabaseConfiguration databaseConfiguration) {
 		this.databaseConfiguration = databaseConfiguration;
+	}
+
+	/**
+	 * @return the instrumentationEnabled
+	 */
+	public boolean isInstrumentationEnabled() {
+		return instrumentationEnabled;
+	}
+
+	/**
+	 * @param instrumentationEnabled the instrumentationEnabled to set
+	 */
+	public void setInstrumentationEnabled(boolean instrumentationEnabled) {
+		this.instrumentationEnabled = instrumentationEnabled;
 	}
 
 }
