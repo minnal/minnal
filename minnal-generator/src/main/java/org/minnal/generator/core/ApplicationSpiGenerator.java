@@ -4,12 +4,12 @@
 package org.minnal.generator.core;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.minnal.core.Application;
-import org.minnal.core.MinnalException;
+import org.minnal.core.serializer.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,11 +17,9 @@ import org.slf4j.LoggerFactory;
  * @author ganeshs
  *
  */
-public class ApplicationSpiGenerator implements Generator {
+public class ApplicationSpiGenerator extends AbstractGenerator {
 	
 	private List<String> applications = new ArrayList<String>();
-	
-	private String resourcesDir;
 	
 	private File file;
 	
@@ -30,29 +28,14 @@ public class ApplicationSpiGenerator implements Generator {
 	/**
 	 * @param applications
 	 */
-	public ApplicationSpiGenerator(String resourcesDir) {
-		this.resourcesDir = resourcesDir;
+	public ApplicationSpiGenerator(File baseDir) {
+		super(baseDir);
 	}
 	
-	public void loadFile() {
-		File dir = new File(resourcesDir);
-		if (! dir.exists()) {
-			throw new MinnalException("Resources directory " + this.resourcesDir + " doesn't exist");
-		}
-		File services = new File(dir, "META-INF/services");
-		if (! services.exists()) {
-			logger.info("Creating the services folder under META-INF");
-			services.mkdirs();
-		}
-		file = new File(services, Application.class.getName());
-	
-		try {
-			if (! file.exists()) {
-				file.createNewFile();
-			}
-		} catch (Exception e) {
-			throw new MinnalException("Failed while creating the file " + file.getAbsolutePath(), e);
-		}
+	@Override
+	public void init() {
+		super.init();
+		file = new File(getServicesFolder(true), Application.class.getName());
 	}
 	
 	public void addApplication(String application) {
@@ -61,25 +44,12 @@ public class ApplicationSpiGenerator implements Generator {
 
 	@Override
 	public void generate() {
-		loadFile();
 		logger.info("Creating the application spi file {}", file.getAbsolutePath());
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(file);
-			for (String application : applications) {
-				writer.append(application).append("\n");
-			}
-		} catch (Exception e) {
-			throw new MinnalException("Failed while creating the file " + file.getAbsolutePath(), e);
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (Exception e) {
-					// ignore
-				}
-			}
+		StringWriter writer = new StringWriter();
+		for (String application : applications) {
+			writer.append(application).append("\n");
 		}
+		serializeTo(file, writer.toString(), Serializer.DEFAULT_TEXT_SERIALIZER);
 	}
 
 }

@@ -124,6 +124,7 @@ public class CommandNew implements Command {
 	@Override
 	public void execute() {
 		Generator generator = new ProjectGenerator(this);
+		generator.init();
 		generator.generate();
 	}
 }

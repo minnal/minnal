@@ -32,7 +32,7 @@ public class CommandStart implements Command {
 		if (values.size() > 0) {
 			projectDir = values.get(0);
 		}
-		ProcessBuilder builder = new ProcessBuilder(Arrays.asList(new String[]{"mvn", "-f", projectDir + "/pom.xml", "exec:exec"}));
+		ProcessBuilder builder = new ProcessBuilder(Arrays.asList(new String[]{"mvn", "-f", projectDir + "/pom.xml", "compile", "exec:exec"}));
 		try {
 			Process p = builder.start();
 			inheritIO(p.getInputStream(), System.out);

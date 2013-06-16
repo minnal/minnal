@@ -9,5 +9,7 @@ package org.minnal.generator.core;
  */
 public interface Generator {
 
+	void init();
+	
 	void generate();
 }

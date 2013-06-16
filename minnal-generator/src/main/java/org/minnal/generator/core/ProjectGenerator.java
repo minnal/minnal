@@ -4,10 +4,7 @@
 package org.minnal.generator.core;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.javalite.common.Inflector;
 import org.minnal.core.MinnalException;
 import org.minnal.generator.CommandNew;
 import org.slf4j.Logger;
@@ -17,41 +14,43 @@ import org.slf4j.LoggerFactory;
  * @author ganeshs
  *
  */
-public class ProjectGenerator implements Generator {
+public class ProjectGenerator extends AbstractGenerator {
 	
 	private CommandNew command;
-	
-	private List<Generator> generators = new ArrayList<Generator>();
 	
 	private static final Logger logger = LoggerFactory.getLogger(ProjectGenerator.class);
 	
 	public ProjectGenerator(CommandNew command) {
+		super(createProjectDir(command));
 		this.command = command;
-		init();
 	}
 	
-	protected void init() {
-		File projectDir = createProjectDir();
-		File mainSrc = createFolder(projectDir, "src/main/java");
-		File testSrc = createFolder(projectDir, "src/test/java");
-		File mainResources = createFolder(projectDir, "src/main/resources");
-		File testResources = createFolder(projectDir, "src/test/resources");
+	@Override
+	public void init() {
+		super.init();
+		createFolder(MAIN_JAVA_FOLDER);
+		createFolder(TEST_JAVA_FOLDER);
+		createFolder(MAIN_RESOURCES_FOLDER);
+		createFolder(TEST_RESOURCES_FOLDER);
+		createFolder(MAIN_META_INF_FOLDER);
+		createFolder(MAIN_SERVICES_FOLDER);
 		
-		addPomGenerator(projectDir);
-		String applicationName = command.getProjectName().toLowerCase().replace('-', '_');
-		ApplicationGenerator applicationGenerator = new ApplicationGenerator(mainSrc.getAbsolutePath(), 
-				mainResources.getAbsolutePath(), Inflector.camelize(applicationName, false), "com." + applicationName.replace('_', '.'));
-		ContainerConfigGenerator containerConfigGenerator = new ContainerConfigGenerator(mainResources.getAbsolutePath());
-		containerConfigGenerator.addApplication(applicationGenerator.getPackageName() + "." + applicationGenerator.getApplicationClassName(), "/");
+		PomGenerator pomGenerator = createPomGenerator();
+		ApplicationGenerator applicationGenerator = new ApplicationGenerator(baseDir);
+		ContainerConfigGenerator containerConfigGenerator = new ContainerConfigGenerator(baseDir);
+		containerConfigGenerator.addApplication(getApplicationClassName(), "/");
 		if (! command.isNoadmin()) {
 			containerConfigGenerator.addApplication("org.minnal.admin.AdminApplication", "/admin");
 		}
-		generators.add(containerConfigGenerator);
-		generators.add(applicationGenerator);
+		
+		addGenerator(pomGenerator);
+		addGenerator(containerConfigGenerator);
+		addGenerator(applicationGenerator);
+		addGenerator(new LoggerConfigGenerator(baseDir));
 	}
 	
-	private void addPomGenerator(File projectDir) {
-		PomGenerator pomGenerator = new PomGenerator(projectDir.getAbsolutePath(), command.getProjectName());
+	private PomGenerator createPomGenerator() {
+		PomGenerator pomGenerator = new PomGenerator(baseDir, command.getProjectName());
 		pomGenerator.addDependency("org.minnal", "minnal-core", command.getVersion());
 		pomGenerator.addDependency("org.hibernate", "hibernate-entitymanager", "4.2.1.Final");
 		pomGenerator.addDependency("org.hsqldb", "hsqldb", "2.2.9");
@@ -69,17 +68,10 @@ public class ProjectGenerator implements Generator {
 		if (! command.isNoinst()) {
 			pomGenerator.addDependency("org.minnal", "minnal-admin", command.getVersion());
 		}
-		
-		generators.add(pomGenerator);
+		return pomGenerator;
 	}
 
-	public void generate() {
-		for (Generator generator : generators) {
-			generator.generate();
-		}
-	}
-	
-	protected File createProjectDir() {
+	protected static File createProjectDir(CommandNew command) {
 		logger.info("Creating the project {} under {}", command.getProjectName(), command.getBaseDir());
 		File dir = new File(command.getBaseDir());
 		if (! dir.exists()) {
@@ -98,10 +90,4 @@ public class ProjectGenerator implements Generator {
 		return projectDir;
 	}
 	
-	private File createFolder(File basedir, String folderName) {
-		logger.info("Creating the folder {} under {}", folderName, basedir);
-		File folder = new File(basedir, folderName);
-		folder.mkdirs();
-		return folder;
-	}
 }

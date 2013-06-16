@@ -4,16 +4,9 @@
 package org.minnal.generator.core;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.plexus.util.IOUtil;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBufferInputStream;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.minnal.core.MinnalException;
 import org.minnal.core.config.ConnectorConfiguration;
 import org.minnal.core.config.ConnectorConfiguration.Scheme;
 import org.minnal.core.config.ContainerConfiguration;
@@ -28,9 +21,7 @@ import com.google.common.net.MediaType;
  * @author ganeshs
  *
  */
-public class ContainerConfigGenerator implements Generator {
-	
-	private String resourcesDir;
+public class ContainerConfigGenerator extends AbstractGenerator {
 	
 	private File file;
 	
@@ -38,48 +29,35 @@ public class ContainerConfigGenerator implements Generator {
 	
 	private Map<String, String> mounts = new HashMap<String, String>();
 	
-	private ApplicationSpiGenerator spiGenerator;
-	
 	private static final Logger logger = LoggerFactory.getLogger(ContainerConfigGenerator.class);
 	
 	/**
 	 * @param resourcesDir
 	 */
-	public ContainerConfigGenerator(String resourcesDir) {
-		this.resourcesDir = resourcesDir;
-		spiGenerator = new ApplicationSpiGenerator(resourcesDir);
+	public ContainerConfigGenerator(File baseDir) {
+		super(baseDir);
+		addGenerator(new ApplicationSpiGenerator(baseDir));
 	}
 	
 	public void addApplication(String applicationClass, String mountPath) {
 		mounts.put(applicationClass, mountPath);
-		spiGenerator.addApplication(applicationClass);
+		generatorFor(ApplicationSpiGenerator.class).addApplication(applicationClass);
 	}
 	
-	public void loadFile() {
-		File dir = new File(resourcesDir);
-		if (! dir.exists()) {
-			throw new MinnalException("Resources directory " + this.resourcesDir + " doesn't exist");
-		}
-		File metaInf = new File(dir, "META-INF");
-		if (! metaInf.exists()) {
-			metaInf.mkdirs();
-		}
-		file = new File(metaInf, "container.yml");
+	@Override
+	public void init() {
+		super.init();
+		file = new File(getMetaInfFolder(true), "container.yml");
 	
-		try {
-			if (! file.exists()) {
-				file.createNewFile();
-				createContainerConfiguration();
-			} else {
-				configuration = Serializer.DEFAULT_YAML_SERIALIZER.deserialize(ChannelBuffers.wrappedBuffer(IOUtil.toByteArray(new FileInputStream(file))), ContainerConfiguration.class);
-			}
-		} catch (Exception e) {
-			throw new MinnalException("Failed while creating the file " + file.getAbsolutePath());
+		if (! file.exists()) {
+			configuration = createContainerConfiguration();
+		} else {
+			configuration = deserializeFrom(file, Serializer.DEFAULT_YAML_SERIALIZER, ContainerConfiguration.class);
 		}
 	}
 	
-	private void createContainerConfiguration() {
-		configuration = new ContainerConfiguration("My Container");
+	private ContainerConfiguration createContainerConfiguration() {
+		ContainerConfiguration configuration = new ContainerConfiguration("My Container");
 		configuration.setDefaultMediaType(MediaType.JSON_UTF_8);
 		configuration.addSerializer(MediaType.JSON_UTF_8, Serializer.getSerializer(MediaType.JSON_UTF_8));
 		configuration.addSerializer(MediaType.XML_UTF_8, Serializer.getSerializer(MediaType.XML_UTF_8));
@@ -89,19 +67,13 @@ public class ContainerConfigGenerator implements Generator {
 		serverConfiguration.addConnectorConfiguration(new ConnectorConfiguration(8080, Scheme.http, null, 2));
 		configuration.setServerConfiguration(serverConfiguration);
 		configuration.setMounts(mounts);
+		return configuration;
 	}
 
 	@Override
 	public void generate() {
-		loadFile();
 		logger.info("Creating the container config file {}", file.getAbsolutePath());
-		ChannelBuffer buffer = Serializer.DEFAULT_YAML_SERIALIZER.serialize(configuration);
-		try {
-			FileWriter writer = new FileWriter(file);
-			IOUtil.copy(new ChannelBufferInputStream(buffer), writer);
-		} catch (Exception e) {
-			throw new MinnalException("Failed while writing the config file " + file.getAbsolutePath(), e);
-		}
-		spiGenerator.generate();
+		super.generate();
+		serializeTo(file, configuration, Serializer.DEFAULT_YAML_SERIALIZER);
 	}
 }

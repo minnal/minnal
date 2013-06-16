@@ -15,7 +15,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.Repository;
-import org.apache.maven.model.RepositoryPolicy;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -27,11 +26,9 @@ import org.slf4j.LoggerFactory;
  * @author ganeshs
  *
  */
-public class PomGenerator implements Generator {
+public class PomGenerator extends AbstractGenerator {
 	
 	private String projectName;
-	
-	private String projectDir;
 	
 	private Model model;
 	
@@ -57,18 +54,15 @@ public class PomGenerator implements Generator {
 	
 	private static final Logger logger = LoggerFactory.getLogger(PomGenerator.class);
 	
-	public PomGenerator(String projectDir, String projectName) {
-		this.projectDir = projectDir;
+	public PomGenerator(File baseDir, String projectName) {
+		super(baseDir);
 		this.projectName = projectName;
 	}
 	
-	protected void loadModel() {
-		File dir = new File(projectDir);
-		if (! dir.exists()) {
-			logger.trace("Project directory {} doesn't exist", projectDir);
-			throw new MinnalException("Project directory " + projectDir + "doesn't exist");
-		}
-		File pom = new File(dir, POM_FILE);
+	@Override
+	public void init() {
+		super.init();
+		File pom = new File(baseDir, POM_FILE);
 		if (pom.exists()) {
 			logger.trace("pom already exist. Reading it");
 			
@@ -79,13 +73,15 @@ public class PomGenerator implements Generator {
 				throw new MinnalException("Failed while reading the pom - " + pom.getName(), e);
 			}
 		} else {
-			try {
-				logger.trace("Creating a new pom file");
-				pom.createNewFile();
-			} catch (Exception e) {
-				throw new MinnalException("Failed while creating the pom - " + pom.getName(), e);
-			}
 			model = createMavenModel();
+		}
+		for (Dependency dependency : dependenciesToAdd) {
+			if (! model.getDependencies().contains(dependency)) {
+				model.addDependency(dependency);
+			}
+		}
+		for (Dependency dependency : dependenciesToRemove) {
+			model.removeDependency(dependency);
 		}
 	}
 	
@@ -153,17 +149,7 @@ public class PomGenerator implements Generator {
 	@Override
 	public void generate() {
 		logger.info("Creating the pom file {}", POM_FILE);
-		loadModel();
-		for (Dependency dependency : dependenciesToAdd) {
-			if (! model.getDependencies().contains(dependency)) {
-				model.addDependency(dependency);
-			}
-		}
-		for (Dependency dependency : dependenciesToRemove) {
-			model.removeDependency(dependency);
-		}
-		
-		File pom = new File(projectDir + "/" + POM_FILE);
+		File pom = new File(baseDir, POM_FILE);
 		try {
 			logger.debug("Writing the generated pom file {}", POM_FILE);
 			MavenXpp3Writer writer = new MavenXpp3Writer();
