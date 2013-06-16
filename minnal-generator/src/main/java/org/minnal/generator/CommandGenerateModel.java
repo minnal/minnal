@@ -16,13 +16,15 @@ import com.beust.jcommander.Parameters;
  * @author ganeshs
  *
  */
-@Parameters(separators = "=", commandDescription = "Generates model/migrations")
+@Parameters(separators = "=", commandDescription = "Generates a model class")
 public class CommandGenerateModel implements Command {
 	
 	@Parameter(description = "The name of the model to create", required=true)
 	private List<String> values = new ArrayList<String>();
 	
-	@Parameter(names = "-fields", description = "The fields in the model", converter=FieldConverter.class, variableArity=true)
+	@Parameter(names = "-fields", converter=FieldConverter.class, variableArity=true, description = "The fields in the model. " +
+			"Format name:type:searchable. Type is the java type of the field (string, integer, long, short, char, double, float, date, timestamp, boolean). " +
+			"Searchable is a boolean that specifies if the field is a searchable field")
 	private List<Field> fields;
 	
 	@Parameter(names = "-projectDir", description = "The project directory")

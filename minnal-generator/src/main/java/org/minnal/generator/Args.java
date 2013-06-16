@@ -12,13 +12,13 @@ import com.beust.jcommander.Parameter;
  */
 public class Args {
 
-	@Parameter(names="-help", help=true)
+	@Parameter(names="-help", help=true, description="Displays the usage")
 	private boolean help;
 	
-	@Parameter(names="-debug")
+	@Parameter(names="-debug", description="Sets the log level to debug")
 	private boolean debug;
 	
-	@Parameter(names="-trace")
+	@Parameter(names="-trace", description="Sets the log level to trace")
 	private boolean trace;
 
 	/**

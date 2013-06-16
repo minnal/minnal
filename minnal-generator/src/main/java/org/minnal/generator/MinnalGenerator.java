@@ -36,7 +36,7 @@ public class MinnalGenerator {
 	public MinnalGenerator() {
 		jc.setProgramName("minnal");
 		jc.addCommand("new", commandNew);
-		jc.addCommand("add", commandAdd);
+//		jc.addCommand("add", commandAdd);
 		jc.addCommand("generate", commandGenerateModel);
 		jc.addCommand("start", commandStart);
 	}
