@@ -1,7 +1,0 @@
-package $packageName;
-
-import org.minnal.core.config.ApplicationConfiguration;
-
-public class ${applicationConfigClassName} extends ApplicationConfiguration {
-
-}
