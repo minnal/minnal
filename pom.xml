@@ -148,11 +148,11 @@
 
 	<repositories>
 		<repository>
-			<id>github-snapshots-repo</id>
+			<id>github-releases-repo</id>
 			<url>https://raw.github.com/ActiveJpa/activejpa/mvn-repo/releases</url>
 			<snapshots>
 				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
+				<updatePolicy>daily</updatePolicy>
 			</snapshots>
 		</repository>
 	</repositories>

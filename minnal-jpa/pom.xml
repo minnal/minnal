@@ -44,7 +44,7 @@
 			<dependency>
 				<groupId>org.activejpa</groupId>
 				<artifactId>activejpa-core</artifactId>
-				<version>0.0.8-SNAPSHOT</version>
+				<version>0.0.8</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>
