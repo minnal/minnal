@@ -52,7 +52,7 @@ public class ApplicationConfigGenerator extends AbstractGenerator {
 	private ApplicationConfiguration createApplicationConfiguration() {
 		ApplicationConfiguration configuration = new ApplicationConfiguration(Inflector.tableize(applicationName));
 		DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
-		databaseConfiguration.setDriverClass("org.hsqldb.jdbc.JdbcDriver");
+		databaseConfiguration.setDriverClass("org.hsqldb.jdbcDriver");
 		databaseConfiguration.setIdleConnectionTestPeriod(300);
 		databaseConfiguration.setMinSize(5);
 		databaseConfiguration.setMaxSize(10);
