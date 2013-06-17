@@ -232,7 +232,7 @@
                   - org.minnal.security.session
                   - org.minnal.security.auth.cas
             </pre>
-            <p>Take a look at the class <code>org.minnal.core.config.ApplicationConfiguration</code> for all the available properties</p>
+            <p>Minnal uses c3p0 for connection pooling. Take a look at the class <code>org.minnal.core.config.ApplicationConfiguration</code> for all the available properties</p>
             <h4>Creating a Resource</h4>
             Creating a resource is straight forward. Unlike <i>Application</i>, resource class need not extend any framework specific classes. You create a resource under <code>com.example.resources</code> package.
             <pre class="brush: java">
@@ -312,6 +312,47 @@
               }
             </pre>
             <p>Take a look at the class <code>org.minnal.core.config.RouteConfiguration</code> for all the available properties</p>
+            <h4>Creating a filter</h4>
+            <p>Minnal provides support for chaining of filters like in http-servlets. The request will pass through all the filters before hitting the controller. To create a filter, implement the interface <code>org.minnal.core.Filter</code></p>
+            <pre class="brush: java">
+              public class MyFilter implements Filter {
+
+                @Override
+                public void doFilter(Request request, Response response, FilterChain chain) {
+                  // pre process request
+                  chain.doFilter(request, response);
+                  // post process response
+                }
+              }
+            </pre>
+            <h4>Adding a filter to the application</h4>
+            <p>You can add filters to the application in the addFilters() method</p>
+            <pre class="brush: java">
+              public class ExampleApplication extends Application&lt;ExampleConfiguration&gt; {
+                @Override
+                protected void addFilters() {
+                  addFilter(new MyFilter());
+                }
+              }
+            </pre>
+            <h4>Handling exceptions</h4>
+            <p>Minnal defines a bunch of application exceptions that gets translated to meaningful HTTP response codes. These exceptions are defined under the package <code>org.minnal.core.server.exception</code>. Below are some of them, take a look at the exception package for other exception types</p>
+            <ul>
+              <li><code>BadRequestException:</code> -- 400 Bad Request</li>
+              <li><code>ConflictException:</code> -- 409 Conflict</li>
+              <li><code>MethodNotAllowedException:</code> -- 405 Method Not Allowed</li>
+            </ul>
+            <h5>Mapping Exceptions</h5>
+            <p>You can map your exceptions to an application exception. You have to override the method mapExceptions() in the application class to do this</p>
+            <pre class="brush: java">
+              public class ExampleApplication extends Application&lt;ExampleConfiguration&gt; {
+                @Override
+                protected void mapExceptions() {
+                  addExceptionMapping(PersistenceException.class, BadRequestException.class);
+                  super.mapExceptions();
+                }
+              }
+            </pre>
             <h4>Creating a plugin</h4>
             <p>Plugin hooks into the lifecycle of an application. Minnal invokes the plugin when an application is intialized or destroyed. Creating a plugin is fairly simple, you will just have to implement the interface <code>org.minnal.core.Plugin</code></p>
             <pre class="brush: java">
@@ -362,10 +403,32 @@
             <p>To add a bundle to the container, you will have to add the bundle class to the SPI of <code>org.minnal.core.Bundle</code> under <i>META-INF/</i> folder, </p>
             <pre class="brush: js">
               com.example.MyBundle
-              
+
             </pre>
             <h3>Minnal Jpa</h3>
-            Work In Progress
+            minnal-jpa has useful abstractions for your DAL. It makes use of <a href="https://github.com/ActiveJpa/activejpa">ActiveJpa</a>, a java library that attempts to implement the active record pattern on top of JPA. It eliminates the need to create DAO or Repository classes and make programming DAL a lot more simpler</i>. Minnal recommends using JPA for DB access and provides a JPA plugin module with ActiveJpa integration.</p>
+            <h4>Creating Domain Classes</h4>
+            <p>Minnal Jpa provides a base domain class <code>org.minnal.jpa.entity.BaseDomain</code> which extends the ActiveJpa model class. Extending the base domain enables you to do ActiveRecord style operations like, <code>Person.find(1L);</code>, <code>Person.where("firstName", "Ganesh");</code> etc... </p>
+            <pre class="brush: java">
+              package com.example.domain;
+
+              @Entity
+              public class Example extends BaseDomain {
+
+              }
+            </pre>
+            <h4>Configuring JPA</h4>
+            <p>minnal-jpa provides a plugin <code>org.minnal.jpa.JPAPlugin</code> to configure JPA. You just need to register the plugin to your application</p> 
+            <pre class="brush: java">
+              public class ExampleApplication extends Application&lt;ExampleConfiguration&gt; {
+               
+                @Override
+                protected void registerPlugins() {
+                  registerPlugin(new JPAPlugin());
+                }
+              }
+            </pre>
+            <p>The JPAPlugin reads the database configuration from your application configuration and loads the <code>EntityManagerFactory</code>. You can configure the vendor specific properties in the db configuration section.</p>
             <h3>Minnal Migrations</h3>
             Work In Progress
             <h3>Minnal Instrumentation</h3>
