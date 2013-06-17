@@ -603,12 +603,12 @@
               <h4>Customizing the API</h4>
               <p>Say, we want to customize the create shopping cart api <i>POST /shopping_carts</i> to do additional stuff while creating the cart. We can overiride the api by creating a resource class for shopping cart. Minnal will generate all the API's but for the customized one. Let's try creating a ShoppingCartResource class under <i>org.minnal.examples.shoppingcart.resources</i></p>
               <pre class="brush:java">
-                package org.minnal.examples.shoppingcart.resources;
+                package com.shopping.cart.resources;
 
                 import org.minnal.core.resource.Resource;
                 import org.minnal.core.Request;
                 import org.minnal.core.Response;
-                import org.minnal.examples.shoppingcart.domain.ShoppingCart;
+                import com.shopping.cart.domain.ShoppingCart;
                 import org.jboss.netty.handler.code.http.HttpResponseStatus;
 
                 // The @Resource annotation tells minnal that this class is resource class. 
