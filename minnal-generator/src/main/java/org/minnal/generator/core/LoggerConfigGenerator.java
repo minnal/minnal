@@ -34,7 +34,6 @@ public class LoggerConfigGenerator extends AbstractTemplateGenerator {
 
 	@Override
 	public void generate() {
-		logger.info("Creating the file {}", file.getAbsolutePath());
 		writeFile(createLoggerTemplate, new VelocityContext(), file);
 	}
 

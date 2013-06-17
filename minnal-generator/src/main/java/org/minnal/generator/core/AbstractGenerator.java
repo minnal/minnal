@@ -59,7 +59,7 @@ public abstract class AbstractGenerator implements Generator {
 	
 	@Override
 	public void init() {
-		applicationName = Inflector.capitalize(baseDir.getName().toLowerCase().replace('-', '_'));
+		applicationName = Inflector.camelize(baseDir.getName().toLowerCase().replace('-', '_'));
 	}
 	
 	protected String getBasePackage() {
