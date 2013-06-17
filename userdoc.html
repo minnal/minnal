@@ -8,8 +8,8 @@
     <meta name="author" content="subramanian.ganesh@gmail.com">
 
     <link rel="stylesheet" href="stylesheets/bootstrap.css">
-    <link rel="stylesheet" href="stylesheets/shCore.css">
-    <link rel="stylesheet" href="stylesheets/shThemeDefault.css">
+    <link rel="stylesheet" href="stylesheets/shCoreEmacs.css">
+    <link rel="stylesheet" href="stylesheets/shThemeEmacs.css">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -37,6 +37,8 @@
     <script src="javascripts/shBrushJava.js"></script>
     <script src="javascripts/shBrushJScript.js"></script>
     <script src="javascripts/shBrushXml.js"></script>
+    <script src="javascripts/shBrushSql.js"></script>
+    <script src="javascripts/shBrushBash.js"></script>
     <script src="javascripts/jquery.toc.min.js"></script>
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -76,25 +78,156 @@
         <div class="span9">
           <div class="row-fluid">
             <h1>User Documentation</h1>
+            <p>This document will provide you detailed information about the feature set of the minnal modules, configuring them, organizing your project, testing your application, extending minnal etc...</p>
+            <p>You should read through <a href="gstarted.html">Getting Started</a> to get an understanding what the framework is capable of.</p>
             <h2>High level design</h2>
-              Work In Progress
+              <p>The core of minnal is the container under which multiple applications are run. The notion of <i>Container</i> and <i>Application</i> might be confusing here. Unlike application servers like Tomcat, minnal doesn't create a classloader per application deployed. The figure below shows the high level design of the framework</p>
+              <img src="images/minnal.jpg"/>
+              <p>At the low level is the container that defines the http connector and handles the incming request via a router. The router resolves the route from the request and deligates the request to application which in turn delegates to a route handler. The request optionally will go through a set of filters before hitting the controller method.</p>
+              <p>The container allows bundles to hook into its life cyle. Bundles can provide custom functionality at container level and will have access to all applications loaded into the container.</p>
+              <p>The application allows plugins to hook into its life cycle. Plugins can provide custom functionality at application level and will have access to all the resources and routes with in the application</p>
             <h2>Modules</h2>
             This section explains in detail the usage of various modules offered by minnal.
-            <h3>minnal-core</h3>
+            <h3>Minnal Core</h3>
+            minnal-core is the core of the framework and doesn't depend on any of the other minnal modules. minna-core is a light weight REST application framework and can be used independent of instrumentation module.
+            <h4>Organizing your project</h4>
+            <p>Minnal recommends you to use maven for managing your project and its dependencies. If you are starting from scratch, take a look at <a href="#toc11">Minnal Generator</a> for creating a project. A minnal project structure would look like this,</p>
+            <ul class="nav">
+              <li><code>src/main/java</code>
+                <ul>
+                  <li><code>com.example</code>
+                    <ul>
+                      <li><code>ExampleApplication</code> <i>-- The application class</i></li>
+                      <li><code>ExampleConfiguration</code> <i>-- The application configuration class</i></li>
+                    </ul>
+                  </li>
+                  <li><code>com.example.domain</code> <i>-- Domain models get in here</i></li>
+                  <li><code>com.example.resources</code> <i>-- Resource classes get in here</i></li>
+                </ul>
+              </li>
+              <li><code>src/main/resources</code>
+                <ul>
+                  <li><code>META-INF</code>
+                    <ul>
+                      <li><code>services</code>
+                        <ul>
+                          <li><code>org.minnal.core.Application</code> <i>-- SPI for Application class</i></li>
+                        </ul>
+                      </li>
+                      <li><code>container.yml</code> <i>-- Container configuration</i></li>
+                      <li><code>example.yml</code> <i>-- Application configuration</i></li>
+                    </ul>
+                  </li>
+                  <li><code>log4j.properties</code> <i>-- Logger configuration</i></li>
+                </ul>
+              </li>
+              <li><code>src/test/java</code></li>
+              <li><code>src/test/resources</code></li>
+            </ul>
+            <h4>Creating an Application</h4>
+            <p>Application class is the entry point to your application. The application specific configurations are read from <code>org.minna.core.config.ApplicationConfiguration</code> class and you will have to extend it to create your application specific configuration</p>
+            <pre class="brush: java">
+              package com.example;
+
+              public class ExampleConfiguration extends ApplicationConfiguration {
+
+              }
+            </pre>
+            <p>Application inherits the configuration parameters from container. For instance, if you haven't set any serialiers for json content type, it will get it from container. You can override it by explicitly specifying in the ApplicationConfiguration</p>
+
+            <p>You create an application by extending the class <code>org.minnal.core.Application</code>.</p>
+            <pre class="brush: java">
+              package com.example;
+
+              public class ExampleApplication extends Application&lt;ExampleConfiguration&gt; {
+
+                @Override
+                protected void defineRoutes() {
+                }
+
+                @Override
+                protected void defineResources() {
+                  addResource(ExmapleResource.class);
+                }
+
+                @Override
+                protected void addFilters() {
+                }
+
+                @Override
+                protected void registerPlugins() {
+                }
+              }
+            </pre>
+            <h4>Creating a Resource</h4>
+            Creating a resource is straight forward. Unlike <i>Application</i>, resource class need not extend any framework specific classes. You create a resource under <code>com.example.resources</code> package.
+            <pre class="brush: java">
+              package com.example.resources;
+
+              public class ExampleResource {
+
+                /**
+                 * Maps to the route GET /examples/:id
+                 */
+                public void readExample(Request request, Response response) {
+                  String id = request.getHeader("id");
+                  Example example = null;
+                  // Read example from your persistence store
+                  response.setContent(example);
+                  response.setStatus(HttpResponseStatus.OK);
+                }
+
+                /**
+                 * Maps to the route POST /examples/
+                 */
+                public Example createExample(Request request, Response response) {
+                  Example example = request.getContentAs(Example.class)
+                  // Write example to your persistence store
+                  return example;
+                }
+              }
+            </pre>
+            <p>The only constraint the framework imposes on you is on the method signature of your resource methods. Your resource methods should take in an instance of <code>org.minnal.core.Request</code> and <code>org.minnal.core.Resposne</code>. The method can return void or the content to set in the response. In case you return the content from the method, minnal will set the content and set the status to <i>200 OK</i>. It will safely ignore the return value if the resposne content is already set.</p>
+            <p>Minnals writes all the query and form parameters to request headers and you can access them by calling <code>request.getHeader("param")</code></p>
+            <p>The resource should be added to your Application to define the routes. You do this by adding the resource in the defineResources() method of the application class</p>
+            <pre class="brush: java">
+              public class ExampleApplication extends Application&lt;ExampleConfiguration&gt; {
+               
+                @Override
+                protected void defineResources() {
+                  addResource(ExmapleResource.class);
+                }
+              }
+            </pre>
+            <h5>Resource configuration</h5>
+            <p>By default minnal inherits the application configuration parameters in to the resource configuration. In most cases you won't have a need to customize these properties. But say if you want to accept the <i>text/csv</i> which is not the default content type specified by the application, you can customize the resource configuration by just pass on an instance of resource configuration to addResource method.</p>
+            <pre class="brush: java">
+              @Override
+              protected void defineResources() {
+                ResourceConfiguration configuration = new ResourceConfiguration("example resource");
+                configuration.addSerializer(MediaType.CSV_UTF_8, csvSerializer);
+                addResource(ExmapleResource.class, configuration);
+              }
+            </pre>
+            <h4>Creating the routes</h4>
+            <p>Routes are associated with resource classes. So we add routes to resources,</p>
+
+            <h4>Configuration</h4>
+            <h3>Minnal Jpa</h3>
             Work In Progress
-            <h3>minnal-jpa</h3>
+            <h3>Minnal Migrations</h3>
             Work In Progress
-            <h3>minnal-migrations</h3>
+            <h3>Minnal Instrumentation</h3>
             Work In Progress
-            <h3>minnal-instrumentation</h3>
+            <h3>Minnal Security</h3>
             Work In Progress
-            <h3>minnal-security</h3>
+            <h3>Minnal Admin</h3>
             Work In Progress
-            <h3>minnal-admin</h3>
-            Work In Progress
-            <h3>minnal-test</h3>
+            <h3>Minnal Generator</h3>
               Work In Progress
-            <h3>minnal-examples</h3>
+            <h3>Minnal Test</h3>
+              Work In Progress
+            <h3>Minnal Examples</h3>
           </div>
         </div>
       </div>
