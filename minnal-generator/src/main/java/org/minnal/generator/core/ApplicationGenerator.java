@@ -15,6 +15,8 @@ import org.javalite.common.Inflector;
  */
 public class ApplicationGenerator extends AbstractTemplateGenerator {
 	
+	private boolean enableJpa;
+	
 	private static Template createApplicationConfigTemplate = engine.getTemplate("META-INF/templates/create_application_configuration.vm");
 	
 	private static Template createApplicationTemplate = engine.getTemplate("META-INF/templates/create_application.vm");
@@ -22,8 +24,9 @@ public class ApplicationGenerator extends AbstractTemplateGenerator {
 	/**
 	 * @param baseDir
 	 */
-	public ApplicationGenerator(File baseDir) {
+	public ApplicationGenerator(File baseDir, boolean enableJpa) {
 		super(baseDir);
+		this.enableJpa = enableJpa;
 		addGenerator(new ApplicationConfigGenerator(baseDir, true));
 	}
 	
@@ -46,6 +49,7 @@ public class ApplicationGenerator extends AbstractTemplateGenerator {
 		context.put("packageName", getBasePackage());
 		context.put("applicationClassName", applicationClass);
 		context.put("applicationConfigClassName", applicationConfigClass);
+		context.put("enableJpa", enableJpa);
 		writeFile(createApplicationTemplate, context, new File(createPackage(getBasePackage()), applicationClass + ".java"));
 	}
 	

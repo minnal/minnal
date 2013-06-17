@@ -1,15 +1,25 @@
 package $packageName;
 
 import org.minnal.core.Application;
+#if ($enableJpa)
+import org.minnal.jpa.JPAPlugin;
+import org.minnal.jpa.OpenSessionInViewFilter;
+#end
 
 public class ${applicationClassName} extends Application<${applicationConfigClassName}> {
 
 	@Override
 	protected void registerPlugins() {
+#if ($enableJpa)
+		registerPlugin(new JPAPlugin());
+#end
 	}
 	
 	@Override
 	protected void addFilters() {
+#if ($enableJpa)
+		addFilter(new OpenSessionInViewFilter(getConfiguration().getDatabaseConfiguration()));
+#end
 	}
 
 	@Override

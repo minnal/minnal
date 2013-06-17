@@ -63,7 +63,7 @@ public class ApplicationConfigGenerator extends AbstractGenerator {
 		properties.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
 		properties.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
 		properties.put("hibernate.current_session_context_class", "thread");
-		properties.put("hibernate.hbm2ddl.auto", "crteate-drop");
+		properties.put("hibernate.hbm2ddl.auto", "create-drop");
 		databaseConfiguration.setProviderProperties(properties);
 		configuration.setPackagesToScan(Arrays.asList(getBasePackage()));
 		configuration.setDatabaseConfiguration(databaseConfiguration);

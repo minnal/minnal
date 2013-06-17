@@ -36,7 +36,7 @@ public class ProjectGenerator extends AbstractGenerator {
 		createFolder(MAIN_SERVICES_FOLDER);
 		
 		PomGenerator pomGenerator = createPomGenerator();
-		ApplicationGenerator applicationGenerator = new ApplicationGenerator(baseDir);
+		ApplicationGenerator applicationGenerator = new ApplicationGenerator(baseDir, !command.isNojpa());
 		ContainerConfigGenerator containerConfigGenerator = new ContainerConfigGenerator(baseDir);
 		containerConfigGenerator.addApplication(getApplicationClassName(), "/");
 		if (! command.isNoadmin()) {
