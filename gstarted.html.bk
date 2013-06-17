@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Minnal - REST framework that helps you eliminate boiler plate code and build applications faster</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="subramanian.ganesh@gmail.com">
+
+    <link rel="stylesheet" href="stylesheets/bootstrap.css">
+    <link rel="stylesheet" href="stylesheets/shCore.css">
+    <link rel="stylesheet" href="stylesheets/shThemeDefault.css">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      #footer {
+        padding-top: 30px;
+      }
+      @media (max-width: 980px) {
+        /* Enable use of floated navbar text */
+        .navbar-text.pull-right {
+          float: none;
+          padding-left: 5px;
+          padding-right: 5px;
+        }
+      }
+    </style>
+    <link href="stylesheets/bootstrap-responsive.css" rel="stylesheet">
+    <link href="stylesheets/toc.css" rel="stylesheet">
+
+    <script src="javascripts/jquery.min.js"></script>
+    <script src="javascripts/bootstrap.min.js"></script>
+    <script src="javascripts/shCore.js"></script>
+    <script src="javascripts/shBrushJava.js"></script>
+    <script src="javascripts/shBrushJScript.js"></script>
+    <script src="javascripts/shBrushXml.js"></script>
+    <script src="javascripts/shBrushSql.js"></script>
+    <script src="javascripts/jquery.toc.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="/minnal">Minnal</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a href="/minnal">Home</a></li>
+              <li class="active"><a href="gstarted.html">Getting Started</a></li>
+              <li><a href="userdoc.html">User Documentation</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <a href="https://github.com/minnal/minnal">
+        <img style="position: absolute; top: 0; right: 0; border: 0;z-index: 2000;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub">
+      </a>
+      <div class="row-fluid">
+        <div class="span3">
+          <div id="toc" class="container-fluid"></div>
+        </div><!--/span-->
+        <div class="span9">
+          <div class="row-fluid">
+            <div id="content" class="container-fluid">
+              <h1>Getting Started</h1>
+              <h2>Overview</h2>
+              <p>Minnal is a highly scalabale and productive REST framework that helps you eliminate boilerplate code and build applications faster. Minnal is a <i>Tamil</i> noun, meaning "lightning". It allows you to build restful applications at lightning speed through its powerful instrumentation module. It generates the API's for your resources at runtime and eliminates the need to write controller and data access layers for your application leaving you to concentrate on enriching your domain</p>
+              <p>Minnal is extremely powerful for applications that are mostly CRUD centric but doesn't restrict you from using it for business interfaces as well. It requires the application to identify the <a href="http://en.wikipedia.org/wiki/Domain-driven_design">aggregate roots</a> in your domain, uses that information to create entity trees and traverses down the tree to create CRUD api's.</p>
+              <p>A typical rest application (service) will have a controller layer that handles the incoming request, optionally delegates them to a application layer which inturn call the domain layer and repository/DAO layer. Most of these are boilerplate code and the really work happens in the domain layer and application layer. However good is the REST framework, it may not help you avoid writing the boilerplate code and you will have spend your effort in testing and managing these code. This is what Minnal is attempting to solve. It eliminates the DAL and Controller from your application, so you can focus on enriching your domain.</p>
+              <p>The framework has a modular design that makes every functionality easily pluggable. If you wish Minnal not to generate the API's for you, you can exclude the <i>instrumentation</i> module from you application. If you wish to write your own DAL, you could do well so by excluding the <i>jpa</i> module. The framework exposes hooks at different stages of the application lifecycle and can be easily extended to support custom functionalities.</p>
+              <p>Minnal uses <a href="http://netty.io/">Netty</a>, a NIO client-server framework, underneath to achieve high scalability. <a href="http://jackson.codehaus.org/">Jackson</a> is used for serializing json/xml and <a href="https://code.google.com/p/snakeyaml/">Snakeyaml</a> for serializing yaml. Minnal recommends JPA for all DB access and uses <a href="http://flywaydb.org/">FlywayDB</a> for running db migrations.
+              <h2>Installing Minnal</h2>
+              <h3>Prerequisites</h3>
+              <p>To run minnal, you need JDK 6 or later. Minnal has been tested with Sun JDK, OpenJDK support will be taken up in the coming versions. Minnal recommends you to use maven to manage your project dependencies, the installation package requires <a href="http://maven.apache.org/download.cgi">maven 3</a> to get started.</p>
+              <p>Ensure your JAVA_HOME is set to JDK and not the JRE. Minnal instrumentation module requires tools.jar from JDK libraries to be in the classpath.</p>
+              <h3>Downloading the package</h3>
+              <p>Download the latest minnal installation package from <a href="https://github.com/minnal/minnal/tree/downloads/minnal/">here</a> and extract the archive to a folder with read and write access.</p>
+              <p>Add the the framework binary folder <i>/path/to/minnal-X.X.X/bin</i> to your path, so you can conviniently run the minnal executable. If you are running on windows, add it to the global environment variables</p>
+              <p>Test if you can run  minnal,</p>
+              <pre class="brush:js">
+                $ minnal -help
+              </prE>
+              If the installation is proper, you should be able to see the usage. Ensure you have executable permissions for the <i>/path/to/minnal-X.X.X/bin</i> folder
+              <pre class="brush:js">
+                Usage: minnal [options] [command] [command options]
+              </pre>
+              <h2>Tutorial</h2>
+              <p>Let us get started by build a simple shopping cart application and in the process learn the core concepts of Minnal Framework.</p>
+              <h3>Shopping Cart Application</h3>
+              Our shopping cart application will expose the below API's,
+              <ul>
+                <li>Create a new product</li>
+                <li>Get all the available products</li>
+                <li>Search the available products by title</li>
+                <li>Create a new shopping cart</li>
+                <li>Add items to shopping cart</li>
+                <li>Update items in the shopping cart</li>
+                <li>Delete items in shopping cart</li>
+                <li>Search for items in shopping cart</li>
+              </ul>
+              <h4>Creating the project</h4>
+              Creating a new project is quite simple with minnal generators.
+              <pre class="brush:js">
+                $ minnal new shopping-cart
+              </pre>
+              <p>This command will create a maven project, generate the application classes and a sample configuration file. You should be seeing the below logs when you run the command,</p>
+              <pre class="brush:js">
+                [INFO] Creating the project shopping-cart under /Users/ganeshs
+                [INFO] Creating the folder src/main/java under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/test/java under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/main/resources under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/test/resources under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/main/resources/META-INF under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/main/resources/META-INF/services under /Users/ganeshs/shopping-cart
+                [INFO] Creating the container config file /Users/ganeshs/shopping-cart/src/main/resources/META-INF/container.yml
+                [INFO] Creating the application spi file /Users/ganeshs/shopping-cart/src/main/resources/META-INF/services/org.minnal.core.Application
+                [INFO] Creating the pom file pom.xml
+                [INFO] Creating the file /Users/ganeshs/shopping-cart/src/main/resources/log4j.properties
+                [INFO] Creating the application config file /Users/ganeshs/shopping-cart/src/main/resources/META-INF/shoppingcart.yml
+                [INFO] Creating the file /Users/ganeshs/shopping-cart/src/main/java/com/shopping/cart/ShoppingCartConfiguration.java
+                [INFO] Creating the file /Users/ganeshs/shopping-cart/src/main/java/com/shopping/cart/ShoppingCartApplication.java
+              </pre>
+              <p>We have just created a minnal project that can generate API's from JPA models. The application has been configured to connect to an in-memory hasql database.</p>
+              <h4>Creating the models</h4>
+              <p>Minnal provides generators for creating JPA models. Lets start creating the 
+              <h4>Setting Up Maven</h4>
+              <p>To get a hello world app to work, we just need to add minnal-core library to our maven dependecies,</p>
+              <pre class="brush: xml">
+                <dependencies>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-core</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+               </dependencies>
+
+               <repositories>
+                 <repository>
+                   <id>minnal-repo</id>
+                   <url>https://raw.github.com/minnal/minnal/mvn-repo/snapshots</url>
+                   <snapshots>
+                     <enabled>true</enabled>
+                     <updatePolicy>always</updatePolicy>
+                   </snapshots>
+                 </repository>
+               </repositories>
+              </pre>
+              <p>The minnal-core library has the rest application server to which we can deploy multiple applications and bundles. If your application doesn't want to generate automated API's, you should be good with just minnal-core library.</p>
+              <h4>Creating Application Configuration</h4>
+              Lets a create the Shopping Cart Application Configuration under the package <i>org.minnal.examples.shoppingcart</i>
+              <pre class="brush: java">
+                package org.minnal.examples.shoppingcart;
+
+                import org.minnal.core.config.ApplicationConfiguration;
+
+                public class ShoppingCartConfiguration extends ApplicationConfiguration {
+
+                }
+              </pre>
+              <p>We don't have any properties to configure yet but have inherited some from the super class ApplicationConfiguration. If the application needs custom properties to be defined, just add getters and setters to this class. The configuration class will be loaded from a yaml config file with the lowercase name of the configuration classname. In our case, minnal will look for a file named shoppingcart.yml under the META-INF/ folder in the classpath.</p>
+              Lets create the shoppingcart.yml file under the <i>src/main/resources/META-INF/</i> folder,
+              <pre class="brush: js">
+                name: shoppingCart
+                # We don't have any entities created yet. We will come back later to add db configuration
+              </pre>
+              <p>You can also specify jackson-json annotations to the properies or getters for custom deserialization.</p>
+              <h4>Creating the Application</h4>
+              Now that we have <i>ShoppingCartConfiguration</i> created, lets create the ShoppingCartApplication class,
+              <pre class="brush: java">
+                package org.minnal.examples.shoppingcart;
+
+                import org.minnal.core.Application;
+
+                public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
+
+                  @Override
+                  protected void defineRoutes() {
+                  }
+
+                  @Override
+                  protected void defineResources() {
+                  }
+
+                  @Override
+                  protected void addFilters() {
+                  }
+
+                  @Override
+                  protected void registerPlugins() {
+                  }
+                }
+              </pre>
+              We have just created a shopping cart application without any route defintions. The application is not yet deployed to the minnal server yet. In the next section, we will see how we can deploy and start the server.
+              <h4>Deploying the Application</h4>
+              <p>Minnal server is modeled as a container that can run multiple applications within the same JVM. Don't get confused with the tomcat container where every application deployed will be having its own classloader. With minnal all the deployed applications will share the same classloader to make it make it simple and easier. The minnal container needs to be configured first and then applications be mounted over the container.</p>
+              <p>Lets create a <i>container.yml</i> file under <i>src/main/resources/META-INF/container.yml</i>,</p>
+              <pre class="brush: js">
+                # The name of the container
+                name: My Container
+
+                # The base path to use for the routes from all the applications
+                basePath: /
+
+                # Http server configuration
+                server:
+                  connectors:
+                    - port: 8080
+                      scheme: http
+
+                # The default http media type that this container would support. Can be overridden by applications
+                defaultMediaType: application/json
+
+                # The serializers to use for the supported media types
+                serializers:
+                  application/json:
+                    class: org.minnal.core.serializer.DefaultJsonSerializer
+
+                # The mount points for the applications
+                mounts:
+                  org.minnal.examples.shoppingcart.ShoppingCartApplication: /
+              </pre>
+
+              <p>We have configured the container to accept http requests at the port 8080 and accept json requests from the cients. Note that our shopping cart application is mounted on the root path '/'</p>
+
+              <p>We are almost done, its just that we have to let the container know where to look for the ShoppingCartApplication. Minnal exposes a SPI for Application class and looks for the implementation classes under the file <i>META-INF/services/org.minnal.core.Application</i>.
+
+              <pre class="brush: js">
+                org.minnal.examples.shoppingcart.ShoppingCartApplication
+
+              </pre>
+
+              <p>If you plan to deploy more than one application, add the fully qualified names of all the applications one in each line. Minnal will mount them all as per the mount configuration in the container.yml</p>
+              <p>Note: Do remember to leave a blank line in the end of file. </p>
+              <h4>Starting the Server</h4>
+              <p>We don't need to write a main class to start our application. Just package the application with the META-INF/ folder and add it to the classpath alongside minnal-core.jar and its dependencies,</p>
+              <pre>
+                java -cp shopping-cart.jar:minnal-core.jar org.minnal.Bootstrap
+              </pre>
+              <p>The application is up and will respond to port 8080 now. Since there aren't any routes defined yet, you will get 404 when you try to hit the url <a href="http://localhost:8080/">http://localhost:8080/</a></p>
+              <h4>Creating the Domain Classes</h4>
+              <p>Lets create the domain classes to the application to make it worth enough. The users of our application should be able to search the products, so lets start from there.</p>
+              <pre class="brush: java">
+                package org.minnal.examples.shoppingcart.domain;
+
+                import org.activejpa.entity.Model;
+                import javax.persistence.*;
+
+                @Entity
+                @Table(name="products")
+                public class Product extends Model {
+
+                  private Long id;
+
+                  private String title;
+
+                  private Double price;
+
+                  @Override
+                  @Id
+                  @GeneratedValue(strategy=GenerationType.IDENTITY)
+                  public Long getId() {
+                    return id;
+                  }
+
+                  public void setId(Long id) {
+                    this.id = id;
+                  }
+
+                  public String getTitle() {
+                    return this.title;
+                  }
+
+                  public void setTitle(String title) {
+                    this.title = title;
+                  }
+
+                  public Double getPrice() {
+                    return this.price;
+                  }
+
+                  public void setPrice(Double price) {
+                    this.price = price;
+                  }
+                }
+              </pre>
+              <p>If you are wondering where the base class Model come from, it's coming from <a href="https://github.com/ActiveJpa/activejpa">ActiveJpa</a>. <i>ActiveJpa is a java library that attempts to implement the active record pattern on top of JPA. It eliminates the need to create DAO or Repository classes and make programming DAL a lot more simpler</i>. Minnal recommends using JPA for DB access and provides a JPA plugin module with ActiveJpa integration.</p>
+              <p>We should include the minnal-jpa module to the classpath to resolve the compilation errors in the Product class. Lets add them to our pom file,</p>
+              <pre class="brush: xml">
+                <dependencies>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-core</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-jpa</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+               </dependencies>
+
+               <repositories>
+                 <repository>
+                   <id>minnal-repo</id>
+                   <url>https://raw.github.com/minnal/minnal/mvn-repo/snapshots</url>
+                   <snapshots>
+                     <enabled>true</enabled>
+                     <updatePolicy>always</updatePolicy>
+                   </snapshots>
+                 </repository>
+                 <repository>
+                   <id>activejpa-repo</id>
+                   <url>https://raw.github.com/ActiveJpa/activejpa/mvn-repo/releases</url>
+                   <snapshots>
+                     <enabled>true</enabled>
+                     <updatePolicy>always</updatePolicy>
+                   </snapshots>
+                 </repository>
+               </repositories>
+              </pre>
+              <p>Lets create the other domain classes for our application. We will need ShoppingCart and ShoppingCartItem classes to represent a shopping cart,
+              <pre class="brush: java">
+                package org.minnal.examples.shoppingcart.domain;
+
+                import org.activejpa.entity.Model;
+                import javax.persistence.*;
+                import java.util.Set;
+
+                @Entity
+                @Table(name="shopping_carts")
+                public class ShoppingCart extends Model {
+
+                  private Long id;
+
+                  private String customerId;
+
+                  private Set&lt;ShoppingCartItem&gt; cartItems;
+
+                  @Override
+                  @Id
+                  @GeneratedValue(strategy=GenerationType.IDENTITY)
+                  public Long getId() {
+                    return id;
+                  }
+
+                  public void setId(Long id) {
+                    this.id = id;
+                  }
+
+                  public String getCustomerId() {
+                    return customerId;
+                  }
+
+                  public void setCustomerId(String customerId) {
+                    this.customerId = customerId;
+                  }
+
+                  @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+                  @JoinColumn(name="shopping_cart_id")
+                  public Set&lt;ShoppingCartItem&gt; getCartItems() {
+                    return this.cartItems;
+                  }
+
+                  public void setCartItems(Set&lt;ShoppingCartItem&gt; cartItems) {
+                    this.cartItems = cartItems;
+                  }
+                }
+
+                @Entity
+                @Table(name="shopping_cart_items")
+                public class ShoppingCartItem extends Model {
+
+                  private Long id;
+
+                  private Product product;
+
+                  private Integer quantity;
+
+                  private ShoppingCart cart;
+
+                  @Override
+                  @Id
+                  @GeneratedValue(strategy=GenerationType.IDENTITY)
+                  public Long getId() {
+                    return id;
+                  }
+
+                  public void setId(Long id) {
+                    this.id = id;
+                  }
+
+                  public Integer getQuantity() {
+                    return quantity;
+                  }
+
+                  public void setQuantity(Integer quantity) {
+                    this.quantity = quantity;
+                  }
+
+                  @ManyToOne(fetch=FetchType.LAZY)
+                  @JoinColumn(name="shopping_cart_id")
+                  public ShoppingCart getCart() {
+                    return this.cart;
+                  }
+
+                  public void setCart(ShoppingCart cart) {
+                    this.cart = cart;
+                  }
+
+                  @ManyToOne(fetch=FetchType.LAZY)
+                  @JoinColumn(name="product_id")
+                  public Product getProduct() {
+                    return this.product;
+                  }
+
+                  public void setProduct(Product product) {
+                    this.product = product;
+                  }
+                }
+              </pre>
+              <p>Our domain classes are created sans any domain operations. We will add domain methods later in the tutorial but now lets set up the db configuration and create the db migrations.</p>
+              <h4>Configuring JPA</h4>
+              <p>We will be using <a href="http://www.hsqldb.org/">hsqldb</a>, an inmemory database and hibernate as JPA provider in our application. We have to configure our application with these settings. Lets add them to shoppingcart.yml,</p>
+              <pre class="brush: js">
+                name: shoppingCart
+
+                # Database configuration
+                db:
+                  driverClass: org.hsqldb.jdbcDriver
+                  url: jdbc:hsqldb:mem:.
+                  username: sa
+                  providerProperties:
+                    hibernate.ejb.naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+                    hibernate.show_sql: false
+                    hibernate.format_sql: false
+                    hibernate.current_session_context_class: thread
+                    hibernate.dialect: org.hibernate.dialect.HSQLDialect
+
+                  # The list of packages to scan for the entity classes.
+                  # It recursively checks the sub directories as well
+                  packagesToScan:
+                    - org.minnal.examples.shoppingcart.domain
+              </pre>
+              <p>The hibernate and hsqldb libraries should be added to the pom dependencies as well</p>
+              <pre class="brush: xml">
+                <dependencies>
+                  <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-entitymanager</artifactId>
+                    <version>4.2.1.Final</version>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>2.2.9</version>
+                  </dependency>
+                </dependencies>
+              </pre>
+
+              <p>We should also regiter the minnal-jpa plugin in our application. The minnal-jpa plugin, creates an entity manager factory and initalizes ActiveJpa library. You can read more about the usage of ActiveJpa <a href="https://github.com/ActiveJpa/activejpa">here</a></p>
+              <pre class="brush: java">
+                import org.minnal.jpa.JPAPlugin;
+
+                public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
+
+                  ....
+
+                  @Override
+                  protected void registerPlugins() {
+                    registerPlugin(new JPAPlugin());
+                  }
+
+                  ....
+                }
+              </pre>
+              <h4>Create DB migrations</h4>
+              <p>To create the database and migrations, we will be using FlywayDB. Read more about Flyway migrations <a href="http://flywaydb.org/getstarted/firststeps/index.html">here</a>. The migrations will be put into <i>src/main/resources/db/migration/</i> folder. Lets create the migration files for creating products, shopping_carts and shopping_cart_items tables</p>
+
+              <pre class="brush: sql">
+                -- file: V1__create_products.sql
+                create table products (
+                  id integer not null primary key identity,
+                  title varchar(50) not null,
+                  price decimal(10, 2) not null
+                );
+
+                -- file: V2__create_shopping_carts.sql
+                create table shopping_carts (
+                  id integer not null primary key identity,
+                  customer_id varchar(50) not null
+                );
+
+                -- file: V3__create_shopping_cart_items.sql
+                create table shopping_cart_items (
+                  id integer not null primary key identity,
+                  product_id integer not null,
+                  cart_id integer not null,
+                  quantity integer not null
+                );
+              </pre>
+              <p>We should also add the FlywayDB as a dependency in our pom file.</p>
+              <pre class="brush: xml">
+                <dependencies>
+                  <dependency>
+                    <groupId>com.googlecode.flyway</groupId>
+                    <artifactId>flyway-core</artifactId>
+                    <version>2.1.1</version>
+                  </dependency>
+                </dependencies>
+              </pre>
+
+              <p>We can either run the migrations standalone using Flyway library or let the application run them during startup. For this tutorial, we will run the migrations during the startup of the application. We will just have to call Flyway migrate in while loading the application,</p>
+              <pre class="brush: java">
+                public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
+
+                  public ShoppingCartApplication() {
+                    // Consider moving this code to a plugin and register it with the application
+
+                    DatabaseConfiguration dbConfig = getConfiguration().getDatabaseConfiguration();
+                    Flyway flyway = new Flyway();
+                    flyway.setDataSource(dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getPassword());
+                    flyway.migrate();
+                  }
+                }
+              </pre>
+              <p> Now when the application is mounted on the container, the migrations will run and create the tables in the database</p>
+
+              <h4>Generating the REST API's</h4>
+              <p>Just a recap, we have create an Application class, domain classes, configured container/application, added JPA plugin and created migrations. We will have to identify the aggregate roots in our domain and enable instrumentation for our application. With that we will be all set to run our simple shopping cart application.</p>
+              <p>We recommend you to read <a href="http://www.infoq.com/minibooks/domain-driven-design-quickly">Domain Driven Design Quickly</a>, a free ebook that explains in detail about identifying the aggregate roots in a domain. <i>"Aggregates are groups of entities that belong together and Aggregate Root is the entity that holds them all together. With out an aggregate root, other entities can't exist"</i>. With this definition, we can identify two Aggregate roots in our domain, Product and ShoppingCart. ShoppingCartItem belongs to ShoppingCart, without the cart, cart item can't exist. Product can be regarded as an aggregate root although it doesn't have any children under it as it can exist without a ShoppingCart and ShoppingCartItem.</p>
+              <p>To mark an entity as aggregate root, you will have to annotate the entity with @AggregateRoot. This annotation comes from the minnal-instrumentation bundle which is resposible for generating the API's at runtime. The instrumentation bundle looks for applications in the container that has <i>enableInstrumentation</i> set to true.</p>
+              <pre class="brush: java">
+                import org.minnal.instrument.entity.AggregateRoot;
+
+                @AggregateRoot
+                public class Product extends Model {
+
+                }
+
+                @AggregateRoot
+                public class ShoppingCart extends Model {
+
+                }
+              </pre>
+              <p>We should enable instrumentation for our shopping cart application, so minnal can generate the API's for us.</p>
+              <pre class="brush: java">
+                public class ShoppingCartApplication extends Application&lt;ShoppingCartConfiguration&gt; {
+                  ....
+
+                  @Override
+                  public boolean shouldInstrument() {
+                    return true;
+                  }
+
+                  ....
+                }
+              </pre>
+              <p>At this juncture, you should see some compilation errors in your models due to the missing AggregateRoot class. We haven't added the minnal-instrumentation library yet to our dependencies, lets add it to the pom file</p>
+              <pre class="brush: xml">
+                <dependencies>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-core</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-jpa</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-instrumentation</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+               </dependencies>
+              </pre>
+              <h4>Where are the Generated API's?</h4>
+              <p>The API's are not generated yet. They will be generated during the startup on the application and will be available only during the application lifetime. Minnal generates the API's at runtime using bytecode enhancement techniques and doesn't generate the source code for you purposefully. Minnal has intentionally kept away from code generation as managing the generated code will be a mess. From our past experience, we have seem developers trying to modify the generated code and mess them up. Another reason why minnal doesn't generate code is to make the application look simpler with just domain code in it.</p>
+              <h4>Viewing the generated API's</h4>
+              <p>How do I view the API's if the code is not generated? Minnal provides an admin application that can list down all the applications running in the container and the API's they expose. Just add minnal-admin to the dependency.</p>
+              <pre class="brush: xml">
+                <dependencies>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-core</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-jpa</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-instrumentation</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+                 <dependency>
+                   <groupId>org.minnal</groupId>
+                   <artifactId>minnal-admin</artifactId>
+                   <version>0.0.1-SNAPSHOT</version>
+                 </dependency>
+               </dependencies>
+              </pre>
+              <p>We should also add org.minnal.admin.AdminApplication to SPI implementations under <i>META-INF/services/org.minnal.core.Application</i> file</p>
+              <pre class="brush: js">
+                org.minnal.examples.shoppingcart.ShoppingCartApplication
+                org.minnal.admin.AdminApplication
+
+              </pre>
+              <p>and mount the admin application to /admin in the container.yml</p>
+              <pre class="brush: js">
+                # The mount points for the applications
+                mounts:
+                  org.minnal.examples.shoppingcart.ShoppingCartApplication: /
+                  org.minnal.admin.AdminApplication: /admin
+              </pre>
+              <p>and lastly mention the packages to scan for resources within the application in the shoppingCart.yml. This will be used by instrumentation module to look for aggregate roots and resource classes that we will be covering later in this tutorial</p>
+              <pre class="brush: js">
+                name: shoppingCart
+                packagesToScan:
+                  - org.minnal.examples.shoppingcart
+              </pre>
+              <p>Lets restart the application now. Hit the url GET <a href="http://localhost:8080/admin/routes/shoppingCart">http://localhost:8080/admin/routes/shoppingCart</a>. You should be seeing the list of API's that are generated by minnal</p>
+              <h4>Generating Search API's</h4>
+              Let's build some search capability for our shopping cart. Our users should be able to find products by title. Minnal provides @Searchable annotation to mark a field as searchable. Fields that are marked as @Searchable will be available to be used in the query params. Let's mark the field title as @Searchable and check the routes again,
+              <pre class="brush: java">
+                import org.minnal.instrument.entity.Searchable;
+
+                @Entity
+                @Table(name="products")
+                public class Product extends Model {
+
+                  ....
+                  ....
+
+                  @Searchable
+                  public String getTitle() {
+                    return this.title;
+                  }
+
+                  public void setTitle(String title) {
+                    this.title = title;
+                  }
+
+                  ....
+                  ....
+              </pre>  
+              <p>Now when you hit the url <a href="http://localhost:8080/admin/routes/shoppingCart">http://localhost:8080/admin/routes/shoppingCart</a>, you should be able to see the search parameters coming up in the routes where products resources is part of.</p>
+              <h4>Customizing the API</h4>
+              <p>Say, we want to customize the create shopping cart api <i>POST /shopping_carts</i> to do additional stuff while creating the cart. We can overiride the api by creating a resource class for shopping cart. Minnal will generate all the API's but for the customized one. Let's try creating a ShoppingCartResource class under <i>org.minnal.examples.shoppingcart.resources</i></p>
+              <pre class="brush:java">
+                package org.minnal.examples.shoppingcart.resources;
+
+                import org.minnal.core.resource.Resource;
+                import org.minnal.core.Request;
+                import org.minnal.core.Response;
+                import org.minnal.examples.shoppingcart.domain.ShoppingCart;
+                import org.jboss.netty.handler.code.http.HttpResponseStatus;
+
+                // The @Resource annotation tells minnal that this class is resource class. 
+                // The value parameter takes in an class that's marked with @AggregateRoot domain
+                // Minnal will scan for all resources marked with @Resource
+                @Resource(value=ShoppingCart.class)
+                public class ShoppingCartResource {
+
+                  // We are overriding the api POST /shopping_carts. 
+                  // The method name should be the same as that of the one from 
+                  // the route defintions at http://localhost:8080/admin/routes/shoppingCart
+                  public ShoppingCart createShoppingCart(Request request, Response response) {
+                    // Your custom code here
+                    response.setStatus(HttpResponseStatus.OK);
+                    // The return value from this method will be set as response content
+                  }
+                }
+              </pre>
+              <p>When you customize an API, do make sure that you create a method with the name as defined in the routes definition from http://localhost:8080/admin/routes/shoppingCart. And don't forget to mark the class with @Resource annotation. We should also tell minnal what packages to look for the resource classes. We have already done this in <i>shoppingcart.yml</i> file.</p>
+              <pre class="brush:js">
+                name: shoppingCart
+
+                # The list of packages to scan for the entity classes.
+                # It recursively checks the sub directories as well
+                packagesToScan: 
+                  - org.minnal.examples.shoppingcart
+              </pre>
+              <p>Now all calls to <i>POST /shopping_carts</i> will be hitting our custom resource class.</p>
+            </div>
+        </div>
+        <div id="footer" class="row-fuid">
+          <div class="container-fluid">
+            <div class="navbar navbar-inverse">
+              <div class="navbar-inner">
+                <div class="container-fluid">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+  <!-- Finally, to actually run the highlighter, you need to include this JS on your page -->
+<script type="text/javascript">
+  SyntaxHighlighter.all();
+  $('#toc').toc({
+    'selectors': 'h1,h2,h3,h4,h5',
+    'highlightOnScroll': false
+  });
+
+</script>
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-41566886-1', 'minnal.github.io');
+                ga('send', 'pageview');
+
+              </script>
+</html>
