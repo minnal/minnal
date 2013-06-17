@@ -83,9 +83,23 @@
               <p>A typical rest application (service) will have a controller layer that handles the incoming request, optionally delegates them to a application layer which inturn call the domain layer and repository/DAO layer. Most of these are boilerplate code and the really work happens in the domain layer and application layer. However good is the REST framework, it may not help you avoid writing the boilerplate code and you will have spend your effort in testing and managing these code. This is what Minnal is attempting to solve. It eliminates the DAL and Controller from your application, so you can focus on enriching your domain.</p>
               <p>The framework has a modular design that makes every functionality easily pluggable. If you wish Minnal not to generate the API's for you, you can exclude the <i>instrumentation</i> module from you application. If you wish to write your own DAL, you could do well so by excluding the <i>jpa</i> module. The framework exposes hooks at different stages of the application lifecycle and can be easily extended to support custom functionalities.</p>
               <p>Minnal uses <a href="http://netty.io/">Netty</a>, a NIO client-server framework, underneath to achieve high scalability. <a href="http://jackson.codehaus.org/">Jackson</a> is used for serializing json/xml and <a href="https://code.google.com/p/snakeyaml/">Snakeyaml</a> for serializing yaml. Minnal recommends JPA for all DB access and uses <a href="http://flywaydb.org/">FlywayDB</a> for running db migrations.
-            
+              <h2>Installing Minnal</h2>
+              <h3>Prerequisites</h3>
+              <p>To run minnal, you need JDK 6 or later. Minnal has been tested with Sun JDK, OpenJDK support will be taken up in the coming versions. Minnal recommends you to use maven to manage your project dependencies, the installation package requires <a href="http://maven.apache.org/download.cgi">maven 3</a> to get started.</p>
+              <p>Ensure your JAVA_HOME is set to JDK and not the JRE. Minnal instrumentation module requires tools.jar from JDK libraries to be in the classpath.</p>
+              <h3>Downloading the package</h3>
+              <p>Download the latest minnal installation package from <a href="https://github.com/minnal/minnal/tree/downloads/minnal/">here</a> and extract the archive to a folder with read and write access.</p>
+              <p>Add the the framework binary folder <i>/path/to/minnal-X.X.X/bin</i> to your path, so you can conviniently run the minnal executable. If you are running on windows, add it to the global environment variables</p>
+              <p>Test if you can run  minnal,</p>
+              <pre class="brush:js">
+                $ minnal -help
+              </prE>
+              If the installation is proper, you should be able to see the usage. Ensure you have executable permissions for the <i>/path/to/minnal-X.X.X/bin</i> folder
+              <pre class="brush:js">
+                Usage: minnal [options] [command] [command options]
+              </pre>
               <h2>Tutorial</h2>
-              <p>In this section, we will build a simple shopping cart application and in the process learn the core concepts of Minnal Framework.</p>
+              <p>Let us get started by build a simple shopping cart application and in the process learn the core concepts of Minnal Framework.</p>
               <h3>Shopping Cart Application</h3>
               Our shopping cart application will expose the below API's,
               <ul>
@@ -98,6 +112,28 @@
                 <li>Delete items in shopping cart</li>
                 <li>Search for items in shopping cart</li>
               </ul>
+              <h4>Creating the project</h4>
+              Creating a new project is quite simple with minnal generators.
+              <pre class="brush:js">
+                $ minnal new shopping-cart
+              </pre>
+              <p>This command will create a maven project, generate the application classes and a sample configuration file. You should be seeing the below logs when you run the command,</p>
+              <pre class="brush:js">
+                [INFO] Creating the project shopping-cart under /Users/ganeshs
+                [INFO] Creating the folder src/main/java under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/test/java under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/main/resources under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/test/resources under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/main/resources/META-INF under /Users/ganeshs/shopping-cart
+                [INFO] Creating the folder src/main/resources/META-INF/services under /Users/ganeshs/shopping-cart
+                [INFO] Creating the pom file pom.xml
+                [INFO] Creating the file /Users/ganeshs/shopping-cart/src/main/resources/log4j.properties
+                [INFO] Creating the application config file /Users/ganeshs/shopping-cart/src/main/resources/META-INF/shopping_cart.yml
+                [INFO] Creating the file /Users/ganeshs/shopping-cart/src/main/java/com/shopping/cart/Shopping_cartConfiguration.java
+                [INFO] Creating the file /Users/ganeshs/shopping-cart/src/main/java/com/shopping/cart/Shopping_cartApplication.java
+                [INFO] Creating the container config file /Users/ganeshs/shopping-cart/src/main/resources/META-INF/container.yml
+                [INFO] Creating the application spi file /Users/ganeshs/shopping-cart/src/main/resources/META-INF/services/org.minnal.core.Application
+              </pre>
               <h4>Setting Up Maven</h4>
               <p>To get a hello world app to work, we just need to add minnal-core library to our maven dependecies,</p>
               <pre class="brush: xml">
