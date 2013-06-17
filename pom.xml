@@ -5,7 +5,7 @@
 	<artifactId>minnal</artifactId>
 	<packaging>pom</packaging>
 	<name>Minnal Framework</name>
-	<version>0.9.0</version>
+	<version>0.9.1-SNAPSHOT</version>
 
 	<modules>
 		<module>minnal-core</module>
@@ -27,7 +27,7 @@
 
 	<scm>
 		<developerConnection>scm:git:https://github.com/minnal/minnal.git</developerConnection>
-	  <tag>minnal-0.9.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<developers>
