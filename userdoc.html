@@ -84,7 +84,7 @@
               <p>The core of minnal is the container under which multiple applications are run. The notion of <i>Container</i> and <i>Application</i> might be confusing here. Unlike application servers like Tomcat, minnal doesn't create a classloader per application deployed. The figure below shows the high level design of the framework</p>
               <img src="images/minnal.jpg"/>
               <p>At the low level is the container that defines the http connector and handles the incming request via a router. The router resolves the route from the request and deligates the request to application which in turn delegates to a route handler. The request optionally will go through a set of filters before hitting the controller method.</p>
-              <p>The container allows bundles to hook into its life cyle. Bundles can provide custom functionality at container level and will have access to all applications loaded into the container.</p>
+              <p>The container allows bundles to hook into its life cyle. Bundles can provide custom functionality at container level and will have access to the container.</p>
               <p>The application allows plugins to hook into its life cycle. Plugins can provide custom functionality at application level and will have access to all the resources and routes with in the application</p>
             <h2>Modules</h2>
             This section explains in detail the usage of various modules offered by minnal.
@@ -312,6 +312,58 @@
               }
             </pre>
             <p>Take a look at the class <code>org.minnal.core.config.RouteConfiguration</code> for all the available properties</p>
+            <h4>Creating a plugin</h4>
+            <p>Plugin hooks into the lifecycle of an application. Minnal invokes the plugin when an application is intialized or destroyed. Creating a plugin is fairly simple, you will just have to implement the interface <code>org.minnal.core.Plugin</code></p>
+            <pre class="brush: java">
+              public class MyPlugin implements Plugin {
+
+                @Override
+                public void init(Application application) {
+                  System.out.println("Initializing the plugin");
+                }
+
+                @Override
+                public void destroy() {
+                  System.out.println("Destroying the plugin");
+                }
+              }
+            </pre>
+            <h4>Registering a plugin to the application</h4>
+            <p>You can register a plugin in the registerPlugins() method of the application class</p>
+            <pre class="brush: java">
+              public class ExampleApplication extends Application&lt;ExampleConfiguration&gt; {
+               
+                @Override
+                protected void registerPlugins() {
+                  registerPlugin(new MyPlugin());
+                }
+              }
+            </pre>
+            <p>The registered plugins will be invoked in the same order they are registered</p>
+            <h4>Creating a bundle</h4>
+            <p>Bundles hook into the life cycle of the container. Bundle gets access to the container. The container invokes the bundle when the container is initialized, started, stopped. To cretae a bundle, simply implement the interface <code>org.minnal.core.Bundle</code></p> 
+            <pre class="brush: java">
+              public class MyBundle implements Bundle {
+
+                public void init(Container container) {
+                  System.out.println("Intializing the bundle");
+                }
+
+                public void start() {
+                  System.out.println("Starting the bundle");
+                }
+
+                public void stop() {
+                  System.out.println("Stopping the bundle");
+                }
+              }
+            </pre>
+            <h4>Adding a bundle to the container</h4>
+            <p>To add a bundle to the container, you will have to add the bundle class to the SPI of <code>org.minnal.core.Bundle</code> under <i>META-INF/</i> folder, </p>
+            <pre class="brush: js">
+              com.example.MyBundle
+              
+            </pre>
             <h3>Minnal Jpa</h3>
             Work In Progress
             <h3>Minnal Migrations</h3>
