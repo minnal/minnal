@@ -79,7 +79,7 @@
           <div class="row-fluid">
             <h1>User Documentation</h1>
             <p>This document will provide you detailed information about the feature set of the minnal modules, configuring them, organizing your project, testing your application, extending minnal etc...</p>
-            <p>You should read through <a href="gstarted.html">Getting Started</a> to get an understanding what the framework is capable of.</p>
+            <p>You should read through <a href="gstarted.html">Getting Started</a> to get an understanding of the framework capabilities.</p>
             <h2>High level design</h2>
               <p>The core of minnal is the container under which multiple applications are run. The notion of <i>Container</i> and <i>Application</i> might be confusing here. Unlike application servers like Tomcat, minnal doesn't create a classloader per application deployed. The figure below shows the high level design of the framework</p>
               <img src="images/minnal.jpg"/>
@@ -124,6 +124,57 @@
               <li><code>src/test/java</code></li>
               <li><code>src/test/resources</code></li>
             </ul>
+            <h4>Container Configuration</h4>
+            <p>Minnal's configuration follows a composite pattern. Routes inherit from a Resource, Resources inherit from an Application and Applications inherit from Container. Minnal abstracts outa bunch of configuration parameters at container level and every component inherits them from their parent.</p>
+            <p>The configuration is loaded from a <i>container.yml</i> file loacated under <i>META-INF/</i> folder in the classpath</p>
+            <pre class="brush: js">
+              # The name of the container
+              name: My Container
+
+              # The base path to use for the routes from all the applications
+              basePath: /
+
+              # Http server configuration
+              server:
+                connectors:
+                  - port: 8080
+                    scheme: http
+
+              # The default http media type that this container would support. Can be overridden by applications
+              defaultMediaType: application/json
+
+              # The serializers to use for the supported media types
+              serializers:
+                application/json:
+                  class: org.minnal.core.serializer.DefaultJsonSerializer
+
+              # The mount points for the applications
+              mounts:
+                com.shopping.cart.ShoppingCartApplication: /
+            </pre>
+            <p>Take a look at the class <code>org.minnal.core.config.ContainerConfiguration</code> for all the available properties</p>
+            <h5>Configuring SSL</h5>
+            Enabling https is quite similar to http, just that ssl needs to be configured. Create a https connector and configure ssl,
+            <pre class="brush: js">
+              # Http server configuration
+              server:
+                connectors:
+                  - port: 8080
+                    scheme: http
+                  - port: 8443
+                    scheme: https
+                    ssl:
+                      keyStoreFile: /Users/ganeshs/keystore.jks
+                      keyStorePassword: password
+                      keyPassword: secret
+            </pre>
+            <p>Take a look the class <code>org.minnal.core.config.SSLConfiguration</code> for all the available properties</p>
+            <h5>Mounting applications to the container</h5>
+            <p>To mount an application to the container, you will have add the application class to the SPI of <code>org.minnal.core.Application</code>. The container loads all the applications from the SPI file and mounts them as configured in the <i>container.yml</i>. Create a file <i>org.minnal.core.Application</i> under <i>META-INF/services/</i> folder and the list of applications you want to add to the container,</p>
+            <pre class="brush: js">
+              com.example.shopping.cart.ShoppingCartApplication
+
+            </pre>
             <h4>Creating an Application</h4>
             <p>Application class is the entry point to your application. The application specific configurations are read from <code>org.minna.core.config.ApplicationConfiguration</code> class and you will have to extend it to create your application specific configuration</p>
             <pre class="brush: java">
@@ -133,8 +184,6 @@
 
               }
             </pre>
-            <p>Application inherits the configuration parameters from container. For instance, if you haven't set any serialiers for json content type, it will get it from container. You can override it by explicitly specifying in the ApplicationConfiguration</p>
-
             <p>You create an application by extending the class <code>org.minnal.core.Application</code>.</p>
             <pre class="brush: java">
               package com.example;
@@ -159,6 +208,31 @@
                 }
               }
             </pre>
+            <h5>Application Configuration</h5>
+            <p>Application inherits the configuration parameters from container. For instance, if you haven't set any serialiers for json content type, it will get it from container. You can override it by explicitly specifying in the ApplicationConfiguration. Minnal looks for the application configuration under <i>META-INF/</i> folder in the classpath. Be sure to name the file as lowercased application name. For instance if your application class name is <code>ShoppingCartApplication</code>, then the application config file name should be <code>shoppingcart.yml</code>. Bare minimum, the application config requires a name to be defined</p>
+            <pre class="brush: js">
+              # The name of the application
+              name: shopping_cart
+            </pre>
+            <h5>Database Configuration</h5>
+            <p>Minnal recommends you to use JPA in your persistence layer but the database configuration is generic enough to use any library in your peristence layer</p>
+            <pre class="brush: js">
+              db:
+                driverClass: com.mysql.jdbc.Driver
+                url: jdbc:mysql://localhost/facilities
+                username: root
+                providerProperties:
+                  hibernate.ejb.naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+                  hibernate.show_sql: true
+                  hibernate.format_sql: false
+                  hibernate.current_session_context_class: thread
+                  hibernate.dialect: org.hibernate.dialect.MySQLDialect
+                packagesToScan: 
+                  - com.ekl.facilities
+                  - org.minnal.security.session
+                  - org.minnal.security.auth.cas
+            </pre>
+            <p>Take a look at the class <code>org.minnal.core.config.ApplicationConfiguration</code> for all the available properties</p>
             <h4>Creating a Resource</h4>
             Creating a resource is straight forward. Unlike <i>Application</i>, resource class need not extend any framework specific classes. You create a resource under <code>com.example.resources</code> package.
             <pre class="brush: java">
@@ -209,10 +283,35 @@
                 addResource(ExmapleResource.class, configuration);
               }
             </pre>
+            <p>Take a look at the class <code>org.minnal.core.config.ResourceConfiguration</code> for all the available properties</p>
             <h4>Creating the routes</h4>
-            <p>Routes are associated with resource classes. So we add routes to resources,</p>
+            <p>Routes are associated with resource classes. You add routes in the defineRoutes() method of the application class</p>
+            <pre class="brush: java">
+              public class ExampleApplication extends Application&lt;ExampleConfiguration&gt; {
+               
+                @Override
+                protected void defineRoutes() {
+                  // Map ExampleResource.readExample method to the route GET /examples/{id}
+                  resource(ExampleResource.class).builder("/examples/{id}").action(HttpMethod.GET, "readExample");
 
-            <h4>Configuration</h4>
+                  // You can also chain the actions for a route
+                  resource(ExampleResource.class).builder("/examples/{id}").action(HttpMethod.PUT, "updateExample").action(HttpMethod.DELETE, "deleteExample");                  
+                }
+              }
+            </pre>
+            <h5>Route Configuration</h5>
+            <p>By default minnal inherits the resource configuration parameters in to the route configuration. You can customize the route configuration as below,</p>
+            <pre class="brush: java">
+              @Override
+              protected void defineRoutes() {
+                RouteConfiguration configuration = new RouteConfiguration("some name");
+                configuration.addSerializer(MediaType.CSV_UTF_8, csvSerializer);
+
+                // Map ExampleResource.readExample method to the route GET /examples/{id}
+                resource(ExampleResource.class).builder("/examples/{id}").action(HttpMethod.GET, "readExample").using(configuration);
+              }
+            </pre>
+            <p>Take a look at the class <code>org.minnal.core.config.RouteConfiguration</code> for all the available properties</p>
             <h3>Minnal Jpa</h3>
             Work In Progress
             <h3>Minnal Migrations</h3>
@@ -247,7 +346,8 @@
 <script type="text/javascript">
   SyntaxHighlighter.all();
   $('#toc').toc({
-    'selectors': 'h1,h2,h3,h4,h5'
+    'selectors': 'h1,h2,h3,h4,h5',
+    'highlightOnScroll': false
   });
 
 </script>
