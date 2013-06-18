@@ -430,7 +430,43 @@
             </pre>
             <p>The JPAPlugin reads the database configuration from your application configuration and loads the <code>EntityManagerFactory</code>. You can configure the vendor specific properties in the db configuration section.</p>
             <h3>Minnal Migrations</h3>
-            Work In Progress
+            <p>Minnal uses FlywayDB for database migrations. Read more about Flyway migrations <a href="http://flywaydb.org/getstarted/firststeps/index.html">here</a>. The current version doesn't have full fledged integration with FlywayDB but provides a plugin to create the migrations during the startup of the application.</p>
+            <h4>Creating db migrations</h4>
+            <p>Refer <a href="http://flywaydb.org/getstarted/firststeps/index.html">FlywayDB</a> to read about creating migration files. With minnal, the migrations should be put into <i>src/main/resources/db/migration/</i> folder. Below are the migrations of our shopping cart application,</p>
+            <pre class="brush: sql">
+              -- file: V1__create_products.sql
+              create table products (
+                id integer not null primary key identity,
+                title varchar(50) not null,
+                price decimal(10, 2) not null
+              );
+
+              -- file: V2__create_shopping_carts.sql
+              create table shopping_carts (
+                id integer not null primary key identity,
+                customer_id varchar(50) not null
+              );
+
+              -- file: V3__create_shopping_cart_items.sql
+              create table shopping_cart_items (
+                id integer not null primary key identity,
+                product_id integer not null,
+                cart_id integer not null,
+                quantity integer not null
+              );
+            </pre>
+            <h4>Running the migrations</h4>
+            <p>You can either manually run the migrations using Flyway library (Refer its documentation on maven plugin) or register the plugin <code>org.minnal.migrations.plugin.MigrationsPlugin</code> in your application to run them during the start up of the application.</p>
+            <pre class="brush: java">
+              public class ExampleApplication extends Application&lt;ExampleConfiguration&gt; {
+               
+                @Override
+                protected void registerPlugins() {
+                  registerPlugin(new MigrationsPlugin());
+                  registerPlugin(new JPAPlugin());
+                }
+              }
+            </pre>
             <h3>Minnal Instrumentation</h3>
             Work In Progress
             <h3>Minnal Security</h3>
