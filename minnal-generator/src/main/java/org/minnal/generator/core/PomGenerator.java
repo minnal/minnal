@@ -46,9 +46,9 @@ public class PomGenerator extends AbstractGenerator {
 	
 	private static final String ACTIVE_JPA_SNAPSHOTS_REPO = "https://raw.github.com/ActiveJpa/activejpa/mvn-repo/snapshots";
 	
-	private static final String MINNAL_RELEASES_REPO = "https://github.com/minnal/minnal/mvn-repo/releases";
+	private static final String MINNAL_RELEASES_REPO = "https://raw.github.com/minnal/minnal/mvn-repo/releases";
 	
-	private static final String MINNAL_SNAPSHOTS_REPO = "https://github.com/minnal/minnal/mvn-repo/snapshots";
+	private static final String MINNAL_SNAPSHOTS_REPO = "https://raw.github.com/minnal/minnal/mvn-repo/snapshots";
 	
 	private static final String BOOSTRAP_CLASS = "org.minnal.Bootstrap";
 	
