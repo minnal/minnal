@@ -8,8 +8,8 @@
     <meta name="author" content="subramanian.ganesh@gmail.com">
 
     <link rel="stylesheet" href="stylesheets/bootstrap.css">
-    <link rel="stylesheet" href="stylesheets/shCore.css">
-    <link rel="stylesheet" href="stylesheets/shThemeDefault.css">
+    <link rel="stylesheet" href="stylesheets/shCoreEmacs.css">
+    <link rel="stylesheet" href="stylesheets/shThemeEmacs.css">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -37,6 +37,8 @@
     <script src="javascripts/shBrushJava.js"></script>
     <script src="javascripts/shBrushJScript.js"></script>
     <script src="javascripts/shBrushXml.js"></script>
+    <script src="javascripts/shBrushSql.js"></script>
+    <script src="javascripts/shBrushBash.js"></script>
     <script src="javascripts/jquery.toc.min.js"></script>
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -77,7 +79,20 @@
           <div class="row-fluid">
             <div id="content">
               <h1>Frequently Asked Questions</h1>
-              Work In Progress
+              <h2>Exceptions thrown</h2>
+              <h3>ClassNotFoundException: com.sun.tools.attach.VirtualMachine</h3>
+              <p>Minnal requires tools.jar to be present on the classpath. If it doesn't find, you might see the below exception,</p> 
+              <pre class="brush: bash">
+                Caused by: java.lang.ClassNotFoundException: com.sun.tools.attach.VirtualMachine
+                at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+                at java.security.AccessController.doPrivileged(Native Method)
+                at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+                at java.lang.ClassLoader.loadClass(ClassLoader.java:306)
+                at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:301)
+                at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
+                ... 9 more
+              </pre>
+              <p>To resolve this, make sure your JAVA_HOME points to the JDK and not JRE. Also ensure that <code>java</code> command is loaded from JDK and not from JRE. If it still throws this exception, check if mvn is pointing to JDK. </p>
             </div>
         </div>
       </div>
