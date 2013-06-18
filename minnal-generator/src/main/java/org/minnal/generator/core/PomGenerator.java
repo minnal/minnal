@@ -95,12 +95,12 @@ public class PomGenerator extends AbstractGenerator {
 		
 		Repository repository = new Repository();
 		repository.setId("activejpa-repo");
-		repository.setUrl(ACTIVE_JPA_SNAPSHOTS_REPO);
+		repository.setUrl(ACTIVE_JPA_RELEASES_REPO);
 		model.addRepository(repository);
 		
 		repository = new Repository();
 		repository.setId("minnal-repo");
-		repository.setUrl(MINNAL_SNAPSHOTS_REPO);
+		repository.setUrl(MINNAL_RELEASES_REPO);
 		model.addRepository(repository);
 		
 		Build build = new Build();
