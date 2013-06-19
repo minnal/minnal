@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import org.minnal.core.route.Action;
 import org.minnal.core.route.Route;
+import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;
 import org.testng.annotations.BeforeMethod;
@@ -40,23 +41,30 @@ public class FilterChainTest {
 	
 	private ServerResponse response;
 	
+	private MessageContext context;
+	
+	private RouteResolver resolver;
+	
 	@BeforeMethod
 	public void setup() {
 		request = mock(ServerRequest.class);
 		response = mock(ServerResponse.class);
+		context = new MessageContext(request, response);
 		filter1 = spy(new TestFilter());
 		filter2 = spy(new TestFilter());
 		filter3 = spy(new TestFilter());
 		route = mock(Route.class);
 		action = mock(Action.class);
+		resolver = mock(RouteResolver.class);
+		when(resolver.resolve(context)).thenReturn(route);
 		when(route.getAction()).thenReturn(action);
 		when(action.invoke(request, response)).thenReturn(Arrays.asList(""));
-		chain = new FilterChain(Arrays.asList(filter1, filter2, filter3), route);
+		chain = new FilterChain(Arrays.asList(filter1, filter2, filter3), resolver);
 	}
 
 	@Test
 	public void shouldInvokeAllFiltersBeforeCallingAction() {
-		chain.doFilter(request, response);
+		chain.doFilter(context);
 		verify(filter1).doFilter(request, response, chain);
 		verify(filter2).doFilter(request, response, chain);
 		verify(filter3).doFilter(request, response, chain);
@@ -65,7 +73,7 @@ public class FilterChainTest {
 	
 	@Test
 	public void shouldInvokePostActionOperation() {
-		chain.doFilter(request, response);
+		chain.doFilter(context);
 		verify((TestFilter)filter1).postDelegation();
 		verify((TestFilter)filter2).postDelegation();
 		verify((TestFilter)filter3).postDelegation();
@@ -75,14 +83,14 @@ public class FilterChainTest {
 	@Test
 	public void shouldSetResponseIfNotSetAlready() {
 		when(response.isContentSet()).thenReturn(false);
-		chain.doFilter(request, response);
+		chain.doFilter(context);
 		verify(response).setContent(Arrays.asList(""));
 	}
 	
 	@Test
 	public void shouldNotSetResponseIfSetAlready() {
 		when(response.isContentSet()).thenReturn(true);
-		chain.doFilter(request, response);
+		chain.doFilter(context);
 		verify(response, never()).setContent(Arrays.asList(""));
 	}
 	
@@ -90,7 +98,7 @@ public class FilterChainTest {
 	public void shouldNotSetResponseIfResponseIsNull() {
 		when(action.invoke(request, response)).thenReturn(null);
 		when(response.isContentSet()).thenReturn(true);
-		chain.doFilter(request, response);
+		chain.doFilter(context);
 		verify(response, never()).setContent(null);
 	}
 	
@@ -99,8 +107,8 @@ public class FilterChainTest {
 		filter1 = spy(new TestFilter());
 		filter2 = spy(new TestFilter(false));
 		filter3 = spy(new TestFilter());
-		chain = new FilterChain(Arrays.asList(filter1, filter2, filter3), route);
-		chain.doFilter(request, response);
+		chain = new FilterChain(Arrays.asList(filter1, filter2, filter3), resolver);
+		chain.doFilter(context);
 		verify(filter1).doFilter(request, response, chain);
 		verify(filter2).doFilter(request, response, chain);
 		verify(filter3, never()).doFilter(request, response, chain);

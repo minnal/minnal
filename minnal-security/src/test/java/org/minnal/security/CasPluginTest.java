@@ -15,6 +15,7 @@ import org.minnal.security.config.CasConfiguration;
 import org.minnal.security.config.SecurityConfiguration;
 import org.minnal.security.filter.cas.CasFilter;
 import org.minnal.security.filter.cas.CasProxyCallbackFilter;
+import org.minnal.security.filter.cas.SingleSignOutFilter;
 import org.minnal.security.session.SessionStore;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -45,11 +46,6 @@ public class CasPluginTest {
 		plugin.init(application);
 		verify(application).addFilter(new CasFilter(configuration));
 		verify(application).addFilter(new CasProxyCallbackFilter(configuration));
-	}
-	
-	@Test
-	public void shouldAddResourceOnInit() {
-		plugin.init(application);
-		verify(application).addResource(any(ResourceClass.class));
+		verify(application).addFilter(new SingleSignOutFilter(configuration));
 	}
 }

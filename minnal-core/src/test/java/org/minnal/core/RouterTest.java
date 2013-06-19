@@ -47,14 +47,17 @@ public class RouterTest {
 	
 	private Application<ApplicationConfiguration> application;
 	
+	private ApplicationMapping applicationMapping;
+	
 	@BeforeMethod
 	public void setup() {
+		applicationMapping = mock(ApplicationMapping.class);
 		resolver = mock(RouteResolver.class);
 		request = mock(ServerRequest.class);
 		response = mock(ServerResponse.class);
 		when(response.getStatus()).thenReturn(HttpResponseStatus.PROCESSING);
 		when(response.isContentSet()).thenReturn(false);
-		router = new Router(resolver);
+		router = new Router(applicationMapping, resolver);
 		context = mock(MessageContext.class);
 		application = mock(Application.class);
 		when(application.getFilters()).thenReturn(Lists.<Filter>newArrayList());
@@ -66,6 +69,7 @@ public class RouterTest {
 		when(action.invoke(request, response)).thenReturn(null);
 		when(route.getAction()).thenReturn(action);
 		when(resolver.resolve(context)).thenReturn(route);
+		when(applicationMapping.resolve(request)).thenReturn(application);
 	}
 
 	@Test

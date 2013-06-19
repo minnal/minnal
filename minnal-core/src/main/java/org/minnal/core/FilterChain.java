@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.minnal.core.route.Route;
+import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerResponse;
 
 /**
@@ -19,11 +20,13 @@ public class FilterChain {
 	
 	private Iterator<Filter> iterator;
 	
-	private Route route;
+	private RouteResolver resolver;
 	
-	public FilterChain(List<Filter> filters, Route route) {
+	private MessageContext context;
+	
+	public FilterChain(List<Filter> filters, RouteResolver resolver) {
 		this.filters = filters;
-		this.route = route;
+		this.resolver = resolver;
 	}
 	
 	public void doFilter(Request request, Response response) {
@@ -33,10 +36,16 @@ public class FilterChain {
 		if (iterator.hasNext()) {
 			iterator.next().doFilter(request, response, this);
 		} else {
+			Route route = resolver.resolve(context);
 			Object result = route.getAction().invoke(request, response);
-			if (result != null && ! ((ServerResponse)response).isContentSet()) {
+			if (result != null && ! ((ServerResponse) response).isContentSet()) {
 				response.setContent(result);
 			}
 		}
+	}
+	
+	void doFilter(MessageContext context) {
+		this.context = context;
+		doFilter(context.getRequest(), context.getResponse());
 	}
 }

@@ -10,8 +10,8 @@ import org.minnal.core.Response;
  * @author ganeshs
  *
  */
-public interface DummyResource {
-	void methodWithoutParameters();
-	void methodWithValidParameters(Request request, Response response);
-	void methodWithAdditionalParameters(Request request, Response response, Object additionalParam);
+public class DummyResource {
+	public void methodWithoutParameters() {}
+	public void methodWithValidParameters(Request request, Response response) {}
+	public void methodWithAdditionalParameters(Request request, Response response, Object additionalParam) {}
 }
