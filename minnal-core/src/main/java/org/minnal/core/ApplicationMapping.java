@@ -53,7 +53,7 @@ public class ApplicationMapping {
 		mountPath = structureUrl(mountPath);
 		String path = getAbsolutePath(mountPath);
 		if (applications.containsKey(path)) {
-			throw new IllegalArgumentException("Mount path - " + mountPath + " already exists");
+			throw new IllegalArgumentException("Mount path - " + mountPath + " already exists. Either change the application base path or override it in container");
 		}
 		if (applications.containsValue(application)) {
 			throw new IllegalArgumentException("Application - " + application + " is already mounted on a different mount path");

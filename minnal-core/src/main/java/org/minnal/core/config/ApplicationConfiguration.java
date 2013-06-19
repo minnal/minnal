@@ -20,6 +20,8 @@ public class ApplicationConfiguration extends Configuration {
 	private DatabaseConfiguration databaseConfiguration;
 	
 	private boolean instrumentationEnabled;
+	
+	private String basePath = "/";
 
 	public ApplicationConfiguration() {
 	}
@@ -69,6 +71,20 @@ public class ApplicationConfiguration extends Configuration {
 	 */
 	public void setInstrumentationEnabled(boolean instrumentationEnabled) {
 		this.instrumentationEnabled = instrumentationEnabled;
+	}
+
+	/**
+	 * @return the basePath
+	 */
+	public String getBasePath() {
+		return basePath;
+	}
+
+	/**
+	 * @param basePath the basePath to set
+	 */
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
 	}
 
 }

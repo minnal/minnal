@@ -1,4 +1,4 @@
-# The name of the container
+# The name of the application
 name: order
 db:
   driverClass: org.hsqldb.jdbcDriver

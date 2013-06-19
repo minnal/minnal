@@ -1,2 +1,3 @@
-# The name of the application 
+# The name of the application
 name: admin
+basePath: /admin

@@ -8,7 +8,7 @@ server:
       scheme: http
       ioWorkerThreadCount: 10
 
-# The name of the container 
+# The name of the container
 name: My Container
 
 # The default http media type that this container would support. Can be overridden by applications
@@ -16,12 +16,7 @@ defaultMediaType: application/json
 
 # The serializers to use for the supported media types
 serializers:
-  application/json: 
+  application/json:
     class: org.minnal.core.serializer.DefaultJsonSerializer
   application/xml:
     class: org.minnal.core.serializer.DefaultXmlSerializer
-mounts:
-  org.minnal.admin.AdminApplication: /admin
-  org.minnal.example.OrderApplication: /
-  
-    

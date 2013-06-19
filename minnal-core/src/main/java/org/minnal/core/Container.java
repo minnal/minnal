@@ -57,7 +57,7 @@ public class Container implements Lifecycle {
 		for (Application<ApplicationConfiguration> application : ServiceLoader.load(Application.class)) {
 			String mountPath = configuration.getMounts().get(application.getClass().getName());
 			if (mountPath == null) {
-				throw new MinnalException("Mount Path not specified for application - " + application.getClass().getName());
+				mountPath = application.getConfiguration().getBasePath();
 			}
 			mount(application, mountPath);
 		}
