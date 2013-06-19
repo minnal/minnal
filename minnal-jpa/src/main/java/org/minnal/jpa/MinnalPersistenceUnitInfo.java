@@ -17,12 +17,9 @@ import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 
-import org.minnal.core.MinnalException;
 import org.minnal.core.config.DatabaseConfiguration;
 import org.minnal.core.scanner.Scanner.Listener;
 import org.minnal.jpa.entity.EntityScanner;
-
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
  * @author ganeshs
@@ -51,7 +48,7 @@ public class MinnalPersistenceUnitInfo implements PersistenceUnitInfo {
 	
 	private void init() {
 		properties.putAll(configuration.getProviderProperties());
-		createDataSource();
+		dataSource = configuration.getDataSourceProvider().getDataSource();
 		scanForEntities();
 	}
 	
@@ -130,22 +127,6 @@ public class MinnalPersistenceUnitInfo implements PersistenceUnitInfo {
 
 	public ClassLoader getNewTempClassLoader() {
 		return null;
-	}
-	
-	public void createDataSource() {
-		ComboPooledDataSource ds = new ComboPooledDataSource();
-		try {
-			Class.forName(configuration.getDriverClass());
-			ds.setJdbcUrl(configuration.getUrl());
-			ds.setUser(configuration.getUsername());
-			ds.setPassword(configuration.getPassword());
-			ds.setIdleConnectionTestPeriod(configuration.getIdleConnectionTestPeriod());
-			ds.setInitialPoolSize(configuration.getMinSize());
-			ds.setMaxPoolSize(configuration.getMaxSize());
-		} catch (Exception e) {
-			throw new MinnalException("Failed while configuring the data source", e);
-		}
-		dataSource = ds;
 	}
 
 }

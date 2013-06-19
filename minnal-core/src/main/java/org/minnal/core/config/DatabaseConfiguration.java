@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.minnal.core.db.C3P0DataSourceProvider;
+import org.minnal.core.db.DataSourceProvider;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -38,6 +41,12 @@ public class DatabaseConfiguration {
 	private Map<String, String> providerProperties = new HashMap<String, String>();
 	
 	private boolean readOnly = false;
+	
+	private DataSourceProvider dataSourceProvider;
+	
+	public DatabaseConfiguration() {
+		 setDataSourceProvider(new C3P0DataSourceProvider());
+	}
 
 	/**
 	 * @return the url
@@ -177,6 +186,32 @@ public class DatabaseConfiguration {
 	 */
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+
+	/**
+	 * @return the dataSourceProvider
+	 */
+	public DataSourceProvider getDataSourceProvider() {
+		return dataSourceProvider;
+	}
+
+	/**
+	 * @param dataSourceProvider the dataSourceProvider to set
+	 */
+	public void setDataSourceProvider(DataSourceProvider dataSourceProvider) {
+		dataSourceProvider.setConfiguration(this);
+		this.dataSourceProvider = dataSourceProvider;
+	}
+
+	@Override
+	public String toString() {
+		return "DatabaseConfiguration [url=" + url + ", username=" + username
+				+ ", password=" + password + ", driverClass=" + driverClass
+				+ ", idleConnectionTestPeriod=" + idleConnectionTestPeriod
+				+ ", maxSize=" + maxSize + ", minSize=" + minSize
+				+ ", packagesToScan=" + packagesToScan
+				+ ", providerProperties=" + providerProperties + ", readOnly="
+				+ readOnly + "]";
 	}
 
 }
