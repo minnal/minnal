@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Properties;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -30,7 +31,9 @@ public abstract class AbstractTemplateGenerator extends AbstractGenerator {
 	
 	static {
 		logger.debug("Loading the velocity templates");
-		engine = new VelocityEngine();
+		Properties properties = new Properties();
+		properties.put("runtime.log.logsystem.class", "org.minnal.core.util.Slf4jLogChute");
+		engine = new VelocityEngine(properties);
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 	}

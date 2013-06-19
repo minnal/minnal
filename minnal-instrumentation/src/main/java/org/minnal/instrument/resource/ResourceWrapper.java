@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import javassist.ClassPool;
@@ -46,7 +47,9 @@ public class ResourceWrapper {
 	private static Template listMethodTemplate;
 	
 	static {
-		VelocityEngine ve = new VelocityEngine();
+		Properties properties = new Properties();
+		properties.put("runtime.log.logsystem.class", "org.minnal.core.util.Slf4jLogChute");
+		VelocityEngine ve = new VelocityEngine(properties);
 		ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
 		ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 		readMethodTemplate = ve.getTemplate("META-INF/templates/read_method.vm");
