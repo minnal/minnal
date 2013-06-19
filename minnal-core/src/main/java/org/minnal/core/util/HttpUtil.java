@@ -4,6 +4,7 @@
 package org.minnal.core.util;
 
 import java.net.URI;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.StringTokenizer;
 
 import org.minnal.core.MinnalException;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
@@ -32,6 +34,14 @@ public class HttpUtil {
 			}
 		}
 		return params;
+	}
+	
+	public static String decode(String value) {
+		try {
+			return URLDecoder.decode(value, Charsets.UTF_8.name());
+		} catch (Exception e) {
+			throw new MinnalException("Failed while decoding the value - " + value, e);
+		}
 	}
 	
 	public static URI createURI(String scheme, String host, String path) {
@@ -81,5 +91,4 @@ public class HttpUtil {
 		}
 		return buffer.toString();
 	}
-	
 }

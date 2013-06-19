@@ -3,6 +3,8 @@
  */
 package org.minnal.core.route;
 
+import static org.minnal.core.util.HttpUtil.decode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +35,7 @@ import com.google.common.base.Splitter;
  */
 public class RoutePattern {
 	
-	private static final String PLACEHOLDER_REGEX = "[a-zA-Z0-9\\-_]+";
+	private static final String PLACEHOLDER_REGEX = "[a-zA-Z0-9\\-_%]+";
 	
 	private static final String PLACEHOLDER_PATTERN_REGEX = "\\{" + PLACEHOLDER_REGEX + "\\}";
 
@@ -98,7 +100,7 @@ public class RoutePattern {
 			return null;
 		}
 		for (int i = 1; i <= matcher.groupCount(); i++) {
-			params.put(parameterNames.get(i-1), matcher.group(i));
+			params.put(parameterNames.get(i-1), decode(matcher.group(i)));
 		}
 		return params;
 	}

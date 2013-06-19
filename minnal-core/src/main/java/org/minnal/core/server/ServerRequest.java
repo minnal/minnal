@@ -3,6 +3,9 @@
  */
 package org.minnal.core.server;
 
+import static org.minnal.core.util.HttpUtil.createURI;
+import static org.minnal.core.util.HttpUtil.getQueryParameters;
+
 import java.net.SocketAddress;
 import java.net.URI;
 import java.util.Map;
@@ -16,7 +19,6 @@ import org.minnal.core.Request;
 import org.minnal.core.route.Route;
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.exception.BadRequestException;
-import org.minnal.core.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +64,7 @@ public class ServerRequest extends ServerMessage implements Request {
 	private void init(HttpRequest request, String scheme) {
 		logger.trace("Initializing the request {}", request);
 		this.request = request;
-		uri = HttpUtil.createURI(scheme, getHeader(HttpHeaders.Names.HOST), request.getUri());
+		uri = createURI(scheme, getHeader(HttpHeaders.Names.HOST), request.getUri());
 		if (containsHeader(HttpHeaders.Names.CONTENT_TYPE)) {
 			contentType = MediaType.parse(getHeader(HttpHeaders.Names.CONTENT_TYPE));
 			if (! contentType.parameters().containsKey(DEFAULT_CHARSET)) {
@@ -84,7 +86,7 @@ public class ServerRequest extends ServerMessage implements Request {
 	}
 	
 	private void populateRequestParameters() {
-		addHeaders(HttpUtil.getQueryParameters(uri));
+		addHeaders(getQueryParameters(uri));
 		if (contentType != null && contentType.is(MediaType.FORM_DATA)) {
 			addHeaders(Serializer.getSerializer(contentType).deserialize(getContent(), Map.class));
 		}
@@ -110,9 +112,9 @@ public class ServerRequest extends ServerMessage implements Request {
 	
 	public String getRelativePath() {
 		if (getApplicationPath() != null) {
-			return getUri().getPath().substring(getApplicationPath().length());
+			return getUri().getRawPath().substring(getApplicationPath().length());
 		}
-		return getUri().getPath();
+		return getUri().getRawPath();
 	}
 	
 	public HttpMethod getHttpMethod() {

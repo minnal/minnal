@@ -114,4 +114,10 @@ public class RoutePatternTest {
 		assertTrue(params.isEmpty());
 	}
 	
+	@Test
+	public void shouldMatchUrlEncodedString() {
+		RoutePattern pattern = new RoutePattern("/orders/{order_id}");
+		Map<String, String> params = pattern.match("/orders/1234%2F1");
+		assertEquals(params.get("order_id"), "1234/1");
+	}
  }
