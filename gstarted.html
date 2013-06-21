@@ -83,9 +83,9 @@
             <div id="content" class="container-fluid">
               <h1>Getting Started</h1>
               <h2>Overview</h2>
-              <p>Minnal is a highly scalabale and productive REST framework that helps you eliminate boilerplate code and build applications faster. Minnal is a <i>Tamil</i> noun, meaning "lightning". It allows you to build restful applications at lightning speed through its powerful instrumentation module. It generates the API's for your resources at runtime and eliminates the need to write controller and data access layers for your application leaving you to concentrate on enriching your domain</p>
+              <p>Minnal is a highly scalable and productive REST framework that helps you eliminate boilerplate code and build applications faster. Minnal is a <i>Tamil</i> noun, meaning "lightning". It allows you to build restful applications at lightning speed through its powerful instrumentation module. It generates the API's for your resources at runtime and eliminates the need to write controller and data access layers for your application leaving you to concentrate on enriching your domain</p>
               <p>Minnal is extremely powerful for applications that are mostly CRUD centric but doesn't restrict you from using it for business interfaces as well. It requires the application to identify the <a href="http://en.wikipedia.org/wiki/Domain-driven_design">aggregate roots</a> in your domain, uses that information to create entity trees and traverses down the tree to create CRUD api's.</p>
-              <p>A typical rest application (service) will have a controller layer that handles the incoming request, optionally delegates them to a application layer which inturn call the domain layer and repository/DAO layer. Most of these are boilerplate code and the really work happens in the domain layer and application layer. However good is the REST framework, it may not help you avoid writing the boilerplate code and you will have spend your effort in testing and managing these code. This is what Minnal is attempting to solve. It eliminates the DAL and Controller from your application, so you can focus on enriching your domain.</p>
+              <p>A typical rest application (service) will have a controller layer that handles the incoming request, optionally delegates them to a application layer which in turn call the domain layer and repository/DAO layer. Most of these are boilerplate code and the really work happens in the domain layer and application layer. However good is the REST framework, it may not help you avoid writing the boilerplate code and you will have spend your effort in testing and managing these code. This is what Minnal is attempting to solve. It eliminates the DAL and Controller from your application, so you can focus on enriching your domain.</p>
               <p>The framework has a modular design that makes every functionality easily pluggable. If you wish Minnal not to generate the API's for you, you can exclude the <i>instrumentation</i> module from you application. If you wish to write your own DAL, you could do well so by excluding the <i>jpa</i> module. The framework exposes hooks at different stages of the application lifecycle and can be easily extended to support custom functionalities.</p>
               <p>Minnal uses <a href="http://netty.io/">Netty</a>, a NIO client-server framework, underneath to achieve high scalability. <a href="http://jackson.codehaus.org/">Jackson</a> is used for serializing json/xml and <a href="https://code.google.com/p/snakeyaml/">Snakeyaml</a> for serializing yaml. Minnal recommends JPA for all DB access and uses <a href="http://flywaydb.org/">FlywayDB</a> for running db migrations.
               <h2>Installing Minnal</h2>
@@ -94,7 +94,7 @@
               <p>Ensure your JAVA_HOME is set to JDK and not the JRE. Minnal instrumentation module requires tools.jar from JDK libraries to be in the classpath.</p>
               <h3>Downloading the package</h3>
               <p>Download the latest minnal installation package from <a href="https://github.com/minnal/minnal/tree/downloads/minnal/">here</a> and extract the archive to a folder with read and write access.</p>
-              <p>Add the the framework binary folder <i>/path/to/minnal-X.X.X/bin</i> to your path, so you can conviniently run the minnal executable. If you are running on windows, add it to the global environment variables</p>
+              <p>Add the the framework binary folder <i>/path/to/minnal-X.X.X/bin</i> to your path, so you can conveniently run the minnal executable. If you are running on windows, add it to the global environment variables</p>
               <p>Test if you can run  minnal,</p>
               <pre class="brush:bash">
                 $ minnal -help
@@ -139,7 +139,7 @@
                 [INFO] Creating the file /Users/ganeshs/shopping-cart/src/main/java/com/shopping/cart/ShoppingCartConfiguration.java
                 [INFO] Creating the file /Users/ganeshs/shopping-cart/src/main/java/com/shopping/cart/ShoppingCartApplication.java
               </pre>
-              <p>We have just created a minnal project that can generate API's from JPA models. The application has been configured to connect to an in-memory hasql database.</p>
+              <p>We have just created a minnal project that can generate API's from JPA models. The application has been configured to connect to an in-memory HSQL database.</p>
               <h4>Creating the domain classes</h4>
               <p>Minnal provides generators for creating JPA models. Lets create the domain classes to the application to make it worth enough. The users of our application should be able to search the products, so lets start from there.</p>
               <pre class="brush: bash">
@@ -151,7 +151,7 @@
                 [INFO] Generating the model class Product under the package com.shopping.cart.domain
                 [INFO] Creating the file /Users/ganeshs/shopping-cart/src/main/java/com/shopping/cart/domain/Product.java
               </pre>
-              <p>We have marked the class <i>Product</i> as @AggregateRoot and hence it will be treated as a reosurce. We have also marked the field <i>title</i> as @Searchable, so minnal will created API's with title in the search params.</p>
+              <p>We have marked the class <i>Product</i> as @AggregateRoot and hence it will be treated as a resource. We have also marked the field <i>title</i> as @Searchable, so minnal will created API's with title in the search params.</p>
               <p>We recommend you to read <a href="http://www.infoq.com/minibooks/domain-driven-design-quickly">Domain Driven Design Quickly</a>, a free ebook that explains in detail about identifying the aggregate roots in a domain. <i>"Aggregates are groups of entities that belong together and Aggregate Root is the entity that holds them all together. With out an aggregate root, other entities can't exist"</i>. With this definition, we can identify two Aggregate roots in our domain, Product and ShoppingCart. ShoppingCartItem belongs to ShoppingCart, without the cart, cart item can't exist. Product can be regarded as an aggregate root although it doesn't have any children under it as it can exist without a ShoppingCart and ShoppingCartItem.</p>
               <p>The generated class will look like this,</p>
               <pre class="brush: java">
@@ -601,7 +601,7 @@
                 </pre>
               </div>
               <h4>Customizing the API</h4>
-              <p>Say, we want to customize the create shopping cart api <i>POST /shopping_carts</i> to do additional stuff while creating the cart. We can overiride the api by creating a resource class for shopping cart. Minnal will generate all the API's but for the customized one. Let's try creating a ShoppingCartResource class under <i>org.minnal.examples.shoppingcart.resources</i></p>
+              <p>Say, we want to customize the create shopping cart api <i>POST /shopping_carts</i> to do additional stuff while creating the cart. We can override the api by creating a resource class for shopping cart. Minnal will generate all the API's but for the customized one. Let's try creating a ShoppingCartResource class under <i>org.minnal.examples.shoppingcart.resources</i></p>
               <pre class="brush:java">
                 package com.shopping.cart.resources;
 
@@ -619,7 +619,7 @@
 
                   // We are overriding the api POST /shopping_carts. 
                   // The method name should be the same as that of the one from 
-                  // the route defintions at http://localhost:8080/admin/routes/shoppingCart
+                  // the route definitions at http://localhost:8080/admin/routes/shoppingCart
                   public ShoppingCart createShoppingCart(Request request, Response response) {
                     // Your custom code here
                     response.setStatus(HttpResponseStatus.OK);
