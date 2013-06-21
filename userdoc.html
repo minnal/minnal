@@ -83,13 +83,13 @@
             <h2>High level design</h2>
               <p>The core of minnal is the container under which multiple applications are run. The notion of <i>Container</i> and <i>Application</i> might be confusing here. Unlike application servers like Tomcat, minnal doesn't create a classloader per application deployed. The figure below shows the high level design of the framework</p>
               <img src="images/minnal.jpg"/>
-              <p>At the low level is the container that defines the http connector and handles the incming request via a router. The router resolves the route from the request and deligates the request to application which in turn delegates to a route handler. The request optionally will go through a set of filters before hitting the controller method.</p>
-              <p>The container allows bundles to hook into its life cyle. Bundles can provide custom functionality at container level and will have access to the container.</p>
+              <p>At the low level is the container that defines the http connector and handles the incoming request via a router. The router resolves the route from the request and delegates the request to application which in turn delegates to a route handler. The request optionally will go through a set of filters before hitting the controller method.</p>
+              <p>The container allows bundles to hook into its life cycle. Bundles can provide custom functionality at container level and will have access to the container.</p>
               <p>The application allows plugins to hook into its life cycle. Plugins can provide custom functionality at application level and will have access to all the resources and routes with in the application</p>
             <h2>Modules</h2>
             This section explains in detail the usage of various modules offered by minnal.
             <h3>Minnal Core</h3>
-            minnal-core is the core of the framework and doesn't depend on any of the other minnal modules. minna-core is a light weight REST application framework and can be used independent of instrumentation module.
+            minnal-core is the core of the framework and doesn't depend on any of the other minnal modules. minnal-core is a light weight REST application framework and can be used independent of instrumentation module.
             <h4>Organizing your project</h4>
             <p>Minnal recommends you to use maven for managing your project and its dependencies. If you are starting from scratch, take a look at <a href="#toc11">Minnal Generator</a> for creating a project. A minnal project structure would look like this,</p>
             <ul class="nav">
@@ -125,8 +125,8 @@
               <li><code>src/test/resources</code></li>
             </ul>
             <h4>Container Configuration</h4>
-            <p>Minnal's configuration follows a composite pattern. Routes inherit from a Resource, Resources inherit from an Application and Applications inherit from Container. Minnal abstracts outa bunch of configuration parameters at container level and every component inherits them from their parent.</p>
-            <p>The configuration is loaded from a <i>container.yml</i> file loacated under <i>META-INF/</i> folder in the classpath</p>
+            <p>Minnal's configuration follows a composite pattern. Routes inherit from a Resource, Resources inherit from an Application and Applications inherit from Container. Minnal abstracts out a bunch of configuration parameters at container level and every component inherits them from their parent.</p>
+            <p>The configuration is loaded from a <i>container.yml</i> file located under <i>META-INF/</i> folder in the classpath</p>
             <pre class="brush: js">
               # The name of the container
               name: My Container
@@ -209,13 +209,13 @@
               }
             </pre>
             <h5>Application Configuration</h5>
-            <p>Application inherits the configuration parameters from container. For instance, if you haven't set any serialiers for json content type, it will get it from container. You can override it by explicitly specifying in the ApplicationConfiguration. Minnal looks for the application configuration under <i>META-INF/</i> folder in the classpath. Be sure to name the file as lowercased application name. For instance if your application class name is <code>ShoppingCartApplication</code>, then the application config file name should be <code>shoppingcart.yml</code>. Bare minimum, the application config requires a name to be defined</p>
+            <p>Application inherits the configuration parameters from container. For instance, if you haven't set any serializers for json content type, it will get it from container. You can override it by explicitly specifying in the ApplicationConfiguration. Minnal looks for the application configuration under <i>META-INF/</i> folder in the classpath. Be sure to name the file as lowercased application name. For instance if your application class name is <code>ShoppingCartApplication</code>, then the application config file name should be <code>shoppingcart.yml</code>. Bare minimum, the application config requires a name to be defined</p>
             <pre class="brush: js">
               # The name of the application
               name: shopping_cart
             </pre>
             <h5>Database Configuration</h5>
-            <p>Minnal recommends you to use JPA in your persistence layer but the database configuration is generic enough to use any library in your peristence layer</p>
+            <p>Minnal recommends you to use JPA in your persistence layer but the database configuration is generic enough to use any library in your persistence layer</p>
             <pre class="brush: js">
               db:
                 driverClass: com.mysql.jdbc.Driver
@@ -261,8 +261,8 @@
                 }
               }
             </pre>
-            <p>The only constraint the framework imposes on you is on the method signature of your resource methods. Your resource methods should take in an instance of <code>org.minnal.core.Request</code> and <code>org.minnal.core.Resposne</code>. The method can return void or the content to set in the response. In case you return the content from the method, minnal will set the content and set the status to <i>200 OK</i>. It will safely ignore the return value if the resposne content is already set.</p>
-            <p>Minnals writes all the query and form parameters to request headers and you can access them by calling <code>request.getHeader("param")</code></p>
+            <p>The only constraint the framework imposes on you is on the method signature of your resource methods. Your resource methods should take in an instance of <code>org.minnal.core.Request</code> and <code>org.minnal.core.Resposne</code>. The method can return void or the content to set in the response. In case you return the content from the method, minnal will set the content and set the status to <i>200 OK</i>. It will safely ignore the return value if the response content is already set.</p>
+            <p>Minnal's writes all the query and form parameters to request headers and you can access them by calling <code>request.getHeader("param")</code></p>
             <p>The resource should be added to your Application to define the routes. You do this by adding the resource in the defineResources() method of the application class</p>
             <pre class="brush: java">
               public class ExampleApplication extends Application&lt;ExampleConfiguration&gt; {
@@ -354,7 +354,7 @@
               }
             </pre>
             <h4>Creating a plugin</h4>
-            <p>Plugin hooks into the lifecycle of an application. Minnal invokes the plugin when an application is intialized or destroyed. Creating a plugin is fairly simple, you will just have to implement the interface <code>org.minnal.core.Plugin</code></p>
+            <p>Plugin hooks into the lifecycle of an application. Minnal invokes the plugin when an application is initialized or destroyed. Creating a plugin is fairly simple, you will just have to implement the interface <code>org.minnal.core.Plugin</code></p>
             <pre class="brush: java">
               public class MyPlugin implements Plugin {
 
@@ -382,7 +382,7 @@
             </pre>
             <p>The registered plugins will be invoked in the same order they are registered</p>
             <h4>Creating a bundle</h4>
-            <p>Bundles hook into the life cycle of the container. Bundle gets access to the container. The container invokes the bundle when the container is initialized, started, stopped. To cretae a bundle, simply implement the interface <code>org.minnal.core.Bundle</code></p> 
+            <p>Bundles hook into the life cycle of the container. Bundle gets access to the container. The container invokes the bundle when the container is initialized, started, stopped. To create a bundle, simply implement the interface <code>org.minnal.core.Bundle</code></p> 
             <pre class="brush: java">
               public class MyBundle implements Bundle {
 
@@ -468,7 +468,7 @@
               }
             </pre>
             <h3>Minnal Instrumentation</h3>
-            <p>minnal-instrumentation provides an instrumentation bundle that hooks into the container and instruments your applications. It looks into your entity tree and creates all the route defintions at runtime.</p> 
+            <p>minnal-instrumentation provides an instrumentation bundle that hooks into the container and instruments your applications. It looks into your entity tree and creates all the route definitions at runtime.</p> 
             <h3>Minnal Security</h3>
             Work In Progress
             <h3>Minnal Admin</h3>
