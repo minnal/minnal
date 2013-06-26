@@ -17,6 +17,7 @@
 		<module>minnal-security</module>
 		<module>minnal-migrations</module>
 		<module>minnal-generator</module>
+		<module>minnal-api</module>
 	</modules>
 
 	<properties>
