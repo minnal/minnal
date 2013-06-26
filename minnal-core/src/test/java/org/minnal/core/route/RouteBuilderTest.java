@@ -56,10 +56,19 @@ public class RouteBuilderTest {
 	}
 	
 	@Test
+	public void shouldAddOptionsActionOnBuild() {
+		builder.action(HttpMethod.GET, "methodWithValidParameters");
+		List<Route> routes = builder.build();
+		assertEquals(routes.size(), 2);
+		assertEquals(routes.get(1).getMethod(), HttpMethod.OPTIONS);
+		assertEquals(routes.get(1).getAction(), null);
+	}
+	
+	@Test
 	public void shouldBuildRouteWhenActionCalledWithValidParams() throws Exception {
 		builder.action(HttpMethod.GET, "methodWithValidParameters");
 		List<Route> routes = builder.build();
-		assertEquals(routes.size(), 1);
+		assertEquals(routes.size(), 2);
 		assertEquals(routes.get(0).getAction(), new Action(resource, resource.getClass().getDeclaredMethod("methodWithValidParameters", Request.class, Response.class)));
 	}
 	
@@ -68,7 +77,7 @@ public class RouteBuilderTest {
 		builder.action(HttpMethod.GET, "methodWithValidParameters");
 		builder.action(HttpMethod.PUT, "methodWithValidParameters");
 		List<Route> routes = builder.build();
-		assertEquals(routes.size(), 2);
+		assertEquals(routes.size(), 3);
 		assertEquals(routes.get(0).getAction(), new Action(resource, resource.getClass().getDeclaredMethod("methodWithValidParameters", Request.class, Response.class)));
 		assertEquals(routes.get(0).getMethod(), HttpMethod.GET);
 		assertEquals(routes.get(1).getAction(), new Action(resource, resource.getClass().getDeclaredMethod("methodWithValidParameters", Request.class, Response.class)));
@@ -80,7 +89,7 @@ public class RouteBuilderTest {
 		builder.action(HttpMethod.GET, "methodWithValidParameters");
 		builder.using(new RouteConfiguration("test"));
 		List<Route> routes = builder.build();
-		assertEquals(routes.size(), 1);
+		assertEquals(routes.size(), 2);
 		assertEquals(routes.get(0).getConfiguration().getName(), "test");
 	}
 	
@@ -90,7 +99,7 @@ public class RouteBuilderTest {
 		builder.attribute("testKey1", "testValue1");
 		builder.attribute("testKey2", "testValue2");
 		List<Route> routes = builder.build();
-		assertEquals(routes.size(), 1);
+		assertEquals(routes.size(), 2);
 		assertEquals(routes.get(0).getAttributes().size(), 2);
 		assertEquals(routes.get(0).getAttributes().get("testKey1"), "testValue1");
 		assertEquals(routes.get(0).getAttributes().get("testKey2"), "testValue2");
@@ -105,7 +114,7 @@ public class RouteBuilderTest {
 		builder.attributes(attributes);
 		builder.attribute("testKey3", "testValue3");
 		List<Route> routes = builder.build();
-		assertEquals(routes.size(), 1);
+		assertEquals(routes.size(), 2);
 		assertEquals(routes.get(0).getAttributes().size(), 3);
 		assertEquals(routes.get(0).getAttributes().get("testKey1"), "testValue1");
 		assertEquals(routes.get(0).getAttributes().get("testKey2"), "testValue2");

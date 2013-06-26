@@ -31,7 +31,8 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle {
 	public void stop() {
 	}
 
-	public void onMount(Application<ApplicationConfiguration> application, String mountPath) {
+	@Override
+	public void postMount(Application<ApplicationConfiguration> application) {
 		if (application.getConfiguration().isInstrumentationEnabled()) {
 			createApplicationEnhancer(application).enhance();
 		}
@@ -39,5 +40,10 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle {
 	
 	protected ApplicationEnhancer createApplicationEnhancer(Application<ApplicationConfiguration> application) {
 		return new ApplicationEnhancer(application);
+	}
+	
+	@Override
+	public int getOrder() {
+		return Integer.MIN_VALUE;
 	}
 }

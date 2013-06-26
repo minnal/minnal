@@ -3,7 +3,7 @@
  */
 package org.minnal.core.resource;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.config.ResourceConfiguration;
@@ -24,11 +24,57 @@ public class ResourceClassTest {
 	public void setup() {
 		config = new ResourceConfiguration("test");
 	}
+	
+	@Test
+	public void shouldCreateResourceClassForAResourceWithDefaultBasePath() {
+		ResourceClass resourceClass = new ResourceClass(config, DummyResource.class);
+		assertEquals(resourceClass.getBasePath(), "");
+	}
+	
+	@Test
+	public void shouldCreateResourceClassForAResourceWithSuppliedBasePath() {
+		ResourceClass resourceClass = new ResourceClass(config, DummyResource.class, "/test");
+		assertEquals(resourceClass.getBasePath(), "/test");
+	}
+	
+	@Test
+	public void shouldCreateResourceClassForAResourceWithEmptyBasePath() {
+		ResourceClass resourceClass = new ResourceClass(config, DummyResource.class, "/");
+		assertEquals(resourceClass.getBasePath(), "");
+	}
 
 	@Test
-	public void shouldCreateResourceClass() {
+	public void shouldCreateResourceClassForAResource() {
 		ResourceClass resourceClass = new ResourceClass(config, DummyResource.class);
 		assertEquals(resourceClass.getConfiguration(), config);
+		assertEquals(resourceClass.getResourceClass(), DummyResource.class);
+		assertNull(resourceClass.getEntityClass());
+	}
+	
+	@Test
+	public void shouldCreateResourceClassForAnEntityWithDefaultBasePath() {
+		ResourceClass resourceClass = new ResourceClass(DummyModel.class, config);
+		assertEquals(resourceClass.getBasePath(), "/dummy_models");
+	}
+	
+	@Test
+	public void shouldCreateResourceClassForAnEntityWithSuppliedBasePath() {
+		ResourceClass resourceClass = new ResourceClass(DummyModel.class, config, "/test");
+		assertEquals(resourceClass.getBasePath(), "/test");
+	}
+	
+	@Test
+	public void shouldCreateResourceClassForAnEntityWithEmptyBasePath() {
+		ResourceClass resourceClass = new ResourceClass(DummyModel.class, config, "/");
+		assertEquals(resourceClass.getBasePath(), "");
+	}
+	
+	@Test
+	public void shouldCreateResourceClassForAnEntity() {
+		ResourceClass resourceClass = new ResourceClass(DummyModel.class, config);
+		assertEquals(resourceClass.getConfiguration(), config);
+		assertEquals(resourceClass.getEntityClass(), DummyModel.class);
+		assertNull(resourceClass.getResourceClass());
 	}
 	
 	@Test
@@ -38,5 +84,9 @@ public class ResourceClassTest {
 		builder.action(HttpMethod.GET, "methodWithValidParameters");
 		Route route = builder.build().get(0);
 		assertEquals(route.getConfiguration().getParent(), config);
+	}
+	
+	public static class DummyModel {
+		
 	}
 }

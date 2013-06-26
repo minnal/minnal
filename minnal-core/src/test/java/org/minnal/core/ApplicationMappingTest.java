@@ -10,8 +10,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
-
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.util.HttpUtil;
@@ -30,12 +28,20 @@ public class ApplicationMappingTest {
 	
 	private Application<ApplicationConfiguration> application2;
 	
+	private ApplicationConfiguration configuration1;
+	
+	private ApplicationConfiguration configuration2;
+	
 	@SuppressWarnings("unchecked")
 	@BeforeMethod
 	public void setup() {
 		applicationMapping = new ApplicationMapping("/test");
 		application1 = mock(Application.class);
 		application2 = mock(Application.class);
+		configuration1 = mock(ApplicationConfiguration.class);
+		configuration2 = mock(ApplicationConfiguration.class);
+		when(application1.getConfiguration()).thenReturn(configuration1);
+		when(application2.getConfiguration()).thenReturn(configuration2);
 	}
 	
 	@Test
@@ -52,47 +58,58 @@ public class ApplicationMappingTest {
 	
 	@Test
 	public void shouldAddApplication() {
-		applicationMapping.addApplication(application1, "/app1");
-		applicationMapping.addApplication(application2, "/app2");
+		when(configuration1.getBasePath()).thenReturn("/app1");
+		when(configuration2.getBasePath()).thenReturn("/app2");
+		applicationMapping.addApplication(application1);
+		applicationMapping.addApplication(application2);
 		assertEquals(applicationMapping.getApplications().size(), 2);
 	}
 	
 	@Test
 	public void shouldSetApplicationPathWhenAdded() {
-		applicationMapping.addApplication(application1, "/app");
+		when(configuration1.getBasePath()).thenReturn("/app");
+		applicationMapping.addApplication(application1);
 		verify(application1).setPath("/test/app");
 	}
 	
 	@Test(expectedExceptions=IllegalArgumentException.class)
 	public void shouldNotAddApplicationIfMountPathIsAlreadyUsed() {
-		applicationMapping.addApplication(application1, "/app");
-		applicationMapping.addApplication(application2, "/app");
+		when(configuration1.getBasePath()).thenReturn("/app");
+		when(configuration2.getBasePath()).thenReturn("/app");
+		applicationMapping.addApplication(application1);
+		applicationMapping.addApplication(application2);
 	}
 	
 	@Test(expectedExceptions=IllegalArgumentException.class)
 	public void shouldNotAddApplicationIfApplicationIsAlreadyAdded() {
-		applicationMapping.addApplication(application1, "/app1");
-		applicationMapping.addApplication(application1, "/app2");
+		when(configuration1.getBasePath()).thenReturn("/app1");
+		when(configuration1.getBasePath()).thenReturn("/app2");
+		applicationMapping.addApplication(application1);
+		applicationMapping.addApplication(application1);
 	}
 	
 	@Test
 	public void shouldRemoveApplicationByMountPath() {
-		applicationMapping.addApplication(application1, "/app");
+		when(configuration1.getBasePath()).thenReturn("/app");
+		applicationMapping.addApplication(application1);
 		applicationMapping.removeApplication("/app");
 		assertTrue(applicationMapping.getApplications().isEmpty());
 	}
 	
 	@Test(expectedExceptions=IllegalArgumentException.class)
 	public void shouldThrowExceptionIfApplicationIsAlreadyRemoved() {
-		applicationMapping.addApplication(application1, "/app");
+		when(configuration1.getBasePath()).thenReturn("/app");
+		applicationMapping.addApplication(application1);
 		applicationMapping.removeApplication("/app");
 		applicationMapping.removeApplication("/app");
 	}
 	
 	@Test
 	public void shouldResolveRequestToApplication() {
-		applicationMapping.addApplication(application1, "/app1");
-		applicationMapping.addApplication(application2, "/app2");
+		when(configuration1.getBasePath()).thenReturn("/app1");
+		when(configuration2.getBasePath()).thenReturn("/app2");
+		applicationMapping.addApplication(application1);
+		applicationMapping.addApplication(application2);
 		ServerRequest request = mock(ServerRequest.class);
 		when(request.getUri()).thenReturn(HttpUtil.createURI("/test/app1/test123"));
 		assertEquals(applicationMapping.resolve(request), application1);
@@ -100,7 +117,8 @@ public class ApplicationMappingTest {
 	
 	@Test
 	public void shouldNotResolveRequestToApplication() {
-		applicationMapping.addApplication(application1, "/app1");
+		when(configuration1.getBasePath()).thenReturn("/app1");
+		applicationMapping.addApplication(application1);
 		ServerRequest request = mock(ServerRequest.class);
 		when(request.getUri()).thenReturn(HttpUtil.createURI("/test/invalidapp/test123"));
 		assertNull(applicationMapping.resolve(request));

@@ -16,14 +16,14 @@ public class AdminApplication extends Application<AdminConfiguration> {
 
 	@Override
 	protected void defineRoutes() {
-		resource(RouteResource.class).builder("/routes/{app_name}").action(HttpMethod.GET, "listRoutes");
-		resource(ApplicationResource.class).builder("/applications").action(HttpMethod.GET, "listApplications");
+		resource(RouteResource.class).builder("/{app_name}").action(HttpMethod.GET, "listRoutes");
+		resource(ApplicationResource.class).builder("/").action(HttpMethod.GET, "listApplications");
 	}
 
 	@Override
 	protected void defineResources() {
-		addResource(RouteResource.class);
-		addResource(ApplicationResource.class);
+		addResource(RouteResource.class, "/routes");
+		addResource(ApplicationResource.class, "/applications");
 	}
 	
 	@Override

@@ -23,10 +23,20 @@ public abstract class ContainerAdapter implements ContainerLifecycleListener {
 	public void afterStop(Container container) {
 	}
 
-	public void onMount(Application<ApplicationConfiguration> application, String mountUrl) {
+	@Override
+	public void postMount(Application<ApplicationConfiguration> application) {
 	}
-
-	public void onUnMount(Application<ApplicationConfiguration> application, String mountUrl) {
+	
+	@Override
+	public void postUnMount(Application<ApplicationConfiguration> application) {
+	}
+	
+	@Override
+	public void preMount(Application<ApplicationConfiguration> application) {
+	}
+	
+	@Override
+	public void preUnMount(Application<ApplicationConfiguration> application) {
 	}
 
 }

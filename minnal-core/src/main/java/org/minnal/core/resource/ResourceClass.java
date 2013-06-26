@@ -7,15 +7,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.javalite.common.Inflector;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.config.ResourceConfiguration;
 import org.minnal.core.route.RouteBuilder;
+import org.minnal.core.util.HttpUtil;
 
 /**
  * @author ganeshs
  *
  */
 public class ResourceClass {
+	
+	private String basePath = "/";
 
 	private Class<?> resourceClass;
 	
@@ -25,24 +29,44 @@ public class ResourceClass {
 	
 	private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
 	
-	public ResourceClass(ResourceConfiguration configuration, Class<?> resourceClass) {
+	public ResourceClass(ResourceConfiguration configuration, Class<?> resourceClass, String basePath) {
 		this.configuration = configuration;
 		this.resourceClass = resourceClass;
 		validate(resourceClass);
+		this.basePath = HttpUtil.structureUrl(basePath);
+	}
+	
+	public ResourceClass(ResourceConfiguration configuration, Class<?> resourceClass) {
+		this(configuration, resourceClass, constructBasePath(getEntityClass(resourceClass)));
+	}
+	
+	public ResourceClass(Class<?> entityClass, ResourceConfiguration configuration, String basePath) {
+		this.configuration = configuration;
+		this.entityClass = entityClass;
+		this.basePath = HttpUtil.structureUrl(basePath);
 	}
 	
 	public ResourceClass(Class<?> entityClass, ResourceConfiguration configuration) {
-		this.configuration = configuration;
-		this.entityClass = entityClass;
+		this(entityClass, configuration, constructBasePath(entityClass));
 	}
 	
 	private void validate(Class<?> resourceClass) {
+		entityClass = getEntityClass(resourceClass);
+	}
+	
+	private static Class<?> getEntityClass(Class<?> resourceClass) {
 		Resource annotation = resourceClass.getAnnotation(Resource.class);
 		if (annotation == null) {
-			return;
-//			throw new MinnalException("Resource class is not marked with @Resource annotation");
+			return null;
 		}
-		entityClass = annotation.value();
+		return annotation.value();
+	}
+	
+	private static String constructBasePath(Class<?> entityClass) {
+		if (entityClass == null) {
+			return "/";
+		}
+		return HttpUtil.SEPARATOR + Inflector.tableize(entityClass.getSimpleName());
 	}
 
 	public Class<?> getResourceClass() {
@@ -71,7 +95,7 @@ public class ResourceClass {
 	}
 	
 	public RouteBuilder builder(String path) {
-		RouteBuilder builder = new RouteBuilder(this, path);
+		RouteBuilder builder = new RouteBuilder(this, basePath + HttpUtil.structureUrl(path));
 		routeBuilders.add(builder);
 		return builder;
 	}
@@ -105,6 +129,20 @@ public class ResourceClass {
 	public void setResourceClass(Class<?> resourceClass) {
 		this.resourceClass = resourceClass;
 		validate(resourceClass);
+	}
+	
+	/**
+	 * @return the basePath
+	 */
+	public String getBasePath() {
+		return basePath;
+	}
+
+	/**
+	 * @param basePath the basePath to set
+	 */
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
 	}
 
 	@Override

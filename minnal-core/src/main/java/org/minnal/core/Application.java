@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.javalite.common.Inflector;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.ConfigurationProvider;
 import org.minnal.core.config.ResourceConfiguration;
@@ -30,7 +31,7 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 
 	private List<Filter> filters = new ArrayList<Filter>();
 	
-	private Routes routes = new Routes();
+	private Map<ResourceClass, Routes> routes = new HashMap<ResourceClass, Routes>();
 	
 	private Map<Class<?>, ResourceClass> resources = new HashMap<Class<?>, ResourceClass>();
 	
@@ -74,6 +75,12 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	
 	public void start() {
 		for (ResourceClass resource : getResources()) {
+			Routes routes = this.routes.get(resource);
+			if (routes == null) {
+				routes = new Routes();
+				this.routes.put(resource, routes);
+			}
+			
 			for (RouteBuilder builder : resource.getRouteBuilders()) {
 				routes.addRoute(builder);
 			}
@@ -94,32 +101,49 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	
 	protected abstract void defineResources();
 	
-	protected void addExceptionMapping(Class<? extends Exception> from, Class<? extends ApplicationException> to) {
-		exceptionHandler.mapException(from, to);
-	}
-	
 	protected void mapExceptions() {
 	}
 	
-	protected void addResource(Class<?> resourceClass) {
-		addResource(resourceClass, new ResourceConfiguration(resourceClass.getSimpleName(), configuration));
+	public void addExceptionMapping(Class<? extends Exception> from, Class<? extends ApplicationException> to) {
+		exceptionHandler.mapException(from, to);
 	}
 	
-	protected void addResource(Class<?> resourceClass, ResourceConfiguration resourceConfiguration) {
+	public void addResource(Class<?> resourceClass) {
+		addResource(resourceClass, "/");
+	}
+	
+	public void addResource(Class<?> resourceClass, String basePath) {
+		addResource(resourceClass, new ResourceConfiguration(getResourceName(resourceClass), configuration), basePath);
+	}
+	
+	public void addResource(Class<?> resourceClass, ResourceConfiguration resourceConfiguration) {
+		addResource(resourceClass, resourceConfiguration, "/");
+	}
+	
+	public void addResource(Class<?> resourceClass, ResourceConfiguration resourceConfiguration, String basePath) {
 		resourceConfiguration.setParent(configuration);
-		ResourceClass resource = new ResourceClass(resourceConfiguration, resourceClass);
+		ResourceClass resource = new ResourceClass(resourceConfiguration, resourceClass, basePath);
 		addResource(resource);
 	}
 	
 	public void addResource(ResourceClass resourceClass) {
+		if (resourcePathExists(resourceClass.getBasePath())) {
+			throw new MinnalException("Resource Path - " + resourceClass.getBasePath() + " already exists in the application");
+		}
 		resources.put(resourceClass.getResourceClass(), resourceClass);
 	}
-
-	/**
-	 * @return the routes
-	 */
-	public Routes getRoutes() {
-		return routes;
+	
+	private boolean resourcePathExists(String path) {
+		for (ResourceClass clazz : resources.values()) {
+			if (clazz.getBasePath().equals(path)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Routes getRoutes(ResourceClass clazz) {
+		return routes.get(clazz);
 	}
 
 	/**
@@ -127,7 +151,7 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	 * 
 	 * @return the path
 	 */
-	String getPath() {
+	public String getPath() {
 		return path;
 	}
 
@@ -140,7 +164,7 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		this.path = path;
 	}
 	
-	protected ResourceClass resource(Class<?> clazz) {
+	public ResourceClass resource(Class<?> clazz) {
 		if (! resources.containsKey(clazz)) {
 			throw new MinnalException("Resource - " + clazz.getName() + " not found");
 		}
@@ -183,5 +207,13 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	@Override
 	public String toString() {
 		return configuration.getName();
+	}
+	
+	private String getResourceName(Class<?> resourceClass) {
+		String resourceName = resourceClass.getSimpleName();
+		if (resourceName.toLowerCase().endsWith("resource")) {
+			resourceName = resourceName.substring(0, resourceName.toLowerCase().indexOf("resource"));
+		}
+		return Inflector.tableize(resourceName);
 	}
 }

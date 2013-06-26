@@ -4,11 +4,16 @@
 package org.minnal.core;
 
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.minnal.core.config.ApplicationConfiguration;
+import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.exception.NotFoundException;
+import org.minnal.core.util.Comparators;
+import org.minnal.core.util.HttpUtil;
 
 /**
  * @author ganeshs
@@ -30,7 +35,10 @@ public class RouteResolver {
 		context.setApplication(application);
 		context.getRequest().setApplicationPath(application.getPath()); // NOTE: This should be done before resolving the action
 		
-		Route route = application.getRoutes().resolve(context.getRequest());
+		ResourceClass resourceClass = resolveResource(application, context.getRequest());
+		context.setResourceClass(resourceClass);
+		Route route = application.getRoutes(resourceClass).resolve(context.getRequest());
+		
 		context.getRequest().setResolvedRoute(route);
 		context.getResponse().setResolvedRoute(route);
 		
@@ -42,5 +50,24 @@ public class RouteResolver {
 		context.getRequest().addHeaders(parameters);
 		context.setRoute(route);
 		return route;
+	}
+	
+	protected ResourceClass resolveResource(Application<ApplicationConfiguration> application, Request request) {
+		Map<String, ResourceClass> resources = getResources(application);
+		String path = request.getUri().getPath();
+		for (Entry<String, ResourceClass> entry : resources.entrySet()) {
+			if (path.startsWith(HttpUtil.structureUrl(application.getConfiguration().getBasePath()) + entry.getKey())) {
+				return entry.getValue();
+			}
+		}
+		throw new NotFoundException();
+	}
+	
+	private Map<String, ResourceClass> getResources(Application<ApplicationConfiguration> application) {
+		Map<String, ResourceClass> resources = new TreeMap<String, ResourceClass>(Comparators.LENGTH_COMPARATOR);
+		for (ResourceClass resource : application.getResources()) {
+			resources.put(resource.getBasePath(), resource);
+		}
+		return resources;
 	}
 }

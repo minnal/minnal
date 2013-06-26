@@ -3,16 +3,16 @@
  */
 package org.minnal.core;
 
+import static org.minnal.core.util.HttpUtil.structureUrl;
+
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.minnal.core.config.ApplicationConfiguration;
-
-import com.google.common.base.Preconditions;
+import org.minnal.core.util.Comparators;
 
 /**
  * Manages the mapping between mount path and application. Resolves the application mount paths to absolute path of the container.
@@ -30,8 +30,6 @@ public class ApplicationMapping {
 	
 	private String basePath;
 	
-	private static final String SEPARATOR = "/";
-	
 	/**
 	 * Constructor with base path of the container. Expects a path starting with '/' character. Defaults to '/' if path is null or empty. 
 	 * Structures the url to ensure it starts with '/' and ends without a '/'
@@ -43,14 +41,14 @@ public class ApplicationMapping {
 	}
 	
 	/**
-	 * Maps a mount path to an application. If the mount path already exists or if the application is already mapped to another mount path, 
+	 * Maps application to its mount path. If the mount path already exists or if the application is already mapped to another mount path, 
 	 * throws an exception
 	 * 
 	 * @param application
 	 * @param mountPath
 	 */
-	public void addApplication(Application<ApplicationConfiguration> application, String mountPath) {
-		mountPath = structureUrl(mountPath);
+	public void addApplication(Application<ApplicationConfiguration> application) {
+		String mountPath = structureUrl(application.getConfiguration().getBasePath());
 		String path = getAbsolutePath(mountPath);
 		if (applications.containsKey(path)) {
 			throw new IllegalArgumentException("Mount path - " + mountPath + " already exists. Either change the application base path or override it in container");
@@ -119,34 +117,9 @@ public class ApplicationMapping {
 		return basePath + mountPath;
 	}
 	
-	/**
-	 * Structures the url to look like a valid path.
-	 * 
-	 * @param url
-	 * @return
-	 */
-	private String structureUrl(String url) {
-		if (url == null || url == "") {
-			return SEPARATOR;
-		}
-		if (! url.startsWith(SEPARATOR)) {
-			url = SEPARATOR + url;
-		}
-		if (url.endsWith(SEPARATOR)) {
-			url = url.substring(0, url.length() - 1);
-		}
-		return url;
-	}
-	
 	private Map<String, Application<ApplicationConfiguration>> getSortedApplications() {
-		Map<String, Application<ApplicationConfiguration>> applications = new TreeMap<String, Application<ApplicationConfiguration>>(
-				new Comparator<String>() {
-					public int compare(String o1, String o2) {
-						Preconditions.checkNotNull(o1);
-						Preconditions.checkNotNull(o2);
-						return o1.length() == o2.length() ? 1 : o1.length() < o2.length() ? 1 : -1;
-					}
-				});
+		Map<String, Application<ApplicationConfiguration>> applications = 
+				new TreeMap<String, Application<ApplicationConfiguration>>(Comparators.LENGTH_COMPARATOR);
 		applications.putAll(this.applications);
 		return applications;
 	}

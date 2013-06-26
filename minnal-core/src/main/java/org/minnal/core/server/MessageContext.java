@@ -5,6 +5,7 @@ package org.minnal.core.server;
 
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
+import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.Route;
 
 
@@ -19,6 +20,8 @@ public class MessageContext {
 	private ServerResponse response;
 	
 	private Application<ApplicationConfiguration> application;
+	
+	private ResourceClass resourceClass;
 	
 	private Route route;
 
@@ -71,6 +74,20 @@ public class MessageContext {
 	 */
 	public void setRoute(Route route) {
 		this.route = route;
+	}
+
+	/**
+	 * @return the resourceClass
+	 */
+	public ResourceClass getResourceClass() {
+		return resourceClass;
+	}
+
+	/**
+	 * @param resourceClass the resourceClass to set
+	 */
+	public void setResourceClass(ResourceClass resourceClass) {
+		this.resourceClass = resourceClass;
 	}
 
 	@Override

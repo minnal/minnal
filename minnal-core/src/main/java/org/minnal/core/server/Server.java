@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A simple http server over netty that deletes all the incoming requests to {@link Router}
+ * A simple http server over netty that delegates all the incoming requests to {@link Router}
  * 
  * @author ganeshs
  *
@@ -62,5 +62,10 @@ public class Server implements Bundle {
 		for (AbstractHttpConnector connector : connectors) {
 			connector.stop();
 		}
+	}
+	
+	@Override
+	public int getOrder() {
+		return Integer.MAX_VALUE;
 	}
 }

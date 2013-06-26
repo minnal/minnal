@@ -22,6 +22,8 @@ import com.google.common.base.Strings;
  *
  */
 public class HttpUtil {
+	
+	public static final String SEPARATOR = "/";
 
 	public static Map<String, String> getQueryParameters(URI uri) {
 		String query = uri.getQuery();
@@ -90,5 +92,28 @@ public class HttpUtil {
 //			buffer.append(";");
 		}
 		return buffer.toString();
+	}
+	
+	/**
+	 * Structures the url to look like a valid path.
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String structureUrl(String url) {
+		if (url == null || url == "") {
+			return SEPARATOR;
+		}
+		if (! url.startsWith(SEPARATOR)) {
+			url = SEPARATOR + url;
+		}
+		if (url.endsWith(SEPARATOR)) {
+			url = url.substring(0, url.length() - 1);
+		}
+		return url;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(structureUrl("/"));
 	}
 }

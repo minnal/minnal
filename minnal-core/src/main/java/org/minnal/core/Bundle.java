@@ -15,4 +15,6 @@ public interface Bundle {
 	void start();
 	
 	void stop();
+	
+	int getOrder();
 }

@@ -3,6 +3,7 @@
  */
 package org.minnal.admin.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.minnal.admin.ApplicationRoutes;
@@ -21,7 +22,10 @@ public class RouteResource {
 	
 	public List<Route> listRoutes(Request request, Response response) {
 		String applicationName = request.getHeader(APP_NAME);
-		Routes routes = ApplicationRoutes.instance.getRoutes(applicationName);
-		return routes.getRoutes();
+		List<Route> routes = new ArrayList<Route>();
+		for (Routes r : ApplicationRoutes.instance.getRoutes(applicationName)) {
+			routes.addAll(r.getRoutes());
+		}
+		return routes;
 	}
 }

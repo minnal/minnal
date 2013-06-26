@@ -24,13 +24,19 @@ public class AdminBundle extends ContainerAdapter implements Bundle {
 
 	public void stop() {
 	}
-
-	public void onMount(Application<ApplicationConfiguration> application, String mountUrl) {
+	
+	@Override
+	public void postMount(Application<ApplicationConfiguration> application) {
 		ApplicationRoutes.instance.addApplication(application);
 	}
 
-	public void onUnMount(Application<ApplicationConfiguration> application, String mountUrl) {
+	@Override
+	public void postUnMount(Application<ApplicationConfiguration> application) {
 		ApplicationRoutes.instance.removeApplication(application);
 	}
 
+	@Override
+	public int getOrder() {
+		return 1;
+	}
 }

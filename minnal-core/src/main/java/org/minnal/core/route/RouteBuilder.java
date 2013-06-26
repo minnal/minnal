@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,7 +39,7 @@ public class RouteBuilder {
 	
 	private RouteConfiguration configuration;
 	
-	private Map<HttpMethod, Action> actions = new HashMap<HttpMethod, Action>();
+	private Map<HttpMethod, Action> actions = new LinkedHashMap<HttpMethod, Action>();
 	
 	private Set<QueryParam> queryParams = new HashSet<QueryParam>();
 	
@@ -97,6 +98,7 @@ public class RouteBuilder {
 		if (actions.isEmpty()) {
 			throw new IllegalStateException("Can't build a route without an action. Make sure you have called routeBuilder.action() before invoking build()");
 		}
+		this.actions.put(HttpMethod.OPTIONS, null);
 		List<Route> routes = new ArrayList<Route>();
 		for (Entry<HttpMethod, Action> entry : actions.entrySet()) {
 			routes.add(new Route(pattern, entry.getKey(), entry.getValue(), configuration, attributes, queryParams));

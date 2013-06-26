@@ -39,7 +39,7 @@ public class RoutePattern {
 	
 	private static final String PLACEHOLDER_PATTERN_REGEX = "\\{" + PLACEHOLDER_REGEX + "\\}";
 
-	private static final String PATH_PATTERN_REGEX = "(\\/[a-z0-9\\-_A-Z]*(" + PLACEHOLDER_PATTERN_REGEX + ")*)+";
+	private static final String PATH_PATTERN_REGEX = "(\\/[a-z0-9\\-_\\.A-Z]*(" + PLACEHOLDER_PATTERN_REGEX + ")*)+";
 	
 	private static final Pattern PATH_PATTERN = Pattern.compile(PATH_PATTERN_REGEX);
 	

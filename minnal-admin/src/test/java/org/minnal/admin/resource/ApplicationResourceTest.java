@@ -14,6 +14,7 @@ import org.minnal.core.Application;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.core.config.ApplicationConfiguration;
+import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.Route;
 import org.minnal.core.route.Routes;
 import org.testng.annotations.BeforeMethod;
@@ -40,9 +41,11 @@ private Request request;
 		ApplicationConfiguration configuration = mock(ApplicationConfiguration.class);
 		when(configuration.getName()).thenReturn("admin");
 		when(application.getConfiguration()).thenReturn(configuration);
+		ResourceClass resource = mock(ResourceClass.class);
+		when(application.getResources()).thenReturn(Arrays.asList(resource));
 		Routes routes = mock(Routes.class);
 		when(routes.getRoutes()).thenReturn(Arrays.asList(mock(Route.class)));
-		when(application.getRoutes()).thenReturn(routes);
+		when(application.getRoutes(resource)).thenReturn(routes);
 		ApplicationRoutes.instance.addApplication(application);
 	}
 

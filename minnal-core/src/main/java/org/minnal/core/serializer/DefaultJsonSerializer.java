@@ -51,7 +51,7 @@ public class DefaultJsonSerializer extends Serializer {
 		mapper.setVisibility(PropertyAccessor.SETTER, Visibility.PROTECTED_AND_PUBLIC);
 		mapper.registerModule(module);
 		mapper.configure(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS, true);
-		mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+		mapper.setPropertyNamingStrategy(getPropertyNamingStrategy());
 	}
 	
 	public ChannelBuffer serialize(Object object) {
@@ -83,5 +83,9 @@ public class DefaultJsonSerializer extends Serializer {
 		} catch (Exception e) {
 			throw new MinnalException("Failed while deserializing the buffer to type - " + javaType, e);
 		}
+	}
+	
+	public PropertyNamingStrategy getPropertyNamingStrategy() {
+		return PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES;
 	}
 }

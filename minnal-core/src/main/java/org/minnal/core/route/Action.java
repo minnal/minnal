@@ -51,6 +51,13 @@ public class Action {
 		}
 	}
 
+	/**
+	 * @return the method
+	 */
+	public Method getMethod() {
+		return method;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

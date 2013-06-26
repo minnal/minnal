@@ -35,6 +35,14 @@ public class ServerResponse extends ServerMessage implements Response {
 		super(response);
 		this.request = request;
 		this.response = response;
+		init();
+	}
+	
+	protected void init() {
+		// TODO: Allowing CORS for all domains. Take the value from configuration
+		addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+		addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_METHODS, "*");
+		addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_HEADERS, "*");
 	}
 
 	public void setStatus(HttpResponseStatus status) {

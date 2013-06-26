@@ -13,7 +13,7 @@ import org.minnal.example.domain.Order;
  * @author ganeshs
  * 
  */
-@Resource(value = Order.class)
+@Resource(Order.class)
 public class OrderResource {
 	
 	public void helloWorld(Request request, Response response) {

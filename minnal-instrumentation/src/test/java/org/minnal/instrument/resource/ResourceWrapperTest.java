@@ -54,6 +54,7 @@ public class ResourceWrapperTest {
 	@BeforeMethod
 	public void setup() throws Exception {
 		resourceClass = mock(ResourceClass.class);
+		when(resourceClass.getBasePath()).thenReturn("/parents");
 		when(resourceClass.getResourceClass()).thenReturn((Class)DummyResource.class);
 		wrapper = spy(new ResourceWrapper(resourceClass));
 		EntityNode node = new EntityNode(Parent.class);
@@ -122,8 +123,8 @@ public class ResourceWrapperTest {
 		Template deleteMethodCreator = mock(Template.class);
 		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
 		RouteBuilder builder = mock(RouteBuilder.class);
-		when(resourceClass.builder(path.getSinglePath())).thenReturn(builder);
-		when(resourceClass.builder(path.getBulkPath())).thenReturn(mock(RouteBuilder.class));
+		when(resourceClass.builder(path.getSinglePath().substring("/parents".length()))).thenReturn(builder);
+		when(resourceClass.builder(path.getBulkPath().substring("/parents".length()))).thenReturn(mock(RouteBuilder.class));
 		final AtomicInteger integer = new AtomicInteger(0);
 		doAnswer(new Answer<String>() {
 			public String answer(InvocationOnMock invocation) throws Throwable {

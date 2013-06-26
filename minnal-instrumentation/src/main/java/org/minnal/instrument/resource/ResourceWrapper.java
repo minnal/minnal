@@ -203,9 +203,9 @@ public class ResourceWrapper {
 		for (Entry<ResourcePath, Map<HttpMethod, String>> entry : paths.entrySet()) {
 			path = entry.getKey();
 			if (path.isBulk()) {
-				builder = resourceClass.builder(path.getNodePath().getBulkPath());
+				builder = resourceClass.builder(constructRoutePath(path.getNodePath().getBulkPath()));
 			} else {
-				builder = resourceClass.builder(path.getNodePath().getSinglePath());
+				builder = resourceClass.builder(constructRoutePath(path.getNodePath().getSinglePath()));
 			}
 			
 			for (Entry<HttpMethod, String> method : entry.getValue().entrySet()) {
@@ -216,6 +216,10 @@ public class ResourceWrapper {
 				builder.queryParam(param);
 			}
 		}
+	}
+	
+	private String constructRoutePath(String path) {
+		return path.substring(resourceClass.getBasePath().length());
 	}
 	
 	private boolean addMethodToPath(ResourcePath resourcePath, HttpMethod method, String action) {

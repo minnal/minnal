@@ -50,7 +50,7 @@ public class InstrumentationBundleTest {
 		when(application.getConfiguration()).thenReturn(configuration);
 		when(configuration.isInstrumentationEnabled()).thenReturn(true);
 		doReturn(enhancer).when(bundle).createApplicationEnhancer(application);
-		bundle.onMount(application, "/");
+		bundle.postMount(application);
 		verify(enhancer).enhance();
 	}
 	
@@ -61,7 +61,7 @@ public class InstrumentationBundleTest {
 		ApplicationConfiguration configuration = mock(ApplicationConfiguration.class);
 		when(application.getConfiguration()).thenReturn(configuration);
 		doReturn(enhancer).when(bundle).createApplicationEnhancer(application);
-		bundle.onMount(application, "/");
+		bundle.postMount(application);
 		verify(enhancer, never()).enhance();
 	}
 }

@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
+import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.route.Action;
@@ -55,6 +56,7 @@ public class RouterTest {
 		resolver = mock(RouteResolver.class);
 		request = mock(ServerRequest.class);
 		response = mock(ServerResponse.class);
+		when(request.getHttpMethod()).thenReturn(HttpMethod.GET);
 		when(response.getStatus()).thenReturn(HttpResponseStatus.PROCESSING);
 		when(response.isContentSet()).thenReturn(false);
 		router = new Router(applicationMapping, resolver);

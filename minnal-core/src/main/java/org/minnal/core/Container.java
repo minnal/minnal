@@ -4,6 +4,8 @@
 package org.minnal.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -12,6 +14,8 @@ import org.minnal.core.config.ConfigurationProvider;
 import org.minnal.core.config.ContainerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author ganeshs
@@ -58,8 +62,10 @@ public class Container implements Lifecycle {
 			String mountPath = configuration.getMounts().get(application.getClass().getName());
 			if (mountPath == null) {
 				mountPath = application.getConfiguration().getBasePath();
+			} else {
+				application.getConfiguration().setBasePath(mountPath);
 			}
-			mount(application, mountPath);
+			mount(application);
 		}
 	}
 	
@@ -69,26 +75,38 @@ public class Container implements Lifecycle {
 	protected void loadBundles() {
 		logger.info("Loading the bundles from service loader");
 		ServiceLoader<Bundle> loader = ServiceLoader.load(Bundle.class);
-		for (Bundle bundle : loader) {
+		List<Bundle> bundles = Lists.newArrayList(loader);
+		Collections.sort(bundles, new Comparator<Bundle>() {
+			@Override
+			public int compare(Bundle o1, Bundle o2) {
+				if (o1.getOrder() == o2.getOrder()) {
+					return 0;
+				}
+				return o1.getOrder() < o2.getOrder() ? -1 : 1;
+			}
+		});
+		for (Bundle bundle : bundles) {
 			bundle.init(this);
-			bundles.add(bundle);
+			this.bundles.add(bundle);
 		}
 	}
 	
 	/**
-	 * Mounts an application to a mount url
+	 * Mounts the application on the container
 	 * 
 	 * @param application
-	 * @param mountUrl
 	 */
-	protected void mount(Application<ApplicationConfiguration> application, String mountUrl) {
-		logger.info("Mounting the application {} on the mount path {}", application, mountUrl);
+	protected void mount(Application<ApplicationConfiguration> application) {
+		logger.info("Mounting the application {} on the mount path {}", application, application.getConfiguration().getBasePath());
 		application.getConfiguration().setParent(configuration);
 		for (ContainerLifecycleListener listener : listeners) {
-			listener.onMount(application, mountUrl);
+			listener.preMount(application);
 		}
 		application.init();
-		applicationMapping.addApplication(application, mountUrl);
+		applicationMapping.addApplication(application);
+		for (ContainerLifecycleListener listener : listeners) {
+			listener.postMount(application);
+		}
 	}
 	
 	/**
@@ -99,23 +117,25 @@ public class Container implements Lifecycle {
 	protected void unMount(String mountUrl) {
 		logger.info("Unmounting the mount path {}", mountUrl);
 		Application<ApplicationConfiguration> application = applicationMapping.removeApplication(mountUrl);
+		for (ContainerLifecycleListener listener : listeners) {
+			listener.preUnMount(application);
+		}
 		application.stop();
 		for (ContainerLifecycleListener listener : listeners) {
-			listener.onUnMount(application, mountUrl);
+			listener.postUnMount(application);
 		}
 	}
 
 	public void start() {
 		logger.info("Starting the container");
-		for (Application<ApplicationConfiguration> application : applicationMapping.getApplications()) {
-			application.start();
-		}
-		
 		for (ContainerLifecycleListener listener : listeners) {
 			listener.beforeStart(this);
 		}
 		for (Bundle bundle : bundles) {
 			bundle.start();
+		}
+		for (Application<ApplicationConfiguration> application : applicationMapping.getApplications()) {
+			application.start();
 		}
 		for (ContainerLifecycleListener listener : listeners) {
 			listener.afterStart(this);
@@ -130,12 +150,12 @@ public class Container implements Lifecycle {
 		for (Bundle bundle : bundles) {
 			bundle.stop();
 		}
-		for (ContainerLifecycleListener listener : listeners) {
-			listener.afterStop(this);
-		}
 		// FIXME What will application do on stop?
 		for (Application<ApplicationConfiguration> application : applicationMapping.getApplications()) {
 			application.stop();
+		}
+		for (ContainerLifecycleListener listener : listeners) {
+			listener.afterStop(this);
 		}
 	}
 
