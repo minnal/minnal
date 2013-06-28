@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package org.minnal.instrument.util;
 
 import static org.testng.Assert.assertEquals;
@@ -9,16 +12,17 @@ import java.util.List;
 import org.minnal.instrument.entity.Searchable;
 import org.testng.annotations.Test;
 
-
+/**
+ * @author anand.karthik
+ *
+ */
 public class ClassUtilsTest {
-	public ClassUtilsTest() {
-	}
 
-	class TempEntity extends  TempSuperEntity{
-		
+	class TempEntity extends TempSuperEntity {
+
 		@Searchable
 		String field1;
-		
+
 		public String getField1() {
 			return field1;
 		}
@@ -29,12 +33,10 @@ public class ClassUtilsTest {
 		public void setField1(String field1) {
 			this.field1 = field1;
 		}
-		
-
 	}
-	
-	class TempSuperEntity{
-		
+
+	class TempSuperEntity {
+
 		@Searchable
 		private String field8;
 
@@ -51,17 +53,16 @@ public class ClassUtilsTest {
 		public void setField8(String field8) {
 			this.field8 = field8;
 		}
-		 
 	}
-	
+
 	@Test
-	public void shouldDiscoverSuperClassFields(){
+	public void shouldDiscoverSuperClassFields() {
 		List<Field> allFields = ClassUtils.getAllFields(TempEntity.class);
 		assertEquals(allFields.size(), 4);
 	}
-	
+
 	@Test
-	public void shouldDiscoverSuperClassMethods(){
+	public void shouldDiscoverSuperClassMethods() {
 		List<Method> allMethods = ClassUtils.getAllMethods(TempEntity.class);
 		assertEquals(allMethods.size(), 16);
 	}

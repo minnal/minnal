@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package org.minnal.instrument.util;
 
 import java.lang.reflect.Field;
@@ -17,7 +20,6 @@ public class ClassUtils {
 	 * 
 	 * @author anand.karthik
 	 */
-	
 	public static List<Field> getAllFields(Class<?> type) {
 		List<Field> fields = new ArrayList<Field>();
 		fields.addAll(Arrays.asList(type.getDeclaredFields()));
@@ -32,7 +34,6 @@ public class ClassUtils {
 	 * 
 	 * @author anand.karthik
 	 */
-
 	public static List<Method> getAllMethods(Class<?> type) {
 		List<Method> methods = new ArrayList<Method>();
 		methods.addAll(Arrays.asList(type.getDeclaredMethods()));

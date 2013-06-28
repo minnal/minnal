@@ -29,21 +29,16 @@ public class EntityMetaDataBuilder {
 		accept(visitor);
 		return metaData;
 	}
-	
 
-	
-	
 	private void accept(EntityVisitor visitor) {
-		List<Field> fieldList = ClassUtils.getAllFields(metaData.getEntityClass());
-		for (Field field : fieldList) {
+		for (Field field : ClassUtils.getAllFields(metaData.getEntityClass())) {
 			Annotation[] annotations = field.getAnnotations();
 			for (Annotation annotation : annotations) {
 				visitor.visitAnnotationField(annotation, field);
 			}
 		}
-		
-		 List<Method> methodList = ClassUtils.getAllMethods(metaData.getEntityClass());		
-		for (Method method : methodList) {
+
+		for (Method method : ClassUtils.getAllMethods(metaData.getEntityClass())) {
 			Annotation[] annotations = method.getAnnotations();
 			for (Annotation annotation : annotations) {
 				visitor.visitAnnotationMethod(annotation, method);
