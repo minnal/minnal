@@ -20,10 +20,10 @@ import org.minnal.core.config.RouteConfiguration;
 import org.minnal.core.resource.ResourceClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.collections.Sets;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Utility class to build a route for a resource class
