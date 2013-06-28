@@ -6,8 +6,12 @@ package org.minnal.instrument.entity.metadata;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
 
 import org.minnal.instrument.entity.metadata.handler.AbstractAnnotationHandler;
+import org.minnal.instrument.util.ClassUtils;
+
+import com.sun.tools.javac.util.List;
 
 /**
  * @author ganeshs
@@ -27,15 +31,20 @@ public class EntityMetaDataBuilder {
 		return metaData;
 	}
 	
+
+	
+	
 	private void accept(EntityVisitor visitor) {
-		for (Field field : metaData.getEntityClass().getDeclaredFields()) {
+		LinkedList<Field> fieldList = ClassUtils.getAllFields(new LinkedList<Field>(), metaData.getEntityClass());
+		for (Field field : fieldList) {
 			Annotation[] annotations = field.getAnnotations();
 			for (Annotation annotation : annotations) {
 				visitor.visitAnnotationField(annotation, field);
 			}
 		}
 		
-		for (Method method : metaData.getEntityClass().getDeclaredMethods()) {
+		 LinkedList<Method> methodList = ClassUtils.getAllMethods(new LinkedList<Method>(), metaData.getEntityClass());		
+		for (Method method : methodList) {
 			Annotation[] annotations = method.getAnnotations();
 			for (Annotation annotation : annotations) {
 				visitor.visitAnnotationMethod(annotation, method);
