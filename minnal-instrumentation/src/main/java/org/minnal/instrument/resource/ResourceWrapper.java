@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -270,7 +271,7 @@ public class ResourceWrapper {
 	private boolean addMethodToPath(ResourcePath resourcePath, HttpMethod method, String action) {
 		Map<HttpMethod, String> methods = paths.get(resourcePath);
 		if (methods == null) {
-			methods = new HashMap<HttpMethod, String>();
+			methods = new LinkedHashMap<HttpMethod, String>();
 			paths.put(resourcePath, methods);
 		}
 		methods.put(method, action);

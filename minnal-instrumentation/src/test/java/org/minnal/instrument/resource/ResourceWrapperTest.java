@@ -56,6 +56,7 @@ public class ResourceWrapperTest {
 		resourceClass = mock(ResourceClass.class);
 		when(resourceClass.getBasePath()).thenReturn("/parents");
 		when(resourceClass.getResourceClass()).thenReturn((Class)DummyResource.class);
+		when(resourceClass.getEntityClass()).thenReturn((Class)Parent.class);
 		wrapper = spy(new ResourceWrapper(resourceClass));
 		EntityNode node = new EntityNode(Parent.class);
 		node.construct();
@@ -141,8 +142,8 @@ public class ResourceWrapperTest {
 		wrapper.addPath(path);
 		wrapper.wrap();
 		verify(resourceClass).setResourceClass(Class.forName(DummyResource.class.getName() + "Wrapper"));
-		verify(builder).action(HttpMethod.GET, "readParentChild");
-		verify(builder).action(HttpMethod.PUT, "updateParentChild");
+		verify(builder).action(HttpMethod.GET, "readParentChild", Void.class, Child.class);
+		verify(builder).action(HttpMethod.PUT, "updateParentChild", Child.class, Void.class);
 	}
 }
 
