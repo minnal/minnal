@@ -3,12 +3,17 @@
  */
 package org.minnal.api;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.jboss.netty.handler.codec.http.HttpMethod;
+import org.minnal.api.util.PropertyUtil;
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.resource.ResourceClass;
@@ -19,9 +24,11 @@ import org.minnal.core.route.RoutePattern.RouteElement;
 import org.minnal.core.util.HttpUtil;
 
 import com.wordnik.swagger.core.Documentation;
+import com.wordnik.swagger.core.DocumentationAllowableListValues;
 import com.wordnik.swagger.core.DocumentationEndPoint;
 import com.wordnik.swagger.core.DocumentationOperation;
 import com.wordnik.swagger.core.DocumentationParameter;
+import com.wordnik.swagger.core.DocumentationSchema;
 
 /**
  * @author ganeshs
@@ -70,7 +77,85 @@ public class ApiDocumentation {
 		documentation.setBasePath(constructBasePath(application.getPath()));
 		documentation.setResourcePath(resourceClass.getBasePath());
 		documentation.setApis(createEndPoints(resourceClass.getRouteBuilders()));
+		documentation.setModels(createSchemas(resourceClass));
 		return documentation;
+	}
+	
+	protected HashMap<String, DocumentationSchema> createSchemas(ResourceClass resourceClass) {
+		HashMap<String, DocumentationSchema> schemas = new HashMap<String, DocumentationSchema>();
+		Class<?> entityClass = resourceClass.getEntityClass();
+		if (entityClass == null) {
+			return schemas;
+		}
+		createSchema(entityClass, schemas);
+		return schemas;
+	}
+	
+	protected DocumentationSchema createSchema(Class<?> clazz, HashMap<String, DocumentationSchema> schemas) {
+		if (schemas.containsKey(clazz.getSimpleName())) {
+			return schemas.get(clazz.getSimpleName());
+		}
+		
+		DocumentationSchema schema = new DocumentationSchema();
+		schema.setId(clazz.getSimpleName());
+		schema.setType(clazz.getSimpleName());
+		
+		// Put the schema in to map. This would ensure we don't get stuck inside a cycle.
+		schemas.put(clazz.getSimpleName(), schema);
+		
+		Map<String, DocumentationSchema> properties = new HashMap<String, DocumentationSchema>();
+		for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(clazz)) {
+			if (descriptor.getName().equals("class")) {
+				continue;
+			}
+			Type genericType = descriptor.getReadMethod() != null ? descriptor.getReadMethod().getGenericReturnType() : 
+				descriptor.getWriteMethod() != null ? descriptor.getWriteMethod().getGenericReturnType() : null;
+			if (genericType == null) {
+				continue;
+			}
+			// Create the schema and models. If the descriptor can't be serialized, don't add to the properties.
+			DocumentationSchema prop = createSchema(descriptor, schemas);
+			if (! PropertyUtil.canSerialize(descriptor)) {
+				continue;
+			}
+			properties.put(descriptor.getName(), prop);
+		}
+		schema.setProperties(properties);
+		return schema;
+	}
+	
+	protected DocumentationSchema createSchema(PropertyDescriptor descriptor, HashMap<String, DocumentationSchema> schemas) {
+		DocumentationSchema model = null;
+		DocumentationSchema schema = new DocumentationSchema();
+		schema.setId(descriptor.getName());
+		
+		if (PropertyUtil.isSimpleProperty(descriptor.getPropertyType())) {
+			if (Enum.class.isAssignableFrom(descriptor.getPropertyType())) {
+				schema.setType("string");
+				DocumentationAllowableListValues values = new DocumentationAllowableListValues(PropertyUtil.getEnumValues(descriptor));
+				schema.setAllowableValues(values);
+			} else {
+				schema.setType(descriptor.getPropertyType().getSimpleName());
+			}
+		} else if (PropertyUtil.isCollectionProperty(descriptor.getReadMethod().getGenericReturnType(), true)) {
+			Class<?> element = PropertyUtil.getCollectionElementType(descriptor.getReadMethod().getGenericReturnType());
+
+			if (! PropertyUtil.isSimpleProperty(element)) {
+				if (! schemas.containsKey(descriptor.getName())) {
+					model = createSchema(element, schemas);
+				} else {
+					model = schemas.get(descriptor.getName());
+				}
+				schema.setType("Array[" + model.getId() + "]");
+				schema.setItems(model);
+			} else {
+				schema.setType(element.getSimpleName().toLowerCase());
+			}
+		} else {
+			model = createSchema(descriptor.getPropertyType(), schemas);
+			schema.setType(model.getId());
+		}
+		return schema;
 	}
 	
 	protected List<DocumentationEndPoint> createEndPoints(List<RouteBuilder> builders) {
@@ -98,9 +183,38 @@ public class ApiDocumentation {
 			op.setHttpMethod(route.getMethod().getName());
 			op.setNickname(route.getAction().getMethod().getName());
 			op.setParameters(createParameter(route));
+			
+			if (route.getMethod().equals(HttpMethod.GET)) {
+				op.setResponseClass(getResponseClass(route));
+			} else if (route.getMethod().equals(HttpMethod.POST)) {
+				op.setResponseClass(getResponseClass(route));
+			}
 			ops.add(op);
 		}
 		return ops;
+	}
+	
+	private String getResponseClass(Route route) {
+		return getType(route.getResponseType());
+	}
+	
+	private String getRequestClass(Route route) {
+		return getType(route.getRequestType());
+	}
+	
+	private String getType(Type type) {
+		if (type instanceof Class) {
+			return ((Class<?>)type).getSimpleName();
+		}
+		
+		if (type instanceof ParameterizedType) {
+			if (PropertyUtil.isCollectionProperty(type, false)) {
+				return "Array[" + PropertyUtil.getCollectionElementType(type).getSimpleName() + "]";
+			} else if (PropertyUtil.isMapProperty(type)) {
+				return "Object";
+			}
+		}
+		return "Object";
 	}
 	
 	protected List<DocumentationParameter> createParameter(Route route) {
@@ -121,6 +235,13 @@ public class ApiDocumentation {
 			parameter.setDataType(param.getType().toString());
 			parameter.setName(param.getName());
 			parameter.setDescription(param.getDescription());
+			parameters.add(parameter);
+		}
+		
+		if (route.getMethod().equals(HttpMethod.POST) || route.getMethod().equals(HttpMethod.PUT)) {
+			DocumentationParameter parameter = new DocumentationParameter();
+			parameter.setParamType("body");
+			parameter.setDataType(getRequestClass(route));
 			parameters.add(parameter);
 		}
 		return parameters;

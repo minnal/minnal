@@ -3,8 +3,8 @@
  */
 package org.minnal.core.route;
 
+import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
-import static org.mockito.Mockito.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +17,10 @@ import org.minnal.core.Response;
 import org.minnal.core.config.ResourceConfiguration;
 import org.minnal.core.config.RouteConfiguration;
 import org.minnal.core.resource.ResourceClass;
-import org.minnal.core.route.QueryParam.Type;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * @author ganeshs
@@ -53,6 +54,22 @@ public class RouteBuilderTest {
 	@Test(expectedExceptions=IllegalStateException.class)
 	public void shouldThrowExceptionWhenBuiltWithoutCallingAction() {
 		builder.build();
+	}
+	
+	@Test
+	public void shouldBuildRouteWithDefaultRequestAndResponseType() {
+		builder.action(HttpMethod.GET, "methodWithValidParameters");
+		List<Route> routes = builder.build();
+		assertEquals(routes.get(1).getRequestType(), Object.class);
+		assertEquals(routes.get(1).getResponseType(), Object.class);
+	}
+	
+	@Test
+	public void shouldBuildRouteWithDefinedRequestAndResponseType() {
+		builder.action(HttpMethod.GET, "methodWithValidParameters", new TypeToken<List<String>>(){}.getType(), Void.class);
+		List<Route> routes = builder.build();
+		assertEquals(routes.get(0).getRequestType(), new TypeToken<List<String>>(){}.getType());
+		assertEquals(routes.get(0).getResponseType(), Void.class);
 	}
 	
 	@Test
@@ -119,29 +136,6 @@ public class RouteBuilderTest {
 		assertEquals(routes.get(0).getAttributes().get("testKey1"), "testValue1");
 		assertEquals(routes.get(0).getAttributes().get("testKey2"), "testValue2");
 		assertEquals(routes.get(0).getAttributes().get("testKey3"), "testValue3");
-	}
-	
-	@Test
-	public void shouldAddQueryParamsWithName() {
-		builder.queryParam("param1");
-		assertEquals(builder.getQueryParams().iterator().next().getName(), "param1");
-		assertEquals(builder.getQueryParams().iterator().next().getType(), Type.string);
-	}
-	
-	@Test
-	public void shouldAddQueryParamsWithNameAndType() {
-		builder.queryParam("param1", Type.integer, "test param");
-		assertEquals(builder.getQueryParams().iterator().next().getName(), "param1");
-		assertEquals(builder.getQueryParams().iterator().next().getType(), Type.integer);
-		assertEquals(builder.getQueryParams().iterator().next().getDescription(), "test param");
-	}
-	
-	@Test
-	public void shouldAddQueryParamsWithNameAndDescription() {
-		builder.queryParam("param1", "test param");
-		assertEquals(builder.getQueryParams().iterator().next().getName(), "param1");
-		assertEquals(builder.getQueryParams().iterator().next().getType(), Type.string);
-		assertEquals(builder.getQueryParams().iterator().next().getDescription(), "test param");
 	}
 	
 	private interface DummyResource {

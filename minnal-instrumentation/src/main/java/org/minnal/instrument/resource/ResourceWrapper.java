@@ -4,15 +4,21 @@
 package org.minnal.instrument.resource;
 
 import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.ClassMemberValue;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -24,11 +30,17 @@ import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.MinnalException;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
+import org.minnal.core.resource.Resource;
 import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.QueryParam;
+import org.minnal.core.route.RouteAction;
 import org.minnal.core.route.RouteBuilder;
 import org.minnal.core.route.RoutePattern;
+import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
+
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 
 /**
  * @author ganeshs
@@ -73,10 +85,11 @@ public class ResourceWrapper {
 	}
 	
 	protected CtClass createGeneratedClass() {
+		CtClass generatedClass = null;
 		if (resourceClass.getResourceClass() != null) {
 			try {
 				CtClass superClass = classPool.get(resourceClass.getResourceClass().getName());
-				return classPool.makeClass(resourceClass.getResourceClass().getName() + "Wrapper", superClass);
+				generatedClass = classPool.makeClass(resourceClass.getResourceClass().getName() + "Wrapper", superClass);
 			} catch (Exception e) {
 				throw new MinnalException("Failed while creating the generated class");
 			}
@@ -84,8 +97,15 @@ public class ResourceWrapper {
 			if (resourceClass.getEntityClass() == null) {
 				throw new MinnalException("Entity Class not defined in the resource class");
 			}
-			return classPool.makeClass(resourceClass.getEntityClass().getName() + "Resource");
+			generatedClass = classPool.makeClass(resourceClass.getEntityClass().getName() + "Resource");
 		}
+		ConstPool constPool = generatedClass.getClassFile().getConstPool();
+		AnnotationsAttribute attr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
+		Annotation resourceAnnotation = new Annotation(Resource.class.getCanonicalName(), constPool);
+		resourceAnnotation.addMemberValue("value", new ClassMemberValue(resourceClass.getEntityClass().getCanonicalName(), constPool));
+		attr.setAnnotation(resourceAnnotation);
+		generatedClass.getClassFile().addAttribute(attr);
+		return generatedClass;
 	}
 	
 	public void addPath(EntityNodePath path) {
@@ -127,10 +147,6 @@ public class ResourceWrapper {
 		if (template == null) {
 			// TODO Can't get here. Handle if it still gets here
 			return;
-		}
-		
-		if (resourcePath.getNodePath().getBulkPath().equals("/facilities/{facility_id}/station_mappings")) {
-			System.out.println();
 		}
 		
 		if (! shouldCreateMethod(resourcePath, method)) {
@@ -209,13 +225,42 @@ public class ResourceWrapper {
 			}
 			
 			for (Entry<HttpMethod, String> method : entry.getValue().entrySet()) {
-				builder.action(method.getKey(), method.getValue());
-			}
-			
-			for (QueryParam param : entry.getKey().getNodePath().getQueryParams()) {
-				builder.queryParam(param);
+				Type requestType = getRequestType(method.getKey(), path);
+				Type responseType = getResponseType(method.getKey(), path);
+				RouteAction action = builder.action(method.getKey(), method.getValue(), requestType, responseType);
+				if (method.getKey().equals(HttpMethod.GET) && path.bulk) {
+					for (QueryParam param : entry.getKey().getNodePath().getQueryParams()) {
+						action.queryParam(param);
+					}
+				}
 			}
 		}
+	}
+	
+	private Type getRequestType(HttpMethod method, ResourcePath path) {
+		if (! method.equals(HttpMethod.POST) && ! method.equals(HttpMethod.PUT)) {
+			return Void.class;
+		}
+		EntityNodePath nodePath = path.getNodePath();
+		EntityNode node = nodePath.get(nodePath.size() - 1);
+		return node.getEntityMetaData().getEntityClass();
+	}
+	
+	private Type getResponseType(HttpMethod method, ResourcePath path) {
+		if (method.equals(HttpMethod.DELETE) || method.equals(HttpMethod.PUT)) {
+			return Void.class;
+		}
+		EntityNodePath nodePath = path.getNodePath();
+		EntityNode node = nodePath.get(nodePath.size() - 1);
+		Class<?> entityClass = node.getEntityMetaData().getEntityClass();
+		if (method.equals(HttpMethod.GET) && path.bulk) {
+			return listOf(TypeToken.of(entityClass)).getType();
+		}
+		return entityClass;
+	}
+	
+	private static <E> TypeToken<List<E>> listOf(TypeToken<E> elementType) {
+		return new TypeToken<List<E>>() {}.where(new TypeParameter<E>() {}, elementType);
 	}
 	
 	private String constructRoutePath(String path) {

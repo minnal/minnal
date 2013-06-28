@@ -4,13 +4,12 @@
 package org.minnal.core.route;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
@@ -19,9 +18,12 @@ import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.core.config.RouteConfiguration;
 import org.minnal.core.resource.ResourceClass;
-import org.minnal.core.route.QueryParam.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.collections.Sets;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * Utility class to build a route for a resource class
@@ -39,9 +41,7 @@ public class RouteBuilder {
 	
 	private RouteConfiguration configuration;
 	
-	private Map<HttpMethod, Action> actions = new LinkedHashMap<HttpMethod, Action>();
-	
-	private Set<QueryParam> queryParams = new HashSet<QueryParam>();
+	private List<RouteAction> actions = new LinkedList<RouteAction>();
 	
 	private static Logger logger = LoggerFactory.getLogger(RouteBuilder.class);
 	
@@ -67,11 +67,15 @@ public class RouteBuilder {
 		return this;
 	}
 	
-	public RouteBuilder action(HttpMethod httpMethod, String methodName) {
-		return action(httpMethod, methodName, Request.class, Response.class);
+	public RouteAction action(HttpMethod httpMethod, String methodName) {
+		return action(httpMethod, methodName, Object.class, Object.class);
 	}
 	
-	protected RouteBuilder action(HttpMethod httpMethod, String methodName, Class<?>... parameterTypes) {
+	public RouteAction action(HttpMethod httpMethod, String methodName, Type requestType, Type responseType) {
+		return action(httpMethod, methodName, requestType, responseType, Request.class, Response.class);
+	}
+	
+	protected RouteAction action(HttpMethod httpMethod, String methodName, Type requestType, Type responseType, Class<?>... parameterTypes) {
 		Method method = null;
 		try {
 			method = resourceClass.getResourceClass().getMethod(methodName, parameterTypes);
@@ -79,61 +83,49 @@ public class RouteBuilder {
 			logger.error("Error while getting the method " + methodName + " for the class " + resourceClass.getResourceClass(), e);
 			throw new MinnalException(e);
 		}
-		return action(httpMethod, method);
+		return action(httpMethod, method, requestType, responseType);
 	}
 	
-	public RouteBuilder action(HttpMethod httpMethod, Method method) {
+	public RouteAction action(HttpMethod httpMethod, Method method) {
+		return action(httpMethod, method, Object.class, Object.class);
+	}
+	
+	public RouteAction action(HttpMethod httpMethod, Method method, Type requestType, Type responseType) {
 		Action action = null;
 		try {
 			action = new Action(resourceClass.getResourceClass().newInstance(), method);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MinnalException("Failed while creating a new isntance of resource class", e);
 		}
-		actions.put(httpMethod, action);
-		return this;
+		RouteAction routeAction = new RouteAction(new Route(pattern, httpMethod, action, requestType, responseType));
+		actions.add(routeAction);
+		return routeAction;
 	}
 	
 	public List<Route> build() {
 		if (actions.isEmpty()) {
 			throw new IllegalStateException("Can't build a route without an action. Make sure you have called routeBuilder.action() before invoking build()");
 		}
-		this.actions.put(HttpMethod.OPTIONS, null);
+		// Add the options route by default to allow clients to check the available options for this path
+		this.actions.add(new RouteAction(new Route(pattern, HttpMethod.OPTIONS, null, Object.class, Object.class)));
 		List<Route> routes = new ArrayList<Route>();
-		for (Entry<HttpMethod, Action> entry : actions.entrySet()) {
-			routes.add(new Route(pattern, entry.getKey(), entry.getValue(), configuration, attributes, queryParams));
+		for (RouteAction routeAction : actions) {
+			routeAction.getRoute().setConfiguration(configuration);
+			routeAction.addAttributes(attributes, false);
+			routes.add(routeAction.getRoute());
 		}
 		return routes;
 	}
 	
 	public Set<HttpMethod> supportedMethods() {
-		return actions.keySet();
+		return Sets.newHashSet(Lists.transform(actions, new Function<RouteAction, HttpMethod>() {
+			@Override
+			public HttpMethod apply(RouteAction input) {
+				return input.getRoute().getMethod();
+			}
+		}));
 	}
 	
-	public RouteBuilder queryParam(QueryParam param) {
-		queryParams.add(param);
-		return this;
-	}
-	
-	public RouteBuilder queryParam(String name) {
-		return queryParam(name, "");
-	}
-	
-	public RouteBuilder queryParam(String name, String description) {
-		return queryParam(name, Type.string, description);
-	}
-	
-	public RouteBuilder queryParam(String name, QueryParam.Type type, String description) {
-		return queryParam(new QueryParam(name, type, description));
-	}
-
-	/**
-	 * @return the queryParams
-	 */
-	public Set<QueryParam> getQueryParams() {
-		return queryParams;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

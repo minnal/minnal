@@ -32,7 +32,7 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle {
 	}
 
 	@Override
-	public void postMount(Application<ApplicationConfiguration> application) {
+	public void preMount(Application<ApplicationConfiguration> application) {
 		if (application.getConfiguration().isInstrumentationEnabled()) {
 			createApplicationEnhancer(application).enhance();
 		}
