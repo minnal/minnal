@@ -28,13 +28,20 @@ public class EntityMetaDataBuilderTest {
 		EntityMetaDataBuilder builder = new EntityMetaDataBuilder(DummyEntity.class);
 		EntityMetaData metaData = builder.build();
 		assertEquals(metaData.getActionMethods().size(), 1);
-		assertEquals(metaData.getSearchFields().size(), 2);
+		assertEquals(metaData.getSearchFields().size(), 1);
 		assertEquals(metaData.getEntityKey(), "field3");
 		assertEquals(metaData.getCollections().size(), 2);
 		assertEquals(metaData.getAssociations().size(), 2);
 	}
 	
-	class DummyEntity extends  DummySuperEntity{
+	@Test
+	public void shouldBuildUnderEntityMetaData() {
+		EntityMetaDataBuilder builder = new EntityMetaDataBuilder(DummyUnderEntity.class);
+		EntityMetaData metaData = builder.build();
+		assertEquals(metaData.getSearchFields().size(), 2);
+	}
+	
+	class DummyEntity{
 		
 		@Searchable
 		String field1;
@@ -60,7 +67,7 @@ public class EntityMetaDataBuilderTest {
 		}
 	}
 	
-	class DummySuperEntity{
+	class DummyUnderEntity extends DummyEntity{
 		
 		@Searchable
 		private String field8;

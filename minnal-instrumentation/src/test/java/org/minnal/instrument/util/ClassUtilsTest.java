@@ -4,7 +4,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
+import java.util.List;
 
 import org.minnal.instrument.entity.Searchable;
 import org.testng.annotations.Test;
@@ -56,13 +56,13 @@ public class ClassUtilsTest {
 	
 	@Test
 	public void shouldDiscoverSuperClassFields(){
-		LinkedList<Field> allFields = ClassUtils.getAllFields(new LinkedList<Field>(), TempEntity.class);
+		List<Field> allFields = ClassUtils.getAllFields(TempEntity.class);
 		assertEquals(allFields.size(), 4);
 	}
 	
 	@Test
 	public void shouldDiscoverSuperClassMethods(){
-		LinkedList<Method> allMethods = ClassUtils.getAllMethods(new LinkedList<Method>(), TempEntity.class);
+		List<Method> allMethods = ClassUtils.getAllMethods(TempEntity.class);
 		assertEquals(allMethods.size(), 16);
 	}
 }

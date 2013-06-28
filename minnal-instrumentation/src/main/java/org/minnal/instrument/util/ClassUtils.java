@@ -2,35 +2,43 @@ package org.minnal.instrument.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+/**
+ * @author anand.karthik
+ *
+ */
 public class ClassUtils {
 
-	public ClassUtils() {
-		// TODO Auto-generated constructor stub
+	/**
+	 * Gets all the declared fields in the Class and all the Inherited Classes
+	 * 
+	 * @author anand.karthik
+	 */
+	
+	public static List<Field> getAllFields(Class<?> type) {
+		List<Field> fields = new ArrayList<Field>();
+		fields.addAll(Arrays.asList(type.getDeclaredFields()));
+		if (type.getSuperclass() != null) {
+	        fields.addAll(getAllFields(type.getSuperclass()));
+	    }
+		return fields;
 	}
 	
-	public static LinkedList<Field> getAllFields(LinkedList<Field> fields, Class<?> type) {
-	    for (Field field: type.getDeclaredFields()) {
-	        fields.add(field);
-	    }
+	/**
+	 * Gets all the declared mehtods in the Class and all the Inherited Classes
+	 * 
+	 * @author anand.karthik
+	 */
 
-	    if (type.getSuperclass() != null) {
-	        fields = getAllFields(fields, type.getSuperclass());
+	public static List<Method> getAllMethods(Class<?> type) {
+		List<Method> methods = new ArrayList<Method>();
+		methods.addAll(Arrays.asList(type.getDeclaredMethods()));
+		if (type.getSuperclass() != null) {
+	        methods.addAll(getAllMethods(type.getSuperclass()));
 	    }
-
-	    return fields;
-	}
-	
-	public static LinkedList<Method> getAllMethods(LinkedList<Method> methods, Class<?> type) {
-	    for (Method method: type.getDeclaredMethods()) {
-	        methods.add(method);
-	    }
-
-	    if (type.getSuperclass() != null) {
-	        methods = getAllMethods(methods, type.getSuperclass());
-	    }
-
 	    return methods;
 	}
 
