@@ -35,8 +35,6 @@ import com.beust.jcommander.internal.Maps;
  */
 public class RouteResolverTest {
 	
-	private ApplicationMapping applicationMapping;
-	
 	private MessageContext context;
 	
 	private ResourceClass resourceClass; 
@@ -51,36 +49,24 @@ public class RouteResolverTest {
 	public void setup() {
 		ServerRequest request = mock(ServerRequest.class);
 		ServerResponse response = mock(ServerResponse.class);
+		application = mock(Application.class);
 		context = mock(MessageContext.class);
 		when(context.getRequest()).thenReturn(request);
 		when(context.getResponse()).thenReturn(response);
-		applicationMapping = mock(ApplicationMapping.class);
-		application = mock(Application.class);
-		when(applicationMapping.resolve(context.getRequest())).thenReturn(application);
+		when(context.getApplication()).thenReturn(application);
+		
 		Routes routes = mock(Routes.class);
 		route = mock(Route.class);
 		RoutePattern pattern = mock(RoutePattern.class);
 		when(route.getRoutePattern()).thenReturn(pattern);
 		when(pattern.match(anyString())).thenReturn(Maps.newHashMap("key", "value"));
 		when(routes.resolve(context.getRequest())).thenReturn(route);
-		resolver = spy(new RouteResolver(applicationMapping));
+		resolver = spy(new RouteResolver());
 		resourceClass = mock(ResourceClass.class);
 		doReturn(resourceClass).when(resolver).resolveResource(application, request);
 		when(application.getRoutes(resourceClass)).thenReturn(routes);
 	}
 
-	@Test(expectedExceptions=NotFoundException.class)
-	public void shouldReturnNotFoundIfApplicationDoesntMatch() {
-		when(applicationMapping.resolve(context.getRequest())).thenReturn(null);
-		resolver.resolve(context);
-	}
-	
-	@Test
-	public void shouldPopulateContextWithApplication() {
-		resolver.resolve(context);
-		verify(context).setApplication(application);
-	}
-	
 	@Test
 	public void shouldPopulateContextWithResourceclass() {
 		resolver.resolve(context);

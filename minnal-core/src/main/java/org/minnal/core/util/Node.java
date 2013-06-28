@@ -124,6 +124,11 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 		visitor.visit(root);
 	}
 	
+	/**
+	 * Traverses all the available paths.
+	 * 
+	 * @param visitor
+	 */
 	public void traverse(PathVisitor<P, T> visitor) {
 		LinkedList<T> list = new LinkedList<T>();
 		Stack<T> stack = new Stack<T>();
@@ -140,7 +145,8 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 					stack.push(child);
 				}
 			} else {
-				while(! list.isEmpty() && ! list.getLast().hasChildren()) {
+				// Remove the last element if it doesn't have children or if it is not the parent of the top most element in the stack
+				while(! list.isEmpty() && (! list.getLast().hasChildren() ||  (!stack.isEmpty() && ! stack.peek().getParent().equals(list.getLast())))) {
 					list.removeLast();
 				}
 			}

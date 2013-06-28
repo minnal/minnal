@@ -106,4 +106,24 @@ public class RouterTest {
 		router.route(context);
 		verify(handler).handle(request, response, exception);
 	}
+	
+	@Test
+	public void shouldPopulateContextWithApplication() {
+		router.route(context);
+		verify(context).setApplication(application);
+	}
+	
+	@Test(expectedExceptions=NotFoundException.class)
+	public void shouldReturnNotFoundIfApplicationDoesntMatch() {
+		when(applicationMapping.resolve(context.getRequest())).thenReturn(null);
+		router.route(context);
+	}
+	
+	@Test
+	public void shouldSetApplicationPathOnRequest() {
+		when(application.getPath()).thenReturn("/app");
+		router.route(context);
+		verify(request).setApplicationPath("/app");
+	}
+	
 }

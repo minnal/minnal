@@ -21,20 +21,11 @@ import org.minnal.core.util.HttpUtil;
  */
 public class RouteResolver {
 	
-	private ApplicationMapping applicationMapping;
-	
-	public RouteResolver(ApplicationMapping applicationMapping) {
-		this.applicationMapping = applicationMapping;
+	public RouteResolver() {
 	}
 
 	public Route resolve(MessageContext context) {
-		Application<ApplicationConfiguration> application = applicationMapping.resolve(context.getRequest());
-		if (application == null) {
-			throw new NotFoundException("Request path not found");
-		}
-		context.setApplication(application);
-		context.getRequest().setApplicationPath(application.getPath()); // NOTE: This should be done before resolving the action
-		
+		Application<ApplicationConfiguration> application = context.getApplication();
 		ResourceClass resourceClass = resolveResource(application, context.getRequest());
 		context.setResourceClass(resourceClass);
 		Route route = application.getRoutes(resourceClass).resolve(context.getRequest());

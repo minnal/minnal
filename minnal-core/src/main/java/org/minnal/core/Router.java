@@ -26,7 +26,7 @@ public class Router {
 	
 	public Router(ApplicationMapping applicationMapping) {
 		this.applicationMapping = applicationMapping;
-		this.resolver = new RouteResolver(applicationMapping);
+		this.resolver = new RouteResolver();
 	}
 	
 	public Router(ApplicationMapping applicationMapping, RouteResolver resolver) {
@@ -42,6 +42,7 @@ public class Router {
 			throw new NotFoundException("Request path not found");
 		}
 		context.setApplication(application);
+		context.getRequest().setApplicationPath(application.getPath()); // NOTE: This should be done before resolving the action
 		
 		try {
 			FilterChain chain = new FilterChain(context.getApplication().getFilters(), resolver);
