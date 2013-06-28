@@ -32,7 +32,7 @@ public class OrderResourceTest extends BaseResourceTest {
 		response = response(request);
 		MessageContext context = new MessageContext(request, response);
 		route(context);
-		assertEquals(response.getStatus(), HttpResponseStatus.OK);
+		assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
 		Order order = serializer.deserialize(response.getContent(), Order.class);
 		assertEquals(order.getCustomerEmail(), "ganeshs@flipkart.com");
 		assertNull(order.getOrderItems());
