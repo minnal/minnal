@@ -4,6 +4,7 @@
 package org.minnal.jpa;
 
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +21,8 @@ import javax.sql.DataSource;
 import org.minnal.core.config.DatabaseConfiguration;
 import org.minnal.core.scanner.Scanner.Listener;
 import org.minnal.jpa.entity.EntityScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author ganeshs
@@ -38,6 +41,8 @@ public class MinnalPersistenceUnitInfo implements PersistenceUnitInfo {
 	private DataSource dataSource;
 	
 	private List<String> managedClasses = new ArrayList<String>();
+	
+	private static final Logger logger = LoggerFactory.getLogger(MinnalPersistenceUnitInfo.class);
 	
 	public MinnalPersistenceUnitInfo(String unitName, DatabaseConfiguration configuration, PersistenceProvider provider) {
 		this.unitName = unitName;
@@ -90,7 +95,10 @@ public class MinnalPersistenceUnitInfo implements PersistenceUnitInfo {
 	}
 
 	public URL getPersistenceUnitRootUrl() {
-		return null;
+		// No need to specify the persistence unit root url as we do it programmatically. But eclipselink expects it, 
+		// although it doesn't load the file, returning null causes a NPE with eclipselink. So returning a dummy url from here.
+		CodeSource codeSource = getClass().getProtectionDomain().getCodeSource();
+		return codeSource.getLocation();
 	}
 
 	public List<String> getManagedClassNames() {
@@ -122,7 +130,9 @@ public class MinnalPersistenceUnitInfo implements PersistenceUnitInfo {
 	}
 
 	public void addTransformer(ClassTransformer transformer) {
-		throw new UnsupportedOperationException("Not supported");
+		logger.info("Add transformer called on the persistent unit info. Ignoring");
+		// TODO Support adding transformers.
+		// Ignore this for now
 	}
 
 	public ClassLoader getNewTempClassLoader() {
