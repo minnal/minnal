@@ -22,12 +22,7 @@ public class SearchableAnnotationHandler extends AbstractAnnotationHandler {
 	@Override
 	public void handle(EntityMetaData metaData, Annotation annotation, Method method) {
 		String value = ((Searchable)annotation).value();
-		String key = method.getName().startsWith("get") ? method.getName().substring(3) : null;
-		
-		if (key == null) {
-			throw new IllegalArgumentException("Method - " + method.getName() + " is not a getter");
-		}
-		value = Strings.isNullOrEmpty(value) ? toLowerCamelCase(key) : value;
+		value = Strings.isNullOrEmpty(value) ? getGetterName(method, true) : value;
 		ParameterMetaData parameterMetaData = new ParameterMetaData(value, value, method.getReturnType());
 		metaData.addSearchField(parameterMetaData);
 	}

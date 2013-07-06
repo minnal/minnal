@@ -6,6 +6,8 @@ package org.minnal.instrument.entity;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -21,6 +23,9 @@ public class DummyModel {
 	private Long id;
 	
 	private String code;
+	
+	@ElementCollection
+	private List<Address> addresses; 
 	
 	@OneToMany
 	private Set<DummyModel> children;
@@ -126,5 +131,38 @@ public class DummyModel {
 	 */
 	public void setSpouse(DummyModel spouse) {
 		this.spouse = spouse;
+	}
+	
+	/**
+	 * @return the addresses
+	 */
+	public List<Address> getAddresses() {
+		return addresses;
+	}
+
+	/**
+	 * @param addresses the addresses to set
+	 */
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
+	}
+
+	@Embeddable
+	public static class Address {
+		private String addressLine1;
+
+		/**
+		 * @return the addressLine1
+		 */
+		public String getAddressLine1() {
+			return addressLine1;
+		}
+
+		/**
+		 * @param addressLine1 the addressLine1 to set
+		 */
+		public void setAddressLine1(String addressLine1) {
+			this.addressLine1 = addressLine1;
+		}
 	}
 }

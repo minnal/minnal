@@ -25,9 +25,9 @@ public class OneToManyAnnotationHandler extends AbstractAnnotationHandler {
 	
 	@Override
 	public void handle(EntityMetaData metaData, Annotation annotation, Method method) {
-		String name = method.getName().startsWith("get") ? method.getName().substring(3) : method.getName();
 		Class<?> elementType = getElementType(method.getGenericReturnType());
-		CollectionMetaData collectionMetaData = new CollectionMetaData(toLowerCamelCase(name), elementType, method.getReturnType(), isEntity(elementType));
+		CollectionMetaData collectionMetaData = new CollectionMetaData(getGetterName(method, false), 
+				elementType, method.getReturnType(), isEntity(elementType));
 		metaData.addCollection(collectionMetaData);
 	}
 
@@ -39,22 +39,6 @@ public class OneToManyAnnotationHandler extends AbstractAnnotationHandler {
 		metaData.addCollection(collectionMetaData);
 	}
 	
-	private Class<?> getElementType(Type type) {
-		if (type instanceof ParameterizedType) {
-			Class<?> rawType = (Class<?>) ((ParameterizedType) type).getRawType();
-			if (Collection.class.isAssignableFrom(rawType)) {
-				return (Class<?>) ((ParameterizedType)type).getActualTypeArguments()[0];
-			} else if (Map.class.isAssignableFrom(rawType)){
-				return (Class<?>) ((ParameterizedType)type).getActualTypeArguments()[1];
-			}
-		}	
-		return Object.class;
-	}
-	
-	private boolean isEntity(Class<?> entityClass) {
-		return entityClass.isAnnotationPresent(Entity.class);
-	}
-
 	@Override
 	public Class<?> getAnnotationType() {
 		return OneToMany.class;

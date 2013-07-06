@@ -18,12 +18,7 @@ public class EntityKeyAnnotationHandler extends AbstractAnnotationHandler {
 
 	@Override
 	public void handle(EntityMetaData metaData, Annotation annotation, Method method) {
-		String key = method.getName().startsWith("get") ? method.getName().substring(3) : null;
-		
-		if (key == null) {
-			throw new IllegalArgumentException("Method - " + method.getName() + " is not a getter");
-		}
-		metaData.setEntityKey(toLowerCamelCase(key));
+		metaData.setEntityKey(getGetterName(method, true));
 	}
 
 	@Override

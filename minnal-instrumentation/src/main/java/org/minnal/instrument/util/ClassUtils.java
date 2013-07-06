@@ -3,6 +3,7 @@
  */
 package org.minnal.instrument.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -43,4 +44,11 @@ public class ClassUtils {
 	    return methods;
 	}
 
+	public static boolean hasAnnotation(Field field, Class<? extends Annotation> clazz) {
+		return field.isAnnotationPresent(clazz);
+	}
+	
+	public static boolean hasAnnotation(Method method, Class<? extends Annotation> clazz) {
+		return method.isAnnotationPresent(clazz);
+	}
 }
