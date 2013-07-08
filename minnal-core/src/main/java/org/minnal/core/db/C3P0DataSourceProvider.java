@@ -10,6 +10,7 @@ import org.minnal.core.config.DatabaseConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.PooledDataSource;
 
@@ -92,5 +93,10 @@ public class C3P0DataSourceProvider implements DataSourceProvider {
 	 */
 	public void setConfiguration(DatabaseConfiguration configuration) {
 		this.configuration = configuration;
+	}
+	
+	@JsonValue
+	String getClassName() {
+		return C3P0DataSourceProvider.class.getCanonicalName();
 	}
 }

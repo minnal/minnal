@@ -47,7 +47,7 @@ public class DefaultJsonSerializer extends Serializer {
 	
 	protected void init(Module module) {
 		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.NONE);
-		mapper.setVisibility(PropertyAccessor.GETTER, Visibility.PUBLIC_ONLY);
+		mapper.setVisibility(PropertyAccessor.GETTER, Visibility.PROTECTED_AND_PUBLIC);
 		mapper.setVisibility(PropertyAccessor.SETTER, Visibility.PROTECTED_AND_PUBLIC);
 		mapper.registerModule(module);
 		mapper.configure(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS, true);
