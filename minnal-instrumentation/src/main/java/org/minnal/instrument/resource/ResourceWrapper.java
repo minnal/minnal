@@ -121,7 +121,7 @@ public class ResourceWrapper {
 		}
 	}
 	
-	protected Template getMethodTemplate(CtClass resourceWrapper, ResourcePath resourcePath, HttpMethod method) {
+	protected Template getMethodTemplate(ResourcePath resourcePath, HttpMethod method) {
 		if (resourcePath.isBulk()) {
 			if (method.equals(HttpMethod.GET)) {
 				return listMethodTemplate;
@@ -144,7 +144,7 @@ public class ResourceWrapper {
 	}
 	
 	protected void addMethod(ResourcePath resourcePath, HttpMethod method) throws Exception {
-		Template template = getMethodTemplate(generatedClass, resourcePath, method);
+		Template template = getMethodTemplate(resourcePath, method);
 		if (template == null) {
 			// TODO Can't get here. Handle if it still gets here
 			return;

@@ -67,7 +67,7 @@ public class ResourceWrapperTest {
 	@Test
 	public void shouldCreateListMethodForAPath() throws Exception {
 		Template listMethodCreator = mock(Template.class);
-		doReturn(listMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, true)), eq(HttpMethod.GET));
+		doReturn(listMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(path, true)), eq(HttpMethod.GET));
 		doReturn("listMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
 		verify(listMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
@@ -76,7 +76,7 @@ public class ResourceWrapperTest {
 	@Test
 	public void shouldCreateCreateMethodForAPath() throws Exception {
 		Template createMethodCreator = mock(Template.class);
-		doReturn(createMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, true)), eq(HttpMethod.POST));
+		doReturn(createMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(path, true)), eq(HttpMethod.POST));
 		doReturn("createMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
 		verify(createMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
@@ -85,7 +85,7 @@ public class ResourceWrapperTest {
 	@Test
 	public void shouldCreateReadMethodForAPath() throws Exception {
 		Template readMethodCreator = mock(Template.class);
-		doReturn(readMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.GET));
+		doReturn(readMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(path, false)), eq(HttpMethod.GET));
 		doReturn("readMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
 		verify(readMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
@@ -94,7 +94,7 @@ public class ResourceWrapperTest {
 	@Test
 	public void shouldCreateUpdateMethodForAPath() throws Exception {
 		Template updateMethodCreator = mock(Template.class);
-		doReturn(updateMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.PUT));
+		doReturn(updateMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(path, false)), eq(HttpMethod.PUT));
 		doReturn("updateMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
 		verify(updateMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
@@ -103,7 +103,7 @@ public class ResourceWrapperTest {
 	@Test
 	public void shouldCreateDeleteMethodForAPath() throws Exception {
 		Template deleteMethodCreator = mock(Template.class);
-		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
+		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
 		doReturn("deleteMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
 		verify(deleteMethodCreator).merge(any(VelocityContext.class), any(StringWriter.class));
@@ -113,7 +113,7 @@ public class ResourceWrapperTest {
 	public void shouldNotCreateMethodIfAlreadyFoundInResource() throws Exception {
 		Template deleteMethodCreator = mock(Template.class);
 		when(resourceClass.hasRoute(path.getSinglePath(), HttpMethod.DELETE)).thenReturn(true);
-		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
+		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
 		doReturn("deleteMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(path);
 		verify(deleteMethodCreator, never()).merge(any(VelocityContext.class), any(StringWriter.class));
@@ -122,7 +122,7 @@ public class ResourceWrapperTest {
 	@Test
 	public void shouldWrapResourceClass() throws Exception {
 		Template deleteMethodCreator = mock(Template.class);
-		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(any(CtClass.class), eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
+		doReturn(deleteMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(path, false)), eq(HttpMethod.DELETE));
 		RouteBuilder builder = mock(RouteBuilder.class);
 		when(resourceClass.builder(path.getSinglePath().substring("/parents".length()))).thenReturn(builder);
 		when(resourceClass.builder(path.getBulkPath().substring("/parents".length()))).thenReturn(mock(RouteBuilder.class));

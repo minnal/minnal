@@ -9,7 +9,6 @@ import java.util.List;
 
 import javassist.CtClass;
 
-import org.javalite.common.Inflector;
 import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
