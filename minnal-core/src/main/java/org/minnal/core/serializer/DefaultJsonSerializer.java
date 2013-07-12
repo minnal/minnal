@@ -12,6 +12,7 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.minnal.core.MinnalException;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -85,6 +86,7 @@ public class DefaultJsonSerializer extends Serializer {
 		}
 	}
 	
+	@JsonIgnore
 	public PropertyNamingStrategy getPropertyNamingStrategy() {
 		return PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES;
 	}
