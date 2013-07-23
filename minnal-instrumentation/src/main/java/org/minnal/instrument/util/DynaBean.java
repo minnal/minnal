@@ -24,7 +24,7 @@ public class DynaBean {
 	}
 	
 	@JsonAnySetter
-	public void set(String name, String value) {
+	public void set(String name, Object value) {
 		map.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name), value);
 	}
 
