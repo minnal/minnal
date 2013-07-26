@@ -116,6 +116,13 @@ public class PropertyUtil {
 	}
 	
 	public static boolean canSerialize(PropertyDescriptor descriptor) {
+		Method method = descriptor.getReadMethod();
+		if (method == null) {
+			method = descriptor.getWriteMethod();
+		}
+		if (method == null || method.getDeclaringClass().equals(Object.class)) {
+			return false;
+		}
 		return ! hasAnnotation(descriptor, JsonIgnore.class);
 	}
 	
@@ -126,6 +133,9 @@ public class PropertyUtil {
 		}
 		
 		Field field = FieldUtils.getField(method.getDeclaringClass(), descriptor.getName(), true);
+		if (field == null) {
+			return false;
+		}
 		if (field.isAnnotationPresent(clazz)) {
 			return true;
 		}
@@ -152,5 +162,23 @@ public class PropertyUtil {
 			// TODO Log exception and ignore
 		}
 		return values;
+	}
+	
+	public static Class<?> getType(PropertyDescriptor descriptor) {
+		Method method = descriptor.getReadMethod();
+		if (method == null) {
+			method = descriptor.getWriteMethod();
+		}
+		if (method == null) {
+			return null;
+		}
+		Type type = method.getGenericReturnType();
+		if (type instanceof ParameterizedType) {
+			if (isCollectionProperty(type, true)) {
+				return getCollectionElementType(type);
+			}
+			return (Class<?>)((ParameterizedType)type).getRawType(); 
+		}
+		return (Class<?>) type;
 	}
 }

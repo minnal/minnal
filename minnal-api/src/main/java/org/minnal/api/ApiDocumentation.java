@@ -3,7 +3,6 @@
  */
 package org.minnal.api;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.api.util.PropertyUtil;
 import org.minnal.core.Application;
@@ -24,7 +22,6 @@ import org.minnal.core.route.RoutePattern.RouteElement;
 import org.minnal.core.util.HttpUtil;
 
 import com.wordnik.swagger.core.Documentation;
-import com.wordnik.swagger.core.DocumentationAllowableListValues;
 import com.wordnik.swagger.core.DocumentationEndPoint;
 import com.wordnik.swagger.core.DocumentationOperation;
 import com.wordnik.swagger.core.DocumentationParameter;
@@ -87,75 +84,10 @@ public class ApiDocumentation {
 		if (entityClass == null) {
 			return schemas;
 		}
-		createSchema(entityClass, schemas);
+		ApiDocumentationNode node = new ApiDocumentationNode(entityClass);
+		node.construct();
+		schemas = (HashMap<String, DocumentationSchema>) node.getModels();
 		return schemas;
-	}
-	
-	protected DocumentationSchema createSchema(Class<?> clazz, HashMap<String, DocumentationSchema> schemas) {
-		if (schemas.containsKey(clazz.getSimpleName())) {
-			return schemas.get(clazz.getSimpleName());
-		}
-		
-		DocumentationSchema schema = new DocumentationSchema();
-		schema.setId(clazz.getSimpleName());
-		schema.setType(clazz.getSimpleName());
-		
-		// Put the schema in to map. This would ensure we don't get stuck inside a cycle.
-		schemas.put(clazz.getSimpleName(), schema);
-		
-		Map<String, DocumentationSchema> properties = new HashMap<String, DocumentationSchema>();
-		for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(clazz)) {
-			if (descriptor.getName().equals("class")) {
-				continue;
-			}
-			Type genericType = descriptor.getReadMethod() != null ? descriptor.getReadMethod().getGenericReturnType() : 
-				descriptor.getWriteMethod() != null ? descriptor.getWriteMethod().getGenericReturnType() : null;
-			if (genericType == null) {
-				continue;
-			}
-			// Create the schema and models. If the descriptor can't be serialized, don't add to the properties.
-			DocumentationSchema prop = createSchema(descriptor, schemas);
-			if (! PropertyUtil.canSerialize(descriptor)) {
-				continue;
-			}
-			properties.put(descriptor.getName(), prop);
-		}
-		schema.setProperties(properties);
-		return schema;
-	}
-	
-	protected DocumentationSchema createSchema(PropertyDescriptor descriptor, HashMap<String, DocumentationSchema> schemas) {
-		DocumentationSchema model = null;
-		DocumentationSchema schema = new DocumentationSchema();
-		schema.setId(descriptor.getName());
-		
-		if (PropertyUtil.isSimpleProperty(descriptor.getPropertyType())) {
-			if (Enum.class.isAssignableFrom(descriptor.getPropertyType())) {
-				schema.setType("string");
-				DocumentationAllowableListValues values = new DocumentationAllowableListValues(PropertyUtil.getEnumValues(descriptor));
-				schema.setAllowableValues(values);
-			} else {
-				schema.setType(descriptor.getPropertyType().getSimpleName());
-			}
-		} else if (PropertyUtil.isCollectionProperty(descriptor.getReadMethod().getGenericReturnType(), true)) {
-			Class<?> element = PropertyUtil.getCollectionElementType(descriptor.getReadMethod().getGenericReturnType());
-
-			if (! PropertyUtil.isSimpleProperty(element)) {
-				if (! schemas.containsKey(descriptor.getName())) {
-					model = createSchema(element, schemas);
-				} else {
-					model = schemas.get(descriptor.getName());
-				}
-				schema.setType("Array[" + model.getId() + "]");
-				schema.setItems(model);
-			} else {
-				schema.setType(element.getSimpleName().toLowerCase());
-			}
-		} else {
-			model = createSchema(descriptor.getPropertyType(), schemas);
-			schema.setType(model.getId());
-		}
-		return schema;
 	}
 	
 	protected List<DocumentationEndPoint> createEndPoints(List<RouteBuilder> builders) {
