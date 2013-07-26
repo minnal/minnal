@@ -182,6 +182,7 @@ public class ApiDocumentation {
 	protected void buildResources(Application<ApplicationConfiguration> application) {
 		Documentation documentation = new Documentation();
 		documentation.setSwaggerVersion("1.1");
+		documentation.setBasePath(constructBasePath(application.getPath()) + "/api/" + application.getConfiguration().getName());
 		for (ResourceClass resourceClass : application.getResources()) {
 			DocumentationEndPoint ep = new DocumentationEndPoint();
 			ep.setPath(HttpUtil.structureUrl(resourceClass.getConfiguration().getName()));
