@@ -42,6 +42,8 @@ public abstract class AbstractHttpConnector extends SimpleChannelUpstreamHandler
 	
 	private ConnectorConfiguration configuration;
 	
+	private ConnectorListener listener;
+	
 	private static final Logger logger = LoggerFactory.getLogger(AbstractHttpConnector.class);
 	
 	/**
@@ -93,6 +95,10 @@ public abstract class AbstractHttpConnector extends SimpleChannelUpstreamHandler
 		return configuration;
 	}
 	
+	public void registerListener(ConnectorListener listener) {
+		this.listener = listener;
+	}
+	
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
 		logger.trace("Received a {} message {} from the remote address {}", configuration.getScheme().name(), e.getMessage(), e.getRemoteAddress());
@@ -101,13 +107,21 @@ public abstract class AbstractHttpConnector extends SimpleChannelUpstreamHandler
 				HttpResponseStatus.PROCESSING)); // Setting temp response. Will override while serializing response
 		MessageContext context = new MessageContext(request, response);
 		ctx.setAttachment(context);
+		listener.onReceived(context);
 		router.route(context);
+		listener.onSuccess(context);
 		context.getResponse().write(ctx.getChannel()).addListener(ChannelFutureListener.CLOSE);
+		listener.onComplete(context);
 	}
 	
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
 		logger.error("Exception caught in the http connector", e);
+		if (ctx.getAttachment() instanceof MessageContext) {
+			listener.onError((MessageContext) ctx.getAttachment());
+		} else {
+			listener.onError(e.getCause());
+		}
 		super.exceptionCaught(ctx, e);
 	}
 }

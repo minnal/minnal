@@ -3,6 +3,9 @@
  */
 package org.minnal.core.server;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.resource.ResourceClass;
@@ -24,6 +27,8 @@ public class MessageContext {
 	private ResourceClass resourceClass;
 	
 	private Route route;
+	
+	private Map<String, Object> attributes = new HashMap<String, Object>();
 
 	/**
 	 * @param request
@@ -88,6 +93,18 @@ public class MessageContext {
 	 */
 	public void setResourceClass(ResourceClass resourceClass) {
 		this.resourceClass = resourceClass;
+	}
+	
+	public void addAttribute(String name, Object value) {
+		this.attributes.put(name, value);
+	}
+	
+	public void removeAttribute(String name) {
+		this.attributes.remove(name);
+	}
+	
+	public Object getAttribute(String name) {
+		return this.attributes.get(name);
 	}
 
 	@Override

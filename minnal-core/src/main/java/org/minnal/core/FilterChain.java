@@ -29,9 +29,17 @@ public class FilterChain {
 	
 	private MessageContext context;
 	
+	private RouterListener listener;
+	
 	public FilterChain(List<Filter> filters, RouteResolver resolver) {
 		this.filters = filters;
 		this.resolver = resolver;
+	}
+	
+	public FilterChain(List<Filter> filters, RouteResolver resolver, RouterListener listener) {
+		this.filters = filters;
+		this.resolver = resolver;
+		this.listener = listener;
 	}
 	
 	public void doFilter(Request request, Response response) {
@@ -42,6 +50,9 @@ public class FilterChain {
 			iterator.next().doFilter(request, response, this);
 		} else {
 			Route route = resolver.resolve(context);
+			if (listener != null) {
+				listener.onRouteResolved(context);
+			}
 			Object result = "";
 			if (context.getRequest().getHttpMethod().equals(HttpMethod.OPTIONS)) {
 				handleOptionsRequest(request, response);

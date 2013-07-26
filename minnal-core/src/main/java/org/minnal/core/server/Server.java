@@ -25,15 +25,13 @@ import org.slf4j.LoggerFactory;
  */
 public class Server implements Bundle {
 
-	private ServerConfiguration configuration;
-	
 	private List<AbstractHttpConnector> connectors = new ArrayList<AbstractHttpConnector>();
 	
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 	
 	public void init(Container container) {
 		logger.info("Initializing the container");
-		configuration = container.getConfiguration().getServerConfiguration();
+		ServerConfiguration configuration = container.getConfiguration().getServerConfiguration();
 		AbstractHttpConnector connector = null;
 		
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
@@ -41,10 +39,11 @@ public class Server implements Bundle {
 		logger.info("Loading the http connectors");
 		for (ConnectorConfiguration connectorConfig : configuration.getConnectorConfigurations()) {
 			if (connectorConfig.getScheme() == Scheme.https) {
-				connector = new HttpsConnector(connectorConfig, container.getRouter());
+				connector = createHttpsConnector(connectorConfig, container.getRouter());
 			} else {
-				connector = new HttpConnector(connectorConfig, container.getRouter());
+				connector = createHttpConnector(connectorConfig, container.getRouter());
 			}
+			connector.registerListener(container.getMessageObserver());
 			connector.initialize();
 			connectors.add(connector);
 		}
@@ -67,5 +66,13 @@ public class Server implements Bundle {
 	@Override
 	public int getOrder() {
 		return Integer.MAX_VALUE;
+	}
+	
+	protected HttpConnector createHttpConnector(ConnectorConfiguration connectorConfig, Router router) {
+		return new HttpConnector(connectorConfig, router);
+	}
+	
+	protected HttpsConnector createHttpsConnector(ConnectorConfiguration connectorConfig, Router router) {
+		return new HttpsConnector(connectorConfig, router);
 	}
 }

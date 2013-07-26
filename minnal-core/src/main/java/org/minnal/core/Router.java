@@ -22,6 +22,8 @@ public class Router {
 	
 	private ApplicationMapping applicationMapping;
 	
+	private RouterListener listener;
+	
 	private static final Logger logger = LoggerFactory.getLogger(Router.class);
 	
 	public Router(ApplicationMapping applicationMapping) {
@@ -41,11 +43,14 @@ public class Router {
 		if (application == null) {
 			throw new NotFoundException("Request path not found");
 		}
+		if (listener != null) {
+			listener.onApplicationResolved(context);
+		}
 		context.setApplication(application);
 		context.getRequest().setApplicationPath(application.getPath()); // NOTE: This should be done before resolving the action
 		
 		try {
-			FilterChain chain = new FilterChain(context.getApplication().getFilters(), resolver);
+			FilterChain chain = new FilterChain(context.getApplication().getFilters(), resolver, listener);
 			chain.doFilter(context);
 		} catch (Exception e) {
 			if (! (e instanceof ApplicationException)) {
@@ -61,5 +66,9 @@ public class Router {
 				}
 			}
 		}
+	}
+	
+	protected void registerListener(RouterListener listener) {
+		this.listener = listener;
 	}
 }

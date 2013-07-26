@@ -31,6 +31,8 @@ public class Container implements Lifecycle {
 	
 	private List<ContainerLifecycleListener> listeners = new ArrayList<ContainerLifecycleListener>();
 	
+	private ContainerMessageObserver messageObserver = new ContainerMessageObserver();
+	
 	private List<Bundle> bundles = new ArrayList<Bundle>();
 	
 	private static ConfigurationProvider configurationProvider = ConfigurationProvider.getDefault();
@@ -49,6 +51,7 @@ public class Container implements Lifecycle {
 		this.configuration = configuration;
 		this.applicationMapping = new ApplicationMapping(configuration.getBasePath());
 		router = new Router(applicationMapping);
+		router.registerListener(messageObserver);
 	}
 	
 	public void init() {
@@ -163,6 +166,10 @@ public class Container implements Lifecycle {
 		logger.trace("Registering the life cycle listener {}", listener.getClass());
 		listeners.add(listener);
 	}
+	
+	public void registerListener(MessageListener listener) {
+		messageObserver.registerListener(listener);
+	}
 
 	/**
 	 * @return the configuration
@@ -176,5 +183,9 @@ public class Container implements Lifecycle {
 	 */
 	public Router getRouter() {
 		return router;
+	}
+	
+	public ContainerMessageObserver getMessageObserver() {
+		return messageObserver;
 	}
 }

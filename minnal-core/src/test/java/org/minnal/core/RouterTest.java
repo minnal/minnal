@@ -115,8 +115,11 @@ public class RouterTest {
 	
 	@Test(expectedExceptions=NotFoundException.class)
 	public void shouldReturnNotFoundIfApplicationDoesntMatch() {
+		RouterListener listener = mock(RouterListener.class);
+		router.registerListener(listener);
 		when(applicationMapping.resolve(context.getRequest())).thenReturn(null);
 		router.route(context);
+		verify(listener, never()).onApplicationResolved(context);
 	}
 	
 	@Test
@@ -126,4 +129,12 @@ public class RouterTest {
 		verify(request).setApplicationPath("/app");
 	}
 	
+	@Test
+	public void shouldInvokeListenerWhenApplicationIsResolved() {
+		RouterListener listener = mock(RouterListener.class);
+		router.registerListener(listener);
+		when(application.getPath()).thenReturn("/app");
+		router.route(context);
+		verify(listener).onApplicationResolved(context);
+	}
 }

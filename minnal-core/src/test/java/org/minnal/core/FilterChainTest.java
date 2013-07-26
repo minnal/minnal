@@ -53,6 +53,8 @@ public class FilterChainTest {
 	
 	private RouteResolver resolver;
 	
+	private RouterListener listener;
+	
 	@BeforeMethod
 	public void setup() {
 		request = mock(ServerRequest.class);
@@ -68,7 +70,8 @@ public class FilterChainTest {
 		when(resolver.resolve(context)).thenReturn(route);
 		when(route.getAction()).thenReturn(action);
 		when(action.invoke(request, response)).thenReturn(Arrays.asList(""));
-		chain = new FilterChain(Arrays.asList(filter1, filter2, filter3), resolver);
+		listener = mock(RouterListener.class);
+		chain = new FilterChain(Arrays.asList(filter1, filter2, filter3), resolver, listener);
 	}
 
 	@Test
@@ -77,6 +80,13 @@ public class FilterChainTest {
 		verify(filter1).doFilter(request, response, chain);
 		verify(filter2).doFilter(request, response, chain);
 		verify(filter3).doFilter(request, response, chain);
+		verify(action).invoke(request, response);
+	}
+	
+	@Test
+	public void shouldNotifyListenersWhenRouteIsResolved() {
+		chain.doFilter(context);
+		verify(listener).onRouteResolved(context);
 		verify(action).invoke(request, response);
 	}
 	
