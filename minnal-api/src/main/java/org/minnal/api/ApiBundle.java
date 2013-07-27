@@ -17,10 +17,10 @@ import org.minnal.core.config.ConnectorConfiguration.Scheme;
  * @author ganeshs
  *
  */
-public class ApiBundle extends ContainerAdapter implements Bundle {
+public class ApiBundle extends ContainerAdapter implements Bundle<ApiBundleConfiguration> {
 
 	@Override
-	public void init(Container container) {
+	public void init(Container container, ApiBundleConfiguration configuration) {
 		container.registerListener(this);
 		for (ConnectorConfiguration connector : container.getConfiguration().getServerConfiguration().getConnectorConfigurations()) {
 			ApiDocumentation.instance.setBaseUrl(connector.getScheme().toString() + "://" + getHostName() + ":" + connector.getPort());

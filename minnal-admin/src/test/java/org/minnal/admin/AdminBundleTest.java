@@ -46,7 +46,7 @@ public class AdminBundleTest {
 	public void shouldRegisterListenerOnInit() {
 		AdminBundle bundle = new AdminBundle();
 		Container container = mock(Container.class);
-		bundle.init(container);
+		bundle.init(container, null);
 		verify(container).registerListener(bundle);
 	}
 	

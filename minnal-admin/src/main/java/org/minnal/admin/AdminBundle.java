@@ -13,9 +13,9 @@ import org.minnal.core.config.ApplicationConfiguration;
  * @author ganeshs
  *
  */
-public class AdminBundle extends ContainerAdapter implements Bundle {
+public class AdminBundle extends ContainerAdapter implements Bundle<AdminBundleConfiguration> {
 
-	public void init(Container container) {
+	public void init(Container container, AdminBundleConfiguration configuration) {
 		container.registerListener(this);
 	}
 

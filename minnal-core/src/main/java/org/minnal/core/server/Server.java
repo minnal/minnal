@@ -23,14 +23,15 @@ import org.slf4j.LoggerFactory;
  * @author ganeshs
  *
  */
-public class Server implements Bundle {
+public class Server implements Bundle<ServerBundleConfiguration> {
 
 	private List<AbstractHttpConnector> connectors = new ArrayList<AbstractHttpConnector>();
 	
 	private static final Logger logger = LoggerFactory.getLogger(Server.class);
 	
-	public void init(Container container) {
+	public void init(Container container, ServerBundleConfiguration config) {
 		logger.info("Initializing the container");
+		// Override the supplied one
 		ServerConfiguration configuration = container.getConfiguration().getServerConfiguration();
 		AbstractHttpConnector connector = null;
 		

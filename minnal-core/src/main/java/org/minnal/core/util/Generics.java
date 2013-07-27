@@ -36,7 +36,20 @@ public final class Generics {
     public static <T> Class<T> getTypeParameter(Class<?> klass, Class<? super T> bound) {
         Type t = klass;
         while (t instanceof Class<?>) {
-            t = ((Class<?>) t).getGenericSuperclass();
+    		for (Type type : ((Class<?>) t).getGenericInterfaces()) {
+    			if (! (type instanceof Class<?>)) {
+    				t = type;
+        			break;
+    			}
+    		}
+    		if (t instanceof Class<?>) {
+    			t = ((Class<?>) t).getGenericSuperclass();
+    		}
+        }
+        
+        if (t == null) {
+        	t = klass;
+        	
         }
         /* This is not guaranteed to work for all cases with convoluted piping
          * of type parameters: but it can at least resolve straight-forward

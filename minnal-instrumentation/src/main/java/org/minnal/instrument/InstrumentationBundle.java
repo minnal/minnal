@@ -14,9 +14,9 @@ import org.minnal.core.config.ApplicationConfiguration;
  * @author ganeshs
  *
  */
-public class InstrumentationBundle extends ContainerAdapter implements Bundle {
+public class InstrumentationBundle extends ContainerAdapter implements Bundle<InstrumentationBundleConfiguration> {
 	
-	public void init(Container container) {
+	public void init(Container container, InstrumentationBundleConfiguration configuration) {
 		getActiveJpaAgentLoader().loadAgent();
 		container.registerListener(this);
 	}

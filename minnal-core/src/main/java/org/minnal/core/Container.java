@@ -12,6 +12,7 @@ import java.util.ServiceLoader;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.ConfigurationProvider;
 import org.minnal.core.config.ContainerConfiguration;
+import org.minnal.core.util.Generics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public class Container implements Lifecycle {
 	
 	private ContainerMessageObserver messageObserver = new ContainerMessageObserver();
 	
-	private List<Bundle> bundles = new ArrayList<Bundle>();
+	private List<Bundle<BundleConfiguration>> bundles = new ArrayList<Bundle<BundleConfiguration>>();
 	
 	private static ConfigurationProvider configurationProvider = ConfigurationProvider.getDefault();
 	
@@ -88,8 +89,17 @@ public class Container implements Lifecycle {
 				return o1.getOrder() < o2.getOrder() ? -1 : 1;
 			}
 		});
-		for (Bundle bundle : bundles) {
-			bundle.init(this);
+		for (Bundle<BundleConfiguration> bundle : bundles) {
+			Class<BundleConfiguration> configClass = Generics.getTypeParameter(bundle.getClass(), BundleConfiguration.class);
+			BundleConfiguration bundleConfig = configuration.getBundleOverrides().get(bundle.getClass().getCanonicalName());
+			if (bundleConfig == null) {
+				try {
+					bundleConfig = (BundleConfiguration) configClass.newInstance();
+				} catch (Exception e) {
+					throw new MinnalException(e);
+				}
+			}
+			bundle.init(this, bundleConfig);
 			this.bundles.add(bundle);
 		}
 	}
@@ -134,7 +144,7 @@ public class Container implements Lifecycle {
 		for (ContainerLifecycleListener listener : listeners) {
 			listener.beforeStart(this);
 		}
-		for (Bundle bundle : bundles) {
+		for (Bundle<BundleConfiguration> bundle : bundles) {
 			bundle.start();
 		}
 		for (Application<ApplicationConfiguration> application : applicationMapping.getApplications()) {
@@ -150,7 +160,7 @@ public class Container implements Lifecycle {
 		for (ContainerLifecycleListener listener : listeners) {
 			listener.beforeStop(this);
 		}
-		for (Bundle bundle : bundles) {
+		for (Bundle<BundleConfiguration> bundle : bundles) {
 			bundle.stop();
 		}
 		// FIXME What will application do on stop?

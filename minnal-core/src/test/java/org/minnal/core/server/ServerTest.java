@@ -67,7 +67,7 @@ public class ServerTest {
 	
 	@Test
 	public void shouldInitializeServer() {
-		server.init(container);
+		server.init(container, null);
 		verify(httpConnector).registerListener(messageObserver);
 		verify(httpConnector).initialize();
 		verify(httpsConnector).registerListener(messageObserver);
@@ -76,7 +76,7 @@ public class ServerTest {
 	
 	@Test
 	public void shouldStartAllConnectors() {
-		server.init(container);
+		server.init(container, null);
 		server.start();
 		verify(httpConnector).start();
 		verify(httpsConnector).start();
@@ -84,7 +84,7 @@ public class ServerTest {
 	
 	@Test
 	public void shouldStopAllConnectors() {
-		server.init(container);
+		server.init(container, null);
 		server.stop();
 		verify(httpConnector).stop();
 		verify(httpsConnector).stop();

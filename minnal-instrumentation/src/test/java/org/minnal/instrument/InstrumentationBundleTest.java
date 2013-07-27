@@ -37,7 +37,7 @@ public class InstrumentationBundleTest {
 	public void shouldRegisterContainerListenerOnInit() {
 		ActiveJpaAgentLoader loader = mock(ActiveJpaAgentLoader.class);
 		doReturn(loader).when(bundle).getActiveJpaAgentLoader();
-		bundle.init(container);
+		bundle.init(container, null);
 		verify(loader).loadAgent();
 		verify(container).registerListener(bundle);
 	}

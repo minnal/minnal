@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.minnal.core.BundleConfiguration;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -27,6 +29,8 @@ public class ContainerConfiguration extends Configuration {
 	private Map<String, String> mounts = new HashMap<String, String>();
 	
 	private String basePath = "/";
+	
+	private Map<String, BundleConfiguration> bundleOverrides = new HashMap<String, BundleConfiguration>();
 	
 	public ContainerConfiguration() {
 	}
@@ -61,6 +65,20 @@ public class ContainerConfiguration extends Configuration {
 	 */
 	public void setMounts(Map<String, String> mounts) {
 		this.mounts = mounts;
+	}
+
+	/**
+	 * @return the bundleOverrides
+	 */
+	public Map<String, BundleConfiguration> getBundleOverrides() {
+		return bundleOverrides;
+	}
+
+	/**
+	 * @param bundleOverrides the bundleOverrides to set
+	 */
+	public void setBundleOverrides(Map<String, BundleConfiguration> bundleOverrides) {
+		this.bundleOverrides = bundleOverrides;
 	}
 
 	/**

@@ -84,7 +84,7 @@ public class ContainerMessageObserver implements RouterListener, ConnectorListen
 	public void onRouteResolved(MessageContext context) {
 		for (MessageListener listener : messageListeners) {
 			try {
-				listener.onReceived(context);
+				listener.onRouteResolved(context);
 			} catch (Exception e) {
 				logger.warn("Failed while handling the route resolved event", e);
 			}

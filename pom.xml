@@ -18,6 +18,7 @@
 		<module>minnal-migrations</module>
 		<module>minnal-generator</module>
 		<module>minnal-api</module>
+		<module>minnal-metrics</module>
 	</modules>
 
 	<properties>

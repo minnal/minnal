@@ -8,9 +8,9 @@ package org.minnal.core;
  * @author ganeshs
  *
  */
-public interface Bundle {
+public interface Bundle<T extends BundleConfiguration> {
 	
-	void init(Container Container);
+	void init(Container Container, T configuration);
 	
 	void start();
 	
