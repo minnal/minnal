@@ -10,13 +10,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.Application;
+import org.minnal.core.Request;
 import org.minnal.core.config.ApplicationConfiguration;
+import org.minnal.core.route.Route;
+import org.minnal.core.route.RoutePattern;
 import org.minnal.core.server.MessageContext;
+import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -40,6 +46,8 @@ public class ResponseMetricCollectorTest {
 	
 	private MetricRegistry metricRegistry;
 	
+	private ServerRequest request;
+	
 	@BeforeMethod
 	public void setup() {
 		collector = spy(new ResponseMetricCollector());
@@ -50,12 +58,29 @@ public class ResponseMetricCollectorTest {
 		when(application.getConfiguration()).thenReturn(configuration);
 		metricRegistry = mock(MetricRegistry.class);
 		when(context.getApplication()).thenReturn(application);
+		request = mock(ServerRequest.class);
+		when(context.getRequest()).thenReturn(request);
 		MetricRegistries.addRegistry(application, metricRegistry);
 	}
 	
 	@AfterMethod
 	public void destroy() {
 		MetricRegistries.removeRegistry(application);
+	}
+	
+	@Test 
+	void shouldFormatMetricName(){
+		ServerResponse response = mock(ServerResponse.class);
+		when(response.getStatus()).thenReturn(HttpResponseStatus.OK);
+		when(context.getResponse()).thenReturn(response);
+		Route route = mock(Route.class);
+		RoutePattern pattern = mock(RoutePattern.class);
+		when(pattern.getPathPattern()).thenReturn("/facilities/{id}/stations/{station_id}");
+		when(route.getRoutePattern()).thenReturn(pattern);
+		when(context.getRoute()).thenReturn(route);
+		when(request.getApplicationPath()).thenReturn("/");
+		when(request.getHttpMethod()).thenReturn(HttpMethod.GET);
+		assertEquals("facilities.id.stations.station_id.GET.responseTime",collector.getMetricName(context, collector.RESPONSE_TIME));
 	}
 	
 	@Test
