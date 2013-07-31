@@ -12,6 +12,7 @@ import org.minnal.core.server.MessageContext;
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.google.common.base.CharMatcher;
 
 /**
  * @author ganeshs
@@ -42,6 +43,11 @@ public class ResponseMetricCollector implements MessageListener {
 	public void onRouteResolved(MessageContext context) {
 	}
 	
+	private String formatName(String name){
+		String slashRemoved = CharMatcher.anyOf("/").trimAndCollapseFrom(name, '.');
+		return CharMatcher.anyOf("{}").removeFrom(slashRemoved);
+	}
+	
 	protected String getMetricName(MessageContext context, String metricName) {
 		Route route = context.getRoute();
 		String name = null;
@@ -50,6 +56,7 @@ public class ResponseMetricCollector implements MessageListener {
 		} else {
 			name = context.getApplication().getConfiguration().getName();
 		}
+		name = formatName(name);
 		return MetricRegistry.name(name, context.getRequest().getHttpMethod().toString(), metricName);
 	}
 
@@ -81,4 +88,5 @@ public class ResponseMetricCollector implements MessageListener {
 		
 		
 	}
+
 }
