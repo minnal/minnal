@@ -64,15 +64,7 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 	}
 #end
 if (filter.shouldPage()) {
-    java.util.Map map = new java.util.HashMap();
-    Integer perPage = filter.getPerPage();
-    Integer pageNo = filter.getPageNo();
-    map.put("total", Long.valueOf(total));
-    map.put("count", Integer.valueOf(${field_name}.size()));
-    map.put("perPage", perPage);
-    map.put("pageNo", pageNo);
-    map.put("data", $field_name);
-    return map;
+	return org.minnal.instrument.resource.ResourceUtil.getPaginatedResponse(filter, $field_name, total);
 } else {
 	return $field_name;
 }
