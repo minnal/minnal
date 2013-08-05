@@ -28,6 +28,11 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 			org.activejpa.entity.Filter filter = org.minnal.instrument.resource.ResourceUtil.getFilter(request, $search_params);
 			org.activejpa.entity.EntityCollection ${field_name}Collection = ${parent}.collection("$resource_name");
 			java.util.List $field_name = ${field_name}Collection.where(filter);
+			long total = 0;
+			if (filter.shouldPage()) {
+			  org.activejpa.entity.Filter totalFilter = filter.clone(false);
+			  total = ${field_name}Collection.count(totalFilter);
+			}
 		#else
 			#if ($parent)
 				#set($collection_entity_key = "$resource_name" + "." + "$node.getEntityMetaData().getEntityKey()")
@@ -52,7 +57,24 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 
 	org.activejpa.entity.Filter filter = org.minnal.instrument.resource.ResourceUtil.getFilter(request, $search_params);
 	java.util.List $field_name = ${model_class}.where(filter);
+	long total = 0;
+	if (filter.shouldPage()) {
+	  org.activejpa.entity.Filter totalFilter = filter.clone(false);
+	  total = ${model_class}.count(totalFilter);
+	}
 #end
-return $field_name;
+if (filter.shouldPage()) {
+    java.util.Map map = new java.util.HashMap();
+    Integer perPage = filter.getPerPage();
+    Integer pageNo = filter.getPageNo();
+    map.put("total", Long.valueOf(total));
+    map.put("count", Integer.valueOf(${field_name}.size()));
+    map.put("perPage", perPage);
+    map.put("pageNo", pageNo);
+    map.put("data", $field_name);
+    return map;
+} else {
+	return $field_name;
+}
 #set ($parent = false)
 }
