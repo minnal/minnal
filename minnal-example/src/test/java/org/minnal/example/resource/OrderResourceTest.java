@@ -48,7 +48,7 @@ public class OrderResourceTest extends BaseResourceTest {
 		}
 		org.minnal.instrument.util.DynaBean dynaBean = request
 				.getContentAs(org.minnal.instrument.util.DynaBean.class);
-		orders.updateAttributes(dynaBean.getAttributes());
+		orders.updateAttributes(dynaBean);
 	}
 	
 	public Object createOrders(org.minnal.core.Request request,

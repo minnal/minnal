@@ -23,6 +23,6 @@ public void $method_name(org.minnal.core.Request request, org.minnal.core.Respon
 	#set($i = $i + 1)
 #end
 org.minnal.instrument.util.DynaBean dynaBean = (org.minnal.instrument.util.DynaBean) request.getContentAs(org.minnal.instrument.util.DynaBean.class);
-${parent}.updateAttributes(dynaBean.getAttributes());
+${parent}.updateAttributes(dynaBean);
 #set ($parent = false)
 }
