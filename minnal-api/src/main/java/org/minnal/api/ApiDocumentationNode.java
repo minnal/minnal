@@ -91,7 +91,7 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 			ApiDocumentationNode node = queue.poll();
 			
 			for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(clazz)) {
-				if (descriptor.getName().equals("class") || ! PropertyUtil.canSerialize(descriptor)) {
+				if (descriptor.getName().equals("class")) {
 					continue;
 				}
 				Type genericType = descriptor.getReadMethod() != null ? descriptor.getReadMethod().getGenericReturnType() : 
@@ -99,12 +99,19 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 				if (genericType == null) {
 					continue;
 				}
-				ApiDocumentationNode child = new ApiDocumentationNode(descriptor, schemas, models);
-				if (node.addChild(child) != null) {
-					queue.offer(child);
-					child.construct();
+				Class<?> clazz = PropertyUtil.getType(descriptor);
+				if (! PropertyUtil.canSerialize(descriptor)) {
+					if (! models.containsKey(clazz.getSimpleName())) {
+						ApiDocumentationNode child = new ApiDocumentationNode(clazz, clazz.getSimpleName(), new HashMap<String, DocumentationSchema>(), models);
+						child.construct();
+					}
+				} else {
+					ApiDocumentationNode child = new ApiDocumentationNode(descriptor, schemas, models);
+					if (node.addChild(child) != null) {
+						queue.offer(child);
+						child.construct();
+					}
 				}
-				
 			}
 		}
 		Map<String, DocumentationSchema> properties = new HashMap<String, DocumentationSchema>();
@@ -161,7 +168,8 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 					model = schemas.get(descriptor.getName());
 				}
 				
-				schema.setType("Array[" + model.getId() + "]");
+				schema.setType("Array");
+				schema.setItems(model);
 			} else {
 				schema.setType(clazz.getSimpleName().toLowerCase());
 			}
