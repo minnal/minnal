@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>minnal</artifactId>
 		<groupId>org.minnal</groupId>
-		<version>0.9.7</version>
+		<version>0.9.8-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -65,12 +65,12 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-core</artifactId>
-				<version>0.9.7</version>
+				<version>0.9.8-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-instrumentation</artifactId>
-				<version>0.9.7</version>
+				<version>0.9.8-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
@@ -80,7 +80,7 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-jpa</artifactId>
-				<version>0.9.7</version>
+				<version>0.9.8-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hsqldb</groupId>
@@ -100,17 +100,17 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-test</artifactId>
-				<version>0.9.7</version>
+				<version>0.9.8-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-admin</artifactId>
-				<version>0.9.7</version>
+				<version>0.9.8-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-api</artifactId>
-				<version>0.9.7</version>
+				<version>0.9.8-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
