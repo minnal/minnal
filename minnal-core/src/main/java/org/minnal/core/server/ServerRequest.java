@@ -8,6 +8,7 @@ import static org.minnal.core.util.HttpUtil.getQueryParameters;
 
 import java.net.SocketAddress;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -143,6 +144,18 @@ public class ServerRequest extends ServerMessage implements Request {
 		}
 		try {
 			return serializer.deserialize(getContent(), clazz);
+		} catch (Exception e) {
+			throw new BadRequestException("Failed while deserializing the content", e);
+		}
+	}
+	
+	public <T extends Collection<E>, E> T getContentAs(Class<T> collectionType, Class<E> elementType) {
+		Serializer serializer = getSerializer(getContentType());
+		if (serializer == null) {
+			throw new MinnalException("Serializer not found for the content type - " + getContentType());
+		}
+		try {
+			return serializer.deserializeCollection(getContent(), collectionType, elementType);
 		} catch (Exception e) {
 			throw new BadRequestException("Failed while deserializing the content", e);
 		}

@@ -6,22 +6,43 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 	#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
 	#set($field_name = $node.getName())
 	
+	java.util.List $field_name = null;
+	org.activejpa.entity.Filter filter = new org.activejpa.entity.Filter();
 	#if($parent)
 		#set($resource_name = $inflector.camelize($node.getResourceName(), false))
 		#set($collection_entity_key = "$resource_name" + "." + "$node.getEntityMetaData().getEntityKey()")
-		$model_class $field_name = ($model_class) ${parent}.collection("$resource_name").first(new Object[]{"$collection_entity_key", request.getHeader("$param_name")});
-		if ($field_name == null) {
+		
+		#if($i+1 == $path.size())
+	 	    filter.addCondition("$collection_entity_key", org.activejpa.entity.Condition.Operator.in, org.minnal.instrument.resource.ResourceUtil.getCommaSeparatedValues(request.getHeader("$param_name")));
+		#else
+			filter.addCondition("$collection_entity_key", request.getHeader("$param_name"));
+		#end
+		
+		$field_name = (java.util.List) (($parent_model)${parent}.get(0)).collection("$resource_name").where(filter);
+		if ($field_name == null || ${field_name}.isEmpty()) {
 			throw new org.minnal.core.server.exception.NotFoundException("$field_name with $collection_entity_key " + request.getHeader("$param_name") + " not found");
 		}
 	#else
-		$model_class $field_name = ($model_class) ${model_class}.first(new Object[] {"$node.getEntityMetaData().getEntityKey()", request.getHeader("$param_name")});
-		if ($field_name == null) {
+		#if($i+1 == $path.size())
+		    filter.addCondition("$node.getEntityMetaData().getEntityKey()", org.activejpa.entity.Condition.Operator.in, org.minnal.instrument.resource.ResourceUtil.getCommaSeparatedValues(request.getHeader("$param_name")));
+		#else
+			filter.addCondition("$node.getEntityMetaData().getEntityKey()", request.getHeader("$param_name"));
+		#end
+		
+		$field_name = (java.util.List) ${model_class}.where(filter);
+		if ($field_name == null || ${field_name}.isEmpty()) {
 			throw new org.minnal.core.server.exception.NotFoundException("$field_name with $node.getEntityMetaData().getEntityKey() " + request.getHeader("$param_name") + " not found");
 		}
 	#end
 	#set($parent = $field_name)
+	#set($parent_model = $model_class)
 	#set($i = $i + 1)
 #end
-return $field_name;
+
+if (${field_name}.size() > 1) {
+	return $field_name;
+} else {
+	return ${field_name}.get(0);
+} 
 #set ($parent = false)
 }

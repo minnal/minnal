@@ -10,7 +10,10 @@ import java.util.Map.Entry;
 import org.activejpa.entity.Filter;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.javalite.common.Inflector;
+import org.minnal.core.MinnalException;
 import org.minnal.core.Request;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * @author ganeshs
@@ -41,6 +44,30 @@ public class ResourceUtil {
 			filter.addCondition(Inflector.camelize(entry.getKey(), false), entry.getValue());
 		}
 		return filter;
+	}
+	
+	public static boolean isCommaSeparated(String value) {
+		return value.contains(",");
+	}
+	
+	public static String[] getCommaSeparatedValues(String value) {
+		return value.split(",");
+	}
+	
+	public static Object getContent(Request request, Class<?> type) {
+		try {
+			return request.getContentAs(type);
+		} catch (MinnalException e) {
+			Throwable ex = e;
+			while (ex.getCause() != null && ex instanceof MinnalException) {
+				if (ex.getCause() instanceof JsonMappingException) {
+					request.getContent().resetReaderIndex();
+					return request.getContentAs(List.class, type);
+				}
+				ex = ex.getCause();
+			}
+			throw e;
+		}
 	}
 	
 	public static Map<String, Object> getPaginatedResponse(Filter filter, List data, long total) {

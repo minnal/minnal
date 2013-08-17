@@ -35,7 +35,7 @@ import com.google.common.base.Splitter;
  */
 public class RoutePattern {
 	
-	private static final String PLACEHOLDER_REGEX = "[a-zA-Z0-9\\-_%]+";
+	private static final String PLACEHOLDER_REGEX = "[a-zA-Z0-9\\-_%,]+";
 	
 	private static final String PLACEHOLDER_PATTERN_REGEX = "\\{" + PLACEHOLDER_REGEX + "\\}";
 

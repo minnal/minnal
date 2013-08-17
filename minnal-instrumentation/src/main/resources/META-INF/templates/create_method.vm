@@ -25,8 +25,15 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 		
 		#set($resource_name = $inflector.camelize($node.getResourceName(), false))
 		#if($i == $path.size() - 1)
-			$model_class $field_name = ($model_class) request.getContentAs(${model_class}.class);
-			${parent}.collection("$resource_name").add($field_name);
+			Object body = org.minnal.instrument.resource.ResourceUtil.getContent(request, ${model_class}.class);
+			if (body instanceof java.util.List) {
+				java.util.Iterator iterator = ((java.util.List) body).iterator();
+				while(iterator.hasNext()) {
+					${parent}.collection("$resource_name").add((${model_class}) iterator.next());
+				}
+			} else {
+				${parent}.collection("$resource_name").add((${model_class}) body);
+			}
 			${parent}.persist();
 		#else
 			#if ($parent)
@@ -50,10 +57,25 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 	#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
 	#set($field_name = $node.getName())
 
-	$model_class $field_name = ($model_class) request.getContentAs(${model_class}.class); 
-	${field_name}.persist();
+	Object body = org.minnal.instrument.resource.ResourceUtil.getContent(request, ${model_class}.class);
+	if (body instanceof java.util.List) {
+		org.activejpa.jpa.JPAContext context = org.activejpa.jpa.JPA.instance.getDefaultConfig().getContext();
+		context.beginTxn();
+    	boolean failed = true;
+    	try {
+    		java.util.Iterator iterator = ((java.util.List) body).iterator();
+			while(iterator.hasNext()) {
+				((${model_class}) iterator.next()).persist();	
+			}
+			failed = false;
+		} finally {
+			context.closeTxn(failed);
+		}
+	} else {
+		((${model_class}) body).persist();
+	}
 #end
 response.setStatus(org.jboss.netty.handler.codec.http.HttpResponseStatus.CREATED);
-return $field_name;
+return body;
 #set ($parent = false)
 }
