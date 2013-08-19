@@ -11,7 +11,7 @@ import org.javalite.common.Inflector;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.config.ResourceConfiguration;
 import org.minnal.core.route.RouteBuilder;
-import org.minnal.core.util.HttpUtil;
+import org.minnal.utils.http.HttpUtil;
 
 /**
  * @author ganeshs

@@ -13,11 +13,12 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.minnal.api.ApiDocumentationNode.ApiDocumentationNodePath;
-import org.minnal.api.util.PropertyUtil;
 import org.minnal.core.util.Node;
+import org.minnal.utils.reflection.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.core.DocumentationAllowableListValues;
 import com.wordnik.swagger.core.DocumentationSchema;
 
@@ -100,7 +101,7 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 					continue;
 				}
 				Class<?> clazz = PropertyUtil.getType(descriptor);
-				if (! PropertyUtil.canSerialize(descriptor)) {
+				if (PropertyUtil.hasAnnotation(descriptor, JsonIgnore.class, true)) {
 					if (! models.containsKey(clazz.getSimpleName())) {
 						ApiDocumentationNode child = new ApiDocumentationNode(clazz, clazz.getSimpleName(), new HashMap<String, DocumentationSchema>(), models);
 						child.construct();

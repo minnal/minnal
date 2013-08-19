@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.core.util;
+package org.minnal.utils.reflection;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.core.util;
+package org.minnal.utils.http;
 
 import java.net.URI;
 import java.net.URLDecoder;
@@ -10,8 +10,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
-
-import org.minnal.core.MinnalException;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
@@ -42,7 +40,7 @@ public class HttpUtil {
 		try {
 			return URLDecoder.decode(value, Charsets.UTF_8.name());
 		} catch (Exception e) {
-			throw new MinnalException("Failed while decoding the value - " + value, e);
+			throw new IllegalArgumentException("Failed while decoding the value - " + value, e);
 		}
 	}
 	
@@ -58,7 +56,7 @@ public class HttpUtil {
 		try {
 			return new URI(uri);
 		} catch (Exception e) {
-			throw new MinnalException("Invalid uri - " + uri);
+			throw new IllegalArgumentException("Invalid uri - " + uri);
 		}
 	}
 

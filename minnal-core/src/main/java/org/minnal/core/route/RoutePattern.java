@@ -3,7 +3,7 @@
  */
 package org.minnal.core.route;
 
-import static org.minnal.core.util.HttpUtil.decode;
+import static org.minnal.utils.http.HttpUtil.decode;
 
 import java.util.ArrayList;
 import java.util.HashMap;

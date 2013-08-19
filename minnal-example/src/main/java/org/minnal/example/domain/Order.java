@@ -3,11 +3,11 @@
  */
 package org.minnal.example.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +18,8 @@ import javax.persistence.Table;
 import org.activejpa.entity.Model;
 import org.minnal.instrument.entity.AggregateRoot;
 import org.minnal.instrument.entity.Searchable;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * @author ganeshs
@@ -32,11 +34,12 @@ public class Order extends Model {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	@JoinColumn(name="orderId")
-	private Set<OrderItem> orderItems;
+	@JsonManagedReference
+	private Set<OrderItem> orderItems = new HashSet<OrderItem>();
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	@JoinColumn(name="orderId")
 	private Set<Payment> payments;
 	
@@ -97,6 +100,11 @@ public class Order extends Model {
 	 */
 	public void setCustomerEmail(String customerEmail) {
 		this.customerEmail = customerEmail;
+	}
+	
+	public void addOrderItem(OrderItem orderItem) {
+		orderItem.setOrder(this);
+		this.orderItems.add(orderItem);
 	}
 
 }

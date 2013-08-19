@@ -23,6 +23,8 @@ public class MinnalGenerator {
 	
 	private CommandGenerateModel commandGenerateModel = new CommandGenerateModel();
 	
+	private CommandGenerateTests commandGenerateTests = new CommandGenerateTests();
+	
 	private CommandNew commandNew = new CommandNew();
 	
 	private Args args = new Args();
@@ -37,7 +39,8 @@ public class MinnalGenerator {
 		jc.setProgramName("minnal");
 		jc.addCommand("new", commandNew);
 //		jc.addCommand("add", commandAdd);
-		jc.addCommand("generate", commandGenerateModel);
+		jc.addCommand("generate-model", commandGenerateModel, "generate");
+		jc.addCommand("generate-tests", commandGenerateTests);
 		jc.addCommand("start", commandStart);
 	}
 	
@@ -81,9 +84,12 @@ public class MinnalGenerator {
 		} else if (command.equalsIgnoreCase("start")) {
 			logger.debug("Running command start");
 			run(commandStart);
-		} else if (command.equalsIgnoreCase("generate")) {
-			logger.debug("Running command generate");
+		} else if (command.equalsIgnoreCase("generate-model")) {
+			logger.debug("Running command generate-model");
 			run(commandGenerateModel);
+		} else if (command.equalsIgnoreCase("generate-tests")) {
+			logger.debug("Running command generate-tests");
+			run(commandGenerateTests);
 		}
 	}
 	

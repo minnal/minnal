@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.api.util;
+package org.minnal.utils.reflection;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -16,16 +16,14 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -111,51 +109,39 @@ public class PropertyUtil {
 		return Object.class;
 	}
 	
-	private static <E> TypeToken<Iterator<E>> iteratorOf(TypeToken<E> elementType) {
-		return new TypeToken<Iterator<E>>() {}.where(new TypeParameter<E>() {}, elementType);
+	public static <T extends Annotation> T getAnnotation(PropertyDescriptor descriptor, Class<T> clazz) {
+		return getAnnotation(descriptor, clazz, false);
 	}
 	
-	public static boolean canSerialize(PropertyDescriptor descriptor) {
+	public static <T extends Annotation> T getAnnotation(PropertyDescriptor descriptor, Class<T> clazz, boolean ignoreObjectClass) {
 		Method method = descriptor.getReadMethod();
-		if (method == null) {
-			method = descriptor.getWriteMethod();
-		}
-		if (method == null || method.getDeclaringClass().equals(Object.class)) {
-			return false;
-		}
-		return ! hasAnnotation(descriptor, JsonIgnore.class);
-	}
-	
-	public static boolean hasAnnotation(PropertyDescriptor descriptor, Class<? extends Annotation> clazz) {
-		Method method = descriptor.getReadMethod();
-		if (method == null) {
-			return false;
+		if (method == null || ignoreObjectClass && method.getDeclaringClass().equals(Object.class)) {
+			return null;
 		}
 		
 		Field field = FieldUtils.getField(method.getDeclaringClass(), descriptor.getName(), true);
 		if (field == null) {
-			return false;
+			return null;
 		}
 		if (field.isAnnotationPresent(clazz)) {
-			return true;
+			return field.getAnnotation(clazz);
 		}
-		
-		return hasAnnotation(method, clazz);
+		return method.getAnnotation(clazz);
 	}
 	
-	public static boolean hasAnnotation(Field field, Class<? extends Annotation> clazz) {
-		return field.isAnnotationPresent(clazz);
+	public static boolean hasAnnotation(PropertyDescriptor descriptor, Class<? extends Annotation> clazz) {
+		return hasAnnotation(descriptor, clazz, false);
 	}
 	
-	public static boolean hasAnnotation(Method method, Class<? extends Annotation> clazz) {
-		return method.isAnnotationPresent(clazz);
+	public static boolean hasAnnotation(PropertyDescriptor descriptor, Class<? extends Annotation> clazz, boolean ignoreObjectClass) {
+		return getAnnotation(descriptor, clazz) != null;
 	}
 	
 	public static List<String> getEnumValues(PropertyDescriptor descriptor) {
 		List<String> values = new ArrayList<String>();
 		try {
-			Enum[] enums = (Enum[])descriptor.getPropertyType().getMethod("values").invoke(null);
-			for (Enum enm : enums) {
+			Enum<?>[] enums = (Enum[])descriptor.getPropertyType().getMethod("values").invoke(null);
+			for (Enum<?> enm : enums) {
 				values.add(enm.name());
 			}
 		} catch (Exception e) {
@@ -180,5 +166,15 @@ public class PropertyUtil {
 			return (Class<?>)((ParameterizedType)type).getRawType(); 
 		}
 		return (Class<?>) type;
+	}
+
+	public static List<PropertyDescriptor> getPopertiesWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
+		List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
+		for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(clazz)) {
+			if (hasAnnotation(descriptor, annotation)) {
+				descriptors.add(descriptor);
+			}
+		}
+		return descriptors;
 	}
 }

@@ -42,6 +42,25 @@ public abstract class AbstractTemplateGenerator extends AbstractGenerator {
 		super(baseDir);
 	}
 	
+	protected void writeFile(String content, File file) {
+		logger.info("Creating the file {}", file.getAbsolutePath());
+		Writer writer = null;
+		try {
+			writer = new FileWriter(file);
+			writer.write(content);
+		} catch (IOException e) {
+			throw new MinnalException(e);
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (Exception e) {
+					// Ignore
+				}
+			}
+		}
+	}
+	
 	protected void writeFile(Template template, VelocityContext context, File file) {
 		logger.info("Creating the file {}", file.getAbsolutePath());
 		Writer writer = null;

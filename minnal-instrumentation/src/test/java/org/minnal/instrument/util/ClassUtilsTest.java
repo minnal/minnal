@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.minnal.instrument.entity.Searchable;
+import org.minnal.utils.reflection.ClassUtils;
 import org.testng.annotations.Test;
 
 /**

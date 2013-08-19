@@ -19,7 +19,7 @@ import org.minnal.core.route.RouteBuilder;
 import org.minnal.core.route.Routes;
 import org.minnal.core.server.exception.ApplicationException;
 import org.minnal.core.server.exception.ExceptionHandler;
-import org.minnal.core.util.Generics;
+import org.minnal.utils.reflection.Generics;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

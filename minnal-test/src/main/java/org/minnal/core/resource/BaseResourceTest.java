@@ -38,6 +38,7 @@ import org.testng.annotations.BeforeSuite;
 
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.google.common.base.Charsets;
@@ -49,37 +50,25 @@ import com.google.common.net.MediaType;
  * @author ganeshs
  *
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class BaseResourceTest {
 	
 	private static final Logger logger = LoggerFactory.getLogger(BaseResourceTest.class);
 	
-	private static PodamFactoryImpl podamFactory; 
+	private static PodamFactoryImpl podamFactory;
 	
 	static {
-		Class<?> clazz = null;
-		try {
-			clazz = Class.forName("org.activejpa.enhancer.ActiveJpaAgentLoader");
-		} catch (ClassNotFoundException e) {
-			logger.debug("org.activejpa.enhancer.ActiveJpaAgentLoader is not found. Not loading the agent");
-		}
-		
-		if (clazz != null) {
-			try {
-				Object instance = clazz.getMethod("instance").invoke(null);
-				clazz.getMethod("loadAgent").invoke(instance);
-			} catch (Exception e) {
-				throw new Error("Failed while loading the activejpa agent");
-			}
-		}
-		
 		List<Class<? extends Annotation>> excludeAnnotations = new ArrayList<Class<? extends Annotation>>();
 		excludeAnnotations.add(JsonIgnore.class);
+		excludeAnnotations.add(JsonBackReference.class);
 		try {
 			excludeAnnotations.add((Class)ClassUtil.findClass("javax.persistence.GeneratedValue"));
 		} catch (ClassNotFoundException e) {
+			logger.trace("javax.persistence.GeneratedValue class not found. Ignoring it", e);
 			// ignore
 		}
 		podamFactory = new PodamFactoryImpl();
+		podamFactory.registerListener(new PodamFactoryListenerImpl());
 		podamFactory.setExcludeAnnotations(excludeAnnotations);
 	}
 	

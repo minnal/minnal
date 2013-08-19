@@ -31,6 +31,16 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.minnal</groupId>
+			<artifactId>minnal-jpa</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.activejpa</groupId>
+			<artifactId>activejpa-test</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -52,7 +62,19 @@
 			<dependency>
 				<groupId>uk.co.jemos.podam</groupId>
 				<artifactId>podam</artifactId>
-				<version>3.0.5.RELEASE</version>
+				<version>3.0.6-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.minnal</groupId>
+				<artifactId>minnal-jpa</artifactId>
+				<version>0.9.8-SNAPSHOT</version>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>org.activejpa</groupId>
+				<artifactId>activejpa-test</artifactId>
+				<version>0.0.11-SNAPSHOT</version>
+				<optional>true</optional>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

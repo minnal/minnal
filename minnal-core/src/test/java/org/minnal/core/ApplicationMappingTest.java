@@ -12,7 +12,7 @@ import static org.testng.Assert.assertTrue;
 
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.server.ServerRequest;
-import org.minnal.core.util.HttpUtil;
+import org.minnal.utils.http.HttpUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

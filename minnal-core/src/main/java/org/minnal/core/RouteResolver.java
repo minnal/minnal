@@ -13,7 +13,7 @@ import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.exception.NotFoundException;
 import org.minnal.core.util.Comparators;
-import org.minnal.core.util.HttpUtil;
+import org.minnal.utils.http.HttpUtil;
 
 /**
  * @author ganeshs

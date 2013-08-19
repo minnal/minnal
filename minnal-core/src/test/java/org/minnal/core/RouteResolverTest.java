@@ -23,7 +23,7 @@ import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;
 import org.minnal.core.server.exception.NotFoundException;
-import org.minnal.core.util.HttpUtil;
+import org.minnal.utils.http.HttpUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

@@ -34,17 +34,24 @@ public void $method_name(org.minnal.core.Request request, org.minnal.core.Respon
 			throw new org.minnal.core.server.exception.NotFoundException("$field_name with $node.getEntityMetaData().getEntityKey() " + request.getHeader("$param_name") + " not found");
 		}
 	#end
-	#set($parent = $field_name)
-	#set($parent_model = $model_class)
+	
+	#if($i+1 != $path.size())
+		#set($parent = $field_name)
+		#set($parent_model = $model_class)
+	#end
 	#set($i = $i + 1)
 #end
 org.activejpa.jpa.JPAContext context = org.activejpa.jpa.JPA.instance.getDefaultConfig().getContext();
 context.beginTxn();
 boolean failed = true;
 try {
-	java.util.Iterator iterator = ((java.util.List) $parent).iterator();
+	java.util.Iterator iterator = ((java.util.List) $field_name).iterator();
 	while(iterator.hasNext()) {
-		((${model_class}) iterator.next()).delete();
+		#if($parent)
+			(($parent_model)${parent}.get(0)).collection("$resource_name").remove((${model_class}) iterator.next());
+		#else
+			((${model_class}) iterator.next()).delete();
+		#end
 	}
 	failed = false;
 } finally {

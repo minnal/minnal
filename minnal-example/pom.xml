@@ -19,6 +19,10 @@
 			<artifactId>minnal-instrumentation</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.minnal</groupId>
+			<artifactId>minnal-generator</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<exclusions>
@@ -55,9 +59,14 @@
 			<groupId>org.minnal</groupId>
 			<artifactId>minnal-admin</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.minnal</groupId>
 			<artifactId>minnal-api</artifactId>
+		</dependency> -->
+		<dependency>
+			<groupId>org.activejpa</groupId>
+			<artifactId>activejpa-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -111,6 +120,17 @@
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-api</artifactId>
 				<version>0.9.8-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.minnal</groupId>
+				<artifactId>minnal-generator</artifactId>
+				<version>0.9.8-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.activejpa</groupId>
+				<artifactId>activejpa-test</artifactId>
+				<version>0.1.1</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

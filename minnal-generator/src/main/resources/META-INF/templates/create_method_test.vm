@@ -1,0 +1,40 @@
+#set($method_name = "create${path.getName()}Test")
+@Test
+public void $method_name() {
+#set($i = 0)
+#set($url = "")
+#if ($path.size() > 1)
+	#foreach($node in $path)
+		#set($resource_name = $inflector.camelize($node.getResourceName(), false))
+		#set($url = "${url}""/$node.getResourceName()/""")
+		#set($key_getter = "get" + $node.getEntityMetaData().getEntityKey().substring(0, 1).toUpperCase() + $node.getEntityMetaData().getEntityKey().substring(1) + "()")
+		#if ($param_names.size() > $i)
+			#set($param_name = $param_names.get($i))
+		#end
+		#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
+		#set($field_name = $node.getName())
+		$model_class $field_name = createDomain(${model_class}.class);
+		#if($i != $path.size() - 1)
+			#if ($parent)
+				#set($collection_entity_key = "$resource_name" + "." + "$node.getEntityMetaData().getEntityKey()")
+				${parent}.collection("$resource_name").add($field_name);
+				${parent}.persist();
+			#else
+				${field_name}.persist();
+			#end
+			#set($url = "${url} + ${field_name}.$key_getter + ")
+		#end
+		#set($parent = $field_name)
+		#set($i = $i + 1)
+	#end
+#else
+	#set($node = $path.get($i))
+	#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
+	#set($field_name = $node.getName())
+	#set($url = """/$node.getResourceName()/""")
+	$model_class $field_name = createDomain(${model_class}.class); 
+#end
+	Response response = call(request($url, HttpMethod.POST, Serializer.DEFAULT_JSON_SERIALIZER.serialize(${field_name})));
+	assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
+#set ($parent = false)
+}

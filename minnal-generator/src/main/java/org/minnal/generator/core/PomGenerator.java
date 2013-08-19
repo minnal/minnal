@@ -50,8 +50,6 @@ public class PomGenerator extends AbstractGenerator {
 	
 	private static final String MINNAL_SNAPSHOTS_REPO = "https://raw.github.com/minnal/minnal/mvn-repo/snapshots";
 	
-	private static final String BOOSTRAP_CLASS = "org.minnal.Bootstrap";
-	
 	private static final Logger logger = LoggerFactory.getLogger(PomGenerator.class);
 	
 	public PomGenerator(File baseDir, String projectName) {
@@ -119,7 +117,7 @@ public class PomGenerator extends AbstractGenerator {
 		arguments.addChild(classpath);
 		arguments.addChild(new Xpp3Dom("classpath"));
 		Xpp3Dom mainClass = new Xpp3Dom("argument");
-		mainClass.setValue(BOOSTRAP_CLASS);
+		mainClass.setValue("${mainClass}");
 		arguments.addChild(mainClass);
 		configuration.addChild(arguments);
 		plugin.setConfiguration(configuration);

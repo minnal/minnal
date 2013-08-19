@@ -3,8 +3,8 @@
  */
 package org.minnal.core.server;
 
-import static org.minnal.core.util.HttpUtil.createURI;
-import static org.minnal.core.util.HttpUtil.getQueryParameters;
+import static org.minnal.utils.http.HttpUtil.createURI;
+import static org.minnal.utils.http.HttpUtil.getQueryParameters;
 
 import java.net.SocketAddress;
 import java.net.URI;

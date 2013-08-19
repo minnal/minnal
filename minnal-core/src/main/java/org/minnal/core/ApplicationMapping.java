@@ -3,7 +3,7 @@
  */
 package org.minnal.core;
 
-import static org.minnal.core.util.HttpUtil.structureUrl;
+import static org.minnal.utils.http.HttpUtil.structureUrl;
 
 import java.util.Collection;
 import java.util.HashMap;

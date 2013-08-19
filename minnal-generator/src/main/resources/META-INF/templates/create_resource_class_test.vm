@@ -1,0 +1,16 @@
+package $package_name;
+
+import org.minnal.core.serializer.Serializer;
+import org.minnal.core.resource.BaseJPAResourceTest;
+import org.testng.annotations.Test;
+import org.jboss.netty.handler.codec.http.HttpMethod;
+import org.jboss.netty.handler.codec.http.HttpResponseStatus;
+import org.minnal.core.Response;
+import static org.testng.Assert.*;
+
+/**
+ * This is an auto generated test class by minnal-generator
+ */
+public class ${resource_class} extends BaseJPAResourceTest {
+	$methods
+}

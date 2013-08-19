@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.minnal.api.util.PropertyUtil;
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.resource.ResourceClass;
@@ -19,7 +18,8 @@ import org.minnal.core.route.QueryParam;
 import org.minnal.core.route.Route;
 import org.minnal.core.route.RouteBuilder;
 import org.minnal.core.route.RoutePattern.RouteElement;
-import org.minnal.core.util.HttpUtil;
+import org.minnal.utils.http.HttpUtil;
+import org.minnal.utils.reflection.PropertyUtil;
 
 import com.wordnik.swagger.core.Documentation;
 import com.wordnik.swagger.core.DocumentationEndPoint;

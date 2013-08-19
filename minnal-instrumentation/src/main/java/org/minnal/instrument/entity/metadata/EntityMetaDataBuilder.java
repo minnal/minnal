@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.minnal.instrument.entity.metadata.handler.AbstractAnnotationHandler;
-import org.minnal.instrument.util.ClassUtils;
+import org.minnal.utils.reflection.ClassUtils;
 
 
 /**

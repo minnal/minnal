@@ -12,10 +12,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.minnal</groupId>
-			<artifactId>minnal-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 		</dependency>
@@ -34,6 +30,14 @@
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.minnal</groupId>
+			<artifactId>minnal-instrumentation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jdt</groupId>
+			<artifactId>core</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -67,6 +71,16 @@
 				<groupId>com.beust</groupId>
 				<artifactId>jcommander</artifactId>
 				<version>1.30</version>
+			</dependency>
+			<dependency>
+				<groupId>org.minnal</groupId>
+				<artifactId>minnal-instrumentation</artifactId>
+				<version>0.9.8-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jdt</groupId>
+				<artifactId>core</artifactId>
+				<version>3.3.0-v_771</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

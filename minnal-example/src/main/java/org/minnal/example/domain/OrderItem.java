@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import org.activejpa.entity.Model;
 import org.minnal.instrument.entity.Searchable;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -27,14 +28,17 @@ public class OrderItem extends Model {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@JsonIgnore
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="orderId")
+	@JsonBackReference
 	private Order order;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="productId")
+	@JoinColumn(name="productId", insertable=false, updatable=false)
+	@JsonIgnore
 	private Product product;
+	
+	private Long productId;
 	
 	@Searchable
 	private int quantity;
@@ -79,6 +83,7 @@ public class OrderItem extends Model {
 	 */
 	public void setProduct(Product product) {
 		this.product = product;
+		this.productId = product.getId();
 	}
 
 	/**
@@ -93,5 +98,19 @@ public class OrderItem extends Model {
 	 */
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+
+	/**
+	 * @return the productId
+	 */
+	public Long getProductId() {
+		return productId;
+	}
+
+	/**
+	 * @param productId the productId to set
+	 */
+	public void setProductId(Long productId) {
+		this.productId = productId;
 	}
 }

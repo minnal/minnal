@@ -1,14 +1,19 @@
 /**
  * 
  */
-package org.minnal.instrument.util;
+package org.minnal.utils.reflection;
 
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.commons.beanutils.PropertyUtils;
+
+import com.google.common.base.CaseFormat;
 
 /**
  * @author anand.karthik
@@ -50,5 +55,26 @@ public class ClassUtils {
 	
 	public static boolean hasAnnotation(Method method, Class<? extends Annotation> clazz) {
 		return method.isAnnotationPresent(clazz);
+	}
+	
+	public static PropertyDescriptor getPropertyDescriptorFromMethod(Method method) {
+		String name = method.getName();
+		if (name.startsWith("get") || name.startsWith("set")) {
+			try {
+				return getPropertyDescriptor(method.getDeclaringClass(), CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, name.substring(3)));
+			} catch (Exception e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+		return null;
+	}
+	
+	public static PropertyDescriptor getPropertyDescriptor(Class<?> clazz, String name) {
+		for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(clazz)) {
+			if (descriptor.getName().equals(name)) {
+				return descriptor;
+			}
+		}
+		return null;
 	}
 }

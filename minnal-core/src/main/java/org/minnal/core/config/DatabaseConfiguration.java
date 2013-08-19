@@ -11,6 +11,7 @@ import java.util.Map;
 import org.minnal.core.db.C3P0DataSourceProvider;
 import org.minnal.core.db.DataSourceProvider;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -42,6 +43,7 @@ public class DatabaseConfiguration {
 	
 	private boolean readOnly = false;
 	
+	@JsonIgnore
 	private DataSourceProvider dataSourceProvider;
 	
 	public DatabaseConfiguration() {

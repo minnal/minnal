@@ -1,12 +1,13 @@
 /**
  * 
  */
-package org.minnal.core.util;
+package org.minnal.utils.http;
 
 import static org.testng.Assert.*;
 
 import java.net.URLEncoder;
 
+import org.minnal.utils.http.HttpUtil;
 import org.testng.annotations.Test;
 
 /**

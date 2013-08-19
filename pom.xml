@@ -19,6 +19,7 @@
 		<module>minnal-generator</module>
 		<module>minnal-api</module>
 		<module>minnal-metrics</module>
+		<module>minnal-utils</module>
 	</modules>
 
 	<properties>

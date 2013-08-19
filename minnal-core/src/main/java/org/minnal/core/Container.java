@@ -12,7 +12,7 @@ import java.util.ServiceLoader;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.ConfigurationProvider;
 import org.minnal.core.config.ContainerConfiguration;
-import org.minnal.core.util.Generics;
+import org.minnal.utils.reflection.Generics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

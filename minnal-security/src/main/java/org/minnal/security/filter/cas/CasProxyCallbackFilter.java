@@ -10,8 +10,8 @@ import org.minnal.core.Filter;
 import org.minnal.core.FilterChain;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
-import org.minnal.core.util.HttpUtil;
 import org.minnal.security.config.SecurityConfiguration;
+import org.minnal.utils.http.HttpUtil;
 
 /**
  * @author ganeshs

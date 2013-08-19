@@ -6,8 +6,8 @@ package org.minnal.generator.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.codehaus.plexus.util.IOUtil;
 import org.javalite.common.Inflector;
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractGenerator implements Generator {
 	
-	private Map<Class<? extends Generator>, Generator> generators = new HashMap<Class<? extends Generator>, Generator>();
+	private List<Generator> generators = new ArrayList<Generator>();
 	
 	protected File baseDir;
 	
@@ -107,7 +107,11 @@ public abstract class AbstractGenerator implements Generator {
 	}
 	
 	protected File createPackage(String packageName) {
-		File srcDir = getFile(baseDir, MAIN_JAVA_FOLDER, true);
+		return createPackage(packageName, MAIN_JAVA_FOLDER);
+	}
+	
+	protected File createPackage(String packageName, String sourceFolder) {
+		File srcDir = getFile(baseDir, sourceFolder, true);
 		File pkg = new File(srcDir, packageName.replace('.', '/'));
 		if (! pkg.exists()) {
 			pkg.mkdirs();
@@ -116,7 +120,7 @@ public abstract class AbstractGenerator implements Generator {
 	}
 	
 	protected void addGenerator(Generator generator) {
-		generators.put(generator.getClass(), generator);
+		generators.add(generator);
 	}
 	
 	protected File createFolder(String folderName) {
@@ -132,12 +136,17 @@ public abstract class AbstractGenerator implements Generator {
 	
 	@SuppressWarnings("unchecked")
 	protected <T extends Generator> T generatorFor(Class<T> generatorClass) {
-		return (T) generators.get(generatorClass);
+		for (Generator generator : generators) {
+			if (generator.getClass().equals(generatorClass)) {
+				return (T) generator;
+			}
+		}
+		return null;
 	}
 	
 	@Override
 	public void generate() {
-		for (Generator generator : generators.values()) {
+		for (Generator generator : generators) {
 			generator.init();
 			generator.generate();
 		}		

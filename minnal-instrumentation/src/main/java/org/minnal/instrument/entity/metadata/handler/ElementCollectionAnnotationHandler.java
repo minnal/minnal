@@ -16,7 +16,7 @@ import javax.persistence.OneToMany;
 import org.activejpa.util.PropertyUtil;
 import org.minnal.instrument.entity.metadata.AssociationMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
-import org.minnal.instrument.util.ClassUtils;
+import org.minnal.utils.reflection.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
