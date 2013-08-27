@@ -3,6 +3,7 @@
  */
 package org.minnal.core.resource;
 
+import java.beans.PropertyDescriptor;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
 import java.net.InetSocketAddress;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBufferInputStream;
 import org.jboss.netty.buffer.ChannelBufferOutputStream;
@@ -22,6 +24,7 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.minnal.autopojo.AutoPojoFactory;
+import org.minnal.autopojo.util.PropertyUtil;
 import org.minnal.core.Container;
 import org.minnal.core.MinnalException;
 import org.minnal.core.Response;
@@ -52,6 +55,8 @@ import com.google.common.net.MediaType;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class BaseResourceTest {
 	
+	private static final int MAX_DEPTH = 20;
+
 	private static final Logger logger = LoggerFactory.getLogger(BaseResourceTest.class);
 	
 	private static AutoPojoFactory factory;
@@ -162,6 +167,30 @@ public abstract class BaseResourceTest {
 	}
 	
 	protected <T> T createDomain(Class<T> clazz, Class<?>... genericTypes) {
-		return factory.populate(clazz, genericTypes);
+		return factory.populate(clazz, MAX_DEPTH, genericTypes);
+	}
+	
+	protected <T> T createDomain(Class<T> clazz, int maxDepth, Class<?>... genericTypes) {
+		return factory.populate(clazz, maxDepth, genericTypes);
+	}
+	
+	protected <T> boolean compare(T model1, T model2, int depth) {
+		if (model1 == null || model2 == null) {
+			return false;
+		}
+		for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(model1)) {
+			if (PropertyUtil.isSimpleProperty(descriptor.getPropertyType())) {
+				try {
+					Object property1 = PropertyUtils.getProperty(model1, descriptor.getName());
+					Object property2 = PropertyUtils.getProperty(model2, descriptor.getName());
+					if (property1 != null && property2 != null && ! property1.equals(property2)) {
+						return  false;
+					}
+				} catch (Exception e) {
+					logger.info(e.getMessage(), e);
+				}
+			}
+		}
+		return true;
 	}
 }

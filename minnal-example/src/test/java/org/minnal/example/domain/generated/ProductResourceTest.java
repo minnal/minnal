@@ -39,6 +39,22 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 	}
 
 	@Test
+	public void updateProductTest() {
+		org.minnal.example.domain.Product product = createDomain(org.minnal.example.domain.Product.class);
+		product.persist();
+		org.minnal.example.domain.Product modifiedproduct = createDomain(
+				org.minnal.example.domain.Product.class, 1);
+		Response response = call(request(
+				"/products/" + product.getId(), HttpMethod.PUT,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(modifiedproduct)));
+		assertEquals(response.getStatus(),
+				HttpResponseStatus.NO_CONTENT);
+		product.merge();
+		assertTrue(compare(modifiedproduct, product, 1));
+	}
+
+	@Test
 	public void readProductTest() {
 		org.minnal.example.domain.Product product = createDomain(org.minnal.example.domain.Product.class);
 		product.persist();
@@ -56,9 +72,7 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 		product.persist();
 		Response response = call(request(
 				"/products/" + product.getId(),
-				HttpMethod.DELETE,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(product)));
+				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/products/" + product.getId(),

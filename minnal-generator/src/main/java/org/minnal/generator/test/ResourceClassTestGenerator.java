@@ -33,7 +33,7 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 	
 	private static Template createMethodTestTemplate = engine.getTemplate("META-INF/templates/create_method_test.vm");
 	
-	private static Template updateMethodTestTemplate;
+	private static Template updateMethodTestTemplate = engine.getTemplate("META-INF/templates/update_method_test.vm");
 	
 	private static Template readMethodTestTemplate = engine.getTemplate("META-INF/templates/read_method_test.vm");
 	

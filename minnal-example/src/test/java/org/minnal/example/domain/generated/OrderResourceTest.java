@@ -34,6 +34,22 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 	}
 
 	@Test
+	public void updateOrderTest() {
+		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
+		order.persist();
+		org.minnal.example.domain.Order modifiedorder = createDomain(
+				org.minnal.example.domain.Order.class, 1);
+		Response response = call(request("/orders/" + order.getId(),
+				HttpMethod.PUT,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(modifiedorder)));
+		assertEquals(response.getStatus(),
+				HttpResponseStatus.NO_CONTENT);
+		order.merge();
+		assertTrue(compare(modifiedorder, order, 1));
+	}
+
+	@Test
 	public void readOrderTest() {
 		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
 		order.persist();
@@ -50,9 +66,7 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
 		order.persist();
 		Response response = call(request("/orders/" + order.getId(),
-				HttpMethod.DELETE,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(order)));
+				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/orders/" + order.getId(),
@@ -93,6 +107,26 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 	}
 
 	@Test
+	public void updateOrderOrderItemTest() {
+		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
+		order.persist();
+		org.minnal.example.domain.OrderItem orderItem = createDomain(org.minnal.example.domain.OrderItem.class);
+		order.collection("orderItems").add(orderItem);
+		order.persist();
+		org.minnal.example.domain.OrderItem modifiedorderItem = createDomain(
+				org.minnal.example.domain.OrderItem.class, 1);
+		Response response = call(request("/orders/" + order.getId()
+				+ "/order_items/" + orderItem.getId(),
+				HttpMethod.PUT,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(modifiedorderItem)));
+		assertEquals(response.getStatus(),
+				HttpResponseStatus.NO_CONTENT);
+		orderItem.merge();
+		assertTrue(compare(modifiedorderItem, orderItem, 1));
+	}
+
+	@Test
 	public void readOrderOrderItemTest() {
 		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
 		order.persist();
@@ -117,9 +151,7 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 		order.persist();
 		Response response = call(request("/orders/" + order.getId()
 				+ "/order_items/" + orderItem.getId(),
-				HttpMethod.DELETE,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(orderItem)));
+				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/orders/" + order.getId()
@@ -166,6 +198,26 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 	}
 
 	@Test
+	public void updateOrderPaymentTest() {
+		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
+		order.persist();
+		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
+		order.collection("payments").add(payment);
+		order.persist();
+		org.minnal.example.domain.Payment modifiedpayment = createDomain(
+				org.minnal.example.domain.Payment.class, 1);
+		Response response = call(request("/orders/" + order.getId()
+				+ "/payments/" + payment.getId(),
+				HttpMethod.PUT,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(modifiedpayment)));
+		assertEquals(response.getStatus(),
+				HttpResponseStatus.NO_CONTENT);
+		payment.merge();
+		assertTrue(compare(modifiedpayment, payment, 1));
+	}
+
+	@Test
 	public void readOrderPaymentTest() {
 		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
 		order.persist();
@@ -190,9 +242,7 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 		order.persist();
 		Response response = call(request("/orders/" + order.getId()
 				+ "/payments/" + payment.getId(),
-				HttpMethod.DELETE,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(payment)));
+				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/orders/" + order.getId()

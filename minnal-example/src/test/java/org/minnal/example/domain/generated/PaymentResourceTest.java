@@ -39,6 +39,22 @@ public class PaymentResourceTest extends BaseJPAResourceTest {
 	}
 
 	@Test
+	public void updatePaymentTest() {
+		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
+		payment.persist();
+		org.minnal.example.domain.Payment modifiedpayment = createDomain(
+				org.minnal.example.domain.Payment.class, 1);
+		Response response = call(request(
+				"/payments/" + payment.getId(), HttpMethod.PUT,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(modifiedpayment)));
+		assertEquals(response.getStatus(),
+				HttpResponseStatus.NO_CONTENT);
+		payment.merge();
+		assertTrue(compare(modifiedpayment, payment, 1));
+	}
+
+	@Test
 	public void readPaymentTest() {
 		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
 		payment.persist();
@@ -56,9 +72,7 @@ public class PaymentResourceTest extends BaseJPAResourceTest {
 		payment.persist();
 		Response response = call(request(
 				"/payments/" + payment.getId(),
-				HttpMethod.DELETE,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(payment)));
+				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/payments/" + payment.getId(),
