@@ -12,6 +12,17 @@ import static org.testng.Assert.*;
  * This is an auto generated test class by minnal-generator
  */
 public class OrderResourceTest extends BaseJPAResourceTest {
+	@Test
+	public void listOrderTest() {
+		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
+		order.persist();
+		Response response = call(request("/orders/", HttpMethod.GET));
+		assertEquals(response.getStatus(), HttpResponseStatus.OK);
+		assertEquals(serializer.deserializeCollection(
+				response.getContent(), java.util.List.class,
+				org.minnal.example.domain.Order.class).size(),
+				(int) org.minnal.example.domain.Order.count());
+	}
 
 	@Test
 	public void createOrderTest() {
@@ -27,9 +38,7 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
 		order.persist();
 		Response response = call(request("/orders/" + order.getId(),
-				HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(order)));
+				HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
 		assertEquals(serializer.deserialize(response.getContent(),
 				org.minnal.example.domain.Order.class).getId(),
@@ -46,8 +55,29 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 						.serialize(order)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
-		assertFalse(org.minnal.example.domain.Order.exists(order
-				.getId()));
+		response = call(request("/orders/" + order.getId(),
+				HttpMethod.GET,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(order)));
+		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
+	}
+
+	@Test
+	public void listOrderOrderItemTest() {
+		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
+		order.persist();
+
+		org.minnal.example.domain.OrderItem orderItem = createDomain(org.minnal.example.domain.OrderItem.class);
+		order.collection("orderItems").add(orderItem);
+		order.persist();
+
+		Response response = call(request("/orders/" + order.getId()
+				+ "/order_items/", HttpMethod.GET));
+		assertEquals(response.getStatus(), HttpResponseStatus.OK);
+		assertEquals(serializer.deserializeCollection(
+				response.getContent(), java.util.List.class,
+				org.minnal.example.domain.OrderItem.class)
+				.size(), order.getOrderItems().size());
 	}
 
 	@Test
@@ -71,9 +101,7 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 		order.persist();
 		Response response = call(request("/orders/" + order.getId()
 				+ "/order_items/" + orderItem.getId(),
-				HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(orderItem)));
+				HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
 		assertEquals(serializer.deserialize(response.getContent(),
 				org.minnal.example.domain.OrderItem.class)
@@ -94,8 +122,35 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 						.serialize(orderItem)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
-		assertFalse(org.minnal.example.domain.OrderItem
-				.exists(orderItem.getId()));
+		response = call(request("/orders/" + order.getId()
+				+ "/order_items/" + orderItem.getId(),
+				HttpMethod.GET,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(orderItem)));
+		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
+	}
+
+	@Test
+	public void listOrderPaymentTest() {
+		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
+		order.persist();
+
+		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
+		order.collection("payments").add(payment);
+		order.persist();
+
+		Response response = call(request("/orders/" + order.getId()
+				+ "/payments/", HttpMethod.GET));
+		assertEquals(response.getStatus(), HttpResponseStatus.OK);
+		assertEquals(
+				serializer
+						.deserializeCollection(
+								response
+										.getContent(),
+								java.util.List.class,
+								org.minnal.example.domain.Payment.class)
+						.size(), order.getPayments()
+						.size());
 	}
 
 	@Test
@@ -119,9 +174,7 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 		order.persist();
 		Response response = call(request("/orders/" + order.getId()
 				+ "/payments/" + payment.getId(),
-				HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(payment)));
+				HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
 		assertEquals(serializer.deserialize(response.getContent(),
 				org.minnal.example.domain.Payment.class)
@@ -142,8 +195,12 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 						.serialize(payment)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
-		assertFalse(org.minnal.example.domain.Payment.exists(payment
-				.getId()));
+		response = call(request("/orders/" + order.getId()
+				+ "/payments/" + payment.getId(),
+				HttpMethod.GET,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(payment)));
+		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 	}
 
 }

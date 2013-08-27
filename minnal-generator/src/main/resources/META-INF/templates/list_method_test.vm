@@ -1,4 +1,4 @@
-#set($method_name = "read${path.getName()}Test")
+#set($method_name = "list${path.getName()}Test")
 @Test
 public void $method_name() {
 #set($i = 0)
@@ -23,10 +23,9 @@ public void $method_name() {
 		#end
 		#if($i != $path.size() - 1)
 			#set($url = "${url} + ${field_name}.$key_getter + ")
-		#else
-			#set($url = "${url} + ${field_name}.$key_getter ")
+			#set($parent = $field_name)
 		#end
-		#set($parent = $field_name)
+		
 		#set($i = $i + 1)
 	#end
 #else
@@ -34,12 +33,17 @@ public void $method_name() {
 	#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
 	#set($field_name = $node.getName())
 	#set($key_getter = "get" + $node.getEntityMetaData().getEntityKey().substring(0, 1).toUpperCase() + $node.getEntityMetaData().getEntityKey().substring(1) + "()")
-	#set($url = """/$node.getResourceName()/"" + ${field_name}.$key_getter ")
+	#set($url = """/$node.getResourceName()/""")
 	$model_class $field_name = createDomain(${model_class}.class);
 	${field_name}.persist(); 
 #end
 	Response response = call(request($url, HttpMethod.GET));
 	assertEquals(response.getStatus(), HttpResponseStatus.OK);
-	assertEquals(serializer.deserialize(response.getContent(), ${model_class}.class).getId(), ${field_name}.getId());
+	#if ($path.size() > 1)
+		#set($collection = "get" + $resource_name.substring(0, 1).toUpperCase() + $resource_name.substring(1) + "()")
+		assertEquals(serializer.deserializeCollection(response.getContent(), java.util.List.class, ${model_class}.class).size(), ${parent}.${collection}.size());
+	#else
+		assertEquals(serializer.deserializeCollection(response.getContent(), java.util.List.class, ${model_class}.class).size(), (int) ${model_class}.count());
+	#end
 #set ($parent = false)
 }

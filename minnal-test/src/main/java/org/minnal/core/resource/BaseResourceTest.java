@@ -21,6 +21,7 @@ import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
+import org.minnal.autopojo.AutoPojoFactory;
 import org.minnal.core.Container;
 import org.minnal.core.MinnalException;
 import org.minnal.core.Response;
@@ -35,8 +36,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-
-import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,7 +54,7 @@ public abstract class BaseResourceTest {
 	
 	private static final Logger logger = LoggerFactory.getLogger(BaseResourceTest.class);
 	
-	private static PodamFactoryImpl podamFactory;
+	private static AutoPojoFactory factory;
 	
 	static {
 		List<Class<? extends Annotation>> excludeAnnotations = new ArrayList<Class<? extends Annotation>>();
@@ -65,11 +64,8 @@ public abstract class BaseResourceTest {
 			excludeAnnotations.add((Class)ClassUtil.findClass("javax.persistence.GeneratedValue"));
 		} catch (ClassNotFoundException e) {
 			logger.trace("javax.persistence.GeneratedValue class not found. Ignoring it", e);
-			// ignore
 		}
-		podamFactory = new PodamFactoryImpl();
-		podamFactory.registerListener(new PodamFactoryListenerImpl());
-		podamFactory.setExcludeAnnotations(excludeAnnotations);
+		factory = new AutoPojoFactory(new TestGenerationStrategy());
 	}
 	
 	private Router router;
@@ -121,6 +117,10 @@ public abstract class BaseResourceTest {
 		}
 	}
 	
+	protected ServerRequest request(String uri, HttpMethod method) {
+		return request(uri, method, "", MediaType.JSON_UTF_8);
+	}
+	
 	protected ServerRequest request(String uri, HttpMethod method, String content) {
 		return request(uri, method, content, MediaType.JSON_UTF_8);
 	}
@@ -161,7 +161,7 @@ public abstract class BaseResourceTest {
 		return response;
 	}
 	
-	protected <T> T createDomain(Class<T> clazz) {
-		return podamFactory.manufacturePojo(clazz);
+	protected <T> T createDomain(Class<T> clazz, Class<?>... genericTypes) {
+		return factory.populate(clazz, genericTypes);
 	}
 }

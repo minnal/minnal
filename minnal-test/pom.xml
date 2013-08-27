@@ -22,16 +22,6 @@
 			<artifactId>minnal-migrations</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>uk.co.jemos.podam</groupId>
-			<artifactId>podam</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.minnal</groupId>
 			<artifactId>minnal-jpa</artifactId>
 			<optional>true</optional>
@@ -40,6 +30,10 @@
 			<groupId>org.activejpa</groupId>
 			<artifactId>activejpa-test</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.minnal</groupId>
+			<artifactId>autopojo</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -60,11 +54,6 @@
 				<version>0.9.8-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>uk.co.jemos.podam</groupId>
-				<artifactId>podam</artifactId>
-				<version>3.0.6-SNAPSHOT</version>
-			</dependency>
-			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-jpa</artifactId>
 				<version>0.9.8-SNAPSHOT</version>
@@ -75,6 +64,11 @@
 				<artifactId>activejpa-test</artifactId>
 				<version>0.0.11-SNAPSHOT</version>
 				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>org.minnal</groupId>
+				<artifactId>autopojo</artifactId>
+				<version>0.0.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

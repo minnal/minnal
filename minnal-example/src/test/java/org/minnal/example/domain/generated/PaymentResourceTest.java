@@ -12,6 +12,22 @@ import static org.testng.Assert.*;
  * This is an auto generated test class by minnal-generator
  */
 public class PaymentResourceTest extends BaseJPAResourceTest {
+	@Test
+	public void listPaymentTest() {
+		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
+		payment.persist();
+		Response response = call(request("/payments/", HttpMethod.GET));
+		assertEquals(response.getStatus(), HttpResponseStatus.OK);
+		assertEquals(
+				serializer
+						.deserializeCollection(
+								response
+										.getContent(),
+								java.util.List.class,
+								org.minnal.example.domain.Payment.class)
+						.size(),
+				(int) org.minnal.example.domain.Payment.count());
+	}
 
 	@Test
 	public void createPaymentTest() {
@@ -27,9 +43,7 @@ public class PaymentResourceTest extends BaseJPAResourceTest {
 		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
 		payment.persist();
 		Response response = call(request(
-				"/payments/" + payment.getId(), HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(payment)));
+				"/payments/" + payment.getId(), HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
 		assertEquals(serializer.deserialize(response.getContent(),
 				org.minnal.example.domain.Payment.class)
@@ -47,8 +61,11 @@ public class PaymentResourceTest extends BaseJPAResourceTest {
 						.serialize(payment)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
-		assertFalse(org.minnal.example.domain.Payment.exists(payment
-				.getId()));
+		response = call(request("/payments/" + payment.getId(),
+				HttpMethod.GET,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(payment)));
+		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 	}
 
 }

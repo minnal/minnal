@@ -12,6 +12,22 @@ import static org.testng.Assert.*;
  * This is an auto generated test class by minnal-generator
  */
 public class ProductResourceTest extends BaseJPAResourceTest {
+	@Test
+	public void listProductTest() {
+		org.minnal.example.domain.Product product = createDomain(org.minnal.example.domain.Product.class);
+		product.persist();
+		Response response = call(request("/products/", HttpMethod.GET));
+		assertEquals(response.getStatus(), HttpResponseStatus.OK);
+		assertEquals(
+				serializer
+						.deserializeCollection(
+								response
+										.getContent(),
+								java.util.List.class,
+								org.minnal.example.domain.Product.class)
+						.size(),
+				(int) org.minnal.example.domain.Product.count());
+	}
 
 	@Test
 	public void createProductTest() {
@@ -27,9 +43,7 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 		org.minnal.example.domain.Product product = createDomain(org.minnal.example.domain.Product.class);
 		product.persist();
 		Response response = call(request(
-				"/products/" + product.getId(), HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(product)));
+				"/products/" + product.getId(), HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
 		assertEquals(serializer.deserialize(response.getContent(),
 				org.minnal.example.domain.Product.class)
@@ -47,8 +61,11 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 						.serialize(product)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
-		assertFalse(org.minnal.example.domain.Product.exists(product
-				.getId()));
+		response = call(request("/products/" + product.getId(),
+				HttpMethod.GET,
+				Serializer.DEFAULT_JSON_SERIALIZER
+						.serialize(product)));
+		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 	}
 
 }
