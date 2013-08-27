@@ -44,11 +44,9 @@ public class PomGenerator extends AbstractGenerator {
 	
 	private static final String ACTIVE_JPA_RELEASES_REPO = "https://raw.github.com/ActiveJpa/activejpa/mvn-repo/releases";
 	
-	private static final String ACTIVE_JPA_SNAPSHOTS_REPO = "https://raw.github.com/ActiveJpa/activejpa/mvn-repo/snapshots";
+	private static final String AUTOPOJO_RELEASES_REPO = "https://raw.github.com/minnal/autopojo/mvn-repo/releases";
 	
 	private static final String MINNAL_RELEASES_REPO = "https://raw.github.com/minnal/minnal/mvn-repo/releases";
-	
-	private static final String MINNAL_SNAPSHOTS_REPO = "https://raw.github.com/minnal/minnal/mvn-repo/snapshots";
 	
 	private static final Logger logger = LoggerFactory.getLogger(PomGenerator.class);
 	
@@ -94,6 +92,11 @@ public class PomGenerator extends AbstractGenerator {
 		Repository repository = new Repository();
 		repository.setId("activejpa-repo");
 		repository.setUrl(ACTIVE_JPA_RELEASES_REPO);
+		model.addRepository(repository);
+		
+		repository = new Repository();
+		repository.setId("autopojo-repo");
+		repository.setUrl(AUTOPOJO_RELEASES_REPO);
 		model.addRepository(repository);
 		
 		repository = new Repository();

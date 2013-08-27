@@ -35,7 +35,7 @@ public class CommandNew implements Command {
 	private String baseDir = System.getProperty("user.dir");
 	
 	@Parameter(names = "-version", description = "The minnal version to use")
-	private String version = "0.9.7";
+	private String version = "0.9.9";
 
 	/**
 	 * @return the projectName

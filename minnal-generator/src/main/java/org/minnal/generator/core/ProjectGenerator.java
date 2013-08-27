@@ -58,6 +58,7 @@ public class ProjectGenerator extends AbstractGenerator {
 		pomGenerator.addDependency("org.minnal", "minnal-test", command.getVersion(), "test");
 		pomGenerator.addDependency("org.minnal", "minnal-migrations", command.getVersion());
 		pomGenerator.addDependency("org.mockito", "mockito-all", "1.9.5");
+		pomGenerator.addDependency("org.minnal", "minnal-generator", command.getVersion());
 		
 		if (! command.isNojpa()) {
 			pomGenerator.addDependency("org.minnal", "minnal-jpa", command.getVersion());

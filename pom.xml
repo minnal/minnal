@@ -117,7 +117,7 @@
 					<merge>true</merge>
 				</configuration>
 				<executions>
-					<!-- run site-maven-plugin's 'site' target as part of the build's normal 
+					<!-- run site-maven-plugin's 'site' target as part of the build's normal
 						'deploy' phase -->
 					<execution>
 						<goals>
@@ -153,6 +153,14 @@
 		<repository>
 			<id>github-releases-repo</id>
 			<url>https://raw.github.com/ActiveJpa/activejpa/mvn-repo/releases</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>autopojo-releases-repo</id>
+			<url>https://raw.github.com/minnal/autopojo/mvn-repo/releases</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
