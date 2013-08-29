@@ -18,6 +18,7 @@ import org.minnal.utils.reflection.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.core.DocumentationAllowableListValues;
 import com.wordnik.swagger.core.DocumentationSchema;
@@ -101,7 +102,7 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 					continue;
 				}
 				Class<?> clazz = PropertyUtil.getType(descriptor);
-				if (PropertyUtil.hasAnnotation(descriptor, JsonIgnore.class, true)) {
+				if (PropertyUtil.hasAnnotation(descriptor, JsonIgnore.class, true) || PropertyUtil.hasAnnotation(descriptor, JsonBackReference.class, true)) {
 					if (! models.containsKey(clazz.getSimpleName())) {
 						ApiDocumentationNode child = new ApiDocumentationNode(clazz, clazz.getSimpleName(), new HashMap<String, DocumentationSchema>(), models);
 						child.construct();

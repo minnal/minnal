@@ -22,6 +22,7 @@ import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.exception.BadRequestException;
+import org.minnal.utils.http.HttpUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -95,5 +96,14 @@ public class ServerRequestTest {
 		doReturn(serializer).when(request).getSerializer(any(MediaType.class));
 		when(serializer.deserialize(buffer, Object.class)).thenThrow(new IllegalStateException());
 		request.getContentAs(Object.class);
+	}
+	
+	@Test
+	public void shouldDecodeQueryParamters() {
+		String uri = "/app/resource?" + HttpUtil.encode("key=test 1234&value=test/123");
+		when(httpRequest.getUri()).thenReturn(uri);
+		ServerRequest request = new ServerRequest(httpRequest, null);
+		verify(httpRequest).addHeader("key", "test 1234");
+		verify(httpRequest).addHeader("value", "test/123");
 	}
 }

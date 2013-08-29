@@ -5,6 +5,7 @@ package org.minnal.utils.http;
 
 import java.net.URI;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class HttpUtil {
 		String query = uri.getQuery();
 		Map<String, String> params = new HashMap<String, String>();
 		if (! Strings.isNullOrEmpty(query)) {
-			Iterator<String> iterator = Splitter.on("&").split(query).iterator();
+			Iterator<String> iterator = Splitter.on("&").split(decode(query)).iterator();
 			while(iterator.hasNext()) {
 				String[] keyValue =  iterator.next().split("=");
 				params.put(keyValue[0], keyValue[1]);
@@ -41,6 +42,14 @@ public class HttpUtil {
 			return URLDecoder.decode(value, Charsets.UTF_8.name());
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Failed while decoding the value - " + value, e);
+		}
+	}
+	
+	public static String encode(String value) {
+		try {
+			return URLEncoder.encode(value, Charsets.UTF_8.name());
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Failed while encoding the value - " + value, e);
 		}
 	}
 	
