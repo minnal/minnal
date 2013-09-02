@@ -7,9 +7,9 @@ import java.beans.PropertyDescriptor;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -24,6 +24,8 @@ import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.minnal.autopojo.AutoPojoFactory;
+import org.minnal.autopojo.Configuration;
+import org.minnal.autopojo.GenerationStrategy;
 import org.minnal.autopojo.util.PropertyUtil;
 import org.minnal.core.Container;
 import org.minnal.core.MinnalException;
@@ -62,7 +64,7 @@ public abstract class BaseResourceTest {
 	private static AutoPojoFactory factory;
 	
 	static {
-		List<Class<? extends Annotation>> excludeAnnotations = new ArrayList<Class<? extends Annotation>>();
+		Set<Class<? extends Annotation>> excludeAnnotations = new HashSet<Class<? extends Annotation>>();
 		excludeAnnotations.add(JsonIgnore.class);
 		excludeAnnotations.add(JsonBackReference.class);
 		try {
@@ -70,7 +72,11 @@ public abstract class BaseResourceTest {
 		} catch (ClassNotFoundException e) {
 			logger.trace("javax.persistence.GeneratedValue class not found. Ignoring it", e);
 		}
-		factory = new AutoPojoFactory(new TestGenerationStrategy());
+		Configuration configuration = new Configuration();
+		configuration.setExcludeAnnotations(excludeAnnotations);
+		GenerationStrategy strategy = new GenerationStrategy(configuration);
+		strategy.register(Object.class, BiDirectionalObjectResolver.class);
+		factory = new AutoPojoFactory(strategy);
 	}
 	
 	private Router router;

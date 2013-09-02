@@ -3,7 +3,7 @@
  */
 package org.minnal.instrument.entity.metadata.handler;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 
@@ -37,6 +37,7 @@ public class ManyToManyAnnotationHandlerTest {
 		handler = new ManyToManyAnnotationHandler();
 		annotation = mock(ManyToMany.class);
 		metaData = mock(EntityMetaData.class);
+		when(metaData.getEntityClass()).thenReturn((Class) DummyModel.class);
 	}
 	
 	@Test
@@ -48,7 +49,7 @@ public class ManyToManyAnnotationHandlerTest {
 	public void shouldAddToMetadataCollectionWhenOnMethod() throws Exception {
 		Method method = DummyModel.class.getDeclaredMethod("getChildren");
 		handler.handle(metaData, annotation, method);
-		CollectionMetaData data = new CollectionMetaData("children", DummyModel.class, Set.class, true);
+		CollectionMetaData data = new CollectionMetaData(DummyModel.class, "children", DummyModel.class, Set.class, true);
 		verify(metaData).addCollection(data);
 	}
 	
@@ -56,7 +57,7 @@ public class ManyToManyAnnotationHandlerTest {
 	public void shouldAddToMetadataCollectionWhenOnField() throws Exception {
 		Field field = DummyModel.class.getDeclaredField("children");
 		handler.handle(metaData, annotation, field);
-		CollectionMetaData data = new CollectionMetaData("children", DummyModel.class, Set.class, true);
+		CollectionMetaData data = new CollectionMetaData(DummyModel.class, "children", DummyModel.class, Set.class, true);
 		verify(metaData).addCollection(data);
 	}
 	
@@ -64,7 +65,7 @@ public class ManyToManyAnnotationHandlerTest {
 	public void shouldSetRightCollectionTypeWhenOnMethod() throws Exception {
 		Method method = DummyModel.class.getDeclaredMethod("getSiblings");
 		handler.handle(metaData, annotation, method);
-		CollectionMetaData data = new CollectionMetaData("siblings", DummyModel.class, List.class, true);
+		CollectionMetaData data = new CollectionMetaData(DummyModel.class, "siblings", DummyModel.class, List.class, true);
 		verify(metaData).addCollection(data);
 	}
 	
@@ -72,7 +73,7 @@ public class ManyToManyAnnotationHandlerTest {
 	public void shouldSetRightCollectionTypeWhenOnField() throws Exception {
 		Field field = DummyModel.class.getDeclaredField("siblings");
 		handler.handle(metaData, annotation, field);
-		CollectionMetaData data = new CollectionMetaData("siblings", DummyModel.class, List.class, true);
+		CollectionMetaData data = new CollectionMetaData(DummyModel.class, "siblings", DummyModel.class, List.class, true);
 		verify(metaData).addCollection(data);
 	}
 }

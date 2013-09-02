@@ -111,11 +111,19 @@ public class ResourceWrapper {
 	
 	public void addPath(EntityNodePath path) {
 		try {
-			addMethod(new ResourcePath(path, true), HttpMethod.GET);
-			addMethod(new ResourcePath(path, true), HttpMethod.POST);
-			addMethod(new ResourcePath(path, false), HttpMethod.PUT);
-			addMethod(new ResourcePath(path, false), HttpMethod.GET);
-			addMethod(new ResourcePath(path, false), HttpMethod.DELETE);
+			if (path.isReadAllowed()) { 
+				addMethod(new ResourcePath(path, true), HttpMethod.GET);
+				addMethod(new ResourcePath(path, false), HttpMethod.GET);
+			}
+			if (path.isCreateAllowed()) {
+				addMethod(new ResourcePath(path, true), HttpMethod.POST);
+			}
+			if (path.isUpdateAllowed()) {
+				addMethod(new ResourcePath(path, false), HttpMethod.PUT);
+			}
+			if (path.isDeleteAllowed()) {
+				addMethod(new ResourcePath(path, false), HttpMethod.DELETE);
+			}
 		} catch (Exception e) {
 			throw new MinnalException(e);
 		}

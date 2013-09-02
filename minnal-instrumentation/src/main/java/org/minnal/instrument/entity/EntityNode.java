@@ -21,6 +21,7 @@ import org.minnal.instrument.entity.metadata.CollectionMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaDataProvider;
 import org.minnal.instrument.entity.metadata.ParameterMetaData;
+import org.minnal.utils.reflection.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,8 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	
 	private Map<Class<?>, List<String>> visitedEntities = new HashMap<Class<?>, List<String>>();
 	
+	private CollectionMetaData source;
+	
 	private static final Logger logger = LoggerFactory.getLogger(EntityNode.class);
 	
 	public EntityNode(Class<?> entityClass) {
@@ -46,6 +49,11 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		super(EntityMetaDataProvider.instance().getEntityMetaData(entityClass));
 		this.name = name;
 		this.resourceName = Inflector.tableize(name);
+	}
+	
+	EntityNode(CollectionMetaData collection) {
+		this(collection.getElementType(), Inflector.singularize(collection.getName()));
+		this.source = collection;
 	}
 	
 	public void construct() {
@@ -59,7 +67,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 				if (! collection.isEntity()) {
 					continue;
 				}
-				EntityNode child = new EntityNode(collection.getElementType(), Inflector.singularize(collection.getName()));
+				EntityNode child = new EntityNode(collection);
 				if (node.addChild(child) != null) {
 					queue.offer(child);
 				}
@@ -138,14 +146,44 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		
 		private String name;
 		
+		private boolean createAllowed = true;
+		
+		private boolean readAllowed = true;
+		
+		private boolean updateAllowed = true;
+		
+		private boolean deleteAllowed = true;
+		
 		private List<QueryParam> queryParams = new ArrayList<QueryParam>();
 
 		public EntityNodePath(List<EntityNode> path) {
 			super(path);
 			init(path);
+			buildPath(path);
 		}
 		
 		private void init(List<EntityNode> path) {
+			if (path.size() == 1) {
+				EntityMetaData data = path.get(0).getValue();
+				AggregateRoot root = ClassUtils.getAnnotation(data.getEntityClass(), AggregateRoot.class);
+				if (root != null) {
+					createAllowed = root.create();
+					readAllowed = root.read();
+					updateAllowed = root.update();
+					deleteAllowed = root.delete();
+				}
+			} else {
+				EntityNode node = path.get(size() - 1);
+				if (node.source != null) {
+					createAllowed = node.source.isCreateAllowed();
+					readAllowed = node.source.isReadAllowed();
+					updateAllowed = node.source.isUpdateAllowed();
+					deleteAllowed = node.source.isDeleteAllowed();
+				}
+			}
+		}
+		
+		private void buildPath(List<EntityNode> path) {
 			StringWriter writer = new StringWriter();
 			Iterator<EntityNode> iterator = iterator();
 			String prefix = "";
@@ -215,6 +253,22 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		 */
 		public List<QueryParam> getQueryParams() {
 			return queryParams;
+		}
+		
+		public boolean isCreateAllowed() {
+			return createAllowed;
+		}
+		
+		public boolean isReadAllowed() {
+			return readAllowed;
+		}
+		
+		public boolean isUpdateAllowed() {
+			return updateAllowed;
+		}
+		
+		public boolean isDeleteAllowed() {
+			return deleteAllowed;
 		}
 
 		@Override

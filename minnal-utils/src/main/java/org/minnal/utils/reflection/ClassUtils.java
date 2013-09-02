@@ -48,6 +48,14 @@ public class ClassUtils {
 	    }
 	    return methods;
 	}
+	
+	public static Field getField(Class<?> clazz, String name) {
+		try {
+			return clazz.getDeclaredField(name);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
 	public static boolean hasAnnotation(Field field, Class<? extends Annotation> clazz) {
 		return field.isAnnotationPresent(clazz);
@@ -76,5 +84,21 @@ public class ClassUtils {
 			}
 		}
 		return null;
+	}
+	
+	public static <T extends Annotation> T getAnnotation(Class<?> clazz, Class<T> annotationClass) {
+		return clazz.getAnnotation(annotationClass);
+	}
+	
+	public static <T extends Annotation> T getAnnotation(Class<?> clazz, String property, Class<T> annotationClass) {
+		PropertyDescriptor descriptor = getPropertyDescriptor(clazz, property);
+		if (descriptor == null) {
+			Field field = getField(clazz, property);
+			if (field != null) {
+				return field.getAnnotation(annotationClass);
+			}
+			return null;
+		}
+		return PropertyUtil.getAnnotation(descriptor, annotationClass);
 	}
 }

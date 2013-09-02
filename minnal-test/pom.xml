@@ -68,7 +68,7 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>autopojo</artifactId>
-				<version>0.0.1</version>
+				<version>0.0.4</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

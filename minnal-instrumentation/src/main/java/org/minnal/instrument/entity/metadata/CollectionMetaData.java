@@ -3,6 +3,10 @@
  */
 package org.minnal.instrument.entity.metadata;
 
+import org.minnal.instrument.entity.Collection;
+import org.minnal.utils.reflection.ClassUtils;
+
+
 /**
  * @author ganeshs
  *
@@ -15,11 +19,30 @@ public class CollectionMetaData extends MetaData {
 	
 	private boolean entity;
 	
-	public CollectionMetaData(String name, Class<?> elementType, Class<?> type, boolean entity) {
+	private boolean createAllowed = true;
+	
+	private boolean readAllowed = true;
+	
+	private boolean updateAllowed = true;
+	
+	private boolean deleteAllowed = true;
+	
+	public CollectionMetaData(Class<?> parent, String name, Class<?> elementType, Class<?> type, boolean entity) {
 		super(name);
 		this.elementType = elementType;
 		this.type = type;
 		this.entity = entity;
+		init(parent, name);
+	}
+	
+	private void init(Class<?> parent, String property) {
+		Collection collection = ClassUtils.getAnnotation(parent, property, Collection.class);
+		if (collection != null) {
+			createAllowed = collection.create();
+			readAllowed = collection.read();
+			updateAllowed = collection.update();
+			deleteAllowed = collection.delete();
+		}
 	}
 
 	public Class<?> getElementType() {
@@ -35,6 +58,34 @@ public class CollectionMetaData extends MetaData {
 	 */
 	public boolean isEntity() {
 		return entity;
+	}
+
+	/**
+	 * @return the createAllowed
+	 */
+	public boolean isCreateAllowed() {
+		return createAllowed;
+	}
+
+	/**
+	 * @return the readAllowed
+	 */
+	public boolean isReadAllowed() {
+		return readAllowed;
+	}
+
+	/**
+	 * @return the updateAllowed
+	 */
+	public boolean isUpdateAllowed() {
+		return updateAllowed;
+	}
+
+	/**
+	 * @return the deleteAllowed
+	 */
+	public boolean isDeleteAllowed() {
+		return deleteAllowed;
 	}
 
 	@Override

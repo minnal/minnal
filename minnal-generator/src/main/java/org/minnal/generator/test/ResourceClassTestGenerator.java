@@ -87,11 +87,19 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 
 	private void createMethods(EntityNodePath path, StringBuffer buffer) {
 		try {
-			buffer.append(createMethod(path, true, HttpMethod.GET)).append("\n");
-			buffer.append(createMethod(path, true, HttpMethod.POST)).append("\n");
-			buffer.append(createMethod(path, false, HttpMethod.PUT)).append("\n");
-			buffer.append(createMethod(path, false, HttpMethod.GET)).append("\n");
-			buffer.append(createMethod(path, false, HttpMethod.DELETE)).append("\n");
+			if (path.isReadAllowed()) {
+				buffer.append(createMethod(path, true, HttpMethod.GET)).append("\n");
+				buffer.append(createMethod(path, false, HttpMethod.GET)).append("\n");
+			}
+			if (path.isCreateAllowed()) {
+				buffer.append(createMethod(path, true, HttpMethod.POST)).append("\n");
+			}
+			if (path.isUpdateAllowed()) {
+				buffer.append(createMethod(path, false, HttpMethod.PUT)).append("\n");
+			}
+			if (path.isDeleteAllowed()) {
+				buffer.append(createMethod(path, false, HttpMethod.DELETE)).append("\n");
+			}
 		} catch (Exception e) {
 			throw new MinnalException(e);
 		}

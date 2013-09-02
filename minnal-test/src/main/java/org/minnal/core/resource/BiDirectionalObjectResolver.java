@@ -4,12 +4,10 @@
 package org.minnal.core.resource;
 
 import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.minnal.autopojo.AttributeMetaData;
-import org.minnal.autopojo.GenerationStrategy;
 import org.minnal.autopojo.resolver.ObjectResolver;
 import org.minnal.autopojo.util.PropertyUtil;
 import org.slf4j.Logger;
@@ -26,19 +24,6 @@ public class BiDirectionalObjectResolver extends ObjectResolver {
 	
 	private static final Logger logger = LoggerFactory.getLogger(BiDirectionalObjectResolver.class);
 
-	public BiDirectionalObjectResolver(GenerationStrategy strategy) {
-		super(strategy);
-	}
-
-	/**
-	 * @param strategy
-	 * @param excludeAnnotations
-	 * @param excludeFields
-	 */
-	public BiDirectionalObjectResolver(GenerationStrategy strategy, List<Class<? extends Annotation>> excludeAnnotations, List<String> excludeFields) {
-		super(strategy, excludeAnnotations, excludeFields);
-	}
-	
 	@Override
 	protected void setAttribute(Object pojo, AttributeMetaData attribute, Object value) {
 		super.setAttribute(pojo, attribute, value);

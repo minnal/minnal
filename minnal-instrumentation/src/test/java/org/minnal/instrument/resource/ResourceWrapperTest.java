@@ -130,9 +130,9 @@ public class ResourceWrapperTest {
 		doAnswer(new Answer<String>() {
 			public String answer(InvocationOnMock invocation) throws Throwable {
 				int val = integer.incrementAndGet();
-				if (val == 4) {
+				if (val == 2) {
 					return "readParentChild";
-				} else if (val == 3) {
+				} else if (val == 4) {
 					return "updateParentChild";
 				} else {
 					return "dummy";

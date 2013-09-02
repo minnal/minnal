@@ -4,6 +4,8 @@
 package org.minnal.instrument.entity;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -58,6 +60,22 @@ public class EntityNodePathTest {
 	}
 	
 	@Test
+	public void shouldGetCrudStatusForPathWithSingleNode() {
+		EntityNodePath path = node.createNodePath(Arrays.asList(node));
+		assertTrue(path.isCreateAllowed());
+		assertFalse(path.isUpdateAllowed());
+	}
+	
+	@Test
+	public void shouldGetCrudStatusForPathWithMultipleNodes() {
+		EntityNode child = node.getChildren().iterator().next();
+		EntityNode grandChild = child.getChildren().iterator().next();
+		EntityNodePath path = node.createNodePath(Arrays.asList(node, child, grandChild));
+		assertTrue(path.isCreateAllowed());
+		assertFalse(path.isDeleteAllowed());
+	}
+	
+	@Test
 	public void shouldGetSingleUriForPathWithSingleNode() {
 		EntityNodePath path = node.createNodePath(Arrays.asList(node));
 		assertEquals(path.getSinglePath(), "/parents/{id}");
@@ -107,6 +125,7 @@ public class EntityNodePathTest {
 	}
 	
 	@Entity
+	@AggregateRoot(update=false)
 	private class Parent extends Model {
 		@Id
 		@Searchable
@@ -130,6 +149,7 @@ public class EntityNodePathTest {
 		@Searchable
 		private String code;
 		@OneToMany
+		@Collection(delete=false)
 		private Set<GrandChild> children;
 		@Override
 		public Serializable getId() {

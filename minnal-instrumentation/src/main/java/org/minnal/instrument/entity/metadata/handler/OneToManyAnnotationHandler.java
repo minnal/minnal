@@ -6,12 +6,7 @@ package org.minnal.instrument.entity.metadata.handler;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Map;
 
-import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 import org.minnal.instrument.entity.metadata.CollectionMetaData;
@@ -26,7 +21,7 @@ public class OneToManyAnnotationHandler extends AbstractAnnotationHandler {
 	@Override
 	public void handle(EntityMetaData metaData, Annotation annotation, Method method) {
 		Class<?> elementType = getElementType(method.getGenericReturnType());
-		CollectionMetaData collectionMetaData = new CollectionMetaData(getGetterName(method, false), 
+		CollectionMetaData collectionMetaData = new CollectionMetaData(metaData.getEntityClass(), getGetterName(method, false), 
 				elementType, method.getReturnType(), isEntity(elementType));
 		metaData.addCollection(collectionMetaData);
 	}
@@ -35,7 +30,7 @@ public class OneToManyAnnotationHandler extends AbstractAnnotationHandler {
 	public void handle(EntityMetaData metaData, Annotation annotation, Field field) {
 		String name = field.getName();
 		Class<?> elementType = getElementType(field.getGenericType());
-		CollectionMetaData collectionMetaData = new CollectionMetaData(name, elementType, field.getType(), isEntity(elementType));
+		CollectionMetaData collectionMetaData = new CollectionMetaData(metaData.getEntityClass(), name, elementType, field.getType(), isEntity(elementType));
 		metaData.addCollection(collectionMetaData);
 	}
 	

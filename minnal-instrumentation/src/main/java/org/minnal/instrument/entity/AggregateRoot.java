@@ -16,4 +16,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AggregateRoot {
 
+	public boolean create() default true;
+	
+	public boolean read() default true;
+	
+	public boolean update() default true;
+	
+	public boolean delete() default true;
 }
