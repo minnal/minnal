@@ -92,7 +92,7 @@
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
-					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo/${profile.deploymentType}</altDeploymentRepository>
+					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/master/${profile.deploymentType}</altDeploymentRepository>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -107,12 +107,12 @@
 				<configuration>
 					<message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
 					<noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
-					<branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+					<outputDirectory>${project.build.directory}/master</outputDirectory> <!-- matches distribution management repository url above -->
+					<branch>refs/heads/master</branch>                       <!-- remote branch name -->
 					<includes>
 						<include>**/*</include>
 					</includes>
-					<repositoryName>minnal</repositoryName>      <!-- github repo name -->
+					<repositoryName>mvn-repo</repositoryName>      <!-- github repo name -->
 					<repositoryOwner>minnal</repositoryOwner>    <!-- github username -->
 					<merge>true</merge>
 				</configuration>
@@ -160,7 +160,7 @@
 		</repository>
 		<repository>
 			<id>autopojo-releases-repo</id>
-			<url>https://raw.github.com/minnal/autopojo/mvn-repo/releases</url>
+      <url>https://raw.github.com/minnal/mvn-repo/master/releases</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
@@ -172,12 +172,12 @@
 		<repository>
 			<id>github-releases-repo</id>
 			<name>GitHub ${project.artifactId} Releases Repository</name>
-			<url>https://raw.github.com/minnal/${project.artifactId}/mvn-repo/releases</url>
+      <url>https://raw.github.com/minnal/mvn-repo/master/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>github-snapshots-repo</id>
 			<name>GitHub ${project.artifactId} Snapshots Repository</name>
-			<url>https://raw.github.com/minnal/${project.artifactId}/mvn-repo/snapshots</url>
+      <url>https://raw.github.com/minnal/mvn-repo/master/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
