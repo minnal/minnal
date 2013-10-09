@@ -43,10 +43,10 @@ public class Router {
 		if (application == null) {
 			throw new NotFoundException("Request path not found");
 		}
+		context.setApplication(application);
 		if (listener != null) {
 			listener.onApplicationResolved(context);
 		}
-		context.setApplication(application);
 		context.getRequest().setApplicationPath(application.getPath()); // NOTE: This should be done before resolving the action
 		
 		try {

@@ -149,12 +149,20 @@ public class Order extends Model {
 		this.orderItems.add(orderItem);
 	}
 	
+	// This method will expose the route /orders/{order_id}/cancel
+	// Your payload should be a json structure with keys mapping to the name of the method arguments
+	// In this scenario the payload would be {"reason": "some cancellation reason"}
+	// Minnal will automatically call this method with the reason taken from payload
 	@Action(value="cancel")
 	public void cancel(String reason) {
 		setStatus(Status.cancelled);
 		setCancellationReason(reason);
 	}
 	
+	// This method will expose the route /orders/{order_id}/order_items/{order_item_id}/cancel
+	// Your payload should be a json structure with keys mapping to the name of the method arguments
+	// In this scenario the payload would be {"reason": "some cancellation reason"}
+	// Minnal will automatically call this method with the reason taken from payload
 	@Action(value="cancel", path="orderItems")
 	public void cancelOrderItem(OrderItem orderItem, String reason) {
 		orderItem.cancel(reason);

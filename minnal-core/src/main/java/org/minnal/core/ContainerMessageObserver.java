@@ -21,6 +21,11 @@ public class ContainerMessageObserver implements RouterListener, ConnectorListen
 	
 	private static final Logger logger = LoggerFactory.getLogger(ContainerMessageObserver.class);
 	
+	/**
+	 * Registers the message listener
+	 * 
+	 * @param listener
+	 */
 	public void registerListener(MessageListener listener) {
 		messageListeners.add(listener);
 	}
@@ -71,6 +76,7 @@ public class ContainerMessageObserver implements RouterListener, ConnectorListen
 
 	@Override
 	public void onApplicationResolved(MessageContext context) {
+		ApplicationContext.instance().setApplicationConfiguration(context.getApplication().getConfiguration());
 		for (MessageListener listener : messageListeners) {
 			try {
 				listener.onApplicationResolved(context);
@@ -82,6 +88,8 @@ public class ContainerMessageObserver implements RouterListener, ConnectorListen
 
 	@Override
 	public void onRouteResolved(MessageContext context) {
+		ApplicationContext.instance().setResourceConfiguration(context.getResourceClass().getConfiguration());
+		ApplicationContext.instance().setRouteConfiguration(context.getRoute().getConfiguration());
 		for (MessageListener listener : messageListeners) {
 			try {
 				listener.onRouteResolved(context);
