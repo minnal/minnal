@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>minnal</artifactId>
 		<groupId>org.minnal</groupId>
-		<version>1.0.2-SNAPSHOT</version>
+		<version>1.0.2</version>
 	</parent>
 
 	<dependencies>
@@ -41,7 +41,7 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-core</artifactId>
-				<version>1.0.2-SNAPSHOT</version>
+				<version>1.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.testng</groupId>
@@ -51,12 +51,12 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-migrations</artifactId>
-				<version>1.0.2-SNAPSHOT</version>
+				<version>1.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-jpa</artifactId>
-				<version>1.0.2-SNAPSHOT</version>
+				<version>1.0.2</version>
 				<optional>true</optional>
 			</dependency>
 			<dependency>
