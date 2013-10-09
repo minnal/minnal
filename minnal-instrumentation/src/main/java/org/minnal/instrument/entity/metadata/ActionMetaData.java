@@ -4,9 +4,9 @@
 package org.minnal.instrument.entity.metadata;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author ganeshs
@@ -14,17 +14,25 @@ import java.util.Set;
  */
 public class ActionMetaData extends MetaData {
 	
-	private Set<ParameterMetaData> parameters = new HashSet<ParameterMetaData>();
+	private List<ParameterMetaData> parameters = new ArrayList<ParameterMetaData>();
 	
 	private Method method;
 	
-	public ActionMetaData(String name, Method method) {
+	private String path;
+	
+	/**
+	 * @param name
+	 * @param path
+	 * @param method
+	 */
+	public ActionMetaData(String name, String path, Method method) {
 		super(name);
 		this.method = method;
+		this.path = path;
 	}
 
-	public Set<ParameterMetaData> getParameters() {
-		return Collections.unmodifiableSet(parameters);
+	public List<ParameterMetaData> getParameters() {
+		return Collections.unmodifiableList(parameters);
 	}
 	
 	public void addParameter(ParameterMetaData parameter) {
@@ -33,6 +41,13 @@ public class ActionMetaData extends MetaData {
 
 	public Method getMethod() {
 		return method;
+	}
+
+	/**
+	 * @return the path
+	 */
+	public String getPath() {
+		return path;
 	}
 
 	@Override

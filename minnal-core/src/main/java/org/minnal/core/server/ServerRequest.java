@@ -138,6 +138,9 @@ public class ServerRequest extends ServerMessage implements Request {
 	}
 
 	public <T> T getContentAs(Class<T> clazz) {
+		if (! hasContent()) {
+			return null;
+		}
 		Serializer serializer = getSerializer(getContentType());
 		if (serializer == null) {
 			throw new MinnalException("Serializer not found for the content type - " + getContentType());
@@ -150,6 +153,9 @@ public class ServerRequest extends ServerMessage implements Request {
 	}
 	
 	public <T extends Collection<E>, E> T getContentAs(Class<T> collectionType, Class<E> elementType) {
+		if (! hasContent()) {
+			return null;
+		}
 		Serializer serializer = getSerializer(getContentType());
 		if (serializer == null) {
 			throw new MinnalException("Serializer not found for the content type - " + getContentType());

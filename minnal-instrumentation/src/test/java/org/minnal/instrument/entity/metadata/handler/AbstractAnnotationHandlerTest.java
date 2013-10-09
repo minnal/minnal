@@ -20,7 +20,7 @@ public class AbstractAnnotationHandlerTest {
 
 	@Test
 	public void shouldGetActionAnnotationHandler() throws Exception {
-		final class c { @Action public void actionMethod() {} }
+		final class c { @Action("action") public void actionMethod() {} }
 		Action action = c.class.getDeclaredMethod("actionMethod").getAnnotation(Action.class);
 		assertEquals(AbstractAnnotationHandler.handlerFor(action).getClass(), ActionAnnotationHandler.class);
 	}

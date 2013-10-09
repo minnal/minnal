@@ -144,6 +144,7 @@ public abstract class BaseResourceTest {
 		HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, uri);
 		request.setContent(buffer(content));
 		request.setHeader(HttpHeaders.Names.CONTENT_TYPE, contentType.toString());
+		request.setHeader(HttpHeaders.Names.CONTENT_LENGTH, content.length());
 		request.setHeader(HttpHeaders.Names.ACCEPT, MediaType.ANY_TYPE);
 		ServerRequest serverRequest = new ServerRequest(request, InetSocketAddress.createUnresolved("localhost", 80));
 		serverRequest.addHeaders(headers);

@@ -88,6 +88,14 @@ public class EntityNodeTest {
 		verify(visitor).visit(entityNode.createNodePath(Arrays.asList(entityNode, entityNode.getChildren().iterator().next())));
 	}
 	
+	@Test
+	public void shouldGetEntityNodePathForPathString() {
+		entityNode = new EntityNode(Parent.class);
+		entityNode.construct();
+		EntityNodePath path = entityNode.getEntityNodePath("children");
+		assertEquals(path.getBulkPath(), "/parents/{parent_id}/children");
+	}
+	
 	@Entity
 	private class CompositeModel extends Model {
 		private Long id;

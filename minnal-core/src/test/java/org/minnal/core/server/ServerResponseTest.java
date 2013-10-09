@@ -4,11 +4,13 @@
 package org.minnal.core.server;
 
 import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -38,5 +40,12 @@ public class ServerResponseTest {
 		verify(httpResponse).addHeader("name", "value");
 		verify(httpResponse).addHeader("name1", "value1");
 		verify(httpResponse).addHeader("name2", "value2");
+	}
+	
+	@Test
+	public void shouldGetContentLength() {
+		when(httpResponse.getHeader(HttpHeaders.Names.CONTENT_LENGTH)).thenReturn("100");
+		ServerResponse response = new ServerResponse(null, httpResponse);
+		assertEquals(response.getContentLength(), 100L);
 	}
 }

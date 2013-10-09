@@ -168,7 +168,7 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	public LinkedList<T> getChildren() {
 		return children;
 	}
-
+	
 	private List<T> copy(List<T> list) {
 		return new ArrayList<T>(list);
 	}

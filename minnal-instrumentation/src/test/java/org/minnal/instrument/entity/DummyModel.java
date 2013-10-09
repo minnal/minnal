@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
  *
  */
 @Entity
+@AggregateRoot
 public class DummyModel {
 
 	private Long id;
@@ -113,9 +114,11 @@ public class DummyModel {
 		this.siblings = siblings;
 	}
 	
+	@Action(value="customAction")
 	public void dummyAction() {
 	}
 	
+	@Action(value="customActionWithParams")
 	public void dummyAction(String param1, Long param2) {
 	}
 

@@ -26,7 +26,7 @@ public class AggregateRootScannerTest {
 		AggregateRootScanner scanner = new AggregateRootScanner("org.minnal.instrument.entity");
 		Listener<Class<?>> listener = mock(Listener.class);
 		scanner.scan(listener);
-		verify(listener, times(2)).handle(any(Class.class));
+		verify(listener, atLeast(2)).handle(any(Class.class));
 		verify(listener).handle(Model1.class);
 		verify(listener).handle(Model2.class);
 	}
@@ -36,7 +36,7 @@ public class AggregateRootScannerTest {
 		AggregateRootScanner scanner = new AggregateRootScanner("org.minnal.instrument.resource", "org.minnal.instrument.entity");
 		Listener<Class<?>> listener = mock(Listener.class);
 		scanner.scan(listener);
-		verify(listener, times(2)).handle(any(Class.class));
+		verify(listener, atLeast(2)).handle(any(Class.class));
 		verify(listener).handle(Model1.class);
 		verify(listener).handle(Model2.class);
 	}
@@ -46,7 +46,7 @@ public class AggregateRootScannerTest {
 		AggregateRootScanner scanner = new AggregateRootScanner("org.minnal.instrument");
 		Listener<Class<?>> listener = mock(Listener.class);
 		scanner.scan(listener);
-		verify(listener, times(2)).handle(any(Class.class));
+		verify(listener, atLeast(2)).handle(any(Class.class));
 		verify(listener).handle(Model1.class);
 		verify(listener).handle(Model2.class);
 	}

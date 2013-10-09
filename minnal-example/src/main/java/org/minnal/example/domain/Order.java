@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.activejpa.entity.Model;
+import org.minnal.instrument.entity.Action;
 import org.minnal.instrument.entity.AggregateRoot;
 import org.minnal.instrument.entity.Searchable;
 
@@ -29,6 +30,14 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Entity
 @Table(name="Orders")
 public class Order extends Model {
+	
+	/**
+	 * @author ganeshs
+	 *
+	 */
+	public enum Status {
+		created, cancelled
+	}
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -45,6 +54,11 @@ public class Order extends Model {
 	
 	@Searchable
 	private String customerEmail;
+	
+	@Searchable
+	private Status status = Status.created;
+	
+	private String cancellationReason;
 
 	/**
 	 * @return the id
@@ -102,9 +116,48 @@ public class Order extends Model {
 		this.customerEmail = customerEmail;
 	}
 	
+	/**
+	 * @return the status
+	 */
+	public Status getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
+	/**
+	 * @return the cancellationReason
+	 */
+	public String getCancellationReason() {
+		return cancellationReason;
+	}
+
+	/**
+	 * @param cancellationReason the cancellationReason to set
+	 */
+	public void setCancellationReason(String cancellationReason) {
+		this.cancellationReason = cancellationReason;
+	}
+
 	public void addOrderItem(OrderItem orderItem) {
 		orderItem.setOrder(this);
 		this.orderItems.add(orderItem);
+	}
+	
+	@Action(value="cancel")
+	public void cancel(String reason) {
+		setStatus(Status.cancelled);
+		setCancellationReason(reason);
+	}
+	
+	@Action(value="cancel", path="orderItems")
+	public void cancelOrderItem(OrderItem orderItem, String reason) {
+		orderItem.cancel(reason);
 	}
 
 }

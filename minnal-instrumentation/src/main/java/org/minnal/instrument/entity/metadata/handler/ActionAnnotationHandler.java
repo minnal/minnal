@@ -7,11 +7,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import org.minnal.core.MinnalException;
 import org.minnal.instrument.entity.Action;
+import org.minnal.instrument.entity.AggregateRoot;
 import org.minnal.instrument.entity.metadata.ActionMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.instrument.entity.metadata.ParameterMetaData;
 import org.minnal.instrument.util.ParameterNameDiscoverer;
+import org.minnal.utils.reflection.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -21,13 +26,24 @@ import com.google.common.base.Strings;
  */
 public class ActionAnnotationHandler extends AbstractAnnotationHandler {
 	
+	private static final Logger logger = LoggerFactory.getLogger(ActionAnnotationHandler.class);
+	
 	@Override
 	public void handle(EntityMetaData metaData, Annotation annotation, Method method) {
+		if (! ClassUtils.hasAnnotation(metaData.getEntityClass(), AggregateRoot.class)) {
+			logger.error("@Action can be specified only on classes marked with @AggregateRoot. {} class is not an aggregate root", metaData.getEntityClass());
+			throw new MinnalException("@Action can be specified only on classes marked with @AggregateRoot. " + 
+					metaData.getEntityClass() + " class is not an aggregate root");
+		}
 		String value = ((Action)annotation).value();
+		String path = ((Action)annotation).path();
 		if (Strings.isNullOrEmpty(value)) {
 			value = method.getName();
 		}
-		ActionMetaData actionMetaData = new ActionMetaData(value, method);
+		if (Strings.isNullOrEmpty(path)) {
+			path = null;
+		}
+		ActionMetaData actionMetaData = new ActionMetaData(value, path, method);
 		String[] parameterNames = ParameterNameDiscoverer.getParameterNames(method);
 		Class<?>[] parameterTypes = method.getParameterTypes();
 		for (int i = 0; i < parameterTypes.length; i++) {

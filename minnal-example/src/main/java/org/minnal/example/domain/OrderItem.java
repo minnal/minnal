@@ -23,6 +23,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 public class OrderItem extends Model {
+	
+	/**
+	 * @author ganeshs
+	 *
+	 */
+	public enum Status {
+		created, cancelled
+	}
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -42,6 +50,11 @@ public class OrderItem extends Model {
 	
 	@Searchable
 	private int quantity;
+	
+	@Searchable
+	private Status status = Status.created;
+	
+	private String cancellationReason;
 
 	/**
 	 * @return the id
@@ -112,5 +125,38 @@ public class OrderItem extends Model {
 	 */
 	public void setProductId(Long productId) {
 		this.productId = productId;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public Status getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
+	/**
+	 * @return the cancellationReason
+	 */
+	public String getCancellationReason() {
+		return cancellationReason;
+	}
+
+	/**
+	 * @param cancellationReason the cancellationReason to set
+	 */
+	public void setCancellationReason(String cancellationReason) {
+		this.cancellationReason = cancellationReason;
+	}
+
+	public void cancel(String reason) {
+		setStatus(Status.cancelled);
+		setCancellationReason(reason);
 	}
 }

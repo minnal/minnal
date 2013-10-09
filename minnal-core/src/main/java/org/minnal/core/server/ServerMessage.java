@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpMessage;
 import org.minnal.core.Message;
 import org.minnal.core.route.Route;
@@ -79,6 +80,14 @@ public abstract class ServerMessage implements Message {
 
 	public ChannelBuffer getContent() {
 		return message.getContent();
+	}
+	
+	public long getContentLength() {
+		return HttpHeaders.getContentLength(message);
+	}
+	
+	public boolean hasContent() {
+		return getContentLength() > 0;
 	}
 
 	public void setContent(ChannelBuffer content) {

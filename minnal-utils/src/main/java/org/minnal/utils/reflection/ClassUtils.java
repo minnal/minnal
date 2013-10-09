@@ -56,6 +56,10 @@ public class ClassUtils {
 			return null;
 		}
 	}
+	
+	public static boolean hasAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+		return clazz.isAnnotationPresent(annotationClass);
+	}
 
 	public static boolean hasAnnotation(Field field, Class<? extends Annotation> clazz) {
 		return field.isAnnotationPresent(clazz);

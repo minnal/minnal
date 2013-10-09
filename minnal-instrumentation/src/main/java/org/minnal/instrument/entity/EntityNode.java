@@ -11,7 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.javalite.common.Inflector;
+import org.minnal.core.MinnalException;
 import org.minnal.core.route.QueryParam;
 import org.minnal.core.route.QueryParam.Type;
 import org.minnal.core.util.Node;
@@ -24,6 +26,8 @@ import org.minnal.instrument.entity.metadata.ParameterMetaData;
 import org.minnal.utils.reflection.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Splitter;
 
 /**
  * @author ganeshs
@@ -124,6 +128,38 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	@Override
 	protected EntityNodePath createNodePath(List<EntityNode> path) {
 		return new EntityNodePath(path);
+	}
+	
+	public EntityNodePath getEntityNodePath(String path) {
+		Iterable<String> nodes = null;
+		if (! StringUtils.isBlank(path)) {
+			nodes = Splitter.on(".").split(path);
+		}
+		List<EntityNode> list = new ArrayList<EntityNode>();
+
+		EntityNode lastNode = this;
+		if (nodes != null) {
+			for (String node : nodes ) {
+				list.add(lastNode);
+				lastNode = lastNode.getChild(node);
+				if (lastNode == null) {
+					logger.error("Invalid path - {} for the node - {}", path, getName());
+					throw new MinnalException("Invalid path - " + path + " for the node - " + getName());
+				}
+			}
+		}
+		list.add(lastNode);
+		return new EntityNodePath(list);
+	}
+	
+	protected EntityNode getChild(String name) {
+		name = Inflector.underscore(name);
+		for (EntityNode child : getChildren()) {
+			if (child.getResourceName().equals(name)) {
+				return child;
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -298,6 +334,11 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 			} else if (!singlePath.equals(other.singlePath))
 				return false;
 			return true;
+		}
+		
+		@Override
+		public String toString() {
+			return getSinglePath();
 		}
 
 		private EntityNode getOuterType() {

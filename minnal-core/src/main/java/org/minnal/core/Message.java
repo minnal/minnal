@@ -31,6 +31,8 @@ public interface Message {
 	
 	ChannelBuffer getContent();
 	
+	long getContentLength();
+	
 	void setContent(ChannelBuffer content);
 	
 	Route getResolvedRoute();

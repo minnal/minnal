@@ -11,6 +11,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.minnal.core.serializer.Serializer;
@@ -43,6 +45,7 @@ public class ServerRequestTest {
 		when(httpRequest.getMethod()).thenReturn(HttpMethod.HEAD);
 		when(httpRequest.getContent()).thenReturn(mock(ChannelBuffer.class));
 		when(httpRequest.getHeader(anyString())).thenReturn("dummy");
+		when(httpRequest.getHeader(HttpHeaders.Names.CONTENT_LENGTH)).thenReturn("100");
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("n1", "v1");
 		headers.put("n2", "v2");
@@ -87,6 +90,15 @@ public class ServerRequestTest {
 		verify(serializer).deserialize(buffer, Object.class);
 	}
 	
+	@Test
+	public void shouldGetNullContentIfContentLengthIs0() {
+		ServerRequest request = spy(new ServerRequest(httpRequest, null));
+		ChannelBuffer buffer = mock(ChannelBuffer.class);
+		doReturn(buffer).when(request).getContent();
+		doReturn(0L).when(request).getContentLength();
+		assertNull(request.getContentAs(Object.class));
+	}
+	
 	@Test(expectedExceptions=BadRequestException.class)
 	public void shouldThrowBadRequestIfSerializationFails() {
 		ServerRequest request = spy(new ServerRequest(httpRequest, null));
@@ -105,5 +117,11 @@ public class ServerRequestTest {
 		ServerRequest request = new ServerRequest(httpRequest, null);
 		verify(httpRequest).addHeader("key", "test 1234");
 		verify(httpRequest).addHeader("value", "test/123");
+	}
+	
+	@Test
+	public void shouldGetContentLength() {
+		ServerRequest request = new ServerRequest(httpRequest, null);
+		assertEquals(request.getContentLength(), 100L);
 	}
 }

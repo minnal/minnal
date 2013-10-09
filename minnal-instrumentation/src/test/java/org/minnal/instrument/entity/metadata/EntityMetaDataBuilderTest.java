@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.minnal.instrument.entity.Action;
+import org.minnal.instrument.entity.AggregateRoot;
 import org.minnal.instrument.entity.EntityKey;
 import org.minnal.instrument.entity.Searchable;
 import org.testng.annotations.Test;
@@ -41,6 +42,7 @@ public class EntityMetaDataBuilderTest {
 		assertEquals(metaData.getSearchFields().size(), 2);
 	}
 	
+	@AggregateRoot
 	class DummyEntity{
 		
 		@Searchable
@@ -61,12 +63,13 @@ public class EntityMetaDataBuilderTest {
 		@OneToOne
 		String field7;
 		
-		@Action
+		@Action("action")
 		public String getField4() {
 			return null;
 		}
 	}
 	
+	@AggregateRoot
 	class DummyUnderEntity extends DummyEntity{
 		
 		@Searchable

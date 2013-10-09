@@ -10,6 +10,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,8 +19,6 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javassist.CtClass;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -31,6 +30,8 @@ import org.apache.velocity.VelocityContext;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.RouteBuilder;
+import org.minnal.instrument.entity.Action;
+import org.minnal.instrument.entity.AggregateRoot;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
@@ -51,6 +52,8 @@ public class ResourceWrapperTest {
 	
 	private EntityNodePath path;
 	
+	private EntityNodePath rootPath;
+	
 	@BeforeMethod
 	public void setup() throws Exception {
 		resourceClass = mock(ResourceClass.class);
@@ -62,6 +65,7 @@ public class ResourceWrapperTest {
 		node.construct();
 		EntityNode child = node.getChildren().iterator().next();
 		path = node.new EntityNodePath(Arrays.asList(node, child));
+		rootPath = node.new EntityNodePath(Arrays.asList(node));
 	}
 	
 	@Test
@@ -110,6 +114,16 @@ public class ResourceWrapperTest {
 	}
 	
 	@Test
+	public void shouldCreateActionMethodAtRoot() throws Exception {
+		Template actionMethodCreator = mock(Template.class);
+		doReturn(actionMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(rootPath.get(0).getEntityNodePath(""), "dummy")), eq(HttpMethod.PUT));
+		doReturn(actionMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(rootPath.get(0).getEntityNodePath("children"), "dummy")), eq(HttpMethod.PUT));
+		doReturn("actionMethod").when(wrapper).makeMethod(any(StringWriter.class));
+		wrapper.addPath(rootPath);
+		verify(actionMethodCreator, times(2)).merge(any(VelocityContext.class), any(StringWriter.class));
+	}
+	
+	@Test
 	public void shouldNotCreateMethodIfAlreadyFoundInResource() throws Exception {
 		Template deleteMethodCreator = mock(Template.class);
 		when(resourceClass.hasRoute(path.getSinglePath(), HttpMethod.DELETE)).thenReturn(true);
@@ -152,6 +166,7 @@ class DummyResource {
 }
 
 @Entity
+@AggregateRoot
 class Parent extends Model {
 	@Id
 	private Long id;
@@ -160,6 +175,14 @@ class Parent extends Model {
 	@Override
 	public Serializable getId() {
 		return id;
+	}
+	@Action(value="dummy")
+	public void dummyAction() {
+		
+	}
+	@Action(value="dummy", path="children")
+	public void dummyAction(Child child) {
+		
 	}
 }
 
