@@ -116,8 +116,8 @@ public class ResourceWrapperTest {
 	@Test
 	public void shouldCreateActionMethodAtRoot() throws Exception {
 		Template actionMethodCreator = mock(Template.class);
-		doReturn(actionMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(rootPath.get(0).getEntityNodePath(""), "dummy")), eq(HttpMethod.PUT));
-		doReturn(actionMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(rootPath.get(0).getEntityNodePath("children"), "dummy")), eq(HttpMethod.PUT));
+		doReturn(actionMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(((EntityNode) rootPath.get(0)).getEntityNodePath(""), "dummy")), eq(HttpMethod.PUT));
+		doReturn(actionMethodCreator).when(wrapper).getMethodTemplate(eq(new ResourcePath(((EntityNode) rootPath.get(0)).getEntityNodePath("children"), "dummy")), eq(HttpMethod.PUT));
 		doReturn("actionMethod").when(wrapper).makeMethod(any(StringWriter.class));
 		wrapper.addPath(rootPath);
 		verify(actionMethodCreator, times(2)).merge(any(VelocityContext.class), any(StringWriter.class));
