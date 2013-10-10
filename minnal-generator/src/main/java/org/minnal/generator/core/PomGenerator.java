@@ -44,9 +44,9 @@ public class PomGenerator extends AbstractGenerator {
 	
 	private static final String ACTIVE_JPA_RELEASES_REPO = "https://raw.github.com/ActiveJpa/activejpa/mvn-repo/releases";
 	
-	private static final String AUTOPOJO_RELEASES_REPO = "https://raw.github.com/minnal/autopojo/mvn-repo/releases";
+	private static final String AUTOPOJO_RELEASES_REPO = "https://raw.github.com/minnal/mvn-repo/master/releases";
 	
-	private static final String MINNAL_RELEASES_REPO = "https://raw.github.com/minnal/minnal/mvn-repo/releases";
+	private static final String MINNAL_RELEASES_REPO = "https://raw.github.com/minnal/mvn-repo/master/releases";
 	
 	private static final Logger logger = LoggerFactory.getLogger(PomGenerator.class);
 	
