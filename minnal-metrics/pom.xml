@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.minnal</groupId>
     <artifactId>minnal</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4-SNAPSHOT</version>
   </parent>
   <artifactId>minnal-metrics</artifactId>
   <dependencies>
@@ -40,7 +40,7 @@
   		<dependency>
   			<groupId>org.minnal</groupId>
   			<artifactId>minnal-core</artifactId>
-  			<version>1.0.3</version>
+  			<version>1.0.4-SNAPSHOT</version>
   		</dependency>
   		<dependency>
   			<groupId>com.codahale.metrics</groupId>
