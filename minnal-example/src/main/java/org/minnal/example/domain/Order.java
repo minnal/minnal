@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,12 +52,13 @@ public class Order extends Model {
 	
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	@JoinColumn(name="orderId")
-	private Set<Payment> payments;
+	private Set<Payment> payments = new HashSet<Payment>();
 	
 	@Searchable
 	private String customerEmail;
 	
 	@Searchable
+	@Enumerated(EnumType.STRING)
 	private Status status = Status.created;
 	
 	private String cancellationReason;

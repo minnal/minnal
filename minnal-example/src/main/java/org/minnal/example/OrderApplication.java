@@ -3,9 +3,13 @@
  */
 package org.minnal.example;
 
+import org.activejpa.util.EnumConverter;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.minnal.core.Application;
 import org.minnal.core.MinnalException;
 import org.minnal.core.server.exception.InternalServerErrorException;
+import org.minnal.example.domain.Order;
+import org.minnal.example.domain.OrderItem;
 import org.minnal.jpa.JPAPlugin;
 import org.minnal.jpa.OpenSessionInViewFilter;
 
@@ -16,6 +20,8 @@ import org.minnal.jpa.OpenSessionInViewFilter;
 public class OrderApplication extends Application<OrderConfiguration> {
 	
 	public OrderApplication() {
+		ConvertUtils.register(EnumConverter.instance, Order.Status.class);
+		ConvertUtils.register(EnumConverter.instance, OrderItem.Status.class);
 	}
 
 	@Override

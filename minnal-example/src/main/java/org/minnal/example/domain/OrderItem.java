@@ -4,6 +4,8 @@
 package org.minnal.example.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,6 +54,7 @@ public class OrderItem extends Model {
 	private int quantity;
 	
 	@Searchable
+	@Enumerated(EnumType.STRING)
 	private Status status = Status.created;
 	
 	private String cancellationReason;
