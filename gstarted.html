@@ -93,7 +93,7 @@
               <p>To run minnal, you need JDK 6 or later. Minnal has been tested with Sun JDK, OpenJDK support will be taken up in the coming versions. Minnal recommends you to use maven to manage your project dependencies, the installation package requires <a href="http://maven.apache.org/download.cgi">maven 3</a> to get started.</p>
               <p>Ensure your JAVA_HOME is set to JDK and not the JRE. Minnal instrumentation module requires tools.jar from JDK libraries to be in the classpath.</p>
               <h3>Downloading the package</h3>
-              <p>Download the latest minnal installation package from <a href="https://github.com/minnal/minnal/tree/downloads/minnal/">here</a> and extract the archive to a folder with read and write access.</p>
+              <p>Download the latest minnal installation package from <a href="https://github.com/minnal/minnal/releases/download/minnal-1.0.4/minnal-1.0.4.tar.gz">here</a> and extract the archive to a folder with read and write access.</p>
               <p>Add the the framework binary folder <i>/path/to/minnal-X.X.X/bin</i> to your path, so you can conveniently run the minnal executable. If you are running on windows, add it to the global environment variables</p>
               <p>Test if you can run  minnal,</p>
               <pre class="brush:bash">
@@ -611,14 +611,14 @@
                 import com.shopping.cart.domain.ShoppingCart;
                 import org.jboss.netty.handler.code.http.HttpResponseStatus;
 
-                // The @Resource annotation tells minnal that this class is resource class. 
+                // The @Resource annotation tells minnal that this class is resource class.
                 // The value parameter takes in an class that's marked with @AggregateRoot domain
                 // Minnal will scan for all resources marked with @Resource
                 @Resource(value=ShoppingCart.class)
                 public class ShoppingCartResource {
 
-                  // We are overriding the api POST /shopping_carts. 
-                  // The method name should be the same as that of the one from 
+                  // We are overriding the api POST /shopping_carts.
+                  // The method name should be the same as that of the one from
                   // the route definitions at http://localhost:8080/admin/routes/shoppingCart
                   public ShoppingCart createShoppingCart(Request request, Response response) {
                     // Your custom code here
