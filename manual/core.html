@@ -1,0 +1,822 @@
+
+
+  
+  
+ 
+  
+  
+ 
+
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Minnal Core &mdash; minnal 1.0.4 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.0.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/my-styles.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.0.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+    <link rel="top" title="minnal 1.0.4 documentation" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Minnal Jpa" href="jpa.html" />
+    <link rel="prev" title="User Documentation" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+  
+  <a href="https://github.com/minnal/minnal" class="visible-desktop">
+  	<img style="position: absolute; top: 40px; right: 0; border: 0; z-index:1000;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub">
+  </a>
+
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">Minnal</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.4</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a href="../index.html"
+     class="dropdown-toggle"
+     data-toggle="dropdown">Docs <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+    ><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started.html#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#domain-modeling">Domain Modeling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started.html#installing-minnal">Installing Minnal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#downloading-the-package">Downloading the package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started.html#tutorial">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#shopping-cart-application">Shopping Cart Application</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#creating-the-project">Creating the project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#creating-the-domain-classes">Creating the domain classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#test-your-apis">Test your APIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#starting-the-server">Starting the server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#view-your-apis">View your APIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#customizing-an-api">Customizing an API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#high-level-design">High level design</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#organizing-your-project">Organizing your project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#container">Container</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#applications">Applications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#resources">Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#routes">Routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exception-handlers">Exception Handlers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plugins">Plugins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bundles">Bundles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-context">Application Context</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jpa.html">Minnal Jpa</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jpa.html#domain-classes">Domain Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jpa.html#configuring-jpa">Configuring JPA</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="migrations.html">Minnal Migrations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="migrations.html#create-migrations">Create Migrations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="migrations.html#run-migrations">Run Migrations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="instrumentation.html">Minnal Instrumentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#resources">Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#sub-resources">Sub-Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#overriding-routes">Overriding Routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#search-params">Search Params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#actions">Actions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#pagination">Pagination</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#bulk-operations">Bulk Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="security.html">Minnal Security</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="security.html#session-store">Session Store</a></li>
+<li class="toctree-l4"><a class="reference internal" href="security.html#authenticators">Authenticators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="security.html#white-listing-urls">White listing urls</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generator.html">Minnal Generator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#create-project">Create Project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#generate-models">Generate Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#generate-tests">Generate Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics.html">Minnal Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#jmx-reporter">JMX Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#graphite-reporter">Graphite Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#custom-reporters">Custom Reporters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#publishing-app-metrics">Publishing App Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="test.html">Minnal Test</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="test.html#testing-resources">Testing Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="test.html#testing-jpa-resources">Testing JPA Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="test.html#testing-models">Testing Models</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html">Minnal Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="examples.html#shopping-cart-application">Shopping Cart Application</a></li>
+<li class="toctree-l4"><a class="reference internal" href="examples.html#cargo-application">Cargo Application</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-notes.html">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-4-11-oct-2013">minnal-1.0.4 / 11-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-3-10-oct-2013">minnal-1.0.3 / 10-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-2-09-oct-2013">minnal-1.0.2 / 09-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-1-02-sep-2013">minnal-1.0.1 / 02-Sep-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-0-29-aug-2013">minnal-1.0.0 / 29-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-9-28-aug-2013">minnal-0.9.9 / 28-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-8-27-aug-2013">minnal-0.9.8 / 27-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-7-17-aug-2013">minnal-0.9.7 / 17-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-6-12-aug-2013">minnal-0.9.6 / 12-Aug-2013</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#reporting-bugs-requesting-enhancements">Reporting bugs / Requesting Enhancements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#contributing-to-minnal">Contributing to minnal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#developers">Developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#exceptions-thrown">Exceptions thrown</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#classnotfoundexception-com-sun-tools-attach-virtualmachine">ClassNotFoundException: com.sun.tools.attach.VirtualMachine</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+  <li><a href="index.html"
+         title="Previous Chapter: User Documentation">&laquo; User Documentati...</a></li>
+  <li><a href="jpa.html"
+         title="Next Chapter: Minnal Jpa">Minnal Jpa &raquo;</a></li>
+            
+            
+            
+            
+              <li></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#high-level-design">High level design</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#organizing-your-project">Organizing your project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#container">Container</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#applications">Applications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#resources">Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#routes">Routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exception-handlers">Exception Handlers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plugins">Plugins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bundles">Bundles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-context">Application Context</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jpa.html">Minnal Jpa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrations.html">Minnal Migrations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="instrumentation.html">Minnal Instrumentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="security.html">Minnal Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generator.html">Minnal Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics.html">Minnal Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="test.html">Minnal Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html">Minnal Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="col-md-9">
+      
+  <div class="section" id="minnal-core">
+<span id="manual-core"></span><h1>Minnal Core</h1>
+<p class="rubric"><em>Minnal Core</em> is the core of the framework and doesn&#8217;t depend on any of the other minnal modules. It is a light weight REST application                             framework and can be used independent of instrumentation module.</p>
+<div class="section" id="organizing-your-project">
+<h2>Organizing your project</h2>
+<p>Minnal recommends you to use maven for managing your project and its dependencies. If you are starting from scratch, take a look at <a class="reference internal" href="generator.html#manual-gen"><em>Minnal Generator</em></a> for creating a project. A minnal project structure would look like this,</p>
+</div>
+<div class="section" id="container">
+<h2>Container</h2>
+<div class="section" id="container-configuration">
+<h3>Container Configuration</h3>
+<p>Minnal&#8217;s configuration follows a composite pattern. <a class="reference internal" href="#routes">Routes</a> inherit from a Resource, <a class="reference internal" href="#resources">Resources</a> inherit from an Application and <a class="reference internal" href="#applications">Applications</a> inherit from Container. Minnal abstracts out a bunch of configuration parameters at container level and every component inherits them from their parent.</p>
+<p>The configuration is loaded from a <em>container.yml</em> file located under <em>META-INF/</em> folder in the classpath</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># The name of the container</span>
+<span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">My Container</span>
+
+<span class="c1"># The base path to use for the routes from all the applications</span>
+<span class="l-Scalar-Plain">basePath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/</span>
+
+<span class="c1"># Http server configuration</span>
+<span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">connectors</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8080</span>
+      <span class="l-Scalar-Plain">scheme</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http</span>
+
+<span class="c1"># The default http media type that this container would support. Can be overridden by applications</span>
+<span class="l-Scalar-Plain">defaultMediaType</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">application/json</span>
+
+<span class="c1"># The serializers to use for the supported media types</span>
+<span class="l-Scalar-Plain">serializers</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">application/json</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.core.serializer.DefaultJsonSerializer</span>
+
+<span class="c1"># The mount points for the applications. If you just have one application in the container,</span>
+<span class="c1"># you can skip this configuration. Defaults to the path &#39;/&#39;</span>
+<span class="l-Scalar-Plain">mounts</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">com.shopping.cart.ShoppingCartApplication</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">Take a look at the class <tt class="docutils literal"><span class="pre">org.minnal.core.config.ContainerConfiguration</span></tt> for all the available properties</p>
+</div>
+</div>
+<div class="section" id="configuring-ssl">
+<h3>Configuring SSL</h3>
+<p>Enabling https is quite similar to http, just that ssl needs to be configured. Create a https connector and configure ssl,</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># Http server configuration</span>
+<span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">connectors</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8080</span>
+      <span class="l-Scalar-Plain">scheme</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http</span>
+    <span class="-Error"> </span><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8443</span>
+     <span class="-Error"> </span><span class="l-Scalar-Plain">scheme</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https</span>
+      <span class="l-Scalar-Plain">ssl</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">keyStoreFile</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/Users/ganeshs/keystore.jks</span>
+        <span class="l-Scalar-Plain">keyStorePassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">password</span>
+        <span class="l-Scalar-Plain">keyPassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">secret</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">Take a look the class <tt class="docutils literal"><span class="pre">org.minnal.core.config.SSLConfiguration</span></tt> for all the available properties</p>
+</div>
+</div>
+<div class="section" id="mounting-applications-to-the-container">
+<h3>Mounting applications to the container</h3>
+<p>To mount an application to the container, you will have add the application class to the SPI of org.minnal.core.Application. The container loads all the applications from the SPI file and mounts them as configured in the container.yml. Create a file org.minnal.core.Application under META-INF/services/ folder and the list of applications you want to add to the container,</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">com.example.shopping.cart.ShoppingCartApplication</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="applications">
+<h2>Applications</h2>
+<p>Application class is the entry point to your application. The application specific configurations are read from org.minna.core.config.ApplicationConfiguration class and you will have to extend it to create your application specific configuration</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleConfiguration</span> <span class="kd">extends</span> <span class="n">ApplicationConfiguration</span> <span class="o">{</span>
+
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>You create an application by extending the class org.minnal.core.Application.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">defineRoutes</span><span class="o">()</span> <span class="o">{</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">defineResources</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">addResource</span><span class="o">(</span><span class="n">ExmapleResource</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">addFilters</span><span class="o">()</span> <span class="o">{</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">registerPlugins</span><span class="o">()</span> <span class="o">{</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="application-configuration">
+<h3>Application Configuration</h3>
+<p>Application inherits the configuration parameters from container. For instance, if you haven&#8217;t set any serializers for json content type, it will get it from container. You can override it by explicitly specifying in the ApplicationConfiguration. Minnal looks for the application configuration under META-INF/ folder in the classpath. Be sure to name the file as lowercased application name. For instance if your application class name is ShoppingCartApplication, then the application config file name should be shoppingcart.yml. Bare minimum, the application config requires a name to be defined</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># The name of the application</span>
+<span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">shopping_cart</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="database-configuration">
+<h3>Database Configuration</h3>
+<p>Minnal recommends you to use JPA in your persistence layer but the database configuration is generic enough to use any library in your persistence layer</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">db</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">driverClass</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">com.mysql.jdbc.Driver</span>
+  <span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">jdbc:mysql://localhost/facilities</span>
+  <span class="l-Scalar-Plain">username</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">root</span>
+  <span class="l-Scalar-Plain">providerProperties</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">hibernate.ejb.naming_strategy</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.hibernate.cfg.ImprovedNamingStrategy</span>
+    <span class="l-Scalar-Plain">hibernate.show_sql</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+    <span class="l-Scalar-Plain">hibernate.format_sql</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+    <span class="l-Scalar-Plain">hibernate.current_session_context_class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">thread</span>
+    <span class="l-Scalar-Plain">hibernate.dialect</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.hibernate.dialect.MySQLDialect</span>
+  <span class="l-Scalar-Plain">packagesToScan</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">com.ekl.facilities</span>
+</pre></div>
+</td></tr></table></div>
+<p>Minnal uses c3p0 for connection pooling.</p>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">Take a look at the class <tt class="docutils literal"><span class="pre">org.minnal.core.config.DatabaseConfiguration</span></tt> for all the available properties</p>
+</div>
+</div>
+</div>
+<div class="section" id="resources">
+<h2>Resources</h2>
+<p>Creating a resource is straight forward. Unlike Application, resource class need not extend any framework specific classes. You create a resource under <tt class="docutils literal"><span class="pre">com.example.resources</span></tt> package.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">resources</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleResource</span> <span class="o">{</span>
+
+  <span class="cm">/**</span>
+<span class="cm">   * Maps to the route GET /examples/:id</span>
+<span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">readExample</span><span class="o">(</span><span class="n">Request</span> <span class="n">request</span><span class="o">,</span> <span class="n">Response</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getHeader</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">);</span>
+    <span class="n">Example</span> <span class="n">example</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="c1">// Read example from your persistence store</span>
+    <span class="n">response</span><span class="o">.</span><span class="na">setContent</span><span class="o">(</span><span class="n">example</span><span class="o">);</span>
+    <span class="n">response</span><span class="o">.</span><span class="na">setStatus</span><span class="o">(</span><span class="n">HttpResponseStatus</span><span class="o">.</span><span class="na">OK</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="cm">/**</span>
+<span class="cm">   * Maps to the route POST /examples/</span>
+<span class="cm">   */</span>
+  <span class="kd">public</span> <span class="n">Example</span> <span class="nf">createExample</span><span class="o">(</span><span class="n">Request</span> <span class="n">request</span><span class="o">,</span> <span class="n">Response</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Example</span> <span class="n">example</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getContentAs</span><span class="o">(</span><span class="n">Example</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+    <span class="c1">// Write example to your persistence store</span>
+    <span class="k">return</span> <span class="n">example</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>The only constraint the framework imposes on you is on the method signature of your resource methods. Your resource methods should take in an instance of <tt class="docutils literal"><span class="pre">org.minnal.core.Request</span></tt> and <tt class="docutils literal"><span class="pre">org.minnal.core.Resposne</span></tt>. The method can return void or the content to set in the response. In case you return the content from the method, minnal will set the content and set the status to 200 OK. It will safely ignore the return value if the response content is already set.</p>
+<p>Minnal&#8217;s writes all the query and form parameters to request headers and you can access them by calling <tt class="docutils literal"><span class="pre">request.getHeader(&quot;param&quot;)</span></tt></p>
+<p>The resource should be added to your Application to define the routes. You do this by adding the resource in the defineResources() method of the application class</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">defineResources</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">addResource</span><span class="o">(</span><span class="n">ExmapleResource</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="resource-configuration">
+<h3>Resource Configuration</h3>
+<p>By default minnal inherits the application configuration parameters in to the resource configuration. In most cases you won&#8217;t have a need to customize these properties. But say if you want to accept the text/csv which is not the default content type specified by the application, you can customize the resource configuration by just pass on an instance of resource configuration to addResource method.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">defineResources</span><span class="o">()</span> <span class="o">{</span>
+  <span class="n">ResourceConfiguration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ResourceConfiguration</span><span class="o">(</span><span class="s">&quot;example resource&quot;</span><span class="o">);</span>
+  <span class="n">configuration</span><span class="o">.</span><span class="na">addSerializer</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">CSV_UTF_8</span><span class="o">,</span> <span class="n">csvSerializer</span><span class="o">);</span>
+  <span class="n">addResource</span><span class="o">(</span><span class="n">ExmapleResource</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">configuration</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">Take a look at the class org.minnal.core.config.ResourceConfiguration for all the available properties</p>
+</div>
+</div>
+</div>
+<div class="section" id="routes">
+<h2>Routes</h2>
+<p>Routes are associated with resource classes. You add routes in the defineRoutes() method of the application class</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">defineRoutes</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// Map ExampleResource.readExample method to the route GET /examples/{id}</span>
+    <span class="n">resource</span><span class="o">(</span><span class="n">ExampleResource</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">builder</span><span class="o">(</span><span class="s">&quot;/examples/{id}&quot;</span><span class="o">).</span><span class="na">action</span><span class="o">(</span><span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="s">&quot;readExample&quot;</span><span class="o">);</span>
+
+    <span class="c1">// You can also chain the actions for a route</span>
+    <span class="n">resource</span><span class="o">(</span><span class="n">ExampleResource</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">builder</span><span class="o">(</span><span class="s">&quot;/examples/{id}&quot;</span><span class="o">).</span><span class="na">action</span><span class="o">(</span><span class="n">HttpMethod</span><span class="o">.</span><span class="na">PUT</span><span class="o">,</span> <span class="s">&quot;updateExample&quot;</span><span class="o">).</span><span class="na">action</span><span class="o">(</span><span class="n">HttpMethod</span><span class="o">.</span><span class="na">DELETE</span><span class="o">,</span> <span class="s">&quot;deleteExample&quot;</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="route-configuration">
+<h3>Route Configuration</h3>
+<p>By default minnal inherits the resource configuration parameters in to the route configuration. You can customize the route configuration as below,</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">defineRoutes</span><span class="o">()</span> <span class="o">{</span>
+  <span class="n">RouteConfiguration</span> <span class="n">configuration</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RouteConfiguration</span><span class="o">(</span><span class="s">&quot;some name&quot;</span><span class="o">);</span>
+  <span class="n">configuration</span><span class="o">.</span><span class="na">addSerializer</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">CSV_UTF_8</span><span class="o">,</span> <span class="n">csvSerializer</span><span class="o">);</span>
+
+  <span class="c1">// Map ExampleResource.readExample method to the route GET /examples/{id}</span>
+  <span class="n">resource</span><span class="o">(</span><span class="n">ExampleResource</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">builder</span><span class="o">(</span><span class="s">&quot;/examples/{id}&quot;</span><span class="o">).</span><span class="na">action</span><span class="o">(</span><span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="s">&quot;readExample&quot;</span><span class="o">).</span><span class="na">using</span><span class="o">(</span><span class="n">configuration</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">Take a look at the class <tt class="docutils literal"><span class="pre">org.minnal.core.config.RouteConfiguration</span></tt> for all the available properties</p>
+</div>
+</div>
+</div>
+<div class="section" id="filters">
+<h2>Filters</h2>
+<p>Minnal provides support for chaining of filters like in http-servlets. The request will pass through all the filters before hitting the controller. To create a filter, implement the interface <tt class="docutils literal"><span class="pre">org.minnal.core.Filter</span></tt></p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyFilter</span> <span class="kd">implements</span> <span class="n">Filter</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doFilter</span><span class="o">(</span><span class="n">Request</span> <span class="n">request</span><span class="o">,</span> <span class="n">Response</span> <span class="n">response</span><span class="o">,</span> <span class="n">FilterChain</span> <span class="n">chain</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// pre process request</span>
+    <span class="n">chain</span><span class="o">.</span><span class="na">doFilter</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
+    <span class="c1">// post process response</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="add-filters-to-application">
+<h3>Add Filters to Application</h3>
+<p>You can add filters to the application in the addFilters() method</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;</span> <span class="o">{</span>
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">addFilters</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">addFilter</span><span class="o">(</span><span class="k">new</span> <span class="n">MyFilter</span><span class="o">());</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="exception-handlers">
+<h2>Exception Handlers</h2>
+<p>Minnal defines a bunch of application exceptions that gets translated to meaningful HTTP response codes. These exceptions are defined under the package <tt class="docutils literal"><span class="pre">org.minnal.core.server.exception</span></tt>. Below are some of them, take a look at the exception package for other exception types</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">BadRequestException</span></tt>: &#8211; 400 Bad Request</li>
+<li><tt class="docutils literal"><span class="pre">ConflictException</span></tt>: &#8211; 409 Conflict</li>
+<li><tt class="docutils literal"><span class="pre">MethodNotAllowedException</span></tt>: &#8211; 405 Method Not Allowed</li>
+</ul>
+<div class="section" id="mapping-exceptions">
+<h3>Mapping Exceptions</h3>
+<p>You can map your exceptions to an application exception. You have to override the method mapExceptions() in the application class to do this</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;</span> <span class="o">{</span>
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">mapExceptions</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">addExceptionMapping</span><span class="o">(</span><span class="n">PersistenceException</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">BadRequestException</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">mapExceptions</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="plugins">
+<h2>Plugins</h2>
+<p>Plugin hooks into the lifecycle of an application. Minnal invokes the plugin when an application is initialized or destroyed. Creating a plugin is fairly simple, you will just have to implement the interface <tt class="docutils literal"><span class="pre">org.minnal.core.Plugin</span></tt></p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyPlugin</span> <span class="kd">implements</span> <span class="n">Plugin</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">Application</span> <span class="n">application</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Initializing the plugin&quot;</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">destroy</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Destroying the plugin&quot;</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="register-plugin-to-application">
+<h3>Register Plugin to Application</h3>
+<p>You can register a plugin in the registerPlugins() method of the application class</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;</span> <span class="o">{</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">registerPlugins</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">registerPlugin</span><span class="o">(</span><span class="k">new</span> <span class="n">MyPlugin</span><span class="o">());</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">The registered plugins will be invoked in the same order they are registered</p>
+</div>
+</div>
+</div>
+<div class="section" id="bundles">
+<h2>Bundles</h2>
+<p>Bundles hook into the life cycle of the container. Bundle gets access to the container. The container invokes the bundle when the container is initialized, started, stopped. To create a bundle, simply implement the interface <tt class="docutils literal"><span class="pre">org.minnal.core.Bundle</span></tt></p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyBundle</span> <span class="kd">implements</span> <span class="n">Bundle</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">Container</span> <span class="n">container</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Intializing the bundle&quot;</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">start</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Starting the bundle&quot;</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">stop</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Stopping the bundle&quot;</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="add-bundle-to-container">
+<h3>Add Bundle to Container</h3>
+<p>To add a bundle to the container, you will have to add the bundle class to the SPI of <tt class="docutils literal"><span class="pre">org.minnal.core.Bundle</span></tt> under <em>META-INF/</em> folder,</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">com.example.MyBundle</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="application-context">
+<h2>Application Context</h2>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, Ganesh Subramanian.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2b1.<br/>
+    </p>
+  </div>
+</footer>
+
+  </body>
+</html>
