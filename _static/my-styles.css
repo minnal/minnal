@@ -82,7 +82,7 @@ p.rubric {
 
 .bs-sidenav ul li {
 	list-style-type: disc;
-	display: list-item;
+	/*display: list-item;*/
 	list-style-position: inside;
 }
 
