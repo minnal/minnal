@@ -1,0 +1,31 @@
+# The name of the container
+name: My Container
+
+# The base path to use for the routes from all the applications
+basePath: /
+
+# Http server configuration
+server:
+  connectors:
+    - port: 8080
+      scheme: http
+     - port: 8443
+      scheme: https
+      ssl:
+        keyStoreFile: /Users/ganeshs/keystore.jks
+        keyStorePassword: password
+        keyPassword: secret
+
+# The default http media type that this container would support. Can be overridden by applications
+defaultMediaType: application/json
+
+# The serializers to use for the supported media types
+serializers:
+  application/json:
+    class: org.minnal.core.serializer.DefaultJsonSerializer
+
+# The mount points for the applications. If you just have one application in the container,
+# you can skip this configuration. Defaults to the path '/'
+mounts:
+  com.shopping.cart.ShoppingCartApplication: /
+

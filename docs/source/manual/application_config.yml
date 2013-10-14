@@ -1,0 +1,31 @@
+# The name of the application
+name: shopping_cart
+
+db:
+  driverClass: com.mysql.jdbc.Driver
+  url: jdbc:mysql://localhost/facilities
+  username: root
+  providerProperties:
+    hibernate.ejb.naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    hibernate.show_sql: true
+    hibernate.format_sql: false
+    hibernate.current_session_context_class: thread
+    hibernate.dialect: org.hibernate.dialect.MySQLDialect
+  packagesToScan:
+    - com.ekl.facilities
+    - org.minnal.security.session
+    - org.minnal.security.auth.cas
+packagesToScan:
+  - com.ekl.facilities
+security:
+  casConfiguration:
+    casServerUrl: https://localhost:8443
+    casProxyCallbackUrl: https://localhost:8083/facilities/casCallbackProxy
+    ticketStorage:
+      class: org.minnal.security.auth.cas.JpaPgtStorage
+  sessionStore:
+    class: org.minnal.security.session.JpaSessionStore
+  sessionExpiryTimeInSecs: 300
+  whiteListedUrls:
+    - /appstatus
+enableAuthentication: false
