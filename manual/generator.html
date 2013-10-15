@@ -149,13 +149,20 @@
 </ul>
 </li>
 <li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Generator</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#create-project">Create Project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-new-project">Create New Project</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#generate-models">Generate Models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#generate-tests">Generate Tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#start-server">Start Server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#other-options">Other Options</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#using-swagger-ui">Using Swagger UI</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="metrics.html">Minnal Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#response-time-collector">Response Time Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#datasource-stats-collector">Datasource Stats Collector</a></li>
 <li class="toctree-l4"><a class="reference internal" href="metrics.html#jmx-reporter">JMX Reporter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="metrics.html#graphite-reporter">Graphite Reporter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="metrics.html#custom-reporters">Custom Reporters</a></li>
@@ -251,9 +258,11 @@
 <li class="toctree-l3"><a class="reference internal" href="instrumentation.html">Minnal Instrumentation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="security.html">Minnal Security</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Generator</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#create-project">Create Project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-new-project">Create New Project</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#generate-models">Generate Models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#generate-tests">Generate Tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#start-server">Start Server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#other-options">Other Options</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a></li>
@@ -277,14 +286,139 @@
       
   <div class="section" id="minnal-generator">
 <span id="manual-gen"></span><h1>Minnal Generator</h1>
-<div class="section" id="create-project">
-<h2>Create Project</h2>
+<p>Minnal Generator provides a command line utility to generate the constructs of <em>Minnal</em>. The generator comes packaged as a binary. Click <a class="reference external" href="http://minnal.github.io/minnal/getting-started.html#installing-minnal">here</a> for instructions on installing the generator binary.</p>
+<div class="section" id="create-new-project">
+<h2>Create New Project</h2>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="highlight"><pre><span class="nv">$ </span>minnal -help new
+
+Create a new minnal project
+Usage: new <span class="o">[</span>options<span class="o">]</span> The name of the project to create
+  Options:
+    -basedir
+       The dir under which the project has to be created
+       Default: /Volumes/data/flipkart/experiments/minnal/minnal-generator
+    -noadmin
+       Exclude admin application
+       Default: <span class="nb">false</span>
+    -noinst
+       Exclude instrumenation bundle
+       Default: <span class="nb">false</span>
+    -nojpa
+       Exclude Jpa plugin
+       Default: <span class="nb">false</span>
+    -version
+       The minnal version to use
+       Default: 1.0.4
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="generate-models">
 <h2>Generate Models</h2>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="nv">$ </span>minnal -help generate-model
+
+Generates a model class
+Usage: generate-model<span class="o">(</span>generate<span class="o">)</span> <span class="o">[</span>options<span class="o">]</span> The name of the model to create
+  Options:
+    -aggregateRoot
+       Is this model an aggregate root?
+       Default: <span class="nb">false</span>
+    -fields
+       The fields in the model. Format name:type:searchable. Type is the java
+       <span class="nb">type </span>of the field <span class="o">(</span>string, integer, long, short, char, double, float, date,
+       timestamp, boolean<span class="o">)</span>. Searchable is a boolean that specifies <span class="k">if </span>the field is a
+       searchable field
+    -projectDir
+       The project directory
+       Default: /Volumes/data/flipkart/experiments/minnal/minnal-generator
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="generate-tests">
 <h2>Generate Tests</h2>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="nv">$ </span>minnal -help generate-tests
+
+Generates the resource tests
+Usage: generate-tests <span class="o">[</span>options<span class="o">]</span>
+  Options:
+    -packages
+       The list of packages
+       Default: <span class="o">[]</span>
+    -projectDir
+       The project directory
+       Default: /Volumes/data/flipkart/experiments/minnal/minnal-generator
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="start-server">
+<h2>Start Server</h2>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="nv">$ </span>minnal -help start
+
+Start the minnal project
+Usage: start <span class="o">[</span>options<span class="o">]</span> The minnal project directory
+  Options:
+    -projectDir
+       The project directory
+       Default: /Volumes/data/flipkart/experiments/minnal/minnal-generator
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="other-options">
+<h2>Other Options</h2>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">Debug</span></tt> - Include -debug to enable DEBUG level</li>
+<li><tt class="docutils literal"><span class="pre">Trace</span></tt> - Include -trace to enable TRACE level</li>
+</ul>
 </div>
 </div>
 

@@ -149,13 +149,20 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="generator.html">Minnal Generator</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="generator.html#create-project">Create Project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#create-new-project">Create New Project</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generator.html#generate-models">Generate Models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generator.html#generate-tests">Generate Tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#start-server">Start Server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#other-options">Other Options</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#using-swagger-ui">Using Swagger UI</a></li>
+</ul>
+</li>
 <li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#response-time-collector">Response Time Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#datasource-stats-collector">Datasource Stats Collector</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#jmx-reporter">JMX Reporter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphite-reporter">Graphite Reporter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#custom-reporters">Custom Reporters</a></li>
@@ -253,6 +260,8 @@
 <li class="toctree-l3"><a class="reference internal" href="generator.html">Minnal Generator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#response-time-collector">Response Time Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#datasource-stats-collector">Datasource Stats Collector</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#jmx-reporter">JMX Reporter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#graphite-reporter">Graphite Reporter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#custom-reporters">Custom Reporters</a></li>
@@ -278,17 +287,135 @@
       
   <div class="section" id="minnal-metrics">
 <span id="manual-metric"></span><h1>Minnal Metrics</h1>
+<p>Metrics bundle hooks into the container and collects statistics at application level. Minnal metrics internally uses <a class="reference external" href="http://metrics.codahale.com/">Yammer&#8217;s metric</a> library and allows you to log the metrics using multiple reporters.</p>
+<p>To enable metrics in your service, add minnal-metrics to your maven dependencies.</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>org.minnal<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>minnal-metrics<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>And enable one or more reporters in the container configuration. You will have to overirde the bundle configuration for metrics bundle. Below code shows a sample configuration</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># You can override the bundle configurations using bundleOverrides</span>
+<span class="l-Scalar-Plain">bundleOverrides</span><span class="p-Indicator">:</span>
+  <span class="c1"># The key is the fully qualified name of the bundle class</span>
+  <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundle</span><span class="p-Indicator">:</span>
+    <span class="c1"># The configuration class must be specified to override the properties</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundleConfiguration</span>
+    <span class="l-Scalar-Plain">enableJmxReporter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="response-time-collector">
+<h2>Response Time Collector</h2>
+<p>The Response time collector collects the response times at route level for each of the applications.  It also computes the max, min, mean, rate and percentile information for every route. The collected metrics are logged via the configured Reporters for every incoming request.</p>
+<div class="section" id="metric-key">
+<h3>Metric Key</h3>
+<p>The metric key is a combination of application name and the route pattern. For instance, if the route pattern is <tt class="docutils literal"><span class="pre">GET</span> <span class="pre">/shopping_carts/{id}/shopping_cart_items</span></tt> and the application name is <em>shoppingcarts</em>, then the metric key will be</p>
+<blockquote>
+<div>shoppingcarts.shopping_carts.id.shopping_cart_items.GET.responseTime</div></blockquote>
+</div>
+</div>
+<div class="section" id="datasource-stats-collector">
+<h2>Datasource Stats Collector</h2>
+<p>The Datasource collector collects the connection pool statistics like <strong>active/idle/total connections</strong>, <strong>failed checkins/checkouts/idle tests</strong>, <strong>uptime</strong> etc. and logs them when requested by the reporters.</p>
+<div class="section" id="id1">
+<h3>Metric Key</h3>
+<p>The datasource metrics are logged using the key,</p>
+<blockquote>
+<div>&lt;application-name&gt;.datasource</div></blockquote>
+</div>
+</div>
 <div class="section" id="jmx-reporter">
 <h2>JMX Reporter</h2>
+<p>JMX Reporter can be enabled from container configuration.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># You can override the bundle configurations using bundleOverrides</span>
+<span class="l-Scalar-Plain">bundleOverrides</span><span class="p-Indicator">:</span>
+  <span class="c1"># The key is the fully qualified name of the bundle class</span>
+  <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundle</span><span class="p-Indicator">:</span>
+    <span class="c1"># The configuration class must be specified to override the properties</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundleConfiguration</span>
+    <span class="l-Scalar-Plain">enableJmxReporter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</pre></div>
+</td></tr></table></div>
+<p>You can view metrics under the JMX domain <tt class="docutils literal"><span class="pre">metrics</span></tt> using Jconsole.</p>
 </div>
 <div class="section" id="graphite-reporter">
 <h2>Graphite Reporter</h2>
+<p>Graphite Reporter can also be enabled from container configuration. It allows you to customize the graphite host/port, key prefix and poll period.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># You can override the bundle configurations using bundleOverrides</span>
+<span class="l-Scalar-Plain">bundleOverrides</span><span class="p-Indicator">:</span>
+  <span class="c1"># The key is the fully qualified name of the bundle class</span>
+  <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundle</span><span class="p-Indicator">:</span>
+    <span class="c1"># The configuration class must be specified to override the properties</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundleConfiguration</span>
+    <span class="l-Scalar-Plain">enableJmxReporter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+    <span class="l-Scalar-Plain">enableGraphiteReporter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+    <span class="l-Scalar-Plain">graphiteReporterConfiguration</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">graphiteHost</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">127.0.0.1</span>
+      <span class="l-Scalar-Plain">graphitePort</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2003</span>
+      <span class="c1"># The prefix string to prepend to the keys</span>
+      <span class="l-Scalar-Plain">prefix</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_prefix</span>
+      <span class="c1"># The time interval in seconds to push the metrics to graphite</span>
+      <span class="l-Scalar-Plain">pollPeriodInSecs</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">10</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="custom-reporters">
 <h2>Custom Reporters</h2>
+<p>The current design doesn&#8217;t allow you to create custom reporters in an elegant way. Please raise an issue about your requirement, we will take it up.</p>
+<p>Take a look at the class <tt class="docutils literal"><span class="pre">org.minnal.metrics.DataSourcePoolMetricCollector</span></tt> for inspiration.</p>
 </div>
 <div class="section" id="publishing-app-metrics">
 <h2>Publishing App Metrics</h2>
+<p>You can also publish you application specific metrics using <em>Minnal Metrics</em>. Minnal creates a MetricRegistry per application to which you can publish your metrics. Below is a demonstration of this functionality.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">MetricRegistry</span> <span class="n">metricRegistry</span> <span class="o">=</span> <span class="n">MetricRegistries</span><span class="o">.</span><span class="na">getRegistry</span><span class="o">(</span><span class="n">application</span><span class="o">.</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">getName</span><span class="o">());</span>
+<span class="n">metricRegistry</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">MetricRegistry</span><span class="o">.</span><span class="na">name</span><span class="o">(</span><span class="n">application</span><span class="o">.</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">getName</span><span class="o">(),</span> <span class="s">&quot;orders&quot;</span><span class="o">,</span> <span class="s">&quot;shipped&quot;</span><span class="o">),</span>
+<span class="k">new</span> <span class="n">Gauge</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">getValue</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">Orders</span><span class="o">.</span><span class="na">count</span><span class="o">(</span><span class="s">&quot;status&quot;</span><span class="o">,</span> <span class="s">&quot;shipped&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="o">);</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 </div>
 

@@ -149,13 +149,20 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="generator.html">Minnal Generator</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="generator.html#create-project">Create Project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#create-new-project">Create New Project</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generator.html#generate-models">Generate Models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generator.html#generate-tests">Generate Tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#start-server">Start Server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#other-options">Other Options</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#using-swagger-ui">Using Swagger UI</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="metrics.html">Minnal Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#response-time-collector">Response Time Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#datasource-stats-collector">Datasource Stats Collector</a></li>
 <li class="toctree-l4"><a class="reference internal" href="metrics.html#jmx-reporter">JMX Reporter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="metrics.html#graphite-reporter">Graphite Reporter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="metrics.html#custom-reporters">Custom Reporters</a></li>
@@ -277,23 +284,110 @@
       
   <div class="section" id="minnal-security">
 <span id="manual-sec"></span><h1>Minnal Security</h1>
+<p>The security module comes up with a couple of pre-defined authenticators and also allows you to extend and create custom authenticators. The authenticator takes in a <tt class="docutils literal"><span class="pre">credential</span></tt>, validates it and returns back a <tt class="docutils literal"><span class="pre">principal</span></tt>. The credential can be username/password or an auth token and the principal will be the user object.</p>
+<p>This module uses a session store for storing the auth tokens. Once an user is authenticated, minnal creates a session for the user and a session token will be returned back to the caller as a cookie. The subsequent calls should send the session token in the request cookie for authenticity.</p>
+<p>The security is configured at application level. Below is a sample security configuration of an application.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">casConfiguration</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">casServerUrl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://localhost:8443</span>
+    <span class="l-Scalar-Plain">casProxyCallbackUrl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://localhost:8083/facilities/casCallbackProxy</span>
+    <span class="l-Scalar-Plain">ticketStorage</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.auth.cas.JpaPgtStorage</span>
+  <span class="l-Scalar-Plain">sessionStore</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.session.JpaSessionStore</span>
+  <span class="l-Scalar-Plain">sessionExpiryTimeInSecs</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">300</span>
+</pre></div>
+</td></tr></table></div>
 <div class="section" id="session-store">
 <h2>Session Store</h2>
+<p>The session store stores the user sessions. A session is a bunch of key-value attributes and maps the session token with an auth token. The security module comes with an inbuilt <tt class="docutils literal"><span class="pre">org.minnal.security.session.JpaSessionStore</span></tt> that stores the sessions in a database table.</p>
+<p>You can change the sesison store from the security configuration of the application.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">sessionStore</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.session.JpaSessionStore</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="authenticators">
 <h2>Authenticators</h2>
+<p><em>Authenticators</em> are the one that actually authenticate the incoming requests based on a strategy. Minnal comes with a <a class="reference external" href="https://github.com/Jasig/cas">CAS</a> authenticator and allows you to build custom ones.</p>
 <div class="section" id="cas-authenticator">
 <h3>CAS Authenticator</h3>
+<p>The CAS authenticator uses <cite>Jasig client library &lt;https://github.com/Jasig/cas&gt;</cite> to talk to the CAS server. It takes in a <tt class="docutils literal"><span class="pre">session/proxy</span> <span class="pre">ticket</span></tt> as credential and validates it against the request path. If they match, returns the CAS user that was originally authenticated. You can configure the authenticator in the security configuration of your application.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">casConfiguration</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">casServerUrl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://localhost:8443</span>
+    <span class="l-Scalar-Plain">casProxyCallbackUrl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://localhost:8083/facilities/casCallbackProxy</span>
+    <span class="l-Scalar-Plain">ticketStorage</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.auth.cas.JpaPgtStorage</span>
+  <span class="l-Scalar-Plain">sessionStore</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.session.JpaSessionStore</span>
+  <span class="l-Scalar-Plain">sessionExpiryTimeInSecs</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">300</span>
+</pre></div>
+</td></tr></table></div>
+<p>To enable CAS authentication for your application, you will have to register CasPlugin in your application.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">registerPlugins</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">getConfiguration</span><span class="o">().</span><span class="na">getSecurityConfiguration</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registerPlugin</span><span class="o">(</span><span class="k">new</span> <span class="n">CasPlugin</span><span class="o">(</span><span class="n">getConfiguration</span><span class="o">().</span><span class="na">getSecurityConfiguration</span><span class="o">()));</span>
+        <span class="o">}</span>
+        <span class="n">registerPlugin</span><span class="o">(</span><span class="k">new</span> <span class="n">JPAPlugin</span><span class="o">());</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
 <div class="section" id="ticket-store">
 <h4>Ticket Store</h4>
+<p>Minnal comes with a database store <tt class="docutils literal"><span class="pre">org.minnal.security.auth.cas.JpaPgtStorage</span></tt> for storing the proxy granting tickets. You can also provide a custom storage via the configuration by extending <tt class="docutils literal"><span class="pre">org.jasig.cas.client.proxy.ProxyGrantingTicketStorage</span></tt></p>
 </div>
 </div>
 <div class="section" id="custom-authenticators">
 <h3>Custom Authenticators</h3>
+<p>Creating authenticators is simple. You will have to implement the interface <tt class="docutils literal"><span class="pre">org.minnal.security.auth.Authenticator</span></tt> and configure it in the security configuration of your application.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Authenticator</span><span class="o">&lt;</span><span class="n">C</span> <span class="kd">extends</span> <span class="n">Credential</span><span class="o">,</span> <span class="n">P</span> <span class="kd">extends</span> <span class="n">Principal</span><span class="o">&gt;</span> <span class="o">{</span>
+
+        <span class="n">P</span> <span class="nf">authenticate</span><span class="o">(</span><span class="n">C</span> <span class="n">credential</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 </div>
 <div class="section" id="white-listing-urls">
 <h2>White listing urls</h2>
+<p>You can whitelist the urls that you don&#8217;t want to be autneticated by adding them to <tt class="docutils literal"><span class="pre">whiteListedUrls</span></tt> in configuration. Typical use cases are publicly visible files, health check urls etc.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">whiteListedUrls</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">/appstatus</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 </div>
 
