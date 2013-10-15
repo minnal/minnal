@@ -50,9 +50,10 @@ public class MinnalGenerator {
 			jc.parse(args);
 		} catch (ParameterException e) {
 			logger.debug("Failed while parsing the args " + args, e);
-			jc.usage();
+			showHelp(jc.getParsedCommand());
 			return;
 		}
+		
 		if (this.args.isTrace()) {
 			LogManager.getRootLogger().setLevel(Level.TRACE);
 		} else if (this.args.isDebug()) {
@@ -62,16 +63,12 @@ public class MinnalGenerator {
 		String command = jc.getParsedCommand();
 		if (Strings.isNullOrEmpty(command)) {
 			logger.debug("Command is missing. Please specify a command");
-			jc.usage();
+			showHelp(command);
 			return;
 		}
 		
 		if (this.args.isHelp()) {
-			if (command != null) {
-				jc.usage(command);
-			} else {
-				jc.usage();
-			}
+			showHelp(command);
 			return;
 		}
 		
@@ -93,6 +90,15 @@ public class MinnalGenerator {
 		}
 	}
 	
+	private void showHelp(String command) {
+		if (! Strings.isNullOrEmpty(command)) {
+			jc.usage(command);
+		} else {
+			jc.usage();
+		}
+		return;
+	}
+	
 	protected void run(Command command) {
 		try {
 			command.execute();
@@ -105,6 +111,7 @@ public class MinnalGenerator {
 	}
 
 	public static void main(String[] args) {
+		args = new String[]{"-help", "start"};
 		MinnalGenerator generator = new MinnalGenerator();
 		generator.process(args);
 	}

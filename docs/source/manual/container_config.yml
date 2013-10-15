@@ -29,3 +29,19 @@ serializers:
 mounts:
   com.shopping.cart.ShoppingCartApplication: /
 
+# You can override the bundle configurations using bundleOverrides
+bundleOverrides:
+  # The key is the fully qualified name of the bundle class
+  org.minnal.metrics.MetricsBundle:
+    # The configuration class must be specified to override the properties
+    class: org.minnal.metrics.MetricsBundleConfiguration
+    enableJmxReporter: true
+    enableGraphiteReporter: true
+    graphiteReporterConfiguration:
+      graphiteHost: 127.0.0.1
+      graphitePort: 2003
+      # The prefix string to prepend to the keys
+      prefix: my_prefix
+      # The time interval in seconds to push the metrics to graphite
+      pollPeriodInSecs: 10
+

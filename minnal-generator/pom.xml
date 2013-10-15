@@ -28,16 +28,16 @@
 			<artifactId>javalite-common</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.beust</groupId>
-			<artifactId>jcommander</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.minnal</groupId>
 			<artifactId>minnal-instrumentation</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jdt</groupId>
 			<artifactId>core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -70,7 +70,7 @@
 			<dependency>
 				<groupId>com.beust</groupId>
 				<artifactId>jcommander</artifactId>
-				<version>1.30</version>
+				<version>1.32</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>

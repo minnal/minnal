@@ -25,7 +25,7 @@ The configuration is loaded from a *container.yml* file located under *META-INF/
 .. literalinclude:: container_config.yml
 	:language: yaml
 	:linenos:
-	:lines: 1-11,18-
+	:lines: 1-11,18-30
 
 .. highlight:: text
 
