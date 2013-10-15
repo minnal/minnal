@@ -135,6 +135,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Instrumentation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#resources">Resources</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sub-resources">Sub-Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exclude-routes">Exclude Routes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#overriding-routes">Overriding Routes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#search-params">Search Params</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#actions">Actions</a></li>
@@ -258,6 +259,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Instrumentation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#resources">Resources</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sub-resources">Sub-Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exclude-routes">Exclude Routes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#overriding-routes">Overriding Routes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#search-params">Search Params</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#actions">Actions</a></li>
@@ -305,27 +307,335 @@
 <h4>Delete</h4>
 </div>
 </div>
-<div class="section" id="exclude-routes">
-<h3>Exclude Routes</h3>
-</div>
 </div>
 <div class="section" id="sub-resources">
 <h2>Sub-Resources</h2>
+</div>
+<div class="section" id="exclude-routes">
+<h2>Exclude Routes</h2>
+<p>You can optionally exclude some of the routes from being exposed as an API. For instance, you may not want to support a DELETE operation on your resource or an UPDATE operation on your sub-resources. The <tt class="docutils literal"><span class="pre">&#64;AggregateRoot</span></tt> annotation takes in optional parameters to exclude crud operations for root resource.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// This aggregate root will expose only read apis</span>
+<span class="nd">@Entity</span>
+<span class="nd">@AggregateRoot</span><span class="o">(</span><span class="n">create</span><span class="o">=</span><span class="kc">true</span><span class="o">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">read</span><span class="o">=</span><span class="kc">true</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">Model</span> <span class="o">{</span>
+
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>In the above case, the <em>Order</em> resource will only expose create &amp; read operations and update/delete will be blocked.</p>
+<p>Exclusion can also be done at the collection (sub-resource) level. You will have to annotate your collections using <tt class="docutils literal"><span class="pre">&#64;Collection</span></tt> annotation and override the crud values for the colleciton.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// This aggregate root will expose only read apis</span>
+<span class="nd">@Entity</span>
+<span class="nd">@AggregateRoot</span><span class="o">(</span><span class="n">create</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">read</span><span class="o">=</span><span class="kc">true</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">Model</span> <span class="o">{</span>
+
+   <span class="c1">// The order items collection read api wont be exposed</span>
+   <span class="nd">@Collection</span><span class="o">(</span><span class="n">read</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">false</span><span class="o">)</span>
+   <span class="kd">private</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">OrderItem</span><span class="o">&gt;</span> <span class="n">orderItems</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>In this case, the <em>OrderItem</em> sub-resource will expose only create API. Others will be blocked.</p>
 </div>
 <div class="section" id="overriding-routes">
 <h2>Overriding Routes</h2>
 </div>
 <div class="section" id="search-params">
 <h2>Search Params</h2>
+<p>Search is one of the key functionalities in a web service. Minnal offers sophisticated solution for searching through entities through its <tt class="docutils literal"><span class="pre">&#64;Searchable</span></tt> annotation. You can mark the fields in your entity that you want to be searchable with <em>&#64;Searchable</em> annotation and minnal would start expecting them in the query params. Minnal makes use of <a class="reference external" href="https://github.com/ActiveJpa/activejpa">ActiveJpa filters</a> internally to search the entities.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Entity</span>
+<span class="nd">@AggregateRoot</span>
+<span class="nd">@Access</span><span class="o">(</span><span class="n">AccessType</span><span class="o">.</span><span class="na">FIELD</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">BaseDomain</span> <span class="o">{</span>
+
+        <span class="nd">@OneToMany</span>
+        <span class="nd">@JoinColumn</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;orderId&quot;</span><span class="o">)</span>
+        <span class="kd">private</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">OrderItem</span><span class="o">&gt;</span> <span class="n">orderItems</span><span class="o">;</span>
+
+        <span class="nd">@Searchable</span>
+        <span class="kd">private</span> <span class="n">String</span> <span class="n">customerEmail</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>In the Order resource above, the field <em>customerEmail</em> is marked as searchable and would eventually show up in the GET APIs of order resource. You should be able to filter orders by customer&#8217;s email by passing on the email in the query params.</p>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># Returns all the orders for the customer with email id &#39;ganeshs@flipkart.com&#39;</span>
+GET /orders?customer_email<span class="o">=</span>ganeshs@flipkart.com
+
+<span class="c"># Checks if order id 1000 was ordered by ganeshs@flipkart.com</span>
+GET /orders/1000?customer_email<span class="o">=</span>ganeshs@flipkart.com
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="nested-search-params">
+<h3>Nested Search Params</h3>
+<p>You can also filter parent records based on child&#8217;s data. Minnal allows nesting of query parameters, means you should be able to get all orders that has items with certain categiry <tt class="docutils literal"><span class="pre">?orders.order_items.category=books</span></tt>. This is achieved by marking the fields in child entities with <em>&#64;Searchable</em>,</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Entity</span>
+<span class="nd">@AggregateRoot</span>
+<span class="nd">@Access</span><span class="o">(</span><span class="n">AccessType</span><span class="o">.</span><span class="na">FIELD</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">BaseDomain</span> <span class="o">{</span>
+
+        <span class="nd">@OneToMany</span>
+        <span class="nd">@JoinColumn</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;orderId&quot;</span><span class="o">)</span>
+        <span class="kd">private</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">OrderItem</span><span class="o">&gt;</span> <span class="n">orderItems</span><span class="o">;</span>
+
+        <span class="nd">@Searchable</span>
+        <span class="kd">private</span> <span class="n">String</span> <span class="n">customerEmail</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="nd">@Entity</span>
+<span class="nd">@Access</span><span class="o">(</span><span class="n">AccessType</span><span class="o">.</span><span class="na">FIELD</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderItem</span> <span class="kd">extends</span> <span class="n">BaseDomain</span> <span class="o">{</span>
+
+        <span class="nd">@Searchable</span>
+        <span class="kd">private</span> <span class="n">String</span> <span class="n">category</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">&#64;Searchable can be added only on fields that translate to a database column. Adding it on a collection or association or a transient column might lead to SQL errors.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The nested searhc params should include the prefix of the root resource. For instance if the root is <em>/orders</em>, the nested search param should be  prefixed with <em>orders.</em></p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Be aware that Minnal uses underscore convention for resources, search params, payload etc. Using wrong case convention might lead to incorrect results.</p>
+</div>
+</div>
 </div>
 <div class="section" id="actions">
 <h2>Actions</h2>
+<p>Minnal can convert your domain operations to APIs effortlessly. You can mark your domain operations with the annotation <tt class="docutils literal"><span class="pre">&#64;Action</span></tt> to indicate that it has to be exposed as PUT api and minnal will create a route for that method and list them in the APIs.</p>
+<p>Domain Driven Design insists that all the operations in an aggregate go through the root of the aggregate. This ensures data integrity and enforcing invariants. For instance, say you want to cancel an order item in an order, it will be easier to enforce the invariants like <em>allow item cancellation only if order is not yet approved</em>. Or in other words, if your controller invokes <tt class="docutils literal"><span class="pre">orderItem.cancel()</span></tt>, it may not be easy to impose order level invariants to it. But if you call <tt class="docutils literal"><span class="pre">order.cancelOrderItem(orderItem)</span></tt>, you get the flexibility of verifying all the order level invariants before cancelling orderItem.</p>
+<div class="section" id="aggregate-root-action">
+<h3>Aggregate Root Action</h3>
+<p>Below code shows a simple usage of &#64;Action on an order cancel operation.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Action</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">&quot;cancel&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">cancel</span><span class="o">(</span><span class="n">String</span> <span class="n">reason</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">setStatus</span><span class="o">(</span><span class="n">Status</span><span class="o">.</span><span class="na">cancelled</span><span class="o">);</span>
+    <span class="n">setCancellationReason</span><span class="o">(</span><span class="n">reason</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>This would create a route <tt class="docutils literal"><span class="pre">PUT</span> <span class="pre">/orders/{order_id}/cancel</span></tt> that would accept the follwing payload,</p>
+<div class="highlight-javascript"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;reason&quot;</span><span class="o">:</span> <span class="s2">&quot;some cancellation reason&quot;</span><span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Minnal automatically populates the keys in the payload to the method arguments of the domain operation.</p>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">You can control the api name by changing the &#64;Action annotation attribute <em>value</em>.</p>
+</div>
+</div>
+<div class="section" id="aggregate-child-action">
+<h3>Aggregate Child Action</h3>
+<p>In case of actions on an aggregate child entity, you might want the path to be at the child resource level. A cancel operation on order item should have a route <tt class="docutils literal"><span class="pre">PUT</span> <span class="pre">/orders/{order_id}/order_items/{order_item_id}/cancel</span></tt>. You can control the route path by specifying the &#64;Action annotation attribute <em>path</em>. The path should be a relative path from root to the child separated by DOTS. <tt class="docutils literal"><span class="pre">Ex:</span> <span class="pre">orderItems.shipments</span></tt></p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Action</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">&quot;cancel&quot;</span><span class="o">,</span> <span class="n">path</span><span class="o">=</span><span class="s">&quot;orderItems&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">cancelOrderItem</span><span class="o">(</span><span class="n">OrderItem</span> <span class="n">orderItem</span><span class="o">,</span> <span class="n">String</span> <span class="n">reason</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">orderItem</span><span class="o">.</span><span class="na">cancel</span><span class="o">(</span><span class="n">reason</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>This would create a route <tt class="docutils literal"><span class="pre">PUT</span> <span class="pre">/orders/{order_id}/order_items/{order_item_id}/cancel</span></tt> that would accept the follwing payload,</p>
+<div class="highlight-javascript"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="p">{</span><span class="s2">&quot;reason&quot;</span><span class="o">:</span> <span class="s2">&quot;some cancellation reason&quot;</span><span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Minnal automatically populates the orderItem in the method argument from the request path and method arguments from the payload.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Bulk operations are not supported currently.</p>
+</div>
+</div>
 </div>
 <div class="section" id="pagination">
 <h2>Pagination</h2>
+<p>Minnal has an <em>out-of-the-box</em> support for pagination. You can pass on the page number and per page count with any GET request to filter of the result. Below code shows a sample pagination request and resposne.</p>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre>GET /orders?customer_email<span class="o">=</span>ganeshs@flipkart.com&amp;page<span class="o">=</span>1&amp;per_page<span class="o">=</span>10
+
+<span class="o">{</span>
+   <span class="s2">&quot;page&quot;</span>: 1,
+   <span class="s2">&quot;per_page&quot;</span>: 10,
+   <span class="s2">&quot;total&quot;</span>: 125,
+   <span class="s2">&quot;count&quot;</span>: 10,
+   <span class="s2">&quot;data&quot;</span>:  <span class="o">[]</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If the per_page and page query parameters are not set, the response structure will be different. Only the <em>data</em> part will be present in the resposne. Do ensure that you treat them differently in your clients.</p>
+</div>
 </div>
 <div class="section" id="bulk-operations">
 <h2>Bulk Operations</h2>
+<p>Minnal supports bulk CRUD operations <em>out-of-the-box</em>. They should suffice for most of the use cases but if you feel a need to customize them, you will have to override the functionality.</p>
+<div class="section" id="bulk-create">
+<h3>Bulk Create</h3>
+<p>You can create multiple objects in a single request by passing on an array in the POST body. Minnal will create all the objects in a single transactional scope.</p>
+<div class="highlight-javascript"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre> <span class="nx">POST</span> <span class="o">/</span><span class="nx">orders</span><span class="o">/</span><span class="mi">1</span><span class="o">/</span><span class="nx">order_items</span>
+
+<span class="p">[{</span>
+    <span class="s2">&quot;order_id&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;quantity&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;product_id&quot;</span><span class="o">:</span> <span class="s2">&quot;xyz&quot;</span>
+<span class="p">},</span> <span class="p">{</span>
+    <span class="s2">&quot;order_id&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;quantity&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;product_id&quot;</span><span class="o">:</span> <span class="s2">&quot;abc&quot;</span>
+<span class="p">}]</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The response body for the create request will be different for bulk vs single creates. In case of bulk, you will get an array back</p>
+</div>
+</div>
+<div class="section" id="bulk-read">
+<h3>Bulk Read</h3>
+<p>You can ready multiple entities in a single request by passing on comma-separated idntifiers in the request path. Minnal will return back an array of objects matching the identifiers in the response.</p>
+<div class="highlight-javascript"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span class="nx">GET</span> <span class="o">/</span><span class="nx">orders</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span>
+
+<span class="p">[{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;customer_email&quot;</span><span class="o">:</span> <span class="s2">&quot;ganeshs@flipkart.com&quot;</span>
+ <span class="p">},</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;customer_email&quot;</span><span class="o">:</span> <span class="s2">&quot;ganeshs@flipkart.com&quot;</span>
+<span class="p">}]</span>
+
+<span class="nx">GET</span> <span class="o">/</span><span class="nx">orders</span><span class="o">/</span><span class="mi">1</span><span class="o">/</span><span class="nx">order_items</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span><span class="mi">13</span>
+
+<span class="p">[{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s2">&quot;order_id&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;quantity&quot;</span><span class="o">:</span> <span class="mi">1</span>
+ <span class="p">},</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="s2">&quot;order_id&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;quantity&quot;</span><span class="o">:</span> <span class="mi">1</span>
+<span class="p">}]</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The response body for the get request will be different for bulk vs single reads. In case of bulk, you will get an array back</p>
+</div>
+</div>
+<div class="section" id="bulk-update">
+<h3>Bulk Update</h3>
+<p>Like in bulk read, you can pass on a comma-separated identifiers to update them in bulk. The payload in the PUT call will be applied for all the entities. This might be a limitation in some cases, you will have to customize the api in such scenarios. All the entities will be updated in the same transactional scope.</p>
+<div class="highlight-javascript"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="nx">PUT</span> <span class="o">/</span><span class="nx">orders</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span>
+
+<span class="p">{</span>
+  <span class="s2">&quot;customer_email&quot;</span><span class="o">:</span> <span class="s2">&quot;ganeshs@flipkart.com&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="bulk-delete">
+<h3>Bulk Delete</h3>
+<p>Bulk delete is similar to bulk retrieval, just pass on comma-separated identifiers that you want to delete.</p>
+<div class="highlight-javascript"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="nx">DELETE</span> <span class="o">/</span><span class="nx">orders</span><span class="o">/</span><span class="mi">1</span><span class="o">/</span><span class="nx">order_items</span><span class="o">/</span><span class="mi">12</span><span class="p">,</span><span class="mi">13</span>
+</pre></div>
+</td></tr></table></div>
+</div>
 </div>
 </div>
 
