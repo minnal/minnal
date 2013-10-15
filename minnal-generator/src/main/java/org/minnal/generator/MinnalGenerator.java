@@ -111,7 +111,6 @@ public class MinnalGenerator {
 	}
 
 	public static void main(String[] args) {
-		args = new String[]{"-help", "start"};
 		MinnalGenerator generator = new MinnalGenerator();
 		generator.process(args);
 	}
