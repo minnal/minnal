@@ -290,26 +290,133 @@
       
   <div class="section" id="minnal-instrumentation">
 <span id="manual-inst"></span><h1>Minnal Instrumentation</h1>
+<p>The instrumentation module is where all the magic happens. Minnal enforces some of the key concepts from Domain Driven Design from within in the framework. The notion of aggregates and aggregate roots is the base of the instrumentation module. Minnal creates the resources and routes around this principle.</p>
 <div class="section" id="resources">
 <h2>Resources</h2>
+<p>Converting your domain models to resources is as simple as marking them with an annotation. The <tt class="docutils literal"><span class="pre">&#64;AggregateRoot</span></tt> annotation instructs minnal to convert the domain model to a resource, construct routes and expose them as API&#8217;s. The only constriant minnal imposes is your domain models should extend <tt class="docutils literal"><span class="pre">org.minnal.jpa.domain.BaseDomain</span></tt> class. This class extends the <tt class="docutils literal"><span class="pre">ActiveJpa</span></tt> Model which is based on ActiveRecord pattern and makes the instrumentation look simpler.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Entity</span>
+<span class="nd">@AggregateRoot</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">BaseDomain</span> <span class="o">{</span>
+
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>The resource name is automatically derived from the domain model name. Minnal pluralizes the domain class name and converts them to underscore separated string.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Minnal follows underscore convention for the genrated apis and recommends the same convention for the APIs created manually as well</p>
+</div>
 <div class="section" id="crud">
 <h3>CRUD</h3>
+<p>The <tt class="docutils literal"><span class="pre">&#64;Aggregate</span></tt> annotation creates all the CRUD APIs dynamically at the <em>runtime</em>. Minnal creates resource classes at the startup time of the application and maps the routes to the resource methods.</p>
 <div class="section" id="create">
 <h4>Create</h4>
+<p>All the create APIs accept the <tt class="docutils literal"><span class="pre">HTTP</span> <span class="pre">POST</span></tt> method and a payload to create the object. It is must to specify the content-type of the payload in the request. The route for create calls will be of the format,</p>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>POST /&lt;resource-name&gt;
+Content-Type: &lt;content-type-of-payload&gt;
+
+&lt;your-payload&gt;
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="read">
 <h4>Read</h4>
+<p>The read calls can be classified into fetch and search. A fetch operation fetches resources by identifiers and a search operation results in returning multiple entities matching the search criteria. The content-type header is not mandatory for read calls, it defaults to the <tt class="docutils literal"><span class="pre">defaultMediaType</span></tt> property in the configuration.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># The default http media type that this container would support. Can be overridden by applications</span>
+<span class="l-Scalar-Plain">defaultMediaType</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">application/json</span>
+</pre></div>
+</td></tr></table></div>
+<p>The route for read calls will be of the format,</p>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># Search call</span>
+GET /&lt;resource-name&gt;?&lt;search-param&gt;<span class="o">=</span>&lt;value&gt;&amp;..
+
+<span class="c"># Fetch call</span>
+GET /&lt;resource-name&gt;/<span class="o">{</span>id<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="update">
 <h4>Update</h4>
+<p>Updates are always done at entity level. The content-type header is mandatory for update calls. The route for update calls will be of the format,</p>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>PUT /&lt;resource-name&gt;/<span class="o">{</span>id<span class="o">}</span>
+Content-Type: &lt;content-type-of-payload&gt;
+
+&lt;your-payload&gt;
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="delete">
 <h4>Delete</h4>
+<p>Updates are always done at entity level. The route for update calls will be of the format,</p>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>DELETE /&lt;resource-name&gt;/<span class="o">{</span>id<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 </div>
 </div>
 <div class="section" id="sub-resources">
 <h2>Sub-Resources</h2>
+<p>Minnal identifies the sub-resources by the JPA annotations <tt class="docutils literal"><span class="pre">&#64;OneToMany</span></tt> and <tt class="docutils literal"><span class="pre">&#64;ManyToMany</span></tt>. Any field or getter marked with these annotations will turn into a sub-resource.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Entity</span>
+<span class="nd">@AggregateRoot</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">BaseDomain</span> <span class="o">{</span>
+
+        <span class="nd">@OneToMany</span>
+        <span class="nd">@JoinColumn</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;orderId&quot;</span><span class="o">)</span>
+        <span class="kd">private</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">OrderItem</span><span class="o">&gt;</span> <span class="n">orderItems</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderItem</span> <span class="kd">extends</span> <span class="n">BaseDomain</span> <span class="o">{</span>
+
+        <span class="nd">@OneToMany</span>
+        <span class="nd">@JoinColumn</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;orderItemId&quot;</span><span class="o">)</span>
+        <span class="kd">private</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Attribute</span><span class="o">&gt;</span> <span class="n">attributes</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>In the above example, minnal would create a root resource for orders and two sub-resources one at item level and other at item attribute level.</p>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre>/orders
+/orders/<span class="o">{</span>order_id<span class="o">}</span>/order_items
+/orders/<span class="o">{</span>order_id<span class="o">}</span>/order_items/<span class="o">{</span>order_item_id<span class="o">}</span>/attributes
+</pre></div>
+</td></tr></table></div>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">While dealing with bi-directional associations, you will be seeing stack overflow errors during serialization. This is not a minnal specific issue but an issue with the modeling in general. One of the common practices being followed is to switch off the receiving end in the bi-directional association. Jackson provides a couple of solutions via <tt class="docutils literal"><span class="pre">&#64;JsonIgnore</span></tt> and <tt class="docutils literal"><span class="pre">&#64;&#64;JsonManagedReference</span> <span class="pre">&amp;</span> <span class="pre">&#64;JsonBackReference</span></tt> annotations.</p>
+</div>
 </div>
 <div class="section" id="exclude-routes">
 <h2>Exclude Routes</h2>
@@ -322,7 +429,7 @@
 6</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// This aggregate root will expose only read apis</span>
 <span class="nd">@Entity</span>
 <span class="nd">@AggregateRoot</span><span class="o">(</span><span class="n">create</span><span class="o">=</span><span class="kc">true</span><span class="o">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">read</span><span class="o">=</span><span class="kc">true</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">Model</span> <span class="o">{</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">BaseDomain</span> <span class="o">{</span>
 
 <span class="o">}</span>
 </pre></div>
@@ -340,7 +447,7 @@
 9</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// This aggregate root will expose only read apis</span>
 <span class="nd">@Entity</span>
 <span class="nd">@AggregateRoot</span><span class="o">(</span><span class="n">create</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">read</span><span class="o">=</span><span class="kc">true</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">Model</span> <span class="o">{</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Order</span> <span class="kd">extends</span> <span class="n">BaseDomain</span> <span class="o">{</span>
 
    <span class="c1">// The order items collection read api wont be exposed</span>
    <span class="nd">@Collection</span><span class="o">(</span><span class="n">read</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">false</span><span class="o">)</span>
@@ -352,6 +459,57 @@
 </div>
 <div class="section" id="overriding-routes">
 <h2>Overriding Routes</h2>
+<p>There could be scenarios where you want to provide a custom <cite>create</cite> functionality but use the default ones for the reads and updates. Minnal allows you to override the generated routes to address these cases. Overriding a route is as simple as you implementing a resource method using any other framework. You will have to create a Resource class and implement the overridden route.</p>
+<p>Say, we want to customize the create shopping cart api POST /shopping_carts to do additional stuff while creating the cart. We can override the api by creating a resource class for shopping cart. Minnal will generate all the API’s but for the customized one. Let’s try creating a ShoppingCartResource class under org.minnal.examples.shoppingcart.resources</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">shopping</span><span class="o">.</span><span class="na">cart</span><span class="o">.</span><span class="na">resources</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.minnal.core.resource.Resource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.minnal.core.Request</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.minnal.core.Response</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.shopping.cart.domain.ShoppingCart</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.jboss.netty.handler.code.http.HttpResponseStatus</span><span class="o">;</span>
+
+<span class="c1">// The @Resource annotation tells minnal that this class is resource class.</span>
+<span class="c1">// The value parameter takes in an class that&#39;s marked with @AggregateRoot domain</span>
+<span class="c1">// Minnal will scan for all resources marked with @Resource</span>
+<span class="nd">@Resource</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="n">ShoppingCart</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShoppingCartResource</span> <span class="o">{</span>
+
+  <span class="c1">// We are overriding the api POST /shopping_carts.</span>
+  <span class="c1">// The method name should be the same as that of the one from</span>
+  <span class="c1">// the route definitions at http://localhost:8080/admin/routes/shoppingCart</span>
+  <span class="kd">public</span> <span class="n">ShoppingCart</span> <span class="nf">createShoppingCart</span><span class="o">(</span><span class="n">Request</span> <span class="n">request</span><span class="o">,</span> <span class="n">Response</span> <span class="n">response</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Your custom code here</span>
+    <span class="n">response</span><span class="o">.</span><span class="na">setStatus</span><span class="o">(</span><span class="n">HttpResponseStatus</span><span class="o">.</span><span class="na">OK</span><span class="o">);</span>
+    <span class="c1">// The return value from this method will be set as response content</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>When you customize an API, do make sure that you create a method with the name as defined in the routes definition from <a class="reference external" href="http://localhost:8080/admin/routes/shopping_carts">http://localhost:8080/admin/routes/shopping_carts</a>. And don’t forget to mark the class with &#64;Resource annotation.</p>
+<p>Now all calls to POST /shopping_carts will be hitting our custom resource class.</p>
 </div>
 <div class="section" id="search-params">
 <h2>Search Params</h2>
