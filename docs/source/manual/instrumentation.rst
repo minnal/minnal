@@ -3,27 +3,120 @@
 ======================
 Minnal Instrumentation
 ======================
+The instrumentation module is where all the magic happens. Minnal enforces some of the key concepts from Domain Driven Design from within in the framework. The notion of aggregates and aggregate roots is the base of the instrumentation module. Minnal creates the resources and routes around this principle.
 
 Resources
 =========
+Converting your domain models to resources is as simple as marking them with an annotation. The ``@AggregateRoot`` annotation instructs minnal to convert the domain model to a resource, construct routes and expose them as API's. The only constriant minnal imposes is your domain models should extend ``org.minnal.jpa.domain.BaseDomain`` class. This class extends the ``ActiveJpa`` Model which is based on ActiveRecord pattern and makes the instrumentation look simpler. 
+
+.. code-block:: java
+	:linenos:
+
+	@Entity
+	@AggregateRoot
+	public class Order extends BaseDomain {
+
+	}
+
+The resource name is automatically derived from the domain model name. Minnal pluralizes the domain class name and converts them to underscore separated string.
+
+.. note::
+
+	Minnal follows underscore convention for the genrated apis and recommends the same convention for the APIs created manually as well
 
 CRUD
 ----
+The ``@Aggregate`` annotation creates all the CRUD APIs dynamically at the *runtime*. Minnal creates resource classes at the startup time of the application and maps the routes to the resource methods. 
 
 Create
 ~~~~~~
+All the create APIs accept the ``HTTP POST`` method and a payload to create the object. It is must to specify the content-type of the payload in the request. The route for create calls will be of the format,
+
+.. code-block:: bash
+	:linenos:
+
+	POST /<resource-name>
+	Content-Type: <content-type-of-payload>
+
+	<your-payload>
 
 Read
 ~~~~
+The read calls can be classified into fetch and search. A fetch operation fetches resources by identifiers and a search operation results in returning multiple entities matching the search criteria. The content-type header is not mandatory for read calls, it defaults to the ``defaultMediaType`` property in the configuration. 
+
+.. literalinclude:: container_config.yml
+	:language: yaml
+	:linenos:
+	:lines: 19-20
+
+The route for read calls will be of the format,
+
+.. code-block:: bash
+	:linenos:
+
+	# Search call
+	GET /<resource-name>?<search-param>=<value>&.. 
+	
+	# Fetch call
+	GET /<resource-name>/{id}
 
 Update
 ~~~~~~
+Updates are always done at entity level. The content-type header is mandatory for update calls. The route for update calls will be of the format,
+
+.. code-block:: bash
+	:linenos:
+
+	PUT /<resource-name>/{id}
+	Content-Type: <content-type-of-payload>
+
+	<your-payload>
 
 Delete
 ~~~~~~
+Updates are always done at entity level. The route for update calls will be of the format,
+
+.. code-block:: bash
+	:linenos:
+
+	DELETE /<resource-name>/{id}
 
 Sub-Resources
 =============
+Minnal identifies the sub-resources by the JPA annotations ``@OneToMany`` and ``@ManyToMany``. Any field or getter marked with these annotations will turn into a sub-resource.
+
+.. code-block:: java
+	:linenos:
+
+	@Entity
+	@AggregateRoot
+	public class Order extends BaseDomain {
+
+		@OneToMany
+		@JoinColumn(name="orderId")
+		private Set<OrderItem> orderItems;
+	}
+
+	@Entity
+	public class OrderItem extends BaseDomain {
+
+		@OneToMany
+		@JoinColumn(name="orderItemId")
+		private Set<Attribute> attributes;
+	}
+
+In the above example, minnal would create a root resource for orders and two sub-resources one at item level and other at item attribute level.
+
+.. code-block:: bash
+	:linenos:
+
+	/orders
+	/orders/{order_id}/order_items 
+	/orders/{order_id}/order_items/{order_item_id}/attributes
+
+.. hint::
+	
+	While dealing with bi-directional associations, you will be seeing stack overflow errors during serialization. This is not a minnal specific issue but an issue with the modeling in general. One of the common practices being followed is to switch off the receiving end in the bi-directional association. Jackson provides a couple of solutions via ``@JsonIgnore`` and ``@@JsonManagedReference & @JsonBackReference`` annotations.
 
 Exclude Routes
 ==============
@@ -35,7 +128,7 @@ You can optionally exclude some of the routes from being exposed as an API. For 
 	// This aggregate root will expose only read apis
 	@Entity
 	@AggregateRoot(create=true, update=false, delete=false, read=true)
-	public class Order extends Model {
+	public class Order extends BaseDomain {
 
 	}
 
@@ -49,7 +142,7 @@ Exclusion can also be done at the collection (sub-resource) level. You will have
 	// This aggregate root will expose only read apis
 	@Entity
 	@AggregateRoot(create=false, update=false, delete=false, read=true)
-	public class Order extends Model {
+	public class Order extends BaseDomain {
 
 	   // The order items collection read api wont be exposed
 	   @Collection(read=false, delete=false, update=false)
@@ -60,6 +153,40 @@ In this case, the *OrderItem* sub-resource will expose only create API. Others w
 
 Overriding Routes
 =================
+There could be scenarios where you want to provide a custom `create` functionality but use the default ones for the reads and updates. Minnal allows you to override the generated routes to address these cases. Overriding a route is as simple as you implementing a resource method using any other framework. You will have to create a Resource class and implement the overridden route.
+
+Say, we want to customize the create shopping cart api POST /shopping_carts to do additional stuff while creating the cart. We can override the api by creating a resource class for shopping cart. Minnal will generate all the API’s but for the customized one. Let’s try creating a ShoppingCartResource class under org.minnal.examples.shoppingcart.resources
+
+.. code-block:: java
+	:linenos:
+
+	package com.shopping.cart.resources;
+
+	import org.minnal.core.resource.Resource;
+	import org.minnal.core.Request;
+	import org.minnal.core.Response;
+	import com.shopping.cart.domain.ShoppingCart;
+	import org.jboss.netty.handler.code.http.HttpResponseStatus;
+
+	// The @Resource annotation tells minnal that this class is resource class.
+	// The value parameter takes in an class that's marked with @AggregateRoot domain
+	// Minnal will scan for all resources marked with @Resource
+	@Resource(value=ShoppingCart.class)
+	public class ShoppingCartResource {
+
+	  // We are overriding the api POST /shopping_carts.
+	  // The method name should be the same as that of the one from
+	  // the route definitions at http://localhost:8080/admin/routes/shoppingCart
+	  public ShoppingCart createShoppingCart(Request request, Response response) {
+	    // Your custom code here
+	    response.setStatus(HttpResponseStatus.OK);
+	    // The return value from this method will be set as response content
+	  }
+	}
+
+When you customize an API, do make sure that you create a method with the name as defined in the routes definition from http://localhost:8080/admin/routes/shopping_carts. And don’t forget to mark the class with @Resource annotation.
+
+Now all calls to POST /shopping_carts will be hitting our custom resource class.
 
 Search Params
 =============
