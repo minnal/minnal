@@ -106,9 +106,9 @@ public class DefaultJsonSerializer extends Serializer {
 		SimpleBeanPropertyFilter filter = null;
 		try {
 			if (includes != null){
-				filter = SimpleBeanPropertyFilter.serializeAllExcept(excludes);
-			} else if (excludes != null){
 				filter = new SimpleBeanPropertyFilter.FilterExceptFilter(includes);
+			} else if (excludes != null){
+				filter = SimpleBeanPropertyFilter.serializeAllExcept(excludes);
 			} else{
 				filter = SimpleBeanPropertyFilter.serializeAllExcept(new HashSet<String>());;
 			}
