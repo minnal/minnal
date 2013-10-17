@@ -29,12 +29,15 @@ public class ServerResponse extends ServerMessage implements Response {
 	
 	private boolean contentSet;
 	
+	private ResponseWriter writer;
+	
 	private static Logger logger = LoggerFactory.getLogger(ServerResponse.class);
 
 	public ServerResponse(ServerRequest request, HttpResponse response) {
 		super(response);
 		this.request = request;
 		this.response = response;
+		this.writer =  new DefaultResponseWriter(this);
 		init();
 	}
 	
@@ -44,6 +47,13 @@ public class ServerResponse extends ServerMessage implements Response {
 		addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_METHODS, "*");
 		addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_HEADERS, "*");
 	}
+	
+	/**
+	 * @param writer
+	 */
+	public void setResponseWriter(ResponseWriter writer) {
+		this.writer = writer;
+	}
 
 	public void setStatus(HttpResponseStatus status) {
 		response.setStatus(status);
@@ -51,17 +61,7 @@ public class ServerResponse extends ServerMessage implements Response {
 	
 	public void setContent(Object content) {
 		if (! contentSet) {
-			MediaType type = null;
-			Serializer serializer = null;
-			if (request.getSupportedAccepts() != null) {
-				type = FluentIterable.from(request.getSupportedAccepts()).first().or(getResolvedRoute().getConfiguration().getDefaultMediaType());
-				serializer = getSerializer(type);
-			} else {
-				type = MediaType.PLAIN_TEXT_UTF_8;
-				serializer = Serializer.DEFAULT_TEXT_SERIALIZER;
-			}
-			setContentType(type);
-			setContent(serializer.serialize(content));
+			writer.write(content);
 		}
 	}
 	
@@ -90,6 +90,14 @@ public class ServerResponse extends ServerMessage implements Response {
 	@Override
 	protected String getCookieHeaderName() {
 		return HttpHeaders.Names.SET_COOKIE;
+	}
+	
+	/**
+	 * Returns the request associated with this response
+	 * @return
+	 */
+	protected ServerRequest getRequest() {
+		return request;
 	}
 
 	@Override
