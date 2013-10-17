@@ -285,14 +285,129 @@
       
   <div class="section" id="minnal-test">
 <span id="manual-test"></span><h1>Minnal Test</h1>
+<p>Minnal test module provide abstractions for testing out projects built using minnal. While <a class="reference internal" href="generator.html#manual-gen"><em>Minnal Generator</em></a> generates the test cases for your resources, there are instances where you want to write additional tests to test customized APIs or test out your domain models. This section takes you through these abstractions using example functionalities.</p>
+<p>Minnal enforces your domain models to extend from <em>ActiveJpa</em> models. AcitveJpa does runtime byte code isnstrumentation on your model classes and hence your models should be tested using <a class="reference external" href="https://github.com/ActiveJpa/activejpa#testing-your-models">activejpa-test</a>. Minnal also uses <a class="reference external" href="https://github.com/minnal/Autopojo">AutoPojo</a> in the abstraction layer for auto populating the domain models. This eliminates you from constructing json/xml data test yourself.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Minnal test module supports only TestNG. Support for Junit is not there at this moment.</p>
+</div>
 <div class="section" id="testing-resources">
 <h2>Testing Resources</h2>
+<p>To test your resources, you should extend the abstract resource test class <tt class="docutils literal"><span class="pre">org.minnal.core.resource.BaseResourceTest</span></tt>. The abstract class has helper methods to construct the request and parse the resposne for output comparisons.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DummyResourceTest</span> <span class="kd">extends</span> <span class="n">BaseResourceTest</span> <span class="o">{</span>
+
+        <span class="nd">@Test</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testPostRequest</span><span class="o">()</span> <span class="o">{</span>
+                <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">call</span><span class="o">(</span><span class="n">request</span><span class="o">(</span><span class="s">&quot;/dummy_resource/&quot;</span><span class="o">,</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">POST</span><span class="o">),</span> <span class="s">&quot;your content&quot;</span><span class="o">);</span>
+                <span class="n">assertEquals</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">(),</span> <span class="n">HttpResponseStatus</span><span class="o">.</span><span class="na">CREATED</span><span class="o">);</span>
+                <span class="n">DummyModel</span> <span class="n">expected</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DummyModel</span><span class="o">();</span>
+                <span class="n">DummyModel</span> <span class="n">actual</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="na">deserialize</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getContent</span><span class="o">(),</span> <span class="n">DummyModel</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+                <span class="n">assertEquals</span><span class="o">(</span><span class="n">actual</span><span class="o">,</span> <span class="n">expected</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Test</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testGetRequest</span><span class="o">()</span> <span class="o">{</span>
+                <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">call</span><span class="o">(</span><span class="n">request</span><span class="o">(</span><span class="s">&quot;/dummy_resource/&quot;</span><span class="o">,</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">));</span>
+                <span class="n">assertEquals</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">(),</span> <span class="n">HttpResponseStatus</span><span class="o">.</span><span class="na">OK</span><span class="o">);</span>
+                <span class="kt">int</span> <span class="n">actualCount</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="na">deserialize</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getContent</span><span class="o">(),</span> <span class="n">DummyModel</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">size</span><span class="o">();</span>
+                <span class="n">assertEquals</span><span class="o">(</span><span class="n">actualCount</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="testing-jpa-resources">
 <h2>Testing JPA Resources</h2>
+<p>Testing your JPA resources is bit tricky. You will have to ensure the a new transaction is opened before starting the test and rolled back at the end. Minnal provides an abstract test class for testing JPA resources <tt class="docutils literal"><span class="pre">org.minnal.core.resource.BaseJPAResourceTest</span></tt></p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderResourceTest</span> <span class="kd">extends</span> <span class="n">BaseJPAResourceTest</span> <span class="o">{</span>
+
+        <span class="nd">@Test</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">listOrderTest</span><span class="o">()</span> <span class="o">{</span>
+                <span class="n">org</span><span class="o">.</span><span class="na">minnal</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">domain</span><span class="o">.</span><span class="na">Order</span> <span class="n">order</span> <span class="o">=</span> <span class="n">createDomain</span><span class="o">(</span><span class="n">org</span><span class="o">.</span><span class="na">minnal</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">domain</span><span class="o">.</span><span class="na">Order</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+                <span class="n">order</span><span class="o">.</span><span class="na">persist</span><span class="o">();</span>
+                <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">call</span><span class="o">(</span><span class="n">request</span><span class="o">(</span><span class="s">&quot;/orders/&quot;</span><span class="o">,</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">));</span>
+                <span class="n">assertEquals</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">(),</span> <span class="n">HttpResponseStatus</span><span class="o">.</span><span class="na">OK</span><span class="o">);</span>
+                <span class="n">assertEquals</span><span class="o">(</span><span class="n">serializer</span><span class="o">.</span><span class="na">deserializeCollection</span><span class="o">(</span>
+                                <span class="n">response</span><span class="o">.</span><span class="na">getContent</span><span class="o">(),</span> <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">List</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+                                <span class="n">org</span><span class="o">.</span><span class="na">minnal</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">domain</span><span class="o">.</span><span class="na">Order</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">size</span><span class="o">(),</span>
+                                <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">org</span><span class="o">.</span><span class="na">minnal</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">domain</span><span class="o">.</span><span class="na">Order</span><span class="o">.</span><span class="na">count</span><span class="o">());</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Test</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">createOrderTest</span><span class="o">()</span> <span class="o">{</span>
+                <span class="n">org</span><span class="o">.</span><span class="na">minnal</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">domain</span><span class="o">.</span><span class="na">Order</span> <span class="n">order</span> <span class="o">=</span> <span class="n">createDomain</span><span class="o">(</span><span class="n">org</span><span class="o">.</span><span class="na">minnal</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">domain</span><span class="o">.</span><span class="na">Order</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+                <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">call</span><span class="o">(</span><span class="n">request</span><span class="o">(</span><span class="s">&quot;/orders/&quot;</span><span class="o">,</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">POST</span><span class="o">,</span>
+                                <span class="n">Serializer</span><span class="o">.</span><span class="na">DEFAULT_JSON_SERIALIZER</span>
+                                                <span class="o">.</span><span class="na">serialize</span><span class="o">(</span><span class="n">order</span><span class="o">)));</span>
+                <span class="n">assertEquals</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">(),</span> <span class="n">HttpResponseStatus</span><span class="o">.</span><span class="na">CREATED</span><span class="o">);</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="testing-models">
 <h2>Testing Models</h2>
+<p>To test your domain models, your test class should extend the class <tt class="docutils literal"><span class="pre">org.activejpa.entity.testng.BaseModelTest</span></tt> The base class takes care of byte code enhancement requirement of ActiveJpa and abstracts them out of your tests.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderTest</span> <span class="kd">extends</span> <span class="n">BaseModelTest</span> <span class="o">{</span>
+        <span class="nd">@Test</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testCreateOrder</span><span class="o">()</span> <span class="o">{</span>
+                <span class="n">Order</span> <span class="n">order</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Order</span><span class="o">();</span>
+                <span class="n">order</span><span class="o">.</span><span class="na">setCustomerEmail</span><span class="o">(</span><span class="s">&quot;dummyemail@dummy.com&quot;</span><span class="o">);</span>
+                <span class="n">order</span><span class="o">.</span><span class="na">persist</span><span class="o">();</span>
+                <span class="n">Assert</span><span class="o">.</span><span class="na">assertEquals</span><span class="o">(</span><span class="n">Order</span><span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="s">&quot;customer_email&quot;</span><span class="o">,</span> <span class="s">&quot;dummyemail@dummy.com&quot;</span><span class="o">).</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">),</span> <span class="n">order</span><span class="o">);</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Take a look at <a class="reference external" href="https://github.com/ActiveJpa/activejpa#testing-your-models">activejap-test</a> for more information on testing your models and for additional exmaples.</p>
 </div>
 </div>
 
