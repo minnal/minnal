@@ -1,4 +1,4 @@
-package serializer;
+package com.minnal.jpa.serializer;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
