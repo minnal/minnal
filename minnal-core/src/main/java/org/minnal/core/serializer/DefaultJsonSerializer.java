@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
 public class DefaultJsonSerializer extends Serializer {
 
 	private ObjectMapper mapper;
-	
+
 	public DefaultJsonSerializer() {
 		this(new SimpleModule());
 	}
@@ -53,10 +53,10 @@ public class DefaultJsonSerializer extends Serializer {
 		this.mapper = mapper;
 		init(module);
 	}
-	
+
 	@JsonFilter("property_filter")  
 	public class PropertyFilterMixIn {} 
-	
+
 	protected void init(Module module) {
 		mapper.addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
 		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.NONE);
@@ -66,19 +66,11 @@ public class DefaultJsonSerializer extends Serializer {
 		mapper.configure(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS, true);
 		mapper.setPropertyNamingStrategy(getPropertyNamingStrategy());
 	}
-	
-	
+
+
 
 	public ChannelBuffer serialize(Object object) {
 		return serialize(object,null,null);
-//		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
-//		ChannelBufferOutputStream os = new ChannelBufferOutputStream(buffer);
-//		try {
-//			mapper.writeValue(os, object);
-//		} catch (Exception e) {
-//			throw new MinnalException("Failed while serializing the object", e);
-//		}
-//		return buffer;
 	}
 
 	public <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass) {
@@ -105,12 +97,12 @@ public class DefaultJsonSerializer extends Serializer {
 	public PropertyNamingStrategy getPropertyNamingStrategy() {
 		return PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES;
 	}
-	
+
 	@Override
 	public ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes) {
 		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
 		ChannelBufferOutputStream os = new ChannelBufferOutputStream(buffer);
-		
+
 		SimpleBeanPropertyFilter filter = null;
 		try {
 			if (includes != null){
@@ -128,8 +120,4 @@ public class DefaultJsonSerializer extends Serializer {
 		}
 		return buffer;
 	}
-
-
-
-
 }
