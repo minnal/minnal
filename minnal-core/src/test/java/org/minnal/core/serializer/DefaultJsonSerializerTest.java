@@ -3,7 +3,7 @@ package org.minnal.core.serializer;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +32,21 @@ public class DefaultJsonSerializerTest {
 		ChannelBuffer channelBuffer = serializer.serialize(model);
 		assertEquals("{\"name\":\"name\",\"value\":\"value\",\"composites\":null,\"association\":null}", 
 				channelBuffer.toString(Charsets.UTF_8)); 
+	}
+	
+	@Test
+	public void shouldDeserializeModel(){
+		ChannelBuffer channelBuffer = serializer.serialize(model);
+		DummyModel dummyModel= serializer.deserialize(channelBuffer, DummyModel.class);
+		assertEquals(dummyModel.name,model.name); 
+	}
+	
+	@Test
+	public void shouldSerializeModelWithEmptySets(){
+		Set<String> includes = new HashSet<String>();
+		includes.add("name");
+		ChannelBuffer channelBuffer = serializer.serialize(model, new HashSet<String>(), new HashSet<String>());
+		assertTrue(channelBuffer.toString(Charsets.UTF_8).contains("value")); 
 	}
 	
 	@Test
