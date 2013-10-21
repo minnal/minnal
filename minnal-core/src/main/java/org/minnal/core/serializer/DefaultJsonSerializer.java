@@ -12,6 +12,9 @@ import org.jboss.netty.buffer.ChannelBufferInputStream;
 import org.jboss.netty.buffer.ChannelBufferOutputStream;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.minnal.core.MinnalException;
+import org.minnal.core.server.AbstractHttpConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -37,6 +40,9 @@ public class DefaultJsonSerializer extends Serializer {
 
 	private ObjectMapper mapper;
 
+	private static final Logger logger = LoggerFactory.getLogger(DefaultJsonSerializer.class);
+
+	
 	public DefaultJsonSerializer() {
 		this(new SimpleModule());
 	}
@@ -105,9 +111,9 @@ public class DefaultJsonSerializer extends Serializer {
 
 		SimpleBeanPropertyFilter filter = null;
 		try {
-			if (includes != null){
+			if (includes != null && includes.size() != 0){
 				filter = new SimpleBeanPropertyFilter.FilterExceptFilter(includes);
-			} else if (excludes != null){
+			} else if (excludes != null && excludes.size() != 0){
 				filter = SimpleBeanPropertyFilter.serializeAllExcept(excludes);
 			} else{
 				filter = SimpleBeanPropertyFilter.serializeAllExcept(new HashSet<String>());;
@@ -116,6 +122,8 @@ public class DefaultJsonSerializer extends Serializer {
 			ObjectWriter writer = mapper.writer(filters);  
 			writer.writeValue(os, object);
 		} catch (Exception e) {
+			logger.error("Unable to serialize object to channel buffer with object :{} " +
+					"includes : {} and excludes : {}", object.toString(), includes.toString(), excludes.toString());
 			throw new MinnalException("Failed while serializing the object", e);
 		}
 		return buffer;

@@ -3,13 +3,13 @@
  */
 package org.minnal.core.server;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.minnal.core.serializer.Serializer;
 
-import com.google.common.collect.FluentIterable;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 /**
@@ -18,6 +18,8 @@ import com.google.common.net.MediaType;
  */
 public class DefaultResponseWriter implements ResponseWriter {
 	
+	private static final String EXCLUDE = "exclude";
+	private static final String INCLUDE = "include";
 	private ServerResponse response;
 
 	/**
@@ -27,29 +29,18 @@ public class DefaultResponseWriter implements ResponseWriter {
 		this.response = response;
 	}
 	
-	public Set<String> getParamsSetFromHeaders(String headerParams){
-		if (headerParams == null){
-			return null;
-		}		
-		Set<String> params = new HashSet<String>(Arrays.asList(headerParams.split(",")));		
-		return params;
+	private Set<String> getParamsSetFromHeader(String headerName){
+		return Sets.newHashSet(Splitter.on(",").split(Strings.nullToEmpty(response.getRequest().getHeader(headerName))));
 	}
 
 	@Override
 	public void write(Object content) {
-		MediaType type = null;
 		Serializer serializer = null;
-		ServerRequest request = response.getRequest();
-		if (request.getSupportedAccepts() != null) {
-			type = FluentIterable.from(request.getSupportedAccepts()).first().or(response.getResolvedRoute().getConfiguration().getDefaultMediaType());
-			serializer = response.getSerializer(type);
-		} else {
-			type = MediaType.PLAIN_TEXT_UTF_8;
-			serializer = Serializer.DEFAULT_TEXT_SERIALIZER;
-		}
+		MediaType type = response.getPrefferedContentType();
+		serializer = (type == MediaType.PLAIN_TEXT_UTF_8) ? Serializer.DEFAULT_TEXT_SERIALIZER : response.getSerializer(type);
 		response.setContentType(type);
-		response.setContent(serializer.serialize(content,getParamsSetFromHeaders(response.getHeader("include")), 
-				getParamsSetFromHeaders(response.getHeader("exclude"))));
+		Set<String> includeSet = getParamsSetFromHeader(INCLUDE);
+		Set<String> excludeSet = getParamsSetFromHeader(EXCLUDE);
+		response.setContent(serializer.serialize(content, excludeSet, includeSet));
 	}
-
 }

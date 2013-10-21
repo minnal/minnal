@@ -48,6 +48,14 @@ public class ServerResponse extends ServerMessage implements Response {
 		addHeader(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_HEADERS, "*");
 	}
 	
+	public MediaType getPrefferedContentType(){
+		if (request.getSupportedAccepts() != null) {
+			return FluentIterable.from(request.getSupportedAccepts()).first().or(this.getResolvedRoute().getConfiguration().getDefaultMediaType());
+		} else {
+			return MediaType.PLAIN_TEXT_UTF_8;
+		}
+	}
+	
 	/**
 	 * @param writer
 	 */
