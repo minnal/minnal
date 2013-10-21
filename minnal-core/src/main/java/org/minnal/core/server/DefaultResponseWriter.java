@@ -36,7 +36,6 @@ public class DefaultResponseWriter implements ResponseWriter {
 	@Override
 	public void write(Object content) {
 		Serializer serializer = null;
-		System.out.println("In write"+content.toString());
 		MediaType type = response.getPrefferedContentType();
 		serializer = (type == MediaType.PLAIN_TEXT_UTF_8) ? Serializer.DEFAULT_TEXT_SERIALIZER : response.getSerializer(type);
 		response.setContentType(type);

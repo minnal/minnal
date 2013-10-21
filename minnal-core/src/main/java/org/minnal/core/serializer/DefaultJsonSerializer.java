@@ -84,8 +84,6 @@ public class DefaultJsonSerializer extends Serializer {
 	public <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass) {
 		ChannelBufferInputStream is = new ChannelBufferInputStream(buffer);
 		try {
-			System.out.println("In deserialize"+buffer.toString(Charsets.UTF_8));
-			System.out.println("In deserialize"+targetClass.toString());
 			return mapper.readValue(is, targetClass);
 		} catch (Exception e) {
 			throw new MinnalException("Failed while deserializing the buffer to type - " + targetClass, e);
@@ -110,16 +108,12 @@ public class DefaultJsonSerializer extends Serializer {
 
 	@Override
 	public ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes) {
-		System.out.println("In serialize"+object.toString());
 		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
 		ChannelBufferOutputStream os = new ChannelBufferOutputStream(buffer);
 
 		SimpleBeanPropertyFilter filter = null;
 		try {
 			if (includes != null && !includes.isEmpty() && includes.size() != 0){
-				for(String s : includes) {
-					System.out.println("abc"+s);
-				}
 				filter = new SimpleBeanPropertyFilter.FilterExceptFilter(includes);
 			} else if (excludes != null && !excludes.isEmpty() && excludes.size() != 0){
 				filter = SimpleBeanPropertyFilter.serializeAllExcept(excludes);
