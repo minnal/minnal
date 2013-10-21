@@ -42,6 +42,5 @@ public class DefaultResponseWriter implements ResponseWriter {
 		Set<String> includeSet = getParamsSetFromHeader(INCLUDE);
 		Set<String> excludeSet = getParamsSetFromHeader(EXCLUDE);
 		response.setContent(serializer.serialize(content, excludeSet, includeSet));
-		System.out.println(response.toString());
 	}
 }
