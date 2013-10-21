@@ -4,6 +4,7 @@
 package org.minnal.core.serializer;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 
@@ -30,6 +31,10 @@ public abstract class Serializer {
 	public static final Serializer DEFAULT_YAML_SERIALIZER = new DefaultYamlSerializer();
 	
 	public abstract ChannelBuffer serialize(Object object);
+	
+	public ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes) {
+		throw new UnsupportedOperationException("Not supported by this serializer");
+	}
 	
 	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);
 	
