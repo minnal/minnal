@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
@@ -19,6 +21,8 @@ import com.google.common.net.MediaType;
  */
 @JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
 public abstract class Serializer {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Serializer.class); 
 	
 	public static final Serializer DEFAULT_JSON_SERIALIZER = new DefaultJsonSerializer();
 	

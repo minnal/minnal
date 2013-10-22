@@ -71,8 +71,8 @@ public class ApiDocumentation {
 	protected Documentation createDocumentation(Application<ApplicationConfiguration> application, ResourceClass resourceClass) {
 		Documentation documentation = new Documentation();
 		documentation.setSwaggerVersion("1.1");
-		documentation.setBasePath(constructBasePath(application.getPath()));
-		documentation.setResourcePath(resourceClass.getBasePath());
+		documentation.setBasePath(baseUrl);
+		documentation.setResourcePath(HttpUtil.structureUrl(resourceClass.getBasePath()));
 		documentation.setApis(createEndPoints(resourceClass.getRouteBuilders()));
 		documentation.setModels(createSchemas(resourceClass));
 		return documentation;
@@ -182,7 +182,7 @@ public class ApiDocumentation {
 	protected void buildResources(Application<ApplicationConfiguration> application) {
 		Documentation documentation = new Documentation();
 		documentation.setSwaggerVersion("1.1");
-		documentation.setBasePath(constructBasePath(application.getPath()) + "/api/" + application.getConfiguration().getName());
+		documentation.setBasePath(baseUrl + "/api/" + application.getConfiguration().getName());
 		for (ResourceClass resourceClass : application.getResources()) {
 			DocumentationEndPoint ep = new DocumentationEndPoint();
 			ep.setPath(HttpUtil.structureUrl(resourceClass.getConfiguration().getName()));
@@ -204,10 +204,6 @@ public class ApiDocumentation {
 		return "/" + route.getRoutePattern().getElements().get(0).getName();
 	}
 	
-	protected String constructBasePath(String path) {
-		return baseUrl + path;
-	}
-
 	/**
 	 * @param baseUrl the baseUrl to set
 	 */

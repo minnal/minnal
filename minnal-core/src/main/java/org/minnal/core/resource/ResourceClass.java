@@ -31,8 +31,7 @@ public class ResourceClass {
 	
 	public ResourceClass(ResourceConfiguration configuration, Class<?> resourceClass, String basePath) {
 		this.configuration = configuration;
-		this.resourceClass = resourceClass;
-		validate(resourceClass);
+		setResourceClass(resourceClass);
 		this.basePath = HttpUtil.structureUrl(basePath);
 	}
 	
@@ -95,7 +94,7 @@ public class ResourceClass {
 	}
 	
 	public RouteBuilder builder(String path) {
-		RouteBuilder builder = new RouteBuilder(this, basePath + HttpUtil.structureUrl(path));
+		RouteBuilder builder = new RouteBuilder(this, HttpUtil.structureUrl(basePath + HttpUtil.structureUrl(path)));
 		routeBuilders.add(builder);
 		return builder;
 	}

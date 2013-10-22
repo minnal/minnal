@@ -27,4 +27,10 @@ public class HttpUtilTest {
 		String value = URLEncoder.encode("12341", "UTF-8");
 		assertEquals(HttpUtil.decode(value), "12341");
 	}
+	
+	@Test
+	public void shouldStructureUrlIfEmptyOrNull() {
+		assertEquals(HttpUtil.structureUrl(null), HttpUtil.SEPARATOR);
+		assertEquals(HttpUtil.structureUrl(""), HttpUtil.SEPARATOR);
+	}
 }

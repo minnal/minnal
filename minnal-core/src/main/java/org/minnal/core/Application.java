@@ -164,8 +164,20 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		this.path = path;
 	}
 	
+	/**
+	 * If a resource class for the given class is found, returns the resource class. If not found, and if a sub class for the given class
+	 * exists, returns that. Else throws an exception
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	public ResourceClass resource(Class<?> clazz) {
 		if (! resources.containsKey(clazz)) {
+			for (ResourceClass resourceClass : resources.values()) {
+				if (clazz.isAssignableFrom(resourceClass.getResourceClass())) {
+					return resourceClass;
+				}
+			}
 			throw new MinnalException("Resource - " + clazz.getName() + " not found");
 		}
 		return resources.get(clazz);

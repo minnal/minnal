@@ -108,7 +108,7 @@ public class HttpUtil {
 	 * @return
 	 */
 	public static String structureUrl(String url) {
-		if (url == null || url == "") {
+		if (url == null || url.equals("")) {
 			return SEPARATOR;
 		}
 		if (! url.startsWith(SEPARATOR)) {
