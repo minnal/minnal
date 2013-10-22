@@ -31,8 +31,7 @@ public class ResourceClass {
 	
 	public ResourceClass(ResourceConfiguration configuration, Class<?> resourceClass, String basePath) {
 		this.configuration = configuration;
-		this.resourceClass = resourceClass;
-		validate(resourceClass);
+		setResourceClass(resourceClass);
 		this.basePath = HttpUtil.structureUrl(basePath);
 	}
 	
