@@ -140,6 +140,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#search-params">Search Params</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#actions">Actions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagination">Pagination</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dynamically-including-excluding-response-fields">Dynamically including &amp; excluding response fields</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#bulk-operations">Bulk Operations</a></li>
 </ul>
 </li>
@@ -188,6 +189,7 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../release-notes.html">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-5-22-oct-2013">minnal-1.0.5 / 22-Oct-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-4-11-oct-2013">minnal-1.0.4 / 11-Oct-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-3-10-oct-2013">minnal-1.0.3 / 10-Oct-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-2-09-oct-2013">minnal-1.0.2 / 09-Oct-2013</a></li>
@@ -264,6 +266,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#search-params">Search Params</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#actions">Actions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagination">Pagination</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dynamically-including-excluding-response-fields">Dynamically including &amp; excluding response fields</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#bulk-operations">Bulk Operations</a></li>
 </ul>
 </li>
@@ -686,6 +689,21 @@ GET /orders/1000?customer_email<span class="o">=</span>ganeshs@flipkart.com
 <p class="first admonition-title">Note</p>
 <p class="last">If the per_page and page query parameters are not set, the response structure will be different. Only the <em>data</em> part will be present in the resposne. Do ensure that you treat them differently in your clients.</p>
 </div>
+</div>
+<div class="section" id="dynamically-including-excluding-response-fields">
+<h2>Dynamically including &amp; excluding response fields</h2>
+<p>There are scenarios where you want to return back an entity thats deeply nested or with so many collections but end up with firing too many database calls and performance issues. The caller might be interested in only few of them but has to parse all of them. Minnal provides a way to filter off the response fields by specifying additional query params. Below is a sample usage,</p>
+<div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># This will return the orders entity without order_items and created_at field in the response.</span>
+GET /orders?exclude<span class="o">=</span>order_items,created_at
+
+<span class="c"># This will return the orders entity with only order_items and created_at in the response.</span>
+GET /orders?include<span class="o">=</span>order_items,created_at
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="bulk-operations">
 <h2>Bulk Operations</h2>

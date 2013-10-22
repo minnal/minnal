@@ -337,6 +337,18 @@ Minnal has an *out-of-the-box* support for pagination. You can pass on the page 
 	
 	If the per_page and page query parameters are not set, the response structure will be different. Only the *data* part will be present in the resposne. Do ensure that you treat them differently in your clients.
 
+Dynamically including & excluding response fields
+=================================================
+There are scenarios where you want to return back an entity thats deeply nested or with so many collections but end up with firing too many database calls and performance issues. The caller might be interested in only few of them but has to parse all of them. Minnal provides a way to filter off the response fields by specifying additional query params. Below is a sample usage,
+
+.. code-block:: bash
+	:linenos:
+
+	# This will return the orders entity without order_items and created_at field in the response.
+	GET /orders?exclude=order_items,created_at
+
+	# This will return the orders entity with only order_items and created_at in the response.
+	GET /orders?include=order_items,created_at
 
 Bulk Operations
 ===============
