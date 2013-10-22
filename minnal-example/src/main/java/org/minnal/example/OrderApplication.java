@@ -5,11 +5,13 @@ package org.minnal.example;
 
 import org.activejpa.util.EnumConverter;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.Application;
 import org.minnal.core.MinnalException;
 import org.minnal.core.server.exception.InternalServerErrorException;
 import org.minnal.example.domain.Order;
 import org.minnal.example.domain.OrderItem;
+import org.minnal.example.resource.OrderResource;
 import org.minnal.jpa.JPAPlugin;
 import org.minnal.jpa.OpenSessionInViewFilter;
 
@@ -26,12 +28,11 @@ public class OrderApplication extends Application<OrderConfiguration> {
 
 	@Override
 	protected void defineRoutes() {
-//		resource(OrderResource.class).builder("/hello").action(HttpMethod.GET, "helloWorld");
+		resource(OrderResource.class).builder("/hello").action(HttpMethod.GET, "helloWorld");
 	}
 
 	@Override
 	protected void defineResources() {
-//		addResource(OrderResource.class);
 	}
 	
 	@Override
