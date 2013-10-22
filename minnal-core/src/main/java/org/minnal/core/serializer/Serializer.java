@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
@@ -19,6 +21,8 @@ import com.google.common.net.MediaType;
  */
 @JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
 public abstract class Serializer {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Serializer.class); 
 	
 	public static final Serializer DEFAULT_JSON_SERIALIZER = new DefaultJsonSerializer();
 	
@@ -33,7 +37,8 @@ public abstract class Serializer {
 	public abstract ChannelBuffer serialize(Object object);
 	
 	public ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes) {
-		throw new UnsupportedOperationException("Not supported by this serializer");
+		logger.warn("WARNING: {} doesn't support exlcuding and including the fields in the response", this.getClass());
+		return serialize(object);
 	}
 	
 	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);
