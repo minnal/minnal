@@ -36,7 +36,6 @@ public class DefaultResponseWriterTest {
 		serializer = mock(Serializer.class);
 	}
 	
-	
 	@Test
 	public void shouldHandleNullHeaderParams(){
 		when(serverResponse.getSerializer(any(MediaType.class))).thenReturn(serializer);

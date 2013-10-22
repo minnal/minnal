@@ -32,9 +32,7 @@ public abstract class Serializer {
 	
 	public abstract ChannelBuffer serialize(Object object);
 	
-	public ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes) {
-		throw new UnsupportedOperationException("Not supported by this serializer");
-	}
+	public abstract ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes);
 	
 	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);
 	

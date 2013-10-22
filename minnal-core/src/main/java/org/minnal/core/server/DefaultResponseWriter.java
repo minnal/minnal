@@ -3,10 +3,12 @@
  */
 package org.minnal.core.server;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.minnal.core.serializer.Serializer;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -30,7 +32,21 @@ public class DefaultResponseWriter implements ResponseWriter {
 	}
 	
 	private Set<String> getParamsSetFromHeader(String headerName){
-		return Sets.newHashSet(Splitter.on(",").trimResults().omitEmptyStrings().split(Strings.nullToEmpty(response.getRequest().getHeader(headerName))));
+		final Set<String> underScoredParams = Sets.newHashSet(Splitter.on(",").trimResults().omitEmptyStrings().split(Strings.nullToEmpty(response.getRequest().getHeader(headerName))));
+		return underScoresToCamelCase(underScoredParams);
+	}
+
+	/**
+	 * expects non-null set of under_score syntax strings
+	 * @param underScoreItems
+	 * @return
+	 */
+	private Set<String> underScoresToCamelCase(Set<String> underScoreItems) {
+		final Set<String> camelCaseItems = new HashSet<String>();
+		for(String param: underScoreItems) {
+			camelCaseItems.add(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, param));
+		}
+		return camelCaseItems;
 	}
 
 	@Override
