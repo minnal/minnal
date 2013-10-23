@@ -36,7 +36,10 @@ public abstract class Serializer {
 	
 	public abstract ChannelBuffer serialize(Object object);
 	
-	public abstract ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes);
+	public ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes) {
+		logger.warn("WARNING: {} doesn't support exlcuding and including the fields in the response", this.getClass());
+		return serialize(object);
+	}
 	
 	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);
 	
