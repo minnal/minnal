@@ -7,8 +7,11 @@ import java.util.Set;
 
 import org.minnal.core.serializer.Serializer;
 
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
@@ -30,7 +33,14 @@ public class DefaultResponseWriter implements ResponseWriter {
 	}
 	
 	private Set<String> getParamsSetFromHeader(String headerName){
-		return Sets.newHashSet(Splitter.on(",").trimResults().omitEmptyStrings().split(Strings.nullToEmpty(response.getRequest().getHeader(headerName))));
+		final Iterable<String> underScoredParams = Splitter.on(",").trimResults().omitEmptyStrings().
+				split(Strings.nullToEmpty(response.getRequest().getHeader(headerName)));
+		return Sets.newHashSet(Iterables.transform(underScoredParams, new Function<String, String>() {
+			@Override
+			public String apply(String input) {
+				return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, input);
+			}
+		}));
 	}
 
 	@Override
