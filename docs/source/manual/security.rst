@@ -22,7 +22,7 @@ You can change the sesison store from the security configuration of the applicat
 
 .. literalinclude:: application_config.yml
 	:language: yaml
-	:linenos: 
+	:linenos:
 	:lines: 20,26-27
 
 Authenticators
@@ -35,7 +35,7 @@ The CAS authenticator uses `Jasig client library <https://github.com/Jasig/cas>`
 
 .. literalinclude:: application_config.yml
 	:language: yaml
-	:linenos: 
+	:linenos:
 	:lines: 20-28
 
 To enable CAS authentication for your application, you will have to register CasPlugin in your application.
@@ -67,11 +67,77 @@ Creating authenticators is simple. You will have to implement the interface ``or
 		P authenticate(C credential);
 	}
 
+Authorizers
+===========
+*Authorizers* authorize the incoming requests against the permissions defined over the route. Minnal comes with a simple authorizer ``org.minnal.security.auth.SimpleAuthorizer`` that reads the roles and permission of the user from property files. You can always extend it to provide your own authorizer.
+
+The security configuration defaults to SimpleAuthorizer. In case you want to provide a custom authorizer implementation, you can override it in the application cofiguration.
+
+.. code-block:: yaml
+	:linenos:
+
+	security:
+	  sessionStore:
+	    class: org.minnal.security.session.JpaSessionStore
+	  authorizer:
+	    class: your.custom.authorizer.CustomAuthorizer
+
+Setting Permissions to Routes
+-----------------------------
+Minnal takes the permission configuration for the routes via the route definition. Below code shows a sample usage,
+
+.. code-block:: java
+	:linenos:
+
+	public class OrderApplication extends Application<OrderConfiguration> {
+	      @Override
+	      protected void defineRoutes() {
+	            resource(OrderResource.class).builder("/hello").action(HttpMethod.GET, "helloWorld")
+	            .attribute(Authorizer.PERMISSIONS, "permission1,permission2");
+	      }
+	}
+
+This instructs minnal to allow only the users with permissions *permission1* and *permission2* for the route *GET /hello*
+
+Simple Authorizer
+-----------------
+The simple authorizer uses the roles and permissions of the principal ``org.minnal.security.auth.Principal`` to authorize the route. If the roles and permissions are not populated in the principal, it looks for the property files *user_roles.properties* and *role_permissions.properties* in the classpath and validates against them.
+
+The location of the property files can be customized by overriding them in the configuration,
+
+.. code-block:: yaml
+	:linenos:
+
+	security:
+	  authorizer:
+	    class: org.minnal.security.auth.SimpleAuthorizer
+	    roleMapper: 
+	      class: org.minnal.security.auth.SimpleUserRoleMapper
+	      mappingFile: <location-to-property-file>
+	    permissionMapper: 
+	      class: org.minnal.security.auth.SimpleRolePermissionMapper
+	      mappingFile: <location-to-property-file>
+
+Custom Authorizers
+------------------
+You can customize the simple authorizer to fetch the roles and permissions of the user from a data store instead of from a property file. All you have to do is to implement the interfaces ``org.minnal.security.auth.UserRoleMapper`` and ``org.minnal.security.auth.RolePermissionMapper`` and override them in the authorizer configuration.
+
+.. code-block:: yaml
+	:linenos:
+
+	security:
+	  authorizer:
+	    class: org.minnal.security.auth.SimpleAuthorizer
+	    roleMapper: 
+	      class: <your-custom-role-mapper-implementation>
+	    permissionMapper: 
+	      class: <your-custom-permission-mapper-implementation>
+
 White listing urls
 ==================
 You can whitelist the urls that you don't want to be autneticated by adding them to ``whiteListedUrls`` in configuration. Typical use cases are publicly visible files, health check urls etc.
 
 .. literalinclude:: application_config.yml
 	:language: yaml
-	:linenos: 
+	:linenos:
 	:lines: 20, 29-30

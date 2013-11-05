@@ -431,3 +431,35 @@ Bulk delete is similar to bulk retrieval, just pass on comma-separated identifie
 	:linenos:
 
 	DELETE /orders/1/order_items/12,13
+
+Authorizing Routes
+==================
+Minnal exposes ``@Secure`` annotation to secure an aggregate root or a collection or an action method. It takes in a HttpMethod and an array permissions to authorize against. You can use ``@SecureMultiple`` for using @Secure multiple times over the same element. Click `here </manual/security.html#authorizers>`_ on instructions for configuring the authorization.
+
+Below code snippet shows a sample usage,
+
+.. code-block:: java
+	:linenos:
+
+	@AggregateRoot
+	@Entity
+	@Table(name="Orders")
+	@SecureMultiple({
+	    @Secure(method=Method.POST, permissions="CREATE_ORDER"),
+	    @Secure(method=Method.PUT, permissions="EDIT_ORDER")
+	})
+	public class Order extends Model {
+
+	    @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+	    @JoinColumn(name="orderId")
+	    @JsonManagedReference
+	    @Secure(method=Method.DELETE, permissions="DELETE_ITEM")
+	    private Set<OrderItem> orderItems = new HashSet<OrderItem>();
+
+	    @Action(value="cancel")
+	    @Secure(method=Method.PUT, permissions="CANCEL_ORDER")
+	    public void cancel(String reason) {
+	        setStatus(Status.cancelled);
+	        setCancellationReason(reason);
+	    }
+	}  
