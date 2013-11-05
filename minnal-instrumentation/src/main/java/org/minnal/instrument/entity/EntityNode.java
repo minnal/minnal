@@ -119,6 +119,13 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	public EntityMetaData getEntityMetaData() {
 		return getValue();
 	}
+	
+	/**
+	 * @return
+	 */
+	public CollectionMetaData getSource() {
+		return source;
+	}
 
 	@Override
 	protected EntityNode getThis() {

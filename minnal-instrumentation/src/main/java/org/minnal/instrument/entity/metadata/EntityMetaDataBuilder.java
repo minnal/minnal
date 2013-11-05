@@ -6,7 +6,6 @@ package org.minnal.instrument.entity.metadata;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import org.minnal.instrument.entity.metadata.handler.AbstractAnnotationHandler;
 import org.minnal.utils.reflection.ClassUtils;

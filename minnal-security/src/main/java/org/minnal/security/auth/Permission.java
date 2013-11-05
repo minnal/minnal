@@ -7,19 +7,29 @@ package org.minnal.security.auth;
  * @author ganeshs
  *
  */
-public class Role {
+public class Permission {
 
 	private String name;
 	
 	/**
 	 * @param name
 	 */
-	public Role(String name) {
+	public Permission(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * @return the name
+	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
@@ -38,7 +48,7 @@ public class Role {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Role other = (Role) obj;
+		Permission other = (Permission) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -46,4 +56,5 @@ public class Role {
 			return false;
 		return true;
 	}
+	
 }

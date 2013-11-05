@@ -9,9 +9,7 @@ import java.util.List;
  * @author ganeshs
  *
  */
-public interface Principal {
-	
-	List<Role> getRoles();
-	
-	List<Permission> getPermissions();
+public interface UserRoleMapper {
+
+	List<Role> getRoles(User user);
 }

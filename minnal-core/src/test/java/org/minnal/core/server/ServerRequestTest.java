@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,5 +124,19 @@ public class ServerRequestTest {
 	public void shouldGetContentLength() {
 		ServerRequest request = new ServerRequest(httpRequest, null);
 		assertEquals(request.getContentLength(), 100L);
+	}
+	
+	@Test
+	public void shouldStoreAttribute() {
+		ServerRequest request = new ServerRequest(httpRequest, null);
+		request.setAttribute("test", "test123");
+		assertEquals(request.getAttribute("test"), "test123");
+	}
+	
+	@Test
+	public void shouldContainAttribute() {
+		ServerRequest request = new ServerRequest(httpRequest, null);
+		request.setAttribute("test", "test123");
+		assertTrue(request.containsAttribute("test"));
 	}
 }

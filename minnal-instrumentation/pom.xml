@@ -67,6 +67,10 @@
 			<groupId>org.minnal</groupId>
 			<artifactId>minnal-utils</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.minnal</groupId>
+			<artifactId>minnal-security</artifactId>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -105,6 +109,11 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-utils</artifactId>
+				<version>1.0.6-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.minnal</groupId>
+				<artifactId>minnal-security</artifactId>
 				<version>1.0.6-SNAPSHOT</version>
 			</dependency>
 		</dependencies>

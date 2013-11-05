@@ -6,16 +6,20 @@ package org.minnal.security.filter;
 import java.util.Map;
 import java.util.UUID;
 
+import org.jboss.netty.buffer.ChannelBuffer;
 import org.minnal.core.Filter;
 import org.minnal.core.FilterChain;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
+import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.exception.UnauthorizedException;
 import org.minnal.security.auth.Authenticator;
 import org.minnal.security.auth.Credential;
 import org.minnal.security.auth.Principal;
+import org.minnal.security.auth.cas.CasAuthenticator;
 import org.minnal.security.config.SecurityConfiguration;
 import org.minnal.security.session.Session;
+import org.minnal.utils.reflection.Generics;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -30,8 +34,6 @@ public abstract class AbstractAuthenticationFilter<C extends Credential, P exten
 	
 	public static final String AUTH_COOKIE = "_session_id";
 	
-	public static final String PRINCIPAL = "principal";
-	
 	public AbstractAuthenticationFilter(SecurityConfiguration configuration) {
 		this.configuration = configuration;
 	}
@@ -43,17 +45,20 @@ public abstract class AbstractAuthenticationFilter<C extends Credential, P exten
 		Session session = null;
 		if (! whiteListed) {
 			session = getSession(request, true);
+			request.setAttribute(Authenticator.SESSION, session);
 			
-			if (session.containsAttribute(PRINCIPAL)) {
+			P principal = retrievePrincipal(session);
+			if (principal != null) {
 				alreadyAuthenticated = true;
+				session.addAttribute(Authenticator.PRINCIPAL, principal);
 			}
 			
 			if (! alreadyAuthenticated) {
-				P principal = getAuthenticator().authenticate(getCredential(request));
+				principal = getAuthenticator().authenticate(getCredential(request));
 				if (principal == null) {
 					handleAuthFailure(request, response, session);
 				} else {
-					session.addAttribute(PRINCIPAL, principal);
+					session.addAttribute(Authenticator.PRINCIPAL, principal);
 					handleAuthSuccess(request, response, session);
 				}
 			}
@@ -113,6 +118,27 @@ public abstract class AbstractAuthenticationFilter<C extends Credential, P exten
 	}
 	
 	protected abstract A getAuthenticator();
+	
+	@SuppressWarnings("unchecked")
+	protected P retrievePrincipal(Session session) {
+		Object principal = session.getAttribute(Authenticator.PRINCIPAL);
+		if (principal == null) {
+			return null;
+		}
+		
+		Class<P> type = Generics.getTypeParameter(getAuthenticator().getClass(), Principal.class);
+		if (type.isAssignableFrom(principal.getClass())) {
+			return (P) principal;
+		}
+		if (principal instanceof Map) {
+			ChannelBuffer buffer = Serializer.DEFAULT_JSON_SERIALIZER.serialize(principal);
+			principal = Serializer.DEFAULT_JSON_SERIALIZER.deserialize(buffer, type);
+			session.addAttribute(Authenticator.PRINCIPAL, principal);
+			return (P) principal;
+		}
+		// Can't come here 
+		return null;
+	}
 
 	@Override
 	public int hashCode() {

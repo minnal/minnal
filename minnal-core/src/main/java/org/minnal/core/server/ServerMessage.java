@@ -33,6 +33,8 @@ public abstract class ServerMessage implements Message {
 	
 	private Route resolvedRoute;
 	
+	private Map<String, Object> attributes = new HashMap<String, Object>();
+	
 	protected static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 	
 	public ServerMessage(HttpMessage message) {
@@ -128,5 +130,20 @@ public abstract class ServerMessage implements Message {
 	
 	public void addCookies(Map<String, String> cookies) {
 		addHeader(getCookieHeaderName(), Joiner.on(";").withKeyValueSeparator("=").join(cookies));
+	}
+	
+	@Override
+	public <T> T getAttribute(String name) {
+		return (T) attributes.get(name);
+	}
+	
+	@Override
+	public void setAttribute(String name, Object value) {
+		attributes.put(name, value);
+	}
+	
+	@Override
+	public boolean containsAttribute(String name) {
+		return attributes.containsKey(name);
 	}
 }

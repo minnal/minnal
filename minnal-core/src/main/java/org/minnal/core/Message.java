@@ -42,4 +42,10 @@ public interface Message {
 	String getCookie(String name);
 	
 	void addCookies(Map<String, String> cookies);
+	
+	boolean containsAttribute(String name);
+	
+	<T> T getAttribute(String name);
+	
+	void setAttribute(String name, Object value);
 }

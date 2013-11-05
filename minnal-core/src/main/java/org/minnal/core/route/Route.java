@@ -101,6 +101,16 @@ public class Route {
 	public Map<String, String> getAttributes() {
 		return attributes;
 	}
+	
+	/**
+	 * Returns the attribute for the given name
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public String getAttribute(String name) {
+		return attributes.get(name);
+	}
 
 	/**
 	 * @return the queryParams

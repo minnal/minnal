@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.minnal.core.server.ConnectorListener;
 import org.minnal.core.server.MessageContext;
+import org.minnal.core.server.exception.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,57 +33,62 @@ public class ContainerMessageObserver implements RouterListener, ConnectorListen
 
 	@Override
 	public void onReceived(MessageContext context) {
-		for (MessageListener listener : messageListeners) {
-			try {
-				listener.onReceived(context);
-			} catch (Exception e) {
-				logger.warn("Failed while handling the message received event", e);
-			}
+		for (final MessageListener listener : messageListeners) {
+			invoke(new ListenerInvoker(){
+				@Override
+				public void invoke(MessageContext context) {
+					listener.onReceived(context);
+				}
+			}, context);
 		}
 	}
 
 	@Override
 	public void onSuccess(MessageContext context) {
-		for (MessageListener listener : messageListeners) {
-			try {
-				listener.onSuccess(context);
-			} catch (Exception e) {
-				logger.warn("Failed while handling the message success event", e);
-			}
+		for (final MessageListener listener : messageListeners) {
+			invoke(new ListenerInvoker(){
+				@Override
+				public void invoke(MessageContext context) {
+					listener.onSuccess(context);
+				}
+			}, context);
 		}
 	}
 
 	@Override
 	public void onError(MessageContext context) {
-		for (MessageListener listener : messageListeners) {
-			try {
-				listener.onError(context);
-			} catch (Exception e) {
-				logger.warn("Failed while handling the message errored event", e);
-			}
+		for (final MessageListener listener : messageListeners) {
+			invoke(new ListenerInvoker(){
+				@Override
+				public void invoke(MessageContext context) {
+					listener.onError(context);
+				}
+			}, context);
 		}
 	}
 
 	@Override
 	public void onComplete(MessageContext context) {
-		for (MessageListener listener : messageListeners) {
-			try {
-				listener.onComplete(context);
-			} catch (Exception e) {
-				logger.warn("Failed while handling the message completed event", e);
-			}
+		for (final MessageListener listener : messageListeners) {
+			invoke(new ListenerInvoker(){
+				@Override
+				public void invoke(MessageContext context) {
+					listener.onComplete(context);
+				}
+			}, context);
 		}
 	}
 
 	@Override
 	public void onApplicationResolved(MessageContext context) {
 		ApplicationContext.instance().setApplicationConfiguration(context.getApplication().getConfiguration());
-		for (MessageListener listener : messageListeners) {
-			try {
-				listener.onApplicationResolved(context);
-			} catch (Exception e) {
-				logger.warn("Failed while handling the application resolved event", e);
-			}
+		for (final MessageListener listener : messageListeners) {
+			invoke(new ListenerInvoker(){
+				@Override
+				public void invoke(MessageContext context) {
+					listener.onApplicationResolved(context);
+				}
+			}, context);
 		}
 	}
 
@@ -90,17 +96,33 @@ public class ContainerMessageObserver implements RouterListener, ConnectorListen
 	public void onRouteResolved(MessageContext context) {
 		ApplicationContext.instance().setResourceConfiguration(context.getResourceClass().getConfiguration());
 		ApplicationContext.instance().setRouteConfiguration(context.getRoute().getConfiguration());
-		for (MessageListener listener : messageListeners) {
-			try {
-				listener.onRouteResolved(context);
-			} catch (Exception e) {
-				logger.warn("Failed while handling the route resolved event", e);
-			}
+		for (final MessageListener listener : messageListeners) {
+			invoke(new ListenerInvoker(){
+				@Override
+				public void invoke(MessageContext context) {
+					listener.onRouteResolved(context);
+				}
+			}, context);
+		}
+	}
+	
+	protected void invoke(ListenerInvoker invoker, MessageContext context) {
+		try {
+			invoker.invoke(context);
+		} catch (ApplicationException e) {
+			throw e;
+		} catch (Exception e) {
+			logger.warn("Failed while handling the event", e);
+			throw new MinnalException(e);
 		}
 	}
 
 	@Override
 	public void onError(Throwable cause) {
+	}
+	
+	public static interface ListenerInvoker {
 		
+		void invoke(MessageContext context);
 	}
 }

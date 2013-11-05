@@ -12,20 +12,13 @@ import org.minnal.security.auth.User;
  */
 public class CasUser extends User {
 	
-	private AttributePrincipal principal;
+	public CasUser() {
+	}
 
 	/**
 	 * @param principal
 	 */
 	public CasUser(AttributePrincipal principal) {
 		super(principal.getName(), principal.getAttributes());
-		this.principal = principal;
-	}
-
-	/**
-	 * @return the principal
-	 */
-	public AttributePrincipal getPrincipal() {
-		return principal;
 	}
 }

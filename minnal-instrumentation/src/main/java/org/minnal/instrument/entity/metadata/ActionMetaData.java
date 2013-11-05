@@ -12,7 +12,7 @@ import java.util.List;
  * @author ganeshs
  *
  */
-public class ActionMetaData extends MetaData {
+public class ActionMetaData extends SecurableMetaData {
 	
 	private List<ParameterMetaData> parameters = new ArrayList<ParameterMetaData>();
 	
@@ -29,6 +29,7 @@ public class ActionMetaData extends MetaData {
 		super(name);
 		this.method = method;
 		this.path = path;
+		super.init(method);
 	}
 
 	public List<ParameterMetaData> getParameters() {

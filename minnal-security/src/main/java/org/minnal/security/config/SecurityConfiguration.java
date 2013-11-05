@@ -6,6 +6,8 @@ package org.minnal.security.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.minnal.security.auth.Authorizer;
+import org.minnal.security.auth.SimpleAuthorizer;
 import org.minnal.security.session.SessionStore;
 
 /**
@@ -21,6 +23,8 @@ public class SecurityConfiguration {
 	private long sessionExpiryTimeInSecs;
 	
 	private List<String> whiteListedUrls = new ArrayList<String>();
+	
+	private Authorizer authorizer = new SimpleAuthorizer();
 	
 	public SecurityConfiguration() {
 	}
@@ -91,5 +95,19 @@ public class SecurityConfiguration {
 	 */
 	public void setWhiteListedUrls(List<String> whitelistedUrls) {
 		this.whiteListedUrls = whitelistedUrls;
+	}
+
+	/**
+	 * @return the authorizer
+	 */
+	public Authorizer getAuthorizer() {
+		return authorizer;
+	}
+
+	/**
+	 * @param authorizer the authorizer to set
+	 */
+	public void setAuthorizer(Authorizer authorizer) {
+		this.authorizer = authorizer;
 	}
 }

@@ -8,7 +8,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,9 +42,13 @@ import org.minnal.core.route.RoutePattern;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.ActionMetaData;
+import org.minnal.instrument.entity.metadata.CollectionMetaData;
+import org.minnal.instrument.entity.metadata.PermissionMetaData;
+import org.minnal.security.auth.Authorizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
@@ -83,7 +86,7 @@ public class ResourceWrapper {
 	
 	private CtClass generatedClass;
 	
-	private Map<ResourcePath, Map<HttpMethod, List<String>>> paths = new HashMap<ResourcePath, Map<HttpMethod, List<String>>>();
+	private Map<ResourcePath, List<MethodMetaData>> paths = new HashMap<ResourcePath, List<MethodMetaData>>();
 	
 	private ClassPool classPool = ClassPool.getDefault();
 	
@@ -106,10 +109,11 @@ public class ResourceWrapper {
 			
 			try {
 				CtClass superClass = classPool.get(resourceClass.getResourceClass().getName());
+				superClass.defrost();
 				generatedClass = classPool.makeClass(resourceClass.getResourceClass().getName() + "Wrapper", superClass);
 			} catch (Exception e) {
 				logger.error("Failed while creating the generated class for the resource - " + resourceClass.getResourceClass(), e);
-				throw new MinnalException("Failed while creating the generated class");
+				throw new MinnalException("Failed while creating the generated class", e);
 			}
 		} else {
 			if (resourceClass.getEntityClass() == null) {
@@ -202,15 +206,18 @@ public class ResourceWrapper {
 		logger.debug("Adding the action method {} for the resource path {} and method {}", action.getName(), resourcePath, method);
 		VelocityContext context = new VelocityContext();
 		context.put("action", action);
-		addMethod(resourcePath, method, context);
+		String methodName = addMethod(resourcePath, method, context);
+		if (methodName != null) {
+			addMethodToPath(resourcePath, method, methodName, action.getPermissionMetaData());
+		}
 	}
 	
-	protected void addMethod(ResourcePath resourcePath, HttpMethod method, VelocityContext context) throws Exception {
+	protected String addMethod(ResourcePath resourcePath, HttpMethod method, VelocityContext context) throws Exception {
 		Template template = getMethodTemplate(resourcePath, method);
 		if (template == null) {
 			logger.error("FATAL!! Template not found for the resource path {} and method {}", resourcePath, method);
 			// TODO Can't get here. Handle if it still gets here
-			return;
+			return null;
 		}
 
 		context.put("inflector", Inflector.class);
@@ -228,8 +235,7 @@ public class ResourceWrapper {
 		template.merge(context, writer);
 		
 		logger.trace("Constructed method string {}", writer);
-		String methodName = makeMethod(writer);
-		addMethodToPath(resourcePath, method, methodName);
+		return makeMethod(writer);
 	}
 	
 	protected void addCrudMethod(ResourcePath resourcePath, HttpMethod method) throws Exception {
@@ -241,7 +247,21 @@ public class ResourceWrapper {
 		}
 		
 		VelocityContext context = new VelocityContext();
-		addMethod(resourcePath, method, context);
+		String methodName = addMethod(resourcePath, method, context);
+		if (methodName != null) {
+			Set<PermissionMetaData> permissions = null;
+			if (resourcePath.getNodePath().size() == 1) {
+				permissions = resourcePath.getNodePath().get(0).getEntityMetaData().getPermissionMetaData();
+			} else {
+				CollectionMetaData source = resourcePath.getNodePath().get(resourcePath.getNodePath().size() - 1).getSource();
+				if (source != null) {
+					permissions = source.getPermissionMetaData();
+				}
+			}
+			if (methodName != null) {
+				addMethodToPath(resourcePath, method, methodName, permissions);
+			}
+		}
 	}
 	
 	protected boolean methodExists(String methodName) {
@@ -312,7 +332,7 @@ public class ResourceWrapper {
 		logger.debug("Creating the routes for the generated class {}", generatedClass);
 		ResourcePath path = null;
 		RouteBuilder builder = null;
-		for (Entry<ResourcePath, Map<HttpMethod, List<String>>> entry : paths.entrySet()) {
+		for (Entry<ResourcePath, List<MethodMetaData>> entry : paths.entrySet()) {
 			path = entry.getKey();
 			
 			if (path.isAction()) {
@@ -323,15 +343,15 @@ public class ResourceWrapper {
 				builder = resourceClass.builder(constructRoutePath(path.getSinglePath()));
 			}
 			
-			for (Entry<HttpMethod, List<String>> method : entry.getValue().entrySet()) {
-				Type requestType = getRequestType(method.getKey(), path);
-				Type responseType = getResponseType(method.getKey(), path);
-				for (String name : method.getValue()) {
-					RouteAction action = builder.action(method.getKey(), name, requestType, responseType);
-					if (method.getKey().equals(HttpMethod.GET) && path.bulk) {
-						for (QueryParam param : entry.getKey().getNodePath().getQueryParams()) {
-							action.queryParam(param);
-						}
+			for (MethodMetaData method : entry.getValue()) {
+				Type requestType = getRequestType(method.getHttpMethod(), path);
+				Type responseType = getResponseType(method.getHttpMethod(), path);
+				RouteAction action = builder.action(method.getHttpMethod(), method.getName(), requestType, responseType);
+				action.attribute(Authorizer.PERMISSIONS, Joiner.on(",").skipNulls().join(method.getPermissions()));
+				
+				if (method.getHttpMethod().equals(HttpMethod.GET) && path.bulk) {
+					for (QueryParam param : entry.getKey().getNodePath().getQueryParams()) {
+						action.queryParam(param);
 					}
 				}
 			}
@@ -368,20 +388,22 @@ public class ResourceWrapper {
 		return path.substring(resourceClass.getBasePath().length());
 	}
 	
-	private boolean addMethodToPath(ResourcePath resourcePath, HttpMethod method, String action) {
-		logger.debug("Adding the method {} with http method {} to the path {}", action, method, resourcePath);
-		Map<HttpMethod, List<String>> methods = paths.get(resourcePath);
+	private void addMethodToPath(ResourcePath resourcePath, HttpMethod method, String action, Set<PermissionMetaData> permissions) {
+		logger.debug("Adding the method {} with the http Method {} to the path {}", action, method, resourcePath);
+		
+		List<String> perms = new ArrayList<String>();
+		for (PermissionMetaData metaData : permissions) {
+			if (metaData.getMethod().equals(method)) {
+				perms = metaData.getPermissions();
+			}
+		}
+		MethodMetaData metaData = new MethodMetaData(action, method, perms);
+		List<MethodMetaData> methods = paths.get(resourcePath);
 		if (methods == null) {
-			methods = new LinkedHashMap<HttpMethod, List<String>>();
+			methods = new ArrayList<MethodMetaData>();
 			paths.put(resourcePath, methods);
 		}
-		List<String> actions = methods.get(method);
-		if (actions == null) {
-			actions = new ArrayList<String>();
-			methods.put(method, actions);
-		}
-		methods.get(method).add(action);
-		return true;
+		methods.add(metaData);
 	}
 	
 	/**
@@ -492,5 +514,74 @@ public class ResourceWrapper {
 					+ ", action=" + action + "]";
 		}
 		
+	}
+	
+	public static class MethodMetaData {
+		
+		private String name;
+		
+		private HttpMethod httpMethod;
+		
+		private List<String> permissions;
+
+		/**
+		 * @param name
+		 * @param httpMethod
+		 * @param permissions
+		 */
+		public MethodMetaData(String name, HttpMethod httpMethod,
+				List<String> permissions) {
+			this.name = name;
+			this.httpMethod = httpMethod;
+			this.permissions = permissions;
+		}
+
+		/**
+		 * @return the name
+		 */
+		public String getName() {
+			return name;
+		}
+
+		/**
+		 * @param name the name to set
+		 */
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		/**
+		 * @return the httpMethod
+		 */
+		public HttpMethod getHttpMethod() {
+			return httpMethod;
+		}
+
+		/**
+		 * @param httpMethod the httpMethod to set
+		 */
+		public void setHttpMethod(HttpMethod httpMethod) {
+			this.httpMethod = httpMethod;
+		}
+
+		/**
+		 * @return the permissions
+		 */
+		public List<String> getPermissions() {
+			return permissions;
+		}
+
+		/**
+		 * @param permissions the permissions to set
+		 */
+		public void setPermissions(List<String> permissions) {
+			this.permissions = permissions;
+		}
+
+		@Override
+		public String toString() {
+			return "MethodMetaData [name=" + name + ", httpMethod="
+					+ httpMethod + ", permissions=" + permissions + "]";
+		}
 	}
 }

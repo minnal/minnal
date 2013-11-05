@@ -10,7 +10,7 @@ import java.util.Set;
  * @author ganeshs
  *
  */
-public class EntityMetaData extends MetaData {
+public class EntityMetaData extends SecurableMetaData {
 
 	private Class<?> entityClass;
 	
@@ -27,6 +27,7 @@ public class EntityMetaData extends MetaData {
 	public EntityMetaData(Class<?> entityClass) {
 		super(entityClass.getSimpleName());
 		this.entityClass = entityClass;
+		super.init(entityClass);
 	}
 	
 	public void addSearchField(ParameterMetaData parameterMetaData) {
@@ -78,4 +79,5 @@ public class EntityMetaData extends MetaData {
 	public Set<AssociationMetaData> getAssociations() {
 		return associations;
 	}
+
 }

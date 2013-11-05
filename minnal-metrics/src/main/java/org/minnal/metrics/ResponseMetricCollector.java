@@ -5,7 +5,7 @@ package org.minnal.metrics;
 
 import java.util.concurrent.TimeUnit;
 
-import org.minnal.core.MessageListener;
+import org.minnal.core.MessageListenerAdapter;
 import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
 
@@ -18,7 +18,7 @@ import com.google.common.base.CharMatcher;
  * @author ganeshs
  *
  */
-public class ResponseMetricCollector implements MessageListener {
+public class ResponseMetricCollector extends MessageListenerAdapter {
 	
 	public static final String EXCEPTIONS = "exceptions";
 
@@ -35,14 +35,6 @@ public class ResponseMetricCollector implements MessageListener {
 		context.addAttribute(START_TIME, clock.getTick());
 	}
 
-	@Override
-	public void onApplicationResolved(MessageContext context) {
-	}
-
-	@Override
-	public void onRouteResolved(MessageContext context) {
-	}
-	
 	private String formatName(String name){
 		String slashRemoved = CharMatcher.anyOf("/").trimAndCollapseFrom(name, '.');
 		return CharMatcher.anyOf("{}").removeFrom(slashRemoved);
@@ -66,10 +58,6 @@ public class ResponseMetricCollector implements MessageListener {
 	}
 
 	@Override
-	public void onError(MessageContext context) {
-	}
-
-	@Override
 	public void onComplete(MessageContext context) {
 		String name = null;
 		Boolean successful = (Boolean) context.getAttribute(SUCCESSFUL);
@@ -85,8 +73,5 @@ public class ResponseMetricCollector implements MessageListener {
 			Timer timer = MetricRegistries.getRegistry(context.getApplication().getConfiguration().getName()).timer(name);
 			timer.update(clock.getTick() - (Long) context.getAttribute(START_TIME), TimeUnit.NANOSECONDS);
 		}
-		
-		
 	}
-
 }

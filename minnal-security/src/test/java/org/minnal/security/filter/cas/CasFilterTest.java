@@ -25,6 +25,7 @@ import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.core.server.exception.SeeOtherException;
 import org.minnal.core.server.exception.UnauthorizedException;
+import org.minnal.security.auth.Authenticator;
 import org.minnal.security.auth.cas.AbstractPgtTicketStorage;
 import org.minnal.security.auth.cas.CasAuthenticator;
 import org.minnal.security.auth.cas.CasCredential;
@@ -104,8 +105,16 @@ public class CasFilterTest extends BaseModelTest {
 		when(sessionStore.createSession(anyString())).thenReturn(session);
 		when(authenticator.authenticate(any(CasCredential.class))).thenReturn(user);
 		filter.doFilter(request, response, chain);
-		verify(session).addAttribute(CasFilter.PRINCIPAL, user);
+		verify(session).addAttribute(Authenticator.PRINCIPAL, user);
 		verify(sessionStore).save(session);
+	}
+	
+	@Test
+	public void shouldStoreSessionOnRequestOnSuccessfulAuth() {
+		when(sessionStore.createSession(anyString())).thenReturn(session);
+		when(authenticator.authenticate(any(CasCredential.class))).thenReturn(user);
+		filter.doFilter(request, response, chain);
+		verify(request).setAttribute(Authenticator.SESSION, session);
 	}
 	
 	@Test
@@ -138,11 +147,20 @@ public class CasFilterTest extends BaseModelTest {
 	@Test
 	public void shouldSkipAuthIfAlreadyAuthenticated() {
 		when(request.getCookie(CasFilter.AUTH_COOKIE)).thenReturn("test123");
-		when(session.containsAttribute(CasFilter.PRINCIPAL)).thenReturn(true);
+		when(session.getAttribute(Authenticator.PRINCIPAL)).thenReturn(user);
 		when(sessionStore.getSession("test123")).thenReturn(session);
 		filter.doFilter(request, response, chain);
 		verify(authenticator, never()).authenticate(any(CasCredential.class));
 		verify(chain).doFilter(request, response);
+	}
+	
+	@Test
+	public void shouldSetSessionOnRequestIfAlreadyAuthenticated() {
+		when(request.getCookie(CasFilter.AUTH_COOKIE)).thenReturn("test123");
+		when(session.getAttribute(Authenticator.PRINCIPAL)).thenReturn(user);
+		when(sessionStore.getSession("test123")).thenReturn(session);
+		filter.doFilter(request, response, chain);
+		verify(request).setAttribute(Authenticator.SESSION, session);
 	}
 	
 	@Test

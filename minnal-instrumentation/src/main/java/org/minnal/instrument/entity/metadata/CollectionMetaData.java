@@ -3,6 +3,9 @@
  */
 package org.minnal.instrument.entity.metadata;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+
 import org.minnal.instrument.entity.Collection;
 import org.minnal.utils.reflection.ClassUtils;
 
@@ -11,7 +14,7 @@ import org.minnal.utils.reflection.ClassUtils;
  * @author ganeshs
  *
  */
-public class CollectionMetaData extends MetaData {
+public class CollectionMetaData extends SecurableMetaData {
 
 	private Class<?> elementType;
 	
@@ -27,6 +30,13 @@ public class CollectionMetaData extends MetaData {
 	
 	private boolean deleteAllowed = true;
 	
+	/**
+	 * @param parent
+	 * @param name
+	 * @param elementType
+	 * @param type
+	 * @param entity
+	 */
 	public CollectionMetaData(Class<?> parent, String name, Class<?> elementType, Class<?> type, boolean entity) {
 		super(name);
 		this.elementType = elementType;
@@ -35,6 +45,10 @@ public class CollectionMetaData extends MetaData {
 		init(parent, name);
 	}
 	
+	/**
+	 * @param parent
+	 * @param property
+	 */
 	private void init(Class<?> parent, String property) {
 		Collection collection = ClassUtils.getAnnotation(parent, property, Collection.class);
 		if (collection != null) {
@@ -42,6 +56,14 @@ public class CollectionMetaData extends MetaData {
 			readAllowed = collection.read();
 			updateAllowed = collection.update();
 			deleteAllowed = collection.delete();
+		}
+		PropertyDescriptor descriptor = ClassUtils.getPropertyDescriptor(parent, property);
+		if (descriptor != null && descriptor.getReadMethod() != null) {
+			super.init(descriptor.getReadMethod());
+		}
+		Field field = ClassUtils.getField(parent, property);
+		if (field != null) {
+			super.init(field);
 		}
 	}
 

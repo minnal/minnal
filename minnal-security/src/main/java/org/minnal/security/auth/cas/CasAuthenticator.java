@@ -48,5 +48,4 @@ public class CasAuthenticator implements Authenticator<CasCredential, CasUser> {
 		}
 		return validator;
 	}
-
 }
