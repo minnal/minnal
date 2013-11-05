@@ -190,8 +190,8 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-6-05-nov-2013">minnal-1.0.6 / 05-Nov-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-5-22-oct-2013">minnal-1.0.5 / 22-Oct-2013</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id1">minnal-1.0.5 / 22-Oct-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-4-11-oct-2013">minnal-1.0.4 / 11-Oct-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-3-10-oct-2013">minnal-1.0.3 / 10-Oct-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-2-09-oct-2013">minnal-1.0.2 / 09-Oct-2013</a></li>
@@ -258,8 +258,8 @@
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-6-05-nov-2013">minnal-1.0.6 / 05-Nov-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-5-22-oct-2013">minnal-1.0.5 / 22-Oct-2013</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id1">minnal-1.0.5 / 22-Oct-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-4-11-oct-2013">minnal-1.0.4 / 11-Oct-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-3-10-oct-2013">minnal-1.0.3 / 10-Oct-2013</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minnal-1-0-2-09-oct-2013">minnal-1.0.2 / 09-Oct-2013</a></li>
@@ -281,10 +281,10 @@
       
   <div class="section" id="release-notes">
 <h1>Release Notes</h1>
-<div class="section" id="minnal-1-0-5-22-oct-2013">
-<h2>minnal-1.0.5 / 22-Oct-2013</h2>
+<div class="section" id="minnal-1-0-6-05-nov-2013">
+<h2>minnal-1.0.6 / 05-Nov-2013</h2>
 <ul>
-<li><p class="first">Fixed issue #30 (Build support for Authorization)</p>
+<li><p class="first">Fixed issue <a class="reference external" href="https://github.com/minnal/minnal/issues/30">#30</a> (Build support for Authorization)</p>
 <p><strong>Authorizing the routes</strong></p>
 <p>This version has got support for authorizing the routes with annotations (if you use minnal-instrumentation) and without annotations (via the route definitions). To use the authorization support, you will have to include minnal-security in your pom.xml file.</p>
 <p>Below is a sample code to set up auth permissions for routes via the route definition,</p>
@@ -350,14 +350,14 @@
 </pre></div>
 </td></tr></table></div>
 </li>
-<li><p class="first">Fixed issue #61 (Fixes in case conversion from under_scores to camelCase)</p>
+<li><p class="first">Fixed issue <a class="reference external" href="https://github.com/minnal/minnal/issues/61">#61</a> (Fixes in case conversion from under_scores to camelCase)</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id1">
+<div class="section" id="minnal-1-0-5-22-oct-2013">
 <h2>minnal-1.0.5 / 22-Oct-2013</h2>
 <ul>
-<li><p class="first">Fixed issue #49 (Support including &amp; excluding fields in the json/xml response)</p>
+<li><p class="first">Fixed issue <a class="reference external" href="https://github.com/minnal/minnal/issues/49">#49</a> (Support including &amp; excluding fields in the json/xml response)</p>
 <p><strong>Dynamically including and excluding fields in the response</strong></p>
 <p>This version of minnal has support for dynamically including or excluding fields in the json response. This is quite useful when returning back a deeply nested entity or entities with collections. If combined with JPA lazy loading, you can avoid firing unwanted db sqls and increase the performance of the API. Below is a sample usage</p>
 <div class="highlight-bash"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -366,11 +366,11 @@ GET /orders?include<span class="o">=</span>order_items
 </pre></div>
 </td></tr></table></div>
 </li>
-<li><p class="first">Fixed issue #57 (Unable to create manual routes to an auto created resource)</p>
+<li><p class="first">Fixed issue <a class="reference external" href="https://github.com/minnal/minnal/issues/57">#57</a> (Unable to create manual routes to an auto created resource)</p>
 </li>
-<li><p class="first">Fixed issue #59 (Swagger API doesn&#8217;t show operations for applications with base path other than &#8216;/&#8217;)</p>
+<li><p class="first">Fixed issue <a class="reference external" href="https://github.com/minnal/minnal/issues/59">#59</a> (Swagger API doesn&#8217;t show operations for applications with base path other than &#8216;/&#8217;)</p>
 </li>
-<li><p class="first">Fixed issue #60 (404 errors are not thrown)</p>
+<li><p class="first">Fixed issue <a class="reference external" href="https://github.com/minnal/minnal/issues/60">#60</a> (404 errors are not thrown)</p>
 </li>
 </ul>
 </div>

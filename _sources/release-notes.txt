@@ -4,10 +4,10 @@
 Release Notes
 #############
 
-minnal-1.0.5 / 22-Oct-2013
+minnal-1.0.6 / 05-Nov-2013
 ==========================
 
-* Fixed issue #30 (Build support for Authorization)
+* Fixed issue `#30 <https://github.com/minnal/minnal/issues/30>`_ (Build support for Authorization)
 
   **Authorizing the routes**
 
@@ -54,12 +54,12 @@ minnal-1.0.5 / 22-Oct-2013
 	    }
 	}  
 
-* Fixed issue #61 (Fixes in case conversion from under_scores to camelCase)
+* Fixed issue `#61 <https://github.com/minnal/minnal/issues/61>`_ (Fixes in case conversion from under_scores to camelCase)
 
 minnal-1.0.5 / 22-Oct-2013
 ==========================
 
-* Fixed issue #49 (Support including & excluding fields in the json/xml response)
+* Fixed issue `#49 <https://github.com/minnal/minnal/issues/49>`_ (Support including & excluding fields in the json/xml response)
 
   **Dynamically including and excluding fields in the response**
 
@@ -71,9 +71,9 @@ minnal-1.0.5 / 22-Oct-2013
 	GET /orders?exclude=created_at,order_items,payments
 	GET /orders?include=order_items
 
-* Fixed issue #57 (Unable to create manual routes to an auto created resource)
-* Fixed issue #59 (Swagger API doesn't show operations for applications with base path other than '/')
-* Fixed issue #60 (404 errors are not thrown)
+* Fixed issue `#57 <https://github.com/minnal/minnal/issues/57>`_ (Unable to create manual routes to an auto created resource)
+* Fixed issue `#59 <https://github.com/minnal/minnal/issues/59>`_ (Swagger API doesn't show operations for applications with base path other than '/')
+* Fixed issue `#60 <https://github.com/minnal/minnal/issues/60>`_ (404 errors are not thrown)
 
 
 minnal-1.0.4 / 11-Oct-2013
