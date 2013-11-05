@@ -434,7 +434,7 @@ Bulk delete is similar to bulk retrieval, just pass on comma-separated identifie
 
 Authorizing Routes
 ==================
-Minnal exposes ``@Secure`` annotation to secure an aggregate root or a collection or an action method. It takes in a HttpMethod and an array permissions to authorize against. You can use ``@SecureMultiple`` for using @Secure multiple times over the same element. Click `here </manual/security.html#authorizers>`_ on instructions for configuring the authorization.
+Minnal exposes ``@Secure`` annotation to secure an aggregate root or a collection or an action method. It takes in a HttpMethod and an array permissions to authorize against. You can use ``@SecureMultiple`` for using @Secure multiple times over the same element. Click `here </minnal/manual/security.html#authorizers>`_ on instructions for configuring the authorization.
 
 Below code snippet shows a sample usage,
 
@@ -463,3 +463,7 @@ Below code snippet shows a sample usage,
 	        setCancellationReason(reason);
 	    }
 	}  
+
+.. note::
+	
+	You should have configured authentication to use authorization.
