@@ -7,6 +7,58 @@ Release Notes
 minnal-1.0.5 / 22-Oct-2013
 ==========================
 
+* Fixed issue #30 (Build support for Authorization)
+
+  **Authorizing the routes**
+
+  This version has got support for authorizing the routes with annotations (if you use minnal-instrumentation) and without annotations (via the route definitions). To use the authorization support, you will have to include minnal-security in your pom.xml file.
+
+  Below is a sample code to set up auth permissions for routes via the route definition,
+
+  .. code-block:: java
+	:linenos:
+
+	public class OrderApplication extends Application<OrderConfiguration> {
+	      @Override
+	      protected void defineRoutes() {
+	            resource(OrderResource.class).builder("/hello").action(HttpMethod.GET, "helloWorld")
+	            .attribute(Authorizer.PERMISSIONS, "permission1,permission2");
+	      }
+	}      
+
+  The same can be achieved through annotations using the minnal-instrumentation module,
+
+  .. code-block:: java
+	:linenos:
+
+	@AggregateRoot
+	@Entity
+	@Table(name="Orders")
+	@SecureMultiple({
+	    @Secure(method=Method.POST, permissions="CREATE_ORDER"),
+	    @Secure(method=Method.PUT, permissions="EDIT_ORDER")
+	})
+	public class Order extends Model {
+
+	    @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+	    @JoinColumn(name="orderId")
+	    @JsonManagedReference
+	    @Secure(method=Method.DELETE, permissions="DELETE_ITEM")
+	    private Set<OrderItem> orderItems = new HashSet<OrderItem>();
+
+	    @Action(value="cancel")
+	    @Secure(method=Method.PUT, permissions="CANCEL_ORDER")
+	    public void cancel(String reason) {
+	        setStatus(Status.cancelled);
+	        setCancellationReason(reason);
+	    }
+	}  
+
+* Fixed issue #61 (Fixes in case conversion from under_scores to camelCase)
+
+minnal-1.0.5 / 22-Oct-2013
+==========================
+
 * Fixed issue #49 (Support including & excluding fields in the json/xml response)
 
   **Dynamically including and excluding fields in the response**
