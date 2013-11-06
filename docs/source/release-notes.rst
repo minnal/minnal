@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+minnal-1.0.7 / 07-Nov-2013
+==========================
+This release has fixes for the below blocker bugs. 
+
+* Fixed issue `#67 <https://github.com/minnal/minnal/issues/67>`_ (tools.jar dependency issue on multiple platforms)
+* Fixed issue `#68 <https://github.com/minnal/minnal/issues/68>`_ (Maven dependency resolution failure on org.eclipse.equinox)
+
 minnal-1.0.6 / 05-Nov-2013
 ==========================
 
