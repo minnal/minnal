@@ -53,9 +53,9 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 			logger.debug("Node {} is visited by {}", child, node);
 			return true;
 		}
-		if (node.parent != null) {
+		if (node.getParent() != null) {
 			logger.debug("Checking if the node {} is visited by the parent of {}", child, node);
-			return checkVisited(node.parent, child);
+			return checkVisited(node.getParent(), child);
 		}
 		return false;
 	}
@@ -84,7 +84,7 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 			logger.debug("Node {} is already visited by this node {} or one of its ancestors", child, getThis());
 			return null;
 		}
-		child.parent = getThis();
+		child.setParent(getThis());
 		if (first) {
 			children.addFirst(child);
 		} else {
@@ -118,7 +118,7 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	 * @param visitor
 	 */
 	private void traverse(T root, Visitor<T> visitor) {
-		for (T child : root.children) {
+		for (T child : root.getChildren()) {
 			traverse(child, visitor);
 		}
 		visitor.visit(root);
@@ -141,7 +141,7 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 			path = createNodePath(copy(list));
 			visitor.visit(path);
 			if (node.hasChildren()) {
-				for (T child : node.children) {
+				for (T child : node.getChildren()) {
 					stack.push(child);
 				}
 			} else {
@@ -160,6 +160,13 @@ public abstract class Node<T extends Node<T, P, V>, P extends Node<T, P, V>.Node
 	 */
 	public T getParent() {
 		return parent;
+	}
+	
+	/**
+	 * @param parent
+	 */
+	public void setParent(T parent) {
+		this.parent = parent;
 	}
 
 	/**
