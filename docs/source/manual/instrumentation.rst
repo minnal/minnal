@@ -74,7 +74,7 @@ Updates are always done at entity level. The content-type header is mandatory fo
 
 Delete
 ~~~~~~
-Updates are always done at entity level. The route for update calls will be of the format,
+Deletes are always done at entity level. The route for delete calls will be of the format,
 
 .. code-block:: bash
 	:linenos:
