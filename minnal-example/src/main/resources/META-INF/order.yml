@@ -13,6 +13,11 @@ db:
     hibernate.hbm2ddl.auto: create-drop
   packagesToScan:
     - org.minnal.example
+    - org.minnal.security.session
 packagesToScan:
   - org.minnal.example
 instrumentationEnabled: true
+#security:
+#  sessionStore:
+#    class: org.minnal.security.session.JpaSessionStore
+#  sessionExpiryTimeInSecs: 300

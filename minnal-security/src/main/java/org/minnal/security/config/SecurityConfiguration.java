@@ -26,6 +26,10 @@ public class SecurityConfiguration {
 	
 	private Authorizer authorizer = new SimpleAuthorizer();
 	
+	private String realm = DEFAULT_REALM;
+	
+	private static final String DEFAULT_REALM = "Service Apis";
+	
 	public SecurityConfiguration() {
 	}
 
@@ -109,5 +113,26 @@ public class SecurityConfiguration {
 	 */
 	public void setAuthorizer(Authorizer authorizer) {
 		this.authorizer = authorizer;
+	}
+
+	/**
+	 * @return the realm
+	 */
+	public String getRealm() {
+		return realm;
+	}
+
+	/**
+	 * @param realm the realm to set
+	 */
+	public void setRealm(String realm) {
+		this.realm = realm;
+	}
+
+	/**
+	 * @return the defaultRealm
+	 */
+	public static String getDefaultRealm() {
+		return DEFAULT_REALM;
 	}
 }

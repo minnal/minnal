@@ -9,11 +9,13 @@ import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.Application;
 import org.minnal.core.MinnalException;
 import org.minnal.core.server.exception.InternalServerErrorException;
+import org.minnal.example.auth.BasicAuthenticator;
 import org.minnal.example.domain.Order;
 import org.minnal.example.domain.OrderItem;
 import org.minnal.example.resource.OrderResource;
 import org.minnal.jpa.JPAPlugin;
 import org.minnal.jpa.OpenSessionInViewFilter;
+import org.minnal.security.filter.basic.BasicAuthenticationFilter;
 
 /**
  * @author ganeshs
@@ -38,6 +40,7 @@ public class OrderApplication extends Application<OrderConfiguration> {
 	@Override
 	protected void addFilters() {
 		addFilter(new OpenSessionInViewFilter(getConfiguration().getDatabaseConfiguration()));
+		addFilter(new BasicAuthenticationFilter(new BasicAuthenticator(), getConfiguration().getSecurityConfiguration()));
 	}
 	
 	@Override
