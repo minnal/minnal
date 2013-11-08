@@ -37,8 +37,10 @@ public class SimpleAuthorizer implements Authorizer {
 		}
 		if (user.getPermissions() == null) {
 			List<Permission> perms = new ArrayList<Permission>();
-			for (Role role : user.getRoles()) {
-				perms.addAll(permissionMapper.getPermissions(role));
+			if (user.getRoles() != null) {
+				for (Role role : user.getRoles()) {
+					perms.addAll(permissionMapper.getPermissions(role));
+				}
 			}
 			user.setPermissions(perms);
 		}

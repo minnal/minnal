@@ -4,6 +4,7 @@
 package org.minnal.security.auth;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +56,13 @@ public class SimpleUserRoleMapper implements UserRoleMapper {
 		Properties properties = new Properties();
 		roles = new HashMap<String, List<Role>>();
 		
+		InputStream is = null;
 		try {
-			properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(mappingFile));
+			is = Thread.currentThread().getContextClassLoader().getResourceAsStream(mappingFile);
+			if (is == null) {
+				return;
+			}
+			properties.load(is);
 			for (Entry<Object, Object> entry : properties.entrySet()) {
 				Iterable<String> rols = Splitter.on(",").omitEmptyStrings().split((String) entry.getValue());
 				roles.put((String) entry.getKey(), Lists.newArrayList(Iterables.transform(rols, new Function<String, Role>() {
@@ -69,6 +75,13 @@ public class SimpleUserRoleMapper implements UserRoleMapper {
 		} catch (IOException e) {
 			logger.error("Failed while loading the property file - " + mappingFile, e);
 			throw new MinnalException("Failed while loading the property file - " + mappingFile, e);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (Exception e) {
+				}
+			}
 		}
 	}
 
