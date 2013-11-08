@@ -40,7 +40,9 @@ public class OrderApplication extends Application<OrderConfiguration> {
 	@Override
 	protected void addFilters() {
 		addFilter(new OpenSessionInViewFilter(getConfiguration().getDatabaseConfiguration()));
-		addFilter(new BasicAuthenticationFilter(new BasicAuthenticator(), getConfiguration().getSecurityConfiguration()));
+		if (getConfiguration().getSecurityConfiguration() != null) {
+			addFilter(new BasicAuthenticationFilter(new BasicAuthenticator(), getConfiguration().getSecurityConfiguration()));
+		}
 	}
 	
 	@Override
