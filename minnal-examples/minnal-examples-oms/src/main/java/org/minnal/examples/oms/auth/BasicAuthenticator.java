@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.example.auth;
+package org.minnal.examples.oms.auth;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.example.domain;
+package org.minnal.examples.oms.domain;
 
 import java.util.HashSet;
 import java.util.Set;

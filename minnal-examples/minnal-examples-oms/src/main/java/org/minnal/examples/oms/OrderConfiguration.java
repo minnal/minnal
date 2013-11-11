@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.example;
+package org.minnal.examples.oms;
 
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.security.config.SecurityAware;

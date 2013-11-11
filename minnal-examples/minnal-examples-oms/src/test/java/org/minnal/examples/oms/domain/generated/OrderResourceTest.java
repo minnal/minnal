@@ -1,4 +1,4 @@
-package org.minnal.example.domain.generated;
+package org.minnal.examples.oms.domain.generated;
 
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.resource.BaseJPAResourceTest;
@@ -14,7 +14,7 @@ import static org.testng.Assert.*;
 public class OrderResourceTest extends BaseJPAResourceTest {
 	@Test
 	public void createOrderTest() {
-		org.minnal.example.domain.Order order = createDomain(org.minnal.example.domain.Order.class);
+		org.minnal.examples.oms.domain.Order order = createDomain(org.minnal.examples.oms.domain.Order.class);
 		Response response = call(request("/orders/", HttpMethod.POST,
 				Serializer.DEFAULT_JSON_SERIALIZER
 						.serialize(order)));

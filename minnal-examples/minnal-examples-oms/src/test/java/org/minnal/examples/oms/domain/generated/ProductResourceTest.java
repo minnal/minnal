@@ -1,4 +1,4 @@
-package org.minnal.example.domain.generated;
+package org.minnal.examples.oms.domain.generated;
 
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.resource.BaseJPAResourceTest;
@@ -14,7 +14,7 @@ import static org.testng.Assert.*;
 public class ProductResourceTest extends BaseJPAResourceTest {
 	@Test
 	public void listProductTest() {
-		org.minnal.example.domain.Product product = createDomain(org.minnal.example.domain.Product.class);
+		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		product.persist();
 		Response response = call(request("/products/", HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
@@ -24,14 +24,14 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 								response
 										.getContent(),
 								java.util.List.class,
-								org.minnal.example.domain.Product.class)
+								org.minnal.examples.oms.domain.Product.class)
 						.size(),
-				(int) org.minnal.example.domain.Product.count());
+				(int) org.minnal.examples.oms.domain.Product.count());
 	}
 
 	@Test
 	public void createProductTest() {
-		org.minnal.example.domain.Product product = createDomain(org.minnal.example.domain.Product.class);
+		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		Response response = call(request("/products/", HttpMethod.POST,
 				Serializer.DEFAULT_JSON_SERIALIZER
 						.serialize(product)));
@@ -40,10 +40,10 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 
 	@Test
 	public void updateProductTest() {
-		org.minnal.example.domain.Product product = createDomain(org.minnal.example.domain.Product.class);
+		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		product.persist();
-		org.minnal.example.domain.Product modifiedproduct = createDomain(
-				org.minnal.example.domain.Product.class, 1);
+		org.minnal.examples.oms.domain.Product modifiedproduct = createDomain(
+				org.minnal.examples.oms.domain.Product.class, 1);
 		Response response = call(request(
 				"/products/" + product.getId(), HttpMethod.PUT,
 				Serializer.DEFAULT_JSON_SERIALIZER
@@ -56,19 +56,19 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 
 	@Test
 	public void readProductTest() {
-		org.minnal.example.domain.Product product = createDomain(org.minnal.example.domain.Product.class);
+		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		product.persist();
 		Response response = call(request(
 				"/products/" + product.getId(), HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
 		assertEquals(serializer.deserialize(response.getContent(),
-				org.minnal.example.domain.Product.class)
+				org.minnal.examples.oms.domain.Product.class)
 				.getId(), product.getId());
 	}
 
 	@Test
 	public void deleteProductTest() {
-		org.minnal.example.domain.Product product = createDomain(org.minnal.example.domain.Product.class);
+		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		product.persist();
 		Response response = call(request(
 				"/products/" + product.getId(),

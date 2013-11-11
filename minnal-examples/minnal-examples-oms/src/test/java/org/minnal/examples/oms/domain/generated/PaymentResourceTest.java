@@ -1,4 +1,4 @@
-package org.minnal.example.domain.generated;
+package org.minnal.examples.oms.domain.generated;
 
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.resource.BaseJPAResourceTest;
@@ -14,7 +14,7 @@ import static org.testng.Assert.*;
 public class PaymentResourceTest extends BaseJPAResourceTest {
 	@Test
 	public void listPaymentTest() {
-		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
+		org.minnal.examples.oms.domain.Payment payment = createDomain(org.minnal.examples.oms.domain.Payment.class);
 		payment.persist();
 		Response response = call(request("/payments/", HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
@@ -24,14 +24,14 @@ public class PaymentResourceTest extends BaseJPAResourceTest {
 								response
 										.getContent(),
 								java.util.List.class,
-								org.minnal.example.domain.Payment.class)
+								org.minnal.examples.oms.domain.Payment.class)
 						.size(),
-				(int) org.minnal.example.domain.Payment.count());
+				(int) org.minnal.examples.oms.domain.Payment.count());
 	}
 
 	@Test
 	public void createPaymentTest() {
-		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
+		org.minnal.examples.oms.domain.Payment payment = createDomain(org.minnal.examples.oms.domain.Payment.class);
 		Response response = call(request("/payments/", HttpMethod.POST,
 				Serializer.DEFAULT_JSON_SERIALIZER
 						.serialize(payment)));
@@ -40,10 +40,10 @@ public class PaymentResourceTest extends BaseJPAResourceTest {
 
 	@Test
 	public void updatePaymentTest() {
-		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
+		org.minnal.examples.oms.domain.Payment payment = createDomain(org.minnal.examples.oms.domain.Payment.class);
 		payment.persist();
-		org.minnal.example.domain.Payment modifiedpayment = createDomain(
-				org.minnal.example.domain.Payment.class, 1);
+		org.minnal.examples.oms.domain.Payment modifiedpayment = createDomain(
+				org.minnal.examples.oms.domain.Payment.class, 1);
 		Response response = call(request(
 				"/payments/" + payment.getId(), HttpMethod.PUT,
 				Serializer.DEFAULT_JSON_SERIALIZER
@@ -56,19 +56,19 @@ public class PaymentResourceTest extends BaseJPAResourceTest {
 
 	@Test
 	public void readPaymentTest() {
-		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
+		org.minnal.examples.oms.domain.Payment payment = createDomain(org.minnal.examples.oms.domain.Payment.class);
 		payment.persist();
 		Response response = call(request(
 				"/payments/" + payment.getId(), HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
 		assertEquals(serializer.deserialize(response.getContent(),
-				org.minnal.example.domain.Payment.class)
+				org.minnal.examples.oms.domain.Payment.class)
 				.getId(), payment.getId());
 	}
 
 	@Test
 	public void deletePaymentTest() {
-		org.minnal.example.domain.Payment payment = createDomain(org.minnal.example.domain.Payment.class);
+		org.minnal.examples.oms.domain.Payment payment = createDomain(org.minnal.examples.oms.domain.Payment.class);
 		payment.persist();
 		Response response = call(request(
 				"/payments/" + payment.getId(),

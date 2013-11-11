@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.example;
+package org.minnal.examples.oms;
 
 import org.activejpa.util.EnumConverter;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -9,10 +9,10 @@ import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.Application;
 import org.minnal.core.MinnalException;
 import org.minnal.core.server.exception.InternalServerErrorException;
-import org.minnal.example.auth.BasicAuthenticator;
-import org.minnal.example.domain.Order;
-import org.minnal.example.domain.OrderItem;
-import org.minnal.example.resource.OrderResource;
+import org.minnal.examples.oms.auth.BasicAuthenticator;
+import org.minnal.examples.oms.domain.Order;
+import org.minnal.examples.oms.domain.OrderItem;
+import org.minnal.examples.oms.resource.OrderResource;
 import org.minnal.jpa.JPAPlugin;
 import org.minnal.jpa.OpenSessionInViewFilter;
 import org.minnal.security.filter.basic.BasicAuthenticationFilter;
