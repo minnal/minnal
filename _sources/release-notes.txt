@@ -4,12 +4,25 @@
 Release Notes
 #############
 
+minnal-1.1.0 / 11-Nov-2013
+==========================
+A bunch of issues have been fixed in this release. Also added a sample petclinic application (from spring examples) using minnal.
+
+* Fixed issue `#69 <https://github.com/minnal/minnal/issues/69>`_ (Compilation failures in Jdk7)
+* Fixed issue `#70 <https://github.com/minnal/minnal/issues/70>`_ (Simple Authorizer throws NPE when property files are not there)
+* Fixed issue `#72 <https://github.com/minnal/minnal/issues/72>`_ (Minnal test generator replaces the test classes)
+* Fixed issue `#73 <https://github.com/minnal/minnal/issues/73>`_ (Add minnal-api dependency to the project generator)
+* Fixed issue `#74 <https://github.com/minnal/minnal/issues/74>`_ (Create a petclinic sample application)
+* Fixed issue `#77 <https://github.com/minnal/minnal/issues/77>`_ (Support for adding multiple jackson modules to custom serializers)
+* Fixed issue `#78 <https://github.com/minnal/minnal/issues/78>`_ (Move minnal-example to examples project)
+
 minnal-1.0.7 / 07-Nov-2013
 ==========================
 This release has fixes for the below blocker bugs. 
 
 * Fixed issue `#67 <https://github.com/minnal/minnal/issues/67>`_ (tools.jar dependency issue on multiple platforms)
 * Fixed issue `#68 <https://github.com/minnal/minnal/issues/68>`_ (Maven dependency resolution failure on org.eclipse.equinox)
+
 
 minnal-1.0.6 / 05-Nov-2013
 ==========================
