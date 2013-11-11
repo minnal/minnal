@@ -42,9 +42,6 @@ public class TestsGenerator extends AbstractGenerator {
 	public static void main(String[] args) {
 		String projectDir = args.length > 0 ? args[0] : System.getProperty("user.dir");
 		String[] packages = args.length > 1 ? args[1].split(",") : new String[]{};
-//		projectDir = "/Volumes/data/ERP/services/ekl-facilities";
-//		packages = new String[]{"com.ekl"};
-		
 		TestsGenerator generator = new TestsGenerator(projectDir, packages);
 		generator.init();
 		generator.generate();

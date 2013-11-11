@@ -82,7 +82,14 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 		StringWriter writer = new StringWriter();
 		createResourceTestClassTemplate.merge(context, writer);
 		
-		writeFile(CodeUtils.format(writer.toString()), new File(createPackage(packageName, TEST_JAVA_FOLDER), testClass + ".java"));
+		File folder = createPackage(packageName, TEST_JAVA_FOLDER);
+		String fileName = testClass + ".java";
+		File file = new File(folder, fileName);
+		if (file.exists()) {
+			file.renameTo(new File(folder, fileName + ".bk"));
+			file = new File(folder, fileName);
+		}
+		writeFile(CodeUtils.format(writer.toString()), file);
 	}
 
 	private void createMethods(EntityNodePath path, StringBuffer buffer) {
