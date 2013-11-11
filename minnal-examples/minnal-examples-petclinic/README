@@ -1,0 +1,4 @@
+Pet Clinic Application
+======================
+
+The petclinic application is taken from [spring projects](http://docs.spring.io/docs/petclinic.html) and ported to minnal. This example demonstrates the simplicity and agility of minnal. It also demonstrates writing custom serializers to manipulate request/response.
