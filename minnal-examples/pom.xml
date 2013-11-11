@@ -14,5 +14,6 @@
 
 	<modules>
 		<module>minnal-examples-petclinic</module>
+		<module>minnal-examples-oms</module>
 	</modules>
 </project>
