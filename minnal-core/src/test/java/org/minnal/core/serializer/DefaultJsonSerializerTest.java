@@ -5,6 +5,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import static org.mockito.Mockito.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +14,9 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Charsets;
 
 
@@ -91,6 +96,20 @@ public class DefaultJsonSerializerTest {
 		excludes.add("name");
 		ChannelBuffer channelBuffer = serializer.serialize(model, excludes, null);
 		assertFalse(channelBuffer.toString(Charsets.UTF_8).contains("name")); 
+	}
+	
+	@Test
+	public void shouldRegisterMultipleModules() {
+		ObjectMapper mapper = spy(new ObjectMapper());
+		serializer = new DefaultJsonSerializer(mapper) {
+			@Override
+			protected void registerModules(ObjectMapper mapper) {
+				mapper.registerModule(new SimpleModule());
+				mapper.registerModule(new SimpleModule());
+				mapper.registerModule(new SimpleModule());
+			}
+		};
+		verify(mapper, times(3)).registerModule(any(Module.class));
 	}
 
 	

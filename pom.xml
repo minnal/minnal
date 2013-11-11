@@ -11,6 +11,7 @@
 		<module>minnal-core</module>
 		<module>minnal-admin</module>
 		<module>minnal-example</module>
+		<module>minnal-examples</module>
 		<module>minnal-jpa</module>
 		<module>minnal-test</module>
 		<module>minnal-instrumentation</module>

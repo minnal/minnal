@@ -3,14 +3,11 @@
  */
 package org.minnal.core.serializer;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Map;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 

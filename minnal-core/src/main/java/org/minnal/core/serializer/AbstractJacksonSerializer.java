@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -33,29 +32,31 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
  * @author ganeshs
  *
  */
-public class AbstractJacksonSerializer extends Serializer {
+public abstract class AbstractJacksonSerializer extends Serializer {
 
 	private ObjectMapper mapper;
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractJacksonSerializer.class);
 
-	protected AbstractJacksonSerializer(ObjectMapper mapper, Module module) {
+	protected AbstractJacksonSerializer(ObjectMapper mapper) {
 		this.mapper = mapper;
-		init(module);
+		init();
 	}
-
-	@JsonFilter("property_filter")  
-	public class PropertyFilterMixIn {} 
-
-	protected void init(Module module) {
+	
+	protected void init() {
 		mapper.addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
 		mapper.setVisibility(PropertyAccessor.FIELD, Visibility.NONE);
 		mapper.setVisibility(PropertyAccessor.GETTER, Visibility.PROTECTED_AND_PUBLIC);
 		mapper.setVisibility(PropertyAccessor.SETTER, Visibility.PROTECTED_AND_PUBLIC);
-		mapper.registerModule(module);
+		registerModules(mapper);
 		mapper.configure(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS, true);
 		mapper.setPropertyNamingStrategy(getPropertyNamingStrategy());
 	}
+	
+	protected abstract void registerModules(ObjectMapper mapper);
+
+	@JsonFilter("property_filter")  
+	public class PropertyFilterMixIn {} 
 
 	public ChannelBuffer serialize(Object object) {
 		return serialize(object,null,null);
