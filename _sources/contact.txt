@@ -6,6 +6,10 @@ Contact
 
 .. highlight:: text
 
+Mailing list
+============
+You can subscribe to the group `minnal-users <https://groups.google.com/forum/#!forum/minnal-users>`_ to discuss about minnal, ask for help and receive notifications about new releases.
+
 Reporting bugs / Requesting Enhancements
 ========================================
 Create an issue for reporting bugs or feature enhancement requests under `https://github.com/minnal/minnal/issues <https://github.com/minnal/minnal/issues>`_. The issues will be prioritized and be taken up in the coming milestone.
