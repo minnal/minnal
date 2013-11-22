@@ -164,7 +164,7 @@
     <profile>
 			<id>default-alt-profile</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 				<file>
 					<exists>${java.home}/lib/tools.jar</exists>
 				</file>
