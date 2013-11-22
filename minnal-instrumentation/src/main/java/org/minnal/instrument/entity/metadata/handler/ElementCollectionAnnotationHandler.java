@@ -5,15 +5,11 @@ package org.minnal.instrument.entity.metadata.handler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.OneToMany;
 
-import org.activejpa.util.PropertyUtil;
 import org.minnal.instrument.entity.metadata.AssociationMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.utils.reflection.ClassUtils;
