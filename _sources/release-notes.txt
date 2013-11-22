@@ -4,6 +4,11 @@
 Release Notes
 #############
 
+minnal-1.1.1 / 22-Nov-2013
+==========================
+
+* Fixed issue `#79 <https://github.com/minnal/minnal/issues/79>`_ (Upgrade autopojo to the latest version 0.0.7)
+
 minnal-1.1.0 / 11-Nov-2013
 ==========================
 A bunch of issues have been fixed in this release. Also added a sample petclinic application (from spring examples) using minnal.
