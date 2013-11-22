@@ -8,7 +8,7 @@
   <parent>
     <artifactId>minnal-examples</artifactId>
     <groupId>org.minnal</groupId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
   </parent>
 
   <build>
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-generator</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -65,43 +65,43 @@
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-instrumentation</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-test</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-jpa</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-migrations</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-admin</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-core</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-api</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

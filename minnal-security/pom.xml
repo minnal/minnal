@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>minnal</artifactId>
 		<groupId>org.minnal</groupId>
-		<version>1.1.1-SNAPSHOT</version>
+		<version>1.1.1</version>
 	</parent>
 
 	<dependencies>
@@ -55,7 +55,7 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-core</artifactId>
-				<version>1.1.1-SNAPSHOT</version>
+				<version>1.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.testng</groupId>
@@ -77,7 +77,7 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-jpa</artifactId>
-				<version>1.1.1-SNAPSHOT</version>
+				<version>1.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.activejpa</groupId>
