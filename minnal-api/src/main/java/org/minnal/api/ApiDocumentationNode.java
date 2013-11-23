@@ -7,6 +7,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,16 +19,19 @@ import org.minnal.utils.reflection.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import scala.Option;
+import scala.collection.JavaConversions;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wordnik.swagger.core.DocumentationAllowableListValues;
-import com.wordnik.swagger.core.DocumentationSchema;
+import com.wordnik.swagger.model.AllowableListValues;
+import com.wordnik.swagger.model.ModelProperty;
 
 /**
  * @author ganeshs
  *
  */
-public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocumentationNodePath, DocumentationSchema> {
+public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocumentationNodePath, Model> {
 	
 	private Class<?> clazz;
 	
@@ -37,27 +41,27 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 	
 	private Map<Class<?>, List<String>> visitedNodes = new HashMap<Class<?>, List<String>>();
 	
-	private Map<String, DocumentationSchema> schemas;
+	private Map<String, Model> schemas;
 	
-	private Map<String, DocumentationSchema> models;
+	private Map<String, Model> models;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ApiDocumentationNode.class);
 
 	public ApiDocumentationNode(Class<?> clazz) {
-		this(clazz, clazz.getSimpleName(), new HashMap<String, DocumentationSchema>(), new HashMap<String, DocumentationSchema>());
+		this(clazz, clazz.getSimpleName(), new HashMap<String, Model>(), new HashMap<String, Model>());
 	}
 	
-	public ApiDocumentationNode(Class<?> clazz, String name, Map<String, DocumentationSchema> schemas, Map<String, DocumentationSchema> models) {
-		super(new DocumentationSchema());
+	public ApiDocumentationNode(Class<?> clazz, String name, Map<String, Model> schemas, Map<String, Model> models) {
+		super(new Model());
 		this.schemas = schemas;
 		this.models = models;
 		this.name = name;
 		this.clazz = clazz;
 		getValue().setId(clazz.getSimpleName());
-		getValue().setType(clazz.getSimpleName());
+		getValue().setQualifiedType(clazz.getSimpleName());
 	}
 	
-	public ApiDocumentationNode(PropertyDescriptor descriptor, Map<String, DocumentationSchema> schemas, Map<String, DocumentationSchema> models) {
+	public ApiDocumentationNode(PropertyDescriptor descriptor, Map<String, Model> schemas, Map<String, Model> models) {
 		this(PropertyUtil.getType(descriptor), descriptor.getName(), schemas, models);
 		this.descriptor = descriptor;
 		getValue().setId(descriptor.getName());
@@ -104,7 +108,7 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 				Class<?> clazz = PropertyUtil.getType(descriptor);
 				if (PropertyUtil.hasAnnotation(descriptor, JsonIgnore.class, true) || PropertyUtil.hasAnnotation(descriptor, JsonBackReference.class, true)) {
 					if (! models.containsKey(clazz.getSimpleName())) {
-						ApiDocumentationNode child = new ApiDocumentationNode(clazz, clazz.getSimpleName(), new HashMap<String, DocumentationSchema>(), models);
+						ApiDocumentationNode child = new ApiDocumentationNode(clazz, clazz.getSimpleName(), new HashMap<String, Model>(), models);
 						child.construct();
 					}
 				} else {
@@ -116,14 +120,19 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 				}
 			}
 		}
-		Map<String, DocumentationSchema> properties = new HashMap<String, DocumentationSchema>();
+		LinkedHashMap<String, ModelProperty> properties = new LinkedHashMap<String, ModelProperty>();
+		int i = 0;
 		for (ApiDocumentationNode node : getChildren()) {
-			properties.put(node.getValue().getId(), node.getValue());
+			properties.put(node.getValue().getId(), createModelProperty(node.getValue(), i++));
 		}
 		getValue().setProperties(properties);
 	}
 	
-	public Map<String, DocumentationSchema> getModels() {
+	protected ModelProperty createModelProperty(Model model, int position) {
+		return new ModelProperty(model.getQualifiedType(), model.getQualifiedType(), position, false, Option.apply(""), null, null);
+	}
+	
+	public Map<String, Model> getModels() {
 		return models;
 	}
 	
@@ -148,17 +157,17 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 	}
 	
 	private void loadSchema() {
-		DocumentationSchema model = null;
-		DocumentationSchema schema = getValue();
+		Model model = null;
+		Model schema = getValue();
 		
 		clazz = PropertyUtil.getType(descriptor);
 		if (PropertyUtil.isSimpleProperty(descriptor.getPropertyType())) {
 			if (Enum.class.isAssignableFrom(descriptor.getPropertyType())) {
-				schema.setType("string");
-				DocumentationAllowableListValues values = new DocumentationAllowableListValues(PropertyUtil.getEnumValues(descriptor));
+				schema.setQualifiedType("string");
+				AllowableListValues values = new AllowableListValues(JavaConversions.asScalaBuffer(PropertyUtil.getEnumValues(descriptor)).toList(), descriptor.getPropertyType().toString());
 				schema.setAllowableValues(values);
 			} else {
-				schema.setType(descriptor.getPropertyType().getSimpleName());
+				schema.setQualifiedType(descriptor.getPropertyType().getSimpleName());
 			}
 		} else if (PropertyUtil.isCollectionProperty(descriptor.getReadMethod().getGenericReturnType(), true)) {
 			if (! PropertyUtil.isSimpleProperty(clazz)) {
@@ -170,15 +179,15 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 					model = schemas.get(descriptor.getName());
 				}
 				
-				schema.setType("Array");
-				schema.setItems(model);
+				schema.setQualifiedType("Array");
+				schema.setBaseModel(model.getName());
 			} else {
-				schema.setType(clazz.getSimpleName().toLowerCase());
+				schema.setQualifiedType(clazz.getSimpleName().toLowerCase());
 			}
 		} else {
 			ApiDocumentationNode node = new ApiDocumentationNode(clazz, descriptor.getName(), schemas, models);
 			node.construct();
-			schema.setType(node.getValue().getId());
+			schema.setQualifiedType(node.getValue().getId());
 		}
 	}
 	
@@ -186,7 +195,7 @@ public class ApiDocumentationNode extends Node<ApiDocumentationNode, ApiDocument
 	 * @author ganeshs
 	 *
 	 */
-	public class ApiDocumentationNodePath extends Node<ApiDocumentationNode, ApiDocumentationNodePath, DocumentationSchema>.NodePath {
+	public class ApiDocumentationNodePath extends Node<ApiDocumentationNode, ApiDocumentationNodePath, Model>.NodePath {
 
 		public ApiDocumentationNodePath(List<ApiDocumentationNode> path) {
 			super(path);

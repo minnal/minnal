@@ -21,11 +21,23 @@ import org.minnal.core.route.RoutePattern.RouteElement;
 import org.minnal.utils.http.HttpUtil;
 import org.minnal.utils.reflection.PropertyUtil;
 
-import com.wordnik.swagger.core.Documentation;
-import com.wordnik.swagger.core.DocumentationEndPoint;
-import com.wordnik.swagger.core.DocumentationOperation;
-import com.wordnik.swagger.core.DocumentationParameter;
-import com.wordnik.swagger.core.DocumentationSchema;
+import scala.Option;
+import scala.Predef;
+import scala.Some;
+import scala.Tuple2;
+import scala.collection.JavaConversions;
+
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.wordnik.swagger.model.ApiDescription;
+import com.wordnik.swagger.model.ApiListing;
+import com.wordnik.swagger.model.ApiListingReference;
+import com.wordnik.swagger.model.Model;
+import com.wordnik.swagger.model.Operation;
+import com.wordnik.swagger.model.Parameter;
+import com.wordnik.swagger.model.ResourceListing;
 
 /**
  * @author ganeshs
@@ -35,11 +47,13 @@ public class ApiDocumentation {
 
 	public static final ApiDocumentation instance = new ApiDocumentation();
 	
-	private Map<String, Map<String, Documentation>> resourceDocs = new HashMap<String, Map<String, Documentation>>();
+	private Map<String, Map<String, ApiListing>> resourceDocs = new HashMap<String, Map<String, ApiListing>>();
 	
-	private Map<String, Documentation> applicationResources = new HashMap<String, Documentation>();
+	private Map<String, ResourceListing> applicationResources = new HashMap<String, ResourceListing>();
 	
 	private String baseUrl;
+	
+	public static final String SWAGGER_VERSION = "1.2";
 	
 	private ApiDocumentation() {}
 	
@@ -48,62 +62,71 @@ public class ApiDocumentation {
 		buildApis(application);
 	}
 	
-	public Documentation getDocumentation(String applicationName, String resourceName) {
-		Map<String, Documentation> docs = resourceDocs.get(applicationName);
+	public ApiListing getApiListing(String applicationName, String resourceName) {
+		Map<String, ApiListing> docs = resourceDocs.get(applicationName);
 		if (docs == null || docs.isEmpty()) {
 			return null;
 		}
 		return docs.get(resourceName);
 	}
 	
-	public Documentation getDocumentation(String applicationName) {
+	public ResourceListing getResourceListing(String applicationName) {
 		return applicationResources.get(applicationName);
 	}
 	
 	protected void buildApis(Application<ApplicationConfiguration> application) {
-		Map<String, Documentation> docs = new HashMap<String, Documentation>();
+		Map<String, ApiListing> docs = new HashMap<String, ApiListing>();
 		resourceDocs.put(application.getConfiguration().getName(), docs);
 		for (ResourceClass resourceClass : application.getResources()) {
-			docs.put(resourceClass.getConfiguration().getName(), createDocumentation(application, resourceClass));
+			docs.put(resourceClass.getConfiguration().getName(), createApiListing(application, resourceClass));
 		}
 	}
 	
-	protected Documentation createDocumentation(Application<ApplicationConfiguration> application, ResourceClass resourceClass) {
-		Documentation documentation = new Documentation();
-		documentation.setSwaggerVersion("1.1");
-		documentation.setBasePath(baseUrl);
-		documentation.setResourcePath(HttpUtil.structureUrl(resourceClass.getBasePath()));
-		documentation.setApis(createEndPoints(resourceClass.getRouteBuilders()));
-		documentation.setModels(createSchemas(resourceClass));
-		return documentation;
+	protected ApiListing createApiListing(Application<ApplicationConfiguration> application, ResourceClass resourceClass) {
+		scala.collection.immutable.List<String> mediaTypes = JavaConversions.asScalaIterable(
+				Iterables.transform(resourceClass.getConfiguration().getSupportedMediaTypes(), Functions.toStringFunction())).toList();
+		
+		List<ApiDescription> apis = createApiDescriptions(resourceClass.getRouteBuilders());
+		Map<String, Model> models = createModels(resourceClass);
+		ApiListing apiListing = new ApiListing("1.0", SWAGGER_VERSION, baseUrl, 
+				HttpUtil.structureUrl(resourceClass.getBasePath()), mediaTypes, mediaTypes, 
+				null, null, JavaConversions.asScalaBuffer(apis).toList(), 
+				Option.apply(JavaConversions.mapAsScalaMap(models).toMap(Predef.<Tuple2<String, Model>>conforms())), Option.apply(""), 1);
+		return apiListing;
 	}
 	
-	protected HashMap<String, DocumentationSchema> createSchemas(ResourceClass resourceClass) {
-		HashMap<String, DocumentationSchema> schemas = new HashMap<String, DocumentationSchema>();
+	protected Map<String, Model> createModels(ResourceClass resourceClass) {
+		Map<String, Model> schemas = new HashMap<String, Model>();
 		Class<?> entityClass = resourceClass.getEntityClass();
 		if (entityClass == null) {
 			return schemas;
 		}
 		ApiDocumentationNode node = new ApiDocumentationNode(entityClass);
 		node.construct();
-		schemas = (HashMap<String, DocumentationSchema>) node.getModels();
+		schemas = Maps.transformValues(node.getModels(), new Function<org.minnal.api.Model, Model>() {
+			@Override
+			public Model apply(org.minnal.api.Model input) {
+				return input.toModel();
+			}
+		});
 		return schemas;
 	}
 	
-	protected List<DocumentationEndPoint> createEndPoints(List<RouteBuilder> builders) {
-		List<DocumentationEndPoint> eps = new ArrayList<DocumentationEndPoint>();
+	protected List<ApiDescription> createApiDescriptions(List<RouteBuilder> builders) {
+		List<ApiDescription> eps = new ArrayList<ApiDescription>();
 		for (RouteBuilder builder : builders) {
-			DocumentationEndPoint ep = new DocumentationEndPoint();
 			List<Route> routes = builder.build();
-			ep.setPath(routes.get(0).getRoutePattern().getPathPattern());
-			ep.setOperations(createOperations(routes));
+			List<Operation> operations = createOperations(routes);
+			ApiDescription ep = new ApiDescription(routes.get(0).getRoutePattern().getPathPattern(), Option.apply(""), 
+					JavaConversions.asScalaBuffer(operations).toList());
 			eps.add(ep);
 		}
 		return eps;
 	}
 	
-	protected List<DocumentationOperation> createOperations(List<Route> routes) {
-		List<DocumentationOperation> ops = new ArrayList<DocumentationOperation>();
+	protected List<Operation> createOperations(List<Route> routes) {
+		List<Operation> ops = new ArrayList<Operation>();
+		int i = 0;
 		for (Route route : routes) {
 			if (! isResource(route)) {
 				continue;
@@ -111,16 +134,16 @@ public class ApiDocumentation {
 			if (route.getMethod().equals(HttpMethod.OPTIONS)) {
 				continue;
 			}
-			DocumentationOperation op = new DocumentationOperation();
-			op.setHttpMethod(route.getMethod().getName());
-			op.setNickname(route.getAction().getMethod().getName());
-			op.setParameters(createParameter(route));
-			
-			if (route.getMethod().equals(HttpMethod.GET)) {
-				op.setResponseClass(getResponseClass(route));
-			} else if (route.getMethod().equals(HttpMethod.POST)) {
-				op.setResponseClass(getResponseClass(route));
+			scala.collection.immutable.List<String> mediaTypes = JavaConversions.asScalaIterable(
+					Iterables.transform(route.getConfiguration().getSupportedMediaTypes(), Functions.toStringFunction())).toList();
+			String responseClass = "";
+			if (route.getMethod().equals(HttpMethod.GET) || route.getMethod().equals(HttpMethod.POST)) {
+				responseClass = getResponseClass(route);
 			}
+			List<Parameter> parameters = createParameter(route);
+			Operation op = new Operation(route.getMethod().getName(), "", "", responseClass, 
+					route.getAction().getMethod().getName(), i++, mediaTypes, mediaTypes, null, null, 
+					JavaConversions.asScalaBuffer(parameters).toList(), null, Option.apply(""));
 			ops.add(op);
 		}
 		return ops;
@@ -149,46 +172,35 @@ public class ApiDocumentation {
 		return "Object";
 	}
 	
-	protected List<DocumentationParameter> createParameter(Route route) {
-		List<DocumentationParameter> parameters = new ArrayList<DocumentationParameter>();
+	protected List<Parameter> createParameter(Route route) {
+		List<Parameter> parameters = new ArrayList<Parameter>();
 		for (String name : route.getRoutePattern().getParameterNames()) {
-			DocumentationParameter parameter = new DocumentationParameter();
-			parameter.setParamType("path");
-			parameter.setDataType("string");
-			parameter.setName(name);
-			parameter.setDescription("The " + name);
-			parameter.setRequired(true);
+			Parameter parameter = new Parameter(name, Option.apply("The " + name), Option.apply(""), true, false, "string", null, "path", null);
 			parameters.add(parameter);
 		}
 		
 		for (QueryParam param : route.getQueryParams()) {
-			DocumentationParameter parameter = new DocumentationParameter();
-			parameter.setParamType("parameter");
-			parameter.setDataType(param.getType().toString());
-			parameter.setName(param.getName());
-			parameter.setDescription(param.getDescription());
+			Parameter parameter = new Parameter(param.getName(), Option.apply(param.getDescription()), Option.apply(""), true, false, param.getType().toString(), null, "parameter", null);
 			parameters.add(parameter);
 		}
 		
 		if (route.getMethod().equals(HttpMethod.POST) || route.getMethod().equals(HttpMethod.PUT)) {
-			DocumentationParameter parameter = new DocumentationParameter();
-			parameter.setParamType("body");
-			parameter.setDataType(getRequestClass(route));
+			Parameter parameter = new Parameter("", Option.apply(""), Option.apply(""), true, false, getRequestClass(route), null, "body", null);
 			parameters.add(parameter);
 		}
 		return parameters;
 	}
 	
 	protected void buildResources(Application<ApplicationConfiguration> application) {
-		Documentation documentation = new Documentation();
-		documentation.setSwaggerVersion("1.1");
-		documentation.setBasePath(baseUrl + "/api/" + application.getConfiguration().getName());
+		int i = 0;
+		List<ApiListingReference> apis = new ArrayList<ApiListingReference>();
 		for (ResourceClass resourceClass : application.getResources()) {
-			DocumentationEndPoint ep = new DocumentationEndPoint();
-			ep.setPath(HttpUtil.structureUrl(resourceClass.getConfiguration().getName()));
-			documentation.addApi(ep);
+			String path = HttpUtil.structureUrl(resourceClass.getConfiguration().getName());
+			ApiListingReference api = new ApiListingReference(path, new Some<String>(resourceClass.getConfiguration().getName()), i++);
+			apis.add(api);
 		}
-		applicationResources.put(application.getConfiguration().getName(), documentation);
+		ResourceListing resourceListing = new ResourceListing("1.0", SWAGGER_VERSION, JavaConversions.asScalaBuffer(apis).toList(), null, null);
+		applicationResources.put(application.getConfiguration().getName(), resourceListing);
 	}
 	
 	protected boolean isResource(Route route) {

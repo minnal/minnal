@@ -7,7 +7,8 @@ import org.minnal.api.ApiDocumentation;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
 
-import com.wordnik.swagger.core.Documentation;
+import com.wordnik.swagger.model.ApiListing;
+import com.wordnik.swagger.model.ResourceListing;
 
 /**
  * @author ganeshs
@@ -15,14 +16,14 @@ import com.wordnik.swagger.core.Documentation;
  */
 public class ApiResource {
 
-	public Documentation listResources(Request request, Response response) {
+	public ResourceListing listResources(Request request, Response response) {
 		String applicationName = request.getHeader("application_name");
-		return ApiDocumentation.instance.getDocumentation(applicationName);
+		return ApiDocumentation.instance.getResourceListing(applicationName);
 	}
 	
-	public Documentation listResourceApis(Request request, Response response) {
+	public ApiListing listResourceApis(Request request, Response response) {
 		String applicationName = request.getHeader("application_name");
 		String resourceName = request.getHeader("resource_name");
-		return ApiDocumentation.instance.getDocumentation(applicationName, resourceName);
+		return ApiDocumentation.instance.getApiListing(applicationName, resourceName);
 	}
 }
