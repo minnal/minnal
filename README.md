@@ -1,4 +1,4 @@
-Minnal
+Minnal  [![Build Status](https://travis-ci.org/minnal/minnal.png)](https://travis-ci.org/minnal/minnal)
 ======
 
 Minnal is a highly scalable and productive RESTful service framework that helps you eliminate boiler plate code and build services faster. It allows you to build services at lightning speed through its powerful instrumentation module. It generates the APIs for your resources at runtime and eliminates the need to write controller and data access layers for your service leaving you to focus on enriching your domain.
