@@ -1,5 +1,7 @@
 package org.minnal.examples.oms.domain.generated;
 
+import java.lang.reflect.Method;
+
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.resource.BaseJPAResourceTest;
 import org.testng.annotations.Test;
@@ -14,8 +16,12 @@ import static org.testng.Assert.*;
 public class ProductResourceTest extends BaseJPAResourceTest {
 	@Test
 	public void listProductTest() {
+		for (Method method : org.minnal.examples.oms.domain.Product.class.getDeclaredMethods()) {
+			System.out.println(method);
+		}
 		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		product.persist();
+		product = org.minnal.examples.oms.domain.Product.findById(1L);
 		Response response = call(request("/products/", HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
 		assertEquals(
@@ -82,4 +88,9 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 	}
 
+	public static void main(String[] args) {
+		for (Method method : org.minnal.examples.oms.domain.Product.class.getDeclaredMethods()) {
+			System.out.println(method);
+		}
+	}
 }

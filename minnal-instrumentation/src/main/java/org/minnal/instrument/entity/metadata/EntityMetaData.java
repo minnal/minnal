@@ -24,6 +24,8 @@ public class EntityMetaData extends SecurableMetaData {
 	
 	private Set<AssociationMetaData> associations = new HashSet<AssociationMetaData>();
 	
+	private Set<ValueMetaData> values = new HashSet<ValueMetaData>();
+	
 	public EntityMetaData(Class<?> entityClass) {
 		super(entityClass.getSimpleName());
 		this.entityClass = entityClass;
@@ -69,8 +71,25 @@ public class EntityMetaData extends SecurableMetaData {
 		this.entityKey = entityKey;
 	}
 
+	/**
+	 * @return the values
+	 */
+	public Set<ValueMetaData> getValues() {
+		return values;
+	}
+
+	/**
+	 * @param associationMetaData
+	 */
 	public void addAssociation(AssociationMetaData associationMetaData) {
 		associations.add(associationMetaData);
+	}
+	
+	/**
+	 * @param valueMetaData
+	 */
+	public void addValue(ValueMetaData valueMetaData) {
+		values.add(valueMetaData);
 	}
 
 	/**
