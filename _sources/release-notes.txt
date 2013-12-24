@@ -4,6 +4,11 @@
 Release Notes
 #############
 
+minnal-1.1.2 / 24-Dec-2013
+==========================
+
+* Fixed issue `#80 <https://github.com/minnal/minnal/issues/80>`_ (Upgrade to latest version of Active Jpa)
+
 minnal-1.1.1 / 22-Nov-2013
 ==========================
 
