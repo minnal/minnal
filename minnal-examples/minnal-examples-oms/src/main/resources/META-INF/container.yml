@@ -4,16 +4,9 @@ basePath: /
 # Http server configuration
 server:
   connectors:
-#    - port: 8080
-#      scheme: http
-#      ioWorkerThreadCount: 10
-    - port: 8083
-      scheme: https
+    - port: 8080
+      scheme: http
       ioWorkerThreadCount: 10
-      ssl:
-        keyStoreFile: /Users/ganeshs/keystore.jks
-        keyStorePassword: password
-        keyPassword: password
 
 # The name of the container
 name: My Container
