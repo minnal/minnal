@@ -5,6 +5,8 @@ package org.minnal.core.server;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.Security;
 
@@ -73,10 +75,12 @@ public class HttpsConnector extends AbstractHttpConnector {
 		}
 		SSLContext serverContext = null;
 		SSLConfiguration configuration = getConfiguration().getSslConfiguration();
+		InputStream stream = null;
 		try {
-			KeyStore ks = KeyStore.getInstance(configuration.getKeystoreType());
 			File file = new File(configuration.getKeyStoreFile());
-			ks.load(new FileInputStream(file), configuration.getKeyStorePassword().toCharArray());
+			stream = new FileInputStream(file);
+			KeyStore ks = KeyStore.getInstance(configuration.getKeystoreType());
+			ks.load(stream, configuration.getKeyStorePassword().toCharArray());
 
 			// Set up key manager factory to use our key store
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
@@ -88,7 +92,15 @@ public class HttpsConnector extends AbstractHttpConnector {
 		} catch (Exception e) {
 			logger.error("Failed while initializing the ssl context", e);
 			throw new MinnalException("Failed to initialize the ssl context", e);
-		}
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					logger.trace("Failed while closing the stream", e);
+				}
+			}
+ 		}
 		return serverContext.createSSLEngine();
 	}
 }
