@@ -1,5 +1,6 @@
 .navbar-brand {
-	background: transparent url("logo24.png") no-repeat -5px 15px;
+	/* background: transparent url("logo24.png") no-repeat -5px 15px;*/
+	padding-top: 10px;
 	padding-left: 62px;
 	font-size: 20px;
 	color: #F5DA81 !important;
