@@ -1,0 +1,518 @@
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Minnal Security &mdash; minnal 1.1.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/my-styles.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.1.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.1.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.1.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+    <link rel="top" title="minnal 1.1.3 documentation" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Minnal Generator" href="generator.html" />
+    <link rel="prev" title="Minnal Instrumentation" href="instrumentation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+  
+  <a href="https://github.com/minnal/minnal" class="visible-desktop">
+  	<img style="position: absolute; top: 40px; right: 0; border: 0; z-index:1000;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub">
+  </a>
+
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html"><img src="../_static/logo.png">
+          Minnal</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.1.3</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Docs <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started.html#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#domain-modeling">Domain Modeling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started.html#installing-minnal">Installing Minnal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#downloading-the-package">Downloading the package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started.html#tutorial">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#shopping-cart-application">Shopping Cart Application</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#creating-the-project">Creating the project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#creating-the-domain-classes">Creating the domain classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#test-your-apis">Test your APIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#starting-the-server">Starting the server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#view-your-apis">View your APIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#customizing-an-api">Customizing an API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#high-level-design">High level design</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="core.html">Minnal Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="core.html#organizing-your-project">Organizing your project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#container">Container</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#applications">Applications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#resources">Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#routes">Routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#exception-handlers">Exception Handlers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#plugins">Plugins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#bundles">Bundles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#application-context">Application Context</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jpa.html">Minnal Jpa</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jpa.html#domain-classes">Domain Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jpa.html#configuring-jpa">Configuring JPA</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="migrations.html">Minnal Migrations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="migrations.html#create-migrations">Create Migrations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="migrations.html#run-migrations">Run Migrations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="instrumentation.html">Minnal Instrumentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#resources">Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#sub-resources">Sub-Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#exclude-routes">Exclude Routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#overriding-routes">Overriding Routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#use-custom-key-as-identifier">Use custom key as identifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#search-params">Search Params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#actions">Actions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#pagination">Pagination</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#dynamically-including-excluding-response-fields">Dynamically including &amp; excluding response fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#bulk-operations">Bulk Operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#authorizing-routes">Authorizing Routes</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Security</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#session-store">Session Store</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#authenticators">Authenticators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#authorizers">Authorizers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#white-listing-urls">White listing urls</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generator.html">Minnal Generator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#create-new-project">Create New Project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#generate-models">Generate Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#generate-tests">Generate Tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#start-server">Start Server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#other-options">Other Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#using-swagger-ui">Using Swagger UI</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="metrics.html">Minnal Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#response-time-collector">Response Time Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#datasource-stats-collector">Datasource Stats Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#jmx-reporter">JMX Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#graphite-reporter">Graphite Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#custom-reporters">Custom Reporters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="metrics.html#publishing-app-metrics">Publishing App Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="test.html">Minnal Test</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="test.html#testing-resources">Testing Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="test.html#testing-jpa-resources">Testing JPA Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="test.html#testing-models">Testing Models</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html">Minnal Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="examples.html#petclinic-application">Petclinic Application</a></li>
+<li class="toctree-l4"><a class="reference internal" href="examples.html#cargo-application">Cargo Application</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-notes.html">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-1-3-8-apr-2014">minnal-1.1.3 / 8-Apr-2014</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-1-2-24-dec-2013">minnal-1.1.2 / 24-Dec-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-1-1-22-nov-2013">minnal-1.1.1 / 22-Nov-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-1-0-11-nov-2013">minnal-1.1.0 / 11-Nov-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-7-07-nov-2013">minnal-1.0.7 / 07-Nov-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-6-05-nov-2013">minnal-1.0.6 / 05-Nov-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-5-22-oct-2013">minnal-1.0.5 / 22-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-4-11-oct-2013">minnal-1.0.4 / 11-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-3-10-oct-2013">minnal-1.0.3 / 10-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-2-09-oct-2013">minnal-1.0.2 / 09-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-1-02-sep-2013">minnal-1.0.1 / 02-Sep-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-0-29-aug-2013">minnal-1.0.0 / 29-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-9-28-aug-2013">minnal-0.9.9 / 28-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-8-27-aug-2013">minnal-0.9.8 / 27-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-7-17-aug-2013">minnal-0.9.7 / 17-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-6-12-aug-2013">minnal-0.9.6 / 12-Aug-2013</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#mailing-list">Mailing list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#reporting-bugs-requesting-enhancements">Reporting bugs / Requesting Enhancements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#contributing-to-minnal">Contributing to minnal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#developers">Developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#exceptions-thrown">Exceptions thrown</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#classnotfoundexception-com-sun-tools-attach-virtualmachine">ClassNotFoundException: com.sun.tools.attach.VirtualMachine</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="instrumentation.html" title="Previous Chapter: Minnal Instrumentation"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm">&laquo; Minnal Instrumen...</span>
+    </a>
+  </li>
+  <li>
+    <a href="generator.html" title="Next Chapter: Minnal Generator"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm">Minnal Generator &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#high-level-design">High level design</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="core.html">Minnal Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jpa.html">Minnal Jpa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrations.html">Minnal Migrations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="instrumentation.html">Minnal Instrumentation</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Security</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#session-store">Session Store</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#authenticators">Authenticators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#authorizers">Authorizers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#white-listing-urls">White listing urls</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generator.html">Minnal Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="metrics.html">Minnal Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="test.html">Minnal Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html">Minnal Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="col-md-9">
+      
+  <div class="section" id="minnal-security">
+<span id="manual-sec"></span><h1>Minnal Security</h1>
+<p>The security module comes up with a couple of pre-defined authenticators and also allows you to extend and create custom authenticators. The authenticator takes in a <tt class="docutils literal"><span class="pre">credential</span></tt>, validates it and returns back a <tt class="docutils literal"><span class="pre">principal</span></tt>. The credential can be username/password or an auth token and the principal will be the user object.</p>
+<p>This module uses a session store for storing the auth tokens. Once an user is authenticated, minnal creates a session for the user and a session token will be returned back to the caller as a cookie. The subsequent calls should send the session token in the request cookie for authenticity.</p>
+<p>The security is configured at application level. Below is a sample security configuration of an application.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">casConfiguration</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">casServerUrl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://localhost:8443</span>
+    <span class="l-Scalar-Plain">casProxyCallbackUrl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://localhost:8083/facilities/casCallbackProxy</span>
+    <span class="l-Scalar-Plain">ticketStorage</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.auth.cas.JpaPgtStorage</span>
+  <span class="l-Scalar-Plain">sessionStore</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.session.JpaSessionStore</span>
+  <span class="l-Scalar-Plain">sessionExpiryTimeInSecs</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">300</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="session-store">
+<h2>Session Store</h2>
+<p>The session store stores the user sessions. A session is a bunch of key-value attributes and maps the session token with an auth token. The security module comes with an inbuilt <tt class="docutils literal"><span class="pre">org.minnal.security.session.JpaSessionStore</span></tt> that stores the sessions in a database table.</p>
+<p>You can change the sesison store from the security configuration of the application.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">sessionStore</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.session.JpaSessionStore</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="authenticators">
+<h2>Authenticators</h2>
+<p><em>Authenticators</em> are the one that actually authenticate the incoming requests based on a strategy. Minnal comes with a <a class="reference external" href="https://github.com/Jasig/cas">CAS</a> authenticator and allows you to build custom ones.</p>
+<div class="section" id="cas-authenticator">
+<h3>CAS Authenticator</h3>
+<p>The CAS authenticator uses <cite>Jasig client library &lt;https://github.com/Jasig/cas&gt;</cite> to talk to the CAS server. It takes in a <tt class="docutils literal"><span class="pre">session/proxy</span> <span class="pre">ticket</span></tt> as credential and validates it against the request path. If they match, returns the CAS user that was originally authenticated. You can configure the authenticator in the security configuration of your application.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">casConfiguration</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">casServerUrl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://localhost:8443</span>
+    <span class="l-Scalar-Plain">casProxyCallbackUrl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://localhost:8083/facilities/casCallbackProxy</span>
+    <span class="l-Scalar-Plain">ticketStorage</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.auth.cas.JpaPgtStorage</span>
+  <span class="l-Scalar-Plain">sessionStore</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.session.JpaSessionStore</span>
+  <span class="l-Scalar-Plain">sessionExpiryTimeInSecs</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">300</span>
+</pre></div>
+</td></tr></table></div>
+<p>To enable CAS authentication for your application, you will have to register CasPlugin in your application.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">registerPlugins</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">getConfiguration</span><span class="o">().</span><span class="na">getSecurityConfiguration</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">registerPlugin</span><span class="o">(</span><span class="k">new</span> <span class="n">CasPlugin</span><span class="o">(</span><span class="n">getConfiguration</span><span class="o">().</span><span class="na">getSecurityConfiguration</span><span class="o">()));</span>
+        <span class="o">}</span>
+        <span class="n">registerPlugin</span><span class="o">(</span><span class="k">new</span> <span class="n">JPAPlugin</span><span class="o">());</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="ticket-store">
+<h4>Ticket Store</h4>
+<p>Minnal comes with a database store <tt class="docutils literal"><span class="pre">org.minnal.security.auth.cas.JpaPgtStorage</span></tt> for storing the proxy granting tickets. You can also provide a custom storage via the configuration by extending <tt class="docutils literal"><span class="pre">org.jasig.cas.client.proxy.ProxyGrantingTicketStorage</span></tt></p>
+</div>
+</div>
+<div class="section" id="custom-authenticators">
+<h3>Custom Authenticators</h3>
+<p>Creating authenticators is simple. You will have to implement the interface <tt class="docutils literal"><span class="pre">org.minnal.security.auth.Authenticator</span></tt> and configure it in the security configuration of your application.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Authenticator</span><span class="o">&lt;</span><span class="n">C</span> <span class="kd">extends</span> <span class="n">Credential</span><span class="o">,</span> <span class="n">P</span> <span class="kd">extends</span> <span class="n">Principal</span><span class="o">&gt;</span> <span class="o">{</span>
+
+        <span class="n">P</span> <span class="nf">authenticate</span><span class="o">(</span><span class="n">C</span> <span class="n">credential</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="authorizers">
+<h2>Authorizers</h2>
+<p><em>Authorizers</em> authorize the incoming requests against the permissions defined over the route. Minnal comes with a simple authorizer <tt class="docutils literal"><span class="pre">org.minnal.security.auth.SimpleAuthorizer</span></tt> that reads the roles and permission of the user from property files. You can always extend it to provide your own authorizer.</p>
+<p>The security configuration defaults to SimpleAuthorizer. In case you want to provide a custom authorizer implementation, you can override it in the application cofiguration.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">sessionStore</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.session.JpaSessionStore</span>
+  <span class="l-Scalar-Plain">authorizer</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">your.custom.authorizer.CustomAuthorizer</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="setting-permissions-to-routes">
+<h3>Setting Permissions to Routes</h3>
+<p>Minnal takes the permission configuration for the routes via the route definition. Below code shows a sample usage,</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrderApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">OrderConfiguration</span><span class="o">&gt;</span> <span class="o">{</span>
+      <span class="nd">@Override</span>
+      <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">defineRoutes</span><span class="o">()</span> <span class="o">{</span>
+            <span class="n">resource</span><span class="o">(</span><span class="n">OrderResource</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">builder</span><span class="o">(</span><span class="s">&quot;/hello&quot;</span><span class="o">).</span><span class="na">action</span><span class="o">(</span><span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="s">&quot;helloWorld&quot;</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">attribute</span><span class="o">(</span><span class="n">Authorizer</span><span class="o">.</span><span class="na">PERMISSIONS</span><span class="o">,</span> <span class="s">&quot;permission1,permission2&quot;</span><span class="o">);</span>
+      <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>This instructs minnal to allow only the users with permissions <em>permission1</em> and <em>permission2</em> for the route <em>GET /hello</em></p>
+</div>
+<div class="section" id="simple-authorizer">
+<h3>Simple Authorizer</h3>
+<p>The simple authorizer uses the roles and permissions of the principal <tt class="docutils literal"><span class="pre">org.minnal.security.auth.Principal</span></tt> to authorize the route. If the roles and permissions are not populated in the principal, it looks for the property files <em>user_roles.properties</em> and <em>role_permissions.properties</em> in the classpath and validates against them.</p>
+<p>The location of the property files can be customized by overriding them in the configuration,</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">authorizer</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.auth.SimpleAuthorizer</span>
+    <span class="l-Scalar-Plain">roleMapper</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.auth.SimpleUserRoleMapper</span>
+      <span class="l-Scalar-Plain">mappingFile</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;location-to-property-file&gt;</span>
+    <span class="l-Scalar-Plain">permissionMapper</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.auth.SimpleRolePermissionMapper</span>
+      <span class="l-Scalar-Plain">mappingFile</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;location-to-property-file&gt;</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="custom-authorizers">
+<h3>Custom Authorizers</h3>
+<p>You can customize the simple authorizer to fetch the roles and permissions of the user from a data store instead of from a property file. All you have to do is to implement the interfaces <tt class="docutils literal"><span class="pre">org.minnal.security.auth.UserRoleMapper</span></tt> and <tt class="docutils literal"><span class="pre">org.minnal.security.auth.RolePermissionMapper</span></tt> and override them in the authorizer configuration.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">authorizer</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.security.auth.SimpleAuthorizer</span>
+    <span class="l-Scalar-Plain">roleMapper</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;your-custom-role-mapper-implementation&gt;</span>
+    <span class="l-Scalar-Plain">permissionMapper</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;your-custom-permission-mapper-implementation&gt;</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="white-listing-urls">
+<h2>White listing urls</h2>
+<p>You can whitelist the urls that you don&#8217;t want to be autneticated by adding them to <tt class="docutils literal"><span class="pre">whiteListedUrls</span></tt> in configuration. Typical use cases are publicly visible files, health check urls etc.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">security</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">whiteListedUrls</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">/appstatus</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+  
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, Ganesh Subramanian.<br/>
+      Last updated on Apr 08, 2014.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-41566886-1', 'minnal.github.io');
+        ga('send', 'pageview');
+  </script>
+
+  </body>
+</html>

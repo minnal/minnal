@@ -1,0 +1,466 @@
+
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Minnal Metrics &mdash; minnal 1.1.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/my-styles.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.1.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.1.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.1.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+    <link rel="top" title="minnal 1.1.3 documentation" href="../index.html" />
+    <link rel="up" title="User Documentation" href="index.html" />
+    <link rel="next" title="Minnal Test" href="test.html" />
+    <link rel="prev" title="Minnal Api" href="api.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+  
+  <a href="https://github.com/minnal/minnal" class="visible-desktop">
+  	<img style="position: absolute; top: 40px; right: 0; border: 0; z-index:1000;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub">
+  </a>
+
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html"><img src="../_static/logo.png">
+          Minnal</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.1.3</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Docs <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started.html#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#domain-modeling">Domain Modeling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started.html#installing-minnal">Installing Minnal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#downloading-the-package">Downloading the package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../getting-started.html#tutorial">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../getting-started.html#shopping-cart-application">Shopping Cart Application</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#creating-the-project">Creating the project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#creating-the-domain-classes">Creating the domain classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#test-your-apis">Test your APIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#starting-the-server">Starting the server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#view-your-apis">View your APIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../getting-started.html#customizing-an-api">Customizing an API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#high-level-design">High level design</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="core.html">Minnal Core</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="core.html#organizing-your-project">Organizing your project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#container">Container</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#applications">Applications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#resources">Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#routes">Routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#filters">Filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#exception-handlers">Exception Handlers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#plugins">Plugins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#bundles">Bundles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="core.html#application-context">Application Context</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jpa.html">Minnal Jpa</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jpa.html#domain-classes">Domain Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jpa.html#configuring-jpa">Configuring JPA</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="migrations.html">Minnal Migrations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="migrations.html#create-migrations">Create Migrations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="migrations.html#run-migrations">Run Migrations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="instrumentation.html">Minnal Instrumentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#resources">Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#sub-resources">Sub-Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#exclude-routes">Exclude Routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#overriding-routes">Overriding Routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#use-custom-key-as-identifier">Use custom key as identifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#search-params">Search Params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#actions">Actions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#pagination">Pagination</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#dynamically-including-excluding-response-fields">Dynamically including &amp; excluding response fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#bulk-operations">Bulk Operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instrumentation.html#authorizing-routes">Authorizing Routes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="security.html">Minnal Security</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="security.html#session-store">Session Store</a></li>
+<li class="toctree-l4"><a class="reference internal" href="security.html#authenticators">Authenticators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="security.html#authorizers">Authorizers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="security.html#white-listing-urls">White listing urls</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="generator.html">Minnal Generator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#create-new-project">Create New Project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#generate-models">Generate Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#generate-tests">Generate Tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#start-server">Start Server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generator.html#other-options">Other Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#using-swagger-ui">Using Swagger UI</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#response-time-collector">Response Time Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#datasource-stats-collector">Datasource Stats Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jmx-reporter">JMX Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphite-reporter">Graphite Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#custom-reporters">Custom Reporters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#publishing-app-metrics">Publishing App Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="test.html">Minnal Test</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="test.html#testing-resources">Testing Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="test.html#testing-jpa-resources">Testing JPA Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="test.html#testing-models">Testing Models</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html">Minnal Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="examples.html#petclinic-application">Petclinic Application</a></li>
+<li class="toctree-l4"><a class="reference internal" href="examples.html#cargo-application">Cargo Application</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-notes.html">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-1-3-8-apr-2014">minnal-1.1.3 / 8-Apr-2014</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-1-2-24-dec-2013">minnal-1.1.2 / 24-Dec-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-1-1-22-nov-2013">minnal-1.1.1 / 22-Nov-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-1-0-11-nov-2013">minnal-1.1.0 / 11-Nov-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-7-07-nov-2013">minnal-1.0.7 / 07-Nov-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-6-05-nov-2013">minnal-1.0.6 / 05-Nov-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-5-22-oct-2013">minnal-1.0.5 / 22-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-4-11-oct-2013">minnal-1.0.4 / 11-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-3-10-oct-2013">minnal-1.0.3 / 10-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-2-09-oct-2013">minnal-1.0.2 / 09-Oct-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-1-02-sep-2013">minnal-1.0.1 / 02-Sep-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-1-0-0-29-aug-2013">minnal-1.0.0 / 29-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-9-28-aug-2013">minnal-0.9.9 / 28-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-8-27-aug-2013">minnal-0.9.8 / 27-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-7-17-aug-2013">minnal-0.9.7 / 17-Aug-2013</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release-notes.html#minnal-0-9-6-12-aug-2013">minnal-0.9.6 / 12-Aug-2013</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#mailing-list">Mailing list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#reporting-bugs-requesting-enhancements">Reporting bugs / Requesting Enhancements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#contributing-to-minnal">Contributing to minnal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contact.html#developers">Developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html#exceptions-thrown">Exceptions thrown</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../faq.html#classnotfoundexception-com-sun-tools-attach-virtualmachine">ClassNotFoundException: com.sun.tools.attach.VirtualMachine</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="api.html" title="Previous Chapter: Minnal Api"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm">&laquo; Minnal Api</span>
+    </a>
+  </li>
+  <li>
+    <a href="test.html" title="Next Chapter: Minnal Test"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm">Minnal Test &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#high-level-design">High level design</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="core.html">Minnal Core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jpa.html">Minnal Jpa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrations.html">Minnal Migrations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="instrumentation.html">Minnal Instrumentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="security.html">Minnal Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generator.html">Minnal Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html">Minnal Api</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Minnal Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#response-time-collector">Response Time Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#datasource-stats-collector">Datasource Stats Collector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jmx-reporter">JMX Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphite-reporter">Graphite Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#custom-reporters">Custom Reporters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#publishing-app-metrics">Publishing App Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="test.html">Minnal Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html">Minnal Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-notes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="col-md-9">
+      
+  <div class="section" id="minnal-metrics">
+<span id="manual-metric"></span><h1>Minnal Metrics</h1>
+<p>Metrics bundle hooks into the container and collects statistics at application level. Minnal metrics internally uses <a class="reference external" href="http://metrics.codahale.com/">Yammer&#8217;s metric</a> library and allows you to log the metrics using multiple reporters.</p>
+<p>To enable metrics in your service, add minnal-metrics to your maven dependencies.</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>org.minnal<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>minnal-metrics<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>And enable one or more reporters in the container configuration. You will have to overirde the bundle configuration for metrics bundle. Below code shows a sample configuration</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># You can override the bundle configurations using bundleOverrides</span>
+<span class="l-Scalar-Plain">bundleOverrides</span><span class="p-Indicator">:</span>
+  <span class="c1"># The key is the fully qualified name of the bundle class</span>
+  <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundle</span><span class="p-Indicator">:</span>
+    <span class="c1"># The configuration class must be specified to override the properties</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundleConfiguration</span>
+    <span class="l-Scalar-Plain">enableJmxReporter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="response-time-collector">
+<h2>Response Time Collector</h2>
+<p>The Response time collector collects the response times at route level for each of the applications.  It also computes the max, min, mean, rate and percentile information for every route. The collected metrics are logged via the configured Reporters for every incoming request.</p>
+<div class="section" id="metric-key">
+<h3>Metric Key</h3>
+<p>The metric key is a combination of application name and the route pattern. For instance, if the route pattern is <tt class="docutils literal"><span class="pre">GET</span> <span class="pre">/shopping_carts/{id}/shopping_cart_items</span></tt> and the application name is <em>shoppingcarts</em>, then the metric key will be</p>
+<blockquote>
+<div>shoppingcarts.shopping_carts.id.shopping_cart_items.GET.responseTime</div></blockquote>
+</div>
+</div>
+<div class="section" id="datasource-stats-collector">
+<h2>Datasource Stats Collector</h2>
+<p>The Datasource collector collects the connection pool statistics like <strong>active/idle/total connections</strong>, <strong>failed checkins/checkouts/idle tests</strong>, <strong>uptime</strong> etc. and logs them when requested by the reporters.</p>
+<div class="section" id="id1">
+<h3>Metric Key</h3>
+<p>The datasource metrics are logged using the key,</p>
+<blockquote>
+<div>&lt;application-name&gt;.datasource</div></blockquote>
+</div>
+</div>
+<div class="section" id="jmx-reporter">
+<h2>JMX Reporter</h2>
+<p>JMX Reporter can be enabled from container configuration.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># You can override the bundle configurations using bundleOverrides</span>
+<span class="l-Scalar-Plain">bundleOverrides</span><span class="p-Indicator">:</span>
+  <span class="c1"># The key is the fully qualified name of the bundle class</span>
+  <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundle</span><span class="p-Indicator">:</span>
+    <span class="c1"># The configuration class must be specified to override the properties</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundleConfiguration</span>
+    <span class="l-Scalar-Plain">enableJmxReporter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</pre></div>
+</td></tr></table></div>
+<p>You can view metrics under the JMX domain <tt class="docutils literal"><span class="pre">metrics</span></tt> using Jconsole.</p>
+</div>
+<div class="section" id="graphite-reporter">
+<h2>Graphite Reporter</h2>
+<p>Graphite Reporter can also be enabled from container configuration. It allows you to customize the graphite host/port, key prefix and poll period.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># You can override the bundle configurations using bundleOverrides</span>
+<span class="l-Scalar-Plain">bundleOverrides</span><span class="p-Indicator">:</span>
+  <span class="c1"># The key is the fully qualified name of the bundle class</span>
+  <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundle</span><span class="p-Indicator">:</span>
+    <span class="c1"># The configuration class must be specified to override the properties</span>
+    <span class="l-Scalar-Plain">class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.minnal.metrics.MetricsBundleConfiguration</span>
+    <span class="l-Scalar-Plain">enableJmxReporter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+    <span class="l-Scalar-Plain">enableGraphiteReporter</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+    <span class="l-Scalar-Plain">graphiteReporterConfiguration</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">graphiteHost</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">127.0.0.1</span>
+      <span class="l-Scalar-Plain">graphitePort</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2003</span>
+      <span class="c1"># The prefix string to prepend to the keys</span>
+      <span class="l-Scalar-Plain">prefix</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">my_prefix</span>
+      <span class="c1"># The time interval in seconds to push the metrics to graphite</span>
+      <span class="l-Scalar-Plain">pollPeriodInSecs</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">10</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="custom-reporters">
+<h2>Custom Reporters</h2>
+<p>The current design doesn&#8217;t allow you to create custom reporters in an elegant way. Please raise an issue about your requirement, we will take it up.</p>
+<p>Take a look at the class <tt class="docutils literal"><span class="pre">org.minnal.metrics.DataSourcePoolMetricCollector</span></tt> for inspiration.</p>
+</div>
+<div class="section" id="publishing-app-metrics">
+<h2>Publishing App Metrics</h2>
+<p>You can also publish you application specific metrics using <em>Minnal Metrics</em>. Minnal creates a MetricRegistry per application to which you can publish your metrics. Below is a demonstration of this functionality.</p>
+<div class="highlight-java"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">MetricRegistry</span> <span class="n">metricRegistry</span> <span class="o">=</span> <span class="n">MetricRegistries</span><span class="o">.</span><span class="na">getRegistry</span><span class="o">(</span><span class="n">application</span><span class="o">.</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">getName</span><span class="o">());</span>
+<span class="n">metricRegistry</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">MetricRegistry</span><span class="o">.</span><span class="na">name</span><span class="o">(</span><span class="n">application</span><span class="o">.</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">getName</span><span class="o">(),</span> <span class="s">&quot;orders&quot;</span><span class="o">,</span> <span class="s">&quot;shipped&quot;</span><span class="o">),</span>
+<span class="k">new</span> <span class="n">Gauge</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">getValue</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">Orders</span><span class="o">.</span><span class="na">count</span><span class="o">(</span><span class="s">&quot;status&quot;</span><span class="o">,</span> <span class="s">&quot;shipped&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+<span class="o">);</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+  
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2013, Ganesh Subramanian.<br/>
+      Last updated on Apr 08, 2014.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-41566886-1', 'minnal.github.io');
+        ga('send', 'pageview');
+  </script>
+
+  </body>
+</html>
