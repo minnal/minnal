@@ -4,6 +4,11 @@
 Release Notes
 #############
 
+minnal-1.1.3 / 8-Apr-2014
+==========================
+
+* Fixed issue `#87 <https://github.com/minnal/minnal/issues/87>`_ (FD leak in HttpsConnector)
+
 minnal-1.1.2 / 24-Dec-2013
 ==========================
 
