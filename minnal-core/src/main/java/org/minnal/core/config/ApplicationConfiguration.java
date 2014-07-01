@@ -22,6 +22,8 @@ public class ApplicationConfiguration extends Configuration {
 	private boolean instrumentationEnabled;
 	
 	private String basePath = "/";
+	
+	private String apiVersion = "1.0";
 
 	public ApplicationConfiguration() {
 	}
@@ -85,6 +87,20 @@ public class ApplicationConfiguration extends Configuration {
 	 */
 	public void setBasePath(String basePath) {
 		this.basePath = basePath;
+	}
+
+	/**
+	 * @return the apiVersion
+	 */
+	public String getApiVersion() {
+		return apiVersion;
+	}
+
+	/**
+	 * @param apiVersion the apiVersion to set
+	 */
+	public void setApiVersion(String apiVersion) {
+		this.apiVersion = apiVersion;
 	}
 
 }

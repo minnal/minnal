@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.javalite.common.Inflector;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
@@ -54,6 +53,8 @@ public class ApiDocumentation {
 	
 	private String baseUrl;
 	
+	public static final String SWAGGER_VERSION = "1.2";
+	
 	private ApiDocumentation() {}
 	
 	public void addApplication(Application<ApplicationConfiguration> application) {
@@ -86,8 +87,8 @@ public class ApiDocumentation {
 		scala.collection.immutable.List<String> produces = getMediaTypes(resourceClass.getConfiguration());
 		scala.collection.immutable.List<ApiDescription> apiDescription = createApiDescription(resourceClass.getRouteBuilders());
 		Option<scala.collection.immutable.Map<String, Model>> models = Option.apply(createSchemas(resourceClass));
-		return new ApiListing("1.2", "1.2", baseUrl, resourcePath, produces, produces, null, null, apiDescription, models 
-				, Option.apply(""), 0);
+		return new ApiListing(application.getConfiguration().getApiVersion(), SWAGGER_VERSION, baseUrl, resourcePath, produces, produces, null, null, 
+				apiDescription, models, Option.apply(""), 0);
 	}
 	
 	protected scala.collection.immutable.Map<String, Model> createSchemas(ResourceClass resourceClass) {
@@ -188,7 +189,7 @@ public class ApiDocumentation {
 		}
 		scala.collection.immutable.List<ApiListingReference> apiList = JavaConversions.asScalaBuffer(apis).toList();
 		ApiInfo apiInfo = new ApiInfo(application.getConfiguration().getName(), "", "", "", "", "");
-		ResourceListing listing = new ResourceListing("1.2", "1.2", apiList, null, Option.apply(apiInfo));
+		ResourceListing listing = new ResourceListing(application.getConfiguration().getApiVersion(), SWAGGER_VERSION, apiList, null, Option.apply(apiInfo));
 		applicationResources.put(application.getConfiguration().getName(), listing);
 	}
 	
