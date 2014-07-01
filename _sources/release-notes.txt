@@ -4,6 +4,16 @@
 Release Notes
 #############
 
+minnal-1.2.0 / 1-Jul-2014
+==========================
+This release has upgrades to the latest version of Swagger and ActiveJPA. With these upgrades, minnal has support for Swagger spec version 1.2 and JPA 2.1.
+
+Note: The swagger base url has changed from this version. It will be of the format /api/<application-name>/api-docs 
+
+* Fixed issue `#93 <https://github.com/minnal/minnal/issues/93>`_ (Collection name singularization not proper)
+* Fixed issue `#94 <https://github.com/minnal/minnal/issues/94>`_ (Upgrade activejpa to latest to support JPA2.1)
+* Fixed issue `#84 <https://github.com/minnal/minnal/issues/84>`_ (Upgrade to latest version of swagger-core)
+
 minnal-1.1.3 / 8-Apr-2014
 ==========================
 
