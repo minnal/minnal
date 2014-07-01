@@ -4,7 +4,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	<parent>
 		<groupId>org.minnal</groupId>
 		<artifactId>minnal</artifactId>
-		<version>1.1.4-SNAPSHOT</version>
+		<version>1.2.0</version>
 	</parent>
 	<artifactId>minnal-api</artifactId>
 	<name>Minnal API bundle</name>
@@ -51,7 +51,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-core</artifactId>
-				<version>1.1.4-SNAPSHOT</version>
+				<version>1.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -66,7 +66,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-utils</artifactId>
-				<version>1.1.4-SNAPSHOT</version>
+				<version>1.2.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
