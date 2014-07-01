@@ -84,7 +84,7 @@
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-entitymanager</artifactId>
-				<version>4.2.3.Final</version>
+				<version>4.3.5.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>
@@ -129,7 +129,7 @@
 			<dependency>
 				<groupId>org.activejpa</groupId>
 				<artifactId>activejpa-test</artifactId>
-				<version>0.1.5</version>
+				<version>0.2.1</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>

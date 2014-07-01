@@ -62,7 +62,7 @@
 			<dependency>
 				<groupId>org.activejpa</groupId>
 				<artifactId>activejpa-test</artifactId>
-				<version>0.1.5</version>
+				<version>0.2.1</version>
 				<optional>true</optional>
 			</dependency>
 			<dependency>
