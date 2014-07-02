@@ -4,11 +4,15 @@
 package org.minnal.core.resource;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.minnal.autopojo.AttributeMetaData;
-import org.minnal.autopojo.resolver.ObjectResolver;
+import org.minnal.autopojo.Configuration;
+import org.minnal.autopojo.GenerationStrategy;
+import org.minnal.autopojo.resolver.CollectionResolver;
 import org.minnal.autopojo.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,22 +24,36 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  * @author ganeshs
  *
  */
-public class BiDirectionalObjectResolver extends ObjectResolver {
+public class BiDirectionalCollectionResolver extends CollectionResolver {
 	
-	private static final Logger logger = LoggerFactory.getLogger(BiDirectionalObjectResolver.class);
-
+	private static final Logger logger = LoggerFactory.getLogger(BiDirectionalCollectionResolver.class);
+	
+	@Override
+	public void resolve(Object pojo, AttributeMetaData attribute, int maxDepth) {
+		// Prevent looping incase of composite models 
+		if (maxDepth > 2 && attribute.getTypeArguments()[0].equals(pojo.getClass())) {
+			return;
+		}
+		super.resolve(pojo, attribute, maxDepth);
+	}
+	
 	@Override
 	protected void setAttribute(Object pojo, AttributeMetaData attribute, Object value) {
 		super.setAttribute(pojo, attribute, value);
 		JsonManagedReference managedReference = attribute.getAnnotation(JsonManagedReference.class);
 		if (managedReference != null && value != null) {
-			PropertyDescriptor backReference = getManagedBackReference(value.getClass(), managedReference.value());
+			Class<?> elementType = (Class<?>) attribute.getTypeArguments()[0];
+			PropertyDescriptor backReference = getManagedBackReference(elementType, managedReference.value());
 			if (backReference != null) {
-				try {
-					PropertyUtils.setProperty(value, backReference.getName(), pojo);
-				} catch (Exception e) {
-					logger.info("Failed while setting the property {} on the class {}", backReference.getName(), value.getClass());
+				Collection collection = (Collection) value;
+				for (Object object : collection) {
+					try {
+						PropertyUtils.setProperty(object, backReference.getName(), pojo);
+					} catch (Exception e) {
+						logger.info("Failed while setting the property {} on the class {}", backReference.getName(), value.getClass());
+					}
 				}
+				
 			}
 		}
 	}

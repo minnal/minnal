@@ -7,6 +7,7 @@ import java.beans.PropertyDescriptor;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
 import java.net.InetSocketAddress;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -76,6 +77,7 @@ public abstract class BaseResourceTest {
 		configuration.setExcludeAnnotations(excludeAnnotations);
 		GenerationStrategy strategy = new GenerationStrategy(configuration);
 		strategy.register(Object.class, BiDirectionalObjectResolver.class);
+		strategy.register(Collection.class, BiDirectionalCollectionResolver.class);
 		factory = new AutoPojoFactory(strategy);
 	}
 	
