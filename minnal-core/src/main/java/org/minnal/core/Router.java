@@ -56,7 +56,7 @@ public class Router {
 			if (! (e instanceof ApplicationException)) {
 				logger.error("Failed while processing the request");
 			}
-			context.getApplication().getExceptionHandler().handle(context.getRequest(), context.getResponse(), e);
+			context.getApplication().getExceptionResolver().resolve(context.getRequest(), context.getResponse(), e);
 		} finally {
 			if (context.getResponse().getStatus() == HttpResponseStatus.PROCESSING) {
 				if (context.getResponse().isContentSet()) {

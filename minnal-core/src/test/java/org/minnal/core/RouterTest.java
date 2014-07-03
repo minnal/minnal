@@ -19,7 +19,7 @@ import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;
-import org.minnal.core.server.exception.ExceptionHandler;
+import org.minnal.core.server.exception.ExceptionResolver;
 import org.minnal.core.server.exception.NotFoundException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -96,15 +96,15 @@ public class RouterTest {
 	}
 	
 	@Test
-	public void shouldInvokeExceptionHandlerOnException() {
+	public void shouldInvokeExceptionResolverOnException() {
 		Application application = mock(Application.class);
-		ExceptionHandler handler = mock(ExceptionHandler.class);
-		when(application.getExceptionHandler()).thenReturn(handler);
+		ExceptionResolver handler = mock(ExceptionResolver.class);
+		when(application.getExceptionResolver()).thenReturn(handler);
 		when(context.getApplication()).thenReturn(application);
 		NotFoundException exception = mock(NotFoundException.class);
 		when(resolver.resolve(context)).thenThrow(exception);
 		router.route(context);
-		verify(handler).handle(request, response, exception);
+		verify(handler).resolve(request, response, exception);
 	}
 	
 	@Test

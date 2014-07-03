@@ -40,6 +40,8 @@ public class Action {
 			logger.error("Failed while invoking the action - " + this, throwable);
 			if (throwable instanceof ApplicationException) {
 				throw (ApplicationException) throwable;
+			} if (throwable instanceof RuntimeException ){
+				throw (RuntimeException) throwable;
 			} else {
 				throw new InternalServerErrorException(throwable);
 			}

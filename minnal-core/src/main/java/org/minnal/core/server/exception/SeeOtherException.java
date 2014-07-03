@@ -13,6 +13,8 @@ import org.minnal.core.Response;
  */
 public class SeeOtherException extends ApplicationException {
 	
+	private static final long serialVersionUID = 1L;
+
 	private String location;
 
 	public SeeOtherException(String location) {

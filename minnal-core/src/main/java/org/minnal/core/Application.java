@@ -19,6 +19,7 @@ import org.minnal.core.route.RouteBuilder;
 import org.minnal.core.route.Routes;
 import org.minnal.core.server.exception.ApplicationException;
 import org.minnal.core.server.exception.ExceptionHandler;
+import org.minnal.core.server.exception.ExceptionResolver;
 import org.minnal.utils.reflection.Generics;
 
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -43,7 +44,7 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	
 	private ConfigurationProvider configurationProvider = ConfigurationProvider.getDefault();
 	
-	private ExceptionHandler exceptionHandler = new ExceptionHandler();
+	private ExceptionResolver exceptionResolver = new ExceptionResolver();
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Application() {
@@ -54,8 +55,8 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		this.configuration = configuration;
 	}
 	
-	public ExceptionHandler getExceptionHandler() {
-		return exceptionHandler;
+	public ExceptionResolver getExceptionResolver() {
+		return exceptionResolver;
 	}
 	
 	public void addFilter(Filter filter) {
@@ -67,6 +68,7 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		addFilters();
 		defineResources();
 		defineRoutes();
+		mapExceptions();
 		
 		for (Plugin plugin : plugins) {
 			plugin.init(this);
@@ -105,7 +107,11 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	}
 	
 	public void addExceptionMapping(Class<? extends Exception> from, Class<? extends ApplicationException> to) {
-		exceptionHandler.mapException(from, to);
+		exceptionResolver.mapException(from, to);
+	}
+	
+	public void addExceptionHandler(Class<? extends Exception> exception, ExceptionHandler handler) {
+		exceptionResolver.addExceptionHandler(exception, handler);
 	}
 	
 	public void addResource(Class<?> resourceClass) {
