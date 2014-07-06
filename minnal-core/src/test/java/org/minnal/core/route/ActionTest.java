@@ -6,8 +6,6 @@ package org.minnal.core.route;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.minnal.core.MinnalException;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
