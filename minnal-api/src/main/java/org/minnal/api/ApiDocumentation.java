@@ -6,6 +6,8 @@ package org.minnal.api;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +112,12 @@ public class ApiDocumentation {
 			ApiDescription ep = new ApiDescription(routes.get(0).getRoutePattern().getPathPattern(), description, createOperations(routes));
 			eps.add(ep);
 		}
+		Collections.sort(eps, new Comparator<ApiDescription>() {
+			@Override
+			public int compare(ApiDescription o1, ApiDescription o2) {
+				return o1.path().compareTo(o2.path());
+			}
+		});
 		return JavaConversions.asScalaBuffer(eps).toList();
 	}
 	
@@ -187,6 +195,12 @@ public class ApiDocumentation {
 			ApiListingReference ep = new ApiListingReference(HttpUtil.structureUrl(resourceName), Option.apply(description), 0);
 			apis.add(ep);
 		}
+		Collections.sort(apis, new Comparator<ApiListingReference>(){
+			@Override
+			public int compare(ApiListingReference o1, ApiListingReference o2) {
+				return o1.path().compareTo(o2.path());
+			}
+		});
 		scala.collection.immutable.List<ApiListingReference> apiList = JavaConversions.asScalaBuffer(apis).toList();
 		ApiInfo apiInfo = new ApiInfo(application.getConfiguration().getName(), "", "", "", "", "");
 		ResourceListing listing = new ResourceListing(application.getConfiguration().getApiVersion(), SWAGGER_VERSION, apiList, null, Option.apply(apiInfo));
