@@ -1,5 +1,5 @@
 #set($method_name = "create$path.getName()")
-public Object $method_name(org.minnal.core.Request request, org.minnal.core.Response response) {
+public Object $method_name(org.minnal.core.Request coreRequest, org.minnal.core.Response coreResponse) {
 #set($i = 0)
 #set($search_params = "new java.util.ArrayList()")
 #if ($path.getQueryParams().size() > 0)
@@ -25,7 +25,7 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 		
 		#set($resource_name = $inflector.camelize($node.getResourceName(), false))
 		#if($i == $path.size() - 1)
-			Object body = org.minnal.instrument.resource.ResourceUtil.getContent(request, ${model_class}.class);
+			Object body = org.minnal.instrument.resource.ResourceUtil.getContent(coreRequest, ${model_class}.class);
 			if (body instanceof java.util.List) {
 				java.util.Iterator iterator = ((java.util.List) body).iterator();
 				while(iterator.hasNext()) {
@@ -38,14 +38,14 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 		#else
 			#if ($parent)
 				#set($collection_entity_key = "$resource_name" + "." + "$node.getEntityMetaData().getEntityKey()")
-				$model_class $field_name = ($model_class) ${parent}.collection("$resource_name").first(new Object[]{"$collection_entity_key", request.getHeader("$param_name")});
+				$model_class $field_name = ($model_class) ${parent}.collection("$resource_name").first(new Object[]{"$collection_entity_key", coreRequest.getHeader("$param_name")});
 				if ($field_name == null) {
-					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $collection_entity_key " + request.getHeader("$param_name") + " not found");
+					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $collection_entity_key " + coreRequest.getHeader("$param_name") + " not found");
 				}
 			#else
-				$model_class $field_name = ($model_class) ${model_class}.first(new Object[] {"$node.getEntityMetaData().getEntityKey()", request.getHeader("$param_name")});
+				$model_class $field_name = ($model_class) ${model_class}.first(new Object[] {"$node.getEntityMetaData().getEntityKey()", coreRequest.getHeader("$param_name")});
 				if ($field_name == null) {
-					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $node.getEntityMetaData().getEntityKey() " + request.getHeader("$param_name") + " not found");
+					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $node.getEntityMetaData().getEntityKey() " + coreRequest.getHeader("$param_name") + " not found");
 				}
 			#end
 		#end
@@ -57,7 +57,7 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 	#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
 	#set($field_name = $node.getName())
 
-	Object body = org.minnal.instrument.resource.ResourceUtil.getContent(request, ${model_class}.class);
+	Object body = org.minnal.instrument.resource.ResourceUtil.getContent(coreRequest, ${model_class}.class);
 	if (body instanceof java.util.List) {
 		org.activejpa.jpa.JPAContext context = org.activejpa.jpa.JPA.instance.getDefaultConfig().getContext();
 		context.beginTxn();
@@ -75,7 +75,7 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 		((${model_class}) body).persist();
 	}
 #end
-response.setStatus(org.jboss.netty.handler.codec.http.HttpResponseStatus.CREATED);
+coreResponse.setStatus(org.jboss.netty.handler.codec.http.HttpResponseStatus.CREATED);
 return body;
 #set ($parent = false)
 }

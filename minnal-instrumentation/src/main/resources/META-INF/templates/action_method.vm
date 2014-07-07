@@ -1,5 +1,5 @@
 #set($method_name = "$action.getName()" + "$path.getName()")
-public void $method_name(org.minnal.core.Request request, org.minnal.core.Response response) {
+public void $method_name(org.minnal.core.Request coreRequest, org.minnal.core.Response coreResponse) {
 #set($i = 0)
 java.util.Map parameters = new java.util.HashMap();
 #foreach($node in $path)
@@ -14,25 +14,25 @@ java.util.Map parameters = new java.util.HashMap();
 		#set($collection_entity_key = "$resource_name" + "." + "$node.getEntityMetaData().getEntityKey()")
 		
 		#if($i+1 == $path.size())
-	 	    filter.addCondition("$collection_entity_key", org.activejpa.entity.Condition.Operator.in, org.minnal.instrument.resource.ResourceUtil.getCommaSeparatedValues(request.getHeader("$param_name")));
+	 	    filter.addCondition("$collection_entity_key", org.activejpa.entity.Condition.Operator.in, org.minnal.instrument.resource.ResourceUtil.getCommaSeparatedValues(coreRequest.getHeader("$param_name")));
 		#else
-			filter.addCondition("$collection_entity_key", request.getHeader("$param_name"));
+			filter.addCondition("$collection_entity_key", coreRequest.getHeader("$param_name"));
 		#end
 		
 		$field_name = (java.util.List) (($parent_model)${parent}.get(0)).collection("$resource_name").where(filter);
 		if ($field_name == null || ${field_name}.isEmpty()) {
-			throw new org.minnal.core.server.exception.NotFoundException("$field_name with $collection_entity_key " + request.getHeader("$param_name") + " not found");
+			throw new org.minnal.core.server.exception.NotFoundException("$field_name with $collection_entity_key " + coreRequest.getHeader("$param_name") + " not found");
 		}
 	#else
 		#if($i+1 == $path.size())
-		    filter.addCondition("$node.getEntityMetaData().getEntityKey()", org.activejpa.entity.Condition.Operator.in, org.minnal.instrument.resource.ResourceUtil.getCommaSeparatedValues(request.getHeader("$param_name")));
+		    filter.addCondition("$node.getEntityMetaData().getEntityKey()", org.activejpa.entity.Condition.Operator.in, org.minnal.instrument.resource.ResourceUtil.getCommaSeparatedValues(coreRequest.getHeader("$param_name")));
 		#else
-			filter.addCondition("$node.getEntityMetaData().getEntityKey()", request.getHeader("$param_name"));
+			filter.addCondition("$node.getEntityMetaData().getEntityKey()", coreRequest.getHeader("$param_name"));
 		#end
 		
 		$field_name = (java.util.List) ${model_class}.where(filter);
 		if ($field_name == null || ${field_name}.isEmpty()) {
-			throw new org.minnal.core.server.exception.NotFoundException("$field_name with $node.getEntityMetaData().getEntityKey() " + request.getHeader("$param_name") + " not found");
+			throw new org.minnal.core.server.exception.NotFoundException("$field_name with $node.getEntityMetaData().getEntityKey() " + coreRequest.getHeader("$param_name") + " not found");
 		}
 	#end
 	parameters.put("${field_name}", ${field_name}.get(0));
@@ -54,12 +54,12 @@ context.beginTxn();
 boolean failed = true;
 Object result = null;
 try {
-	result = org.minnal.instrument.resource.ResourceUtil.invokeAction(root, "$action.getMethod().getName()", actionParams, request, parameters);
+	result = org.minnal.instrument.resource.ResourceUtil.invokeAction(root, "$action.getMethod().getName()", actionParams, coreRequest, parameters);
 	failed = false;
 } finally {
 	context.closeTxn(failed);
 	if (result != null) {
-		response.setContent(result);
+		coreResponse.setContent(result);
 	}
 }
 #set ($parent = false)

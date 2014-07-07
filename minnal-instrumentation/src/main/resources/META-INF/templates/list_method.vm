@@ -1,5 +1,5 @@
 #set($method_name = "list$inflector.pluralize($path.getName())")
-public Object $method_name(org.minnal.core.Request request, org.minnal.core.Response response) {
+public Object $method_name(org.minnal.core.Request coreRequest, org.minnal.core.Response coreResponse) {
 #set($i = 0)
 #set($search_params = "new java.util.ArrayList()")
 #if ($path.getQueryParams().size() > 0)
@@ -25,7 +25,7 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 		
 		#set($resource_name = $inflector.camelize($node.getResourceName(), false))
 		#if($i == $path.size() - 1)
-			org.activejpa.entity.Filter filter = org.minnal.instrument.resource.ResourceUtil.getFilter(request, $search_params);
+			org.activejpa.entity.Filter filter = org.minnal.instrument.resource.ResourceUtil.getFilter(coreRequest, $search_params);
 			org.activejpa.entity.EntityCollection ${field_name}Collection = ${parent}.collection("$resource_name");
 			java.util.List $field_name = ${field_name}Collection.where(filter);
 			long total = 0;
@@ -36,14 +36,14 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 		#else
 			#if ($parent)
 				#set($collection_entity_key = "$resource_name" + "." + "$node.getEntityMetaData().getEntityKey()")
-				$model_class $field_name = ($model_class) ${parent}.collection("$resource_name").first(new Object[]{"$collection_entity_key", request.getHeader("$param_name")});
+				$model_class $field_name = ($model_class) ${parent}.collection("$resource_name").first(new Object[]{"$collection_entity_key", coreRequest.getHeader("$param_name")});
 				if ($field_name == null) {
-					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $collection_entity_key " + request.getHeader("$param_name") + " not found");
+					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $collection_entity_key " + coreRequest.getHeader("$param_name") + " not found");
 				}
 			#else
-				$model_class $field_name = ($model_class) ${model_class}.first(new Object[] {"$node.getEntityMetaData().getEntityKey()", request.getHeader("$param_name")});
+				$model_class $field_name = ($model_class) ${model_class}.first(new Object[] {"$node.getEntityMetaData().getEntityKey()", coreRequest.getHeader("$param_name")});
 				if ($field_name == null) {
-					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $node.getEntityMetaData().getEntityKey() " + request.getHeader("$param_name") + " not found");
+					throw new org.minnal.core.server.exception.NotFoundException("$field_name with $node.getEntityMetaData().getEntityKey() " + coreRequest.getHeader("$param_name") + " not found");
 				}
 			#end
 		#end
@@ -55,7 +55,7 @@ public Object $method_name(org.minnal.core.Request request, org.minnal.core.Resp
 	#set($model_class = $node.getEntityMetaData().getEntityClass().getCanonicalName())
 	#set($field_name = $node.getName())
 
-	org.activejpa.entity.Filter filter = org.minnal.instrument.resource.ResourceUtil.getFilter(request, $search_params);
+	org.activejpa.entity.Filter filter = org.minnal.instrument.resource.ResourceUtil.getFilter(coreRequest, $search_params);
 	java.util.List $field_name = ${model_class}.where(filter);
 	long total = 0;
 	if (filter.shouldPage()) {
