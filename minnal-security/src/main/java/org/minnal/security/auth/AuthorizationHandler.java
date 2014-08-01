@@ -6,13 +6,11 @@ package org.minnal.security.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotAuthorizedException;
+
 import org.minnal.core.MessageListenerAdapter;
-import org.minnal.core.Request;
-import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
-import org.minnal.core.server.exception.ForbiddenException;
-import org.minnal.core.server.exception.UnauthorizedException;
 import org.minnal.security.config.SecurityAware;
 import org.minnal.security.config.SecurityConfiguration;
 import org.minnal.security.session.Session;
@@ -21,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -48,7 +47,7 @@ public class AuthorizationHandler extends MessageListenerAdapter {
 		Principal principal = getPrincipal(context.getRequest());
 		if (principal == null) {
 			logger.info("User is not authenticated");
-			throw new UnauthorizedException("Not authenticated");
+			throw new NotAuthorizedException("Not authenticated");
 		}
 		if (! authorizer.authorize(principal, permissions)) {
 			throw new ForbiddenException();
@@ -77,7 +76,7 @@ public class AuthorizationHandler extends MessageListenerAdapter {
 	 */
 	protected List<Permission> getPermissions(Route route) {
 		String value = route.getAttribute(Authorizer.PERMISSIONS);
-		if (StringUtils.isBlank(value)) {
+		if (Strings.isNullOrEmpty(value)) {
 			return new ArrayList<Permission>();
 		}
 		Iterable<String> permissions = Splitter.on(",").omitEmptyStrings().split(value.toString());

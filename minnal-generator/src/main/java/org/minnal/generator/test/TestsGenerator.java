@@ -6,7 +6,6 @@ package org.minnal.generator.test;
 import java.io.File;
 
 import org.minnal.core.config.ResourceConfiguration;
-import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.scanner.Scanner;
 import org.minnal.core.scanner.Scanner.Listener;
 import org.minnal.generator.core.AbstractGenerator;

@@ -14,8 +14,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.activejpa.entity.Model;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.minnal.core.serializer.Serializer;
 
 import com.google.common.io.BaseEncoding;

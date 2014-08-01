@@ -4,6 +4,7 @@
 package org.minnal.core;
 
 import static org.minnal.utils.http.HttpUtil.structureUrl;
+import io.netty.handler.codec.http.HttpRequest;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.TreeMap;
 
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.util.Comparators;
+import org.minnal.utils.http.HttpUtil;
 
 /**
  * Manages the mapping between mount path and application. Resolves the application mount paths to absolute path of the container.
@@ -56,7 +58,7 @@ public class ApplicationMapping {
 		if (applications.containsValue(application)) {
 			throw new IllegalArgumentException("Application - " + application + " is already mounted on a different mount path");
 		}
-		application.setPath(path);
+		application.setPath(HttpUtil.createURI(path));
 		applications.put(path, application);
 	}
 	
@@ -81,8 +83,8 @@ public class ApplicationMapping {
 	 * @param request
 	 * @return the application that this request resolves to
 	 */
-	public Application<ApplicationConfiguration> resolve(Request request) {
-		String path = request.getUri().getPath();
+	public Application<ApplicationConfiguration> resolve(HttpRequest request) {
+		String path = request.getUri();
 		for (Entry<String, Application<ApplicationConfiguration>> entry : getSortedApplications().entrySet()) {
 			if (path.startsWith(entry.getKey())) {
 				return entry.getValue();

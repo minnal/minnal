@@ -3,14 +3,14 @@
  */
 package org.minnal.security.auth;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.HashMap;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-
-import static org.testng.Assert.*;
 
 /**
  * @author ganeshs

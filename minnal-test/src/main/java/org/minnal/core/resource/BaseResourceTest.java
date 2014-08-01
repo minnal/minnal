@@ -3,6 +3,18 @@
  */
 package org.minnal.core.resource;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
+
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
@@ -13,17 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBufferInputStream;
-import org.jboss.netty.buffer.ChannelBufferOutputStream;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.handler.codec.http.DefaultHttpRequest;
-import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
-import org.jboss.netty.handler.codec.http.HttpHeaders;
-import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.minnal.autopojo.AutoPojoFactory;
 import org.minnal.autopojo.Configuration;
 import org.minnal.autopojo.GenerationStrategy;
@@ -120,10 +121,10 @@ public abstract class BaseResourceTest {
 		router.route(context);
 	}
 	
-	protected ServerRequest request(String uri, HttpMethod method, ChannelBuffer content) {
+	protected ServerRequest request(String uri, HttpMethod method, ByteBuf content) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
-			ByteStreams.copy(new ChannelBufferInputStream(content), bos);
+			ByteStreams.copy(new ByteBufInputStream(content), bos);
 			return request(uri, method, bos.toString(Charsets.UTF_8.name()), MediaType.JSON_UTF_8);
 		} catch (Exception e) {
 			throw new MinnalException(e);
@@ -143,23 +144,23 @@ public abstract class BaseResourceTest {
 	}
 	
 	protected ServerRequest request(String uri, HttpMethod method, String content, MediaType contentType, Map<String, String> headers) {
-		HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, uri);
-		request.setContent(buffer(content));
-		request.setHeader(HttpHeaders.Names.CONTENT_TYPE, contentType.toString());
-		request.setHeader(HttpHeaders.Names.CONTENT_LENGTH, content.length());
-		request.setHeader(HttpHeaders.Names.ACCEPT, MediaType.ANY_TYPE);
+		FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, method, uri);
+		request.content().writeBytes(buffer(content));
+		request.headers().add(HttpHeaders.Names.CONTENT_TYPE, contentType.toString());
+		request.headers().add(HttpHeaders.Names.CONTENT_LENGTH, content.length());
+		request.headers().add(HttpHeaders.Names.ACCEPT, MediaType.ANY_TYPE);
 		ServerRequest serverRequest = new ServerRequest(request, InetSocketAddress.createUnresolved("localhost", 80));
 		serverRequest.addHeaders(headers);
 		return serverRequest;
 	}
 	
 	protected ServerResponse response(ServerRequest request) {
-		return new ServerResponse(request, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.PROCESSING));
+		return new ServerResponse(request, new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.PROCESSING));
 	}
 	
-	protected ChannelBuffer buffer(String content) {
-		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
-		ChannelBufferOutputStream os = new ChannelBufferOutputStream(buffer);
+	protected ByteBuf buffer(String content) {
+		ByteBuf buffer = Unpooled.buffer();
+		ByteBufOutputStream os = new ByteBufOutputStream(buffer);
 		try {
 			os.write(content.getBytes());
 		} catch (Exception e) {

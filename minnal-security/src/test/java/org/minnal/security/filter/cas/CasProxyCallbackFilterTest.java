@@ -8,8 +8,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import javax.servlet.FilterChain;
+
 import org.jasig.cas.client.ssl.AnyHostnameVerifier;
-import org.minnal.core.FilterChain;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.security.auth.cas.AbstractPgtTicketStorage;

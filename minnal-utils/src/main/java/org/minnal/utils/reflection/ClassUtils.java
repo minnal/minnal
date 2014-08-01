@@ -94,6 +94,10 @@ public class ClassUtils {
 		return clazz.getAnnotation(annotationClass);
 	}
 	
+	public static <T extends Annotation> T getAnnotation(Method method, Class<T> clazz) {
+		return method.getAnnotation(clazz);
+	}
+	
 	public static <T extends Annotation> T getAnnotation(Class<?> clazz, String property, Class<T> annotationClass) {
 		PropertyDescriptor descriptor = getPropertyDescriptor(clazz, property);
 		if (descriptor == null) {

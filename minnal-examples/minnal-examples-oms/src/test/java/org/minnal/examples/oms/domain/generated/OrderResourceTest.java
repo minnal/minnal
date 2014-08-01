@@ -1,12 +1,12 @@
 package org.minnal.examples.oms.domain.generated;
 
-import org.minnal.core.serializer.Serializer;
-import org.minnal.core.resource.BaseJPAResourceTest;
-import org.testng.annotations.Test;
-import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
+import static org.testng.Assert.assertEquals;
+import io.netty.handler.codec.http.HttpResponseStatus;
+
 import org.minnal.core.Response;
-import static org.testng.Assert.*;
+import org.minnal.core.resource.BaseJPAResourceTest;
+import org.minnal.core.serializer.Serializer;
+import org.testng.annotations.Test;
 
 /**
  * This is an auto generated test class by minnal-generator

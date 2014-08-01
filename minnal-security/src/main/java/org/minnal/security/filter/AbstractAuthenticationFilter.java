@@ -6,9 +6,8 @@ package org.minnal.security.filter;
 import java.util.Map;
 import java.util.UUID;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.minnal.core.Filter;
-import org.minnal.core.FilterChain;
+import javax.servlet.FilterChain;
+
 import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.core.serializer.Serializer;
@@ -16,7 +15,6 @@ import org.minnal.core.server.exception.UnauthorizedException;
 import org.minnal.security.auth.Authenticator;
 import org.minnal.security.auth.Credential;
 import org.minnal.security.auth.Principal;
-import org.minnal.security.auth.cas.CasAuthenticator;
 import org.minnal.security.config.SecurityConfiguration;
 import org.minnal.security.session.Session;
 import org.minnal.utils.reflection.Generics;

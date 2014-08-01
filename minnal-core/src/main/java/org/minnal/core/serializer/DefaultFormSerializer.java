@@ -3,10 +3,10 @@
  */
 package org.minnal.core.serializer;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.Collection;
 import java.util.Map;
-
-import org.jboss.netty.buffer.ChannelBuffer;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -18,7 +18,7 @@ import com.google.common.base.Splitter;
 public class DefaultFormSerializer extends DefaultTextSerializer {
 
 	@Override
-	public ChannelBuffer serialize(Object object) {
+	public ByteBuf serialize(Object object) {
 		if (! (object instanceof Map)) {
 			return super.serialize(object);
 		} else {
@@ -29,7 +29,7 @@ public class DefaultFormSerializer extends DefaultTextSerializer {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass) {
+	public <T> T deserialize(ByteBuf buffer, Class<T> targetClass) {
 		if (! targetClass.isAssignableFrom(Map.class)) {
 			throw new IllegalArgumentException("Target class is not a map");
 		}
@@ -38,7 +38,7 @@ public class DefaultFormSerializer extends DefaultTextSerializer {
 	}
 
 	@Override
-	public <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType) {
+	public <T extends Collection<E>, E> T deserializeCollection(ByteBuf buffer, Class<T> collectionType, Class<E> elementType) {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 

@@ -3,9 +3,12 @@
  */
 package org.minnal.security.filter.cas;
 
-import org.minnal.core.Request;
-import org.minnal.core.Response;
-import org.minnal.core.server.exception.SeeOtherException;
+import java.net.URI;
+
+import javax.ws.rs.RedirectionException;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+
 import org.minnal.security.auth.cas.CasAuthenticator;
 import org.minnal.security.auth.cas.CasCredential;
 import org.minnal.security.auth.cas.CasUser;
@@ -41,7 +44,7 @@ public class CasFilter extends AbstractAuthenticationFilter<CasCredential, CasUs
 		String ticket = request.getHeader("ticket");
 		if (ticket == null) {
 			logger.debug("Ticket is not found in the request. Redirecting to cas server");
-			throw new SeeOtherException(constructRedirectUrl(request));
+			throw new RedirectionException(Response.Status.SEE_OTHER, constructRedirectUrl(request));
 		}
 		return new CasCredential(ticket, request.getUri().toASCIIString().split("\\?")[0]);
 	}
@@ -52,7 +55,7 @@ public class CasFilter extends AbstractAuthenticationFilter<CasCredential, CasUs
 		super.handleAuthSuccess(request, response, session);
 	}
 	
-	private String constructRedirectUrl(Request request) {
-		return getConfiguration().getCasConfiguration().getCasServerUrl() + "/login?service=" + request.getUri().toASCIIString(); 
+	private URI constructRedirectUrl(Request request) {
+		return URI.create(getConfiguration().getCasConfiguration().getCasServerUrl() + "/login?service=" + request.getUri().toASCIIString()); 
 	}
 }

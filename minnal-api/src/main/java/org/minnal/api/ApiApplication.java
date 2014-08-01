@@ -3,7 +3,6 @@
  */
 package org.minnal.api;
 
-import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.api.resources.ApiResource;
 import org.minnal.core.Application;
 import org.minnal.core.config.ResourceConfiguration;

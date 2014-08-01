@@ -7,12 +7,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
+import static org.testng.Assert.fail;
+import io.netty.handler.codec.http.HttpResponseStatus;
+
+import javax.servlet.FilterChain;
 
 import org.jasig.cas.client.ssl.AnyHostnameVerifier;
-import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.minnal.core.FilterChain;
 import org.minnal.core.MinnalException;
 import org.minnal.core.Request;
 import org.minnal.core.Response;

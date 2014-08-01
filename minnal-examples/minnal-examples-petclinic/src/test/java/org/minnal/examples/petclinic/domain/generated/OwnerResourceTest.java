@@ -1,16 +1,14 @@
 package org.minnal.examples.petclinic.domain.generated;
 
-import org.minnal.core.serializer.Serializer;
-import org.minnal.core.resource.BaseJPAResourceTest;
-import org.testng.annotations.Test;
-import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import io.netty.handler.codec.http.HttpResponseStatus;
+
 import org.minnal.core.Response;
+import org.minnal.core.resource.BaseJPAResourceTest;
+import org.minnal.core.serializer.Serializer;
 import org.minnal.examples.petclinic.JodatimeJsonSerializer;
-
-import com.google.common.base.Charsets;
-
-import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * This is an auto generated test class by minnal-generator

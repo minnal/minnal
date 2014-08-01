@@ -55,14 +55,10 @@
 			<artifactId>minnal-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.minnal</groupId>
-			<artifactId>minnal-admin</artifactId>
-		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.minnal</groupId>
 			<artifactId>minnal-api</artifactId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.activejpa</groupId>
 			<artifactId>activejpa-test</artifactId>
@@ -111,16 +107,11 @@
 				<artifactId>minnal-test</artifactId>
 				<version>1.2.1-SNAPSHOT</version>
 			</dependency>
-			<dependency>
-				<groupId>org.minnal</groupId>
-				<artifactId>minnal-admin</artifactId>
-				<version>1.2.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
+			<!-- <dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-api</artifactId>
 				<version>1.2.1-SNAPSHOT</version>
-			</dependency>
+			</dependency> -->
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-generator</artifactId>

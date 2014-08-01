@@ -13,17 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.netty.handler.codec.http.HttpMethod;
+import org.glassfish.jersey.server.internal.routing.Routers.RouteBuilder;
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.Configuration;
-import org.minnal.core.resource.ResourceClass;
 import org.minnal.core.route.QueryParam;
-import org.minnal.core.route.Route;
-import org.minnal.core.route.RouteBuilder;
-import org.minnal.core.route.RoutePattern.RouteElement;
 import org.minnal.utils.http.HttpUtil;
 import org.minnal.utils.reflection.PropertyUtil;
+import org.minnal.utils.route.RoutePattern.RouteElement;
 
 import scala.Option;
 import scala.collection.JavaConversions;

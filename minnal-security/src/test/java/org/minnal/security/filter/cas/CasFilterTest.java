@@ -17,10 +17,12 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
 
+import javax.servlet.FilterChain;
+import javax.ws.rs.RedirectionException;
+
 import org.activejpa.entity.testng.BaseModelTest;
 import org.activejpa.jpa.JPA;
 import org.jasig.cas.client.ssl.AnyHostnameVerifier;
-import org.minnal.core.FilterChain;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.core.server.exception.SeeOtherException;
@@ -95,7 +97,7 @@ public class CasFilterTest extends BaseModelTest {
 		try {
 			filter.doFilter(request, response, chain);
 			fail("Expected SeeOther Exception but didn't get one");
-		} catch (SeeOtherException e) {
+		} catch (RedirectionException e) {
 		}
 		
 	}

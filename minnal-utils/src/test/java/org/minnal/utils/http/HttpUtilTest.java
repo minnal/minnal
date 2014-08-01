@@ -3,11 +3,10 @@
  */
 package org.minnal.utils.http;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import java.net.URLEncoder;
 
-import org.minnal.utils.http.HttpUtil;
 import org.testng.annotations.Test;
 
 /**

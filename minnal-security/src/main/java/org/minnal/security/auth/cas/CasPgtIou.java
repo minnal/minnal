@@ -3,8 +3,6 @@
  */
 package org.minnal.security.auth.cas;
 
-import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

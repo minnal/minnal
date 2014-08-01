@@ -3,11 +3,12 @@
  */
 package org.minnal.security.filter.cas;
 
+import io.netty.handler.codec.http.HttpResponseStatus;
+
 import java.net.URI;
 
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.minnal.core.Filter;
-import org.minnal.core.FilterChain;
+import javax.servlet.FilterChain;
+
 import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.security.config.SecurityConfiguration;

@@ -13,5 +13,4 @@ public interface RouterListener {
 
 	void onApplicationResolved(MessageContext context);
 	
-	void onRouteResolved(MessageContext context);
 }

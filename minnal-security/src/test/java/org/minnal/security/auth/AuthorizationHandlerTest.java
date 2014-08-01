@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
-import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
 import org.minnal.core.server.ServerRequest;
 import org.minnal.core.server.ServerResponse;

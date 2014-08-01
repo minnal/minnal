@@ -17,10 +17,6 @@ public class PetclinicApplication extends Application<PetclinicConfiguration> {
 	}
 
 	@Override
-	protected void defineRoutes() {
-	}
-
-	@Override
 	protected void defineResources() {
 	}
 }

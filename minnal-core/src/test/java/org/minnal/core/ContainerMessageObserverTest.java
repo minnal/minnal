@@ -11,8 +11,6 @@ import static org.testng.Assert.assertEquals;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.ResourceConfiguration;
 import org.minnal.core.config.RouteConfiguration;
-import org.minnal.core.resource.ResourceClass;
-import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -31,10 +29,6 @@ public class ContainerMessageObserverTest {
 	
 	private Application<ApplicationConfiguration> application;
 	
-	private ResourceClass resourceClass;
-	
-	private Route route;
-	
 	private ApplicationConfiguration applicationConfiguration;
 	
 	private ResourceConfiguration resourceConfiguration;
@@ -49,17 +43,9 @@ public class ContainerMessageObserverTest {
 		application = mock(Application.class);
 		applicationConfiguration = mock(ApplicationConfiguration.class);
 		when(application.getConfiguration()).thenReturn(applicationConfiguration);
-		resourceClass = mock(ResourceClass.class);
-		resourceConfiguration = mock(ResourceConfiguration.class);
-		when(resourceClass.getConfiguration()).thenReturn(resourceConfiguration);
-		route = mock(Route.class);
-		routeConfiguration = mock(RouteConfiguration.class);
-		when(route.getConfiguration()).thenReturn(routeConfiguration);
 		ApplicationContext.instance().clear();
 		context = mock(MessageContext.class);
 		when(context.getApplication()).thenReturn(application);
-		when(context.getResourceClass()).thenReturn(resourceClass);
-		when(context.getRoute()).thenReturn(route);
 	}
 	
 	@Test
@@ -96,18 +82,5 @@ public class ContainerMessageObserverTest {
 	public void shouldSetApplicationConfigurationOnApplicationResolved() {
 		observer.onApplicationResolved(context);
 		assertEquals(ApplicationContext.instance().getApplicationConfiguration(), applicationConfiguration);
-	}
-	
-	@Test
-	public void shouldInvokeListenerOnRouteResolved() {
-		observer.onRouteResolved(context);
-		verify(listener).onRouteResolved(context);
-	}
-	
-	@Test
-	public void shouldSetRouteAndResourceConfigurationOnRouteResolved() {
-		observer.onRouteResolved(context);
-		assertEquals(ApplicationContext.instance().getRouteConfiguration(), routeConfiguration);
-		assertEquals(ApplicationContext.instance().getResourceConfiguration(), resourceConfiguration);
 	}
 }

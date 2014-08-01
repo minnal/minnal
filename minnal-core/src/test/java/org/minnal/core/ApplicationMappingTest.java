@@ -9,10 +9,11 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import io.netty.handler.codec.http.HttpRequest;
+
+import java.net.URI;
 
 import org.minnal.core.config.ApplicationConfiguration;
-import org.minnal.core.server.ServerRequest;
-import org.minnal.utils.http.HttpUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -69,7 +70,7 @@ public class ApplicationMappingTest {
 	public void shouldSetApplicationPathWhenAdded() {
 		when(configuration1.getBasePath()).thenReturn("/app");
 		applicationMapping.addApplication(application1);
-		verify(application1).setPath("/test/app");
+		verify(application1).setPath(URI.create("/test/app"));
 	}
 	
 	@Test(expectedExceptions=IllegalArgumentException.class)
@@ -110,8 +111,8 @@ public class ApplicationMappingTest {
 		when(configuration2.getBasePath()).thenReturn("/app2");
 		applicationMapping.addApplication(application1);
 		applicationMapping.addApplication(application2);
-		ServerRequest request = mock(ServerRequest.class);
-		when(request.getUri()).thenReturn(HttpUtil.createURI("/test/app1/test123"));
+		HttpRequest request = mock(HttpRequest.class);
+		when(request.getUri()).thenReturn("/test/app1/test123");
 		assertEquals(applicationMapping.resolve(request), application1);
 	}
 	
@@ -119,8 +120,8 @@ public class ApplicationMappingTest {
 	public void shouldNotResolveRequestToApplication() {
 		when(configuration1.getBasePath()).thenReturn("/app1");
 		applicationMapping.addApplication(application1);
-		ServerRequest request = mock(ServerRequest.class);
-		when(request.getUri()).thenReturn(HttpUtil.createURI("/test/invalidapp/test123"));
+		HttpRequest request = mock(HttpRequest.class);
+		when(request.getUri()).thenReturn("/test/invalidapp/test123");
 		assertNull(applicationMapping.resolve(request));
 	}
 		

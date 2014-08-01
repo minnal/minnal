@@ -7,10 +7,10 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import io.netty.handler.codec.http.HttpResponseStatus;
 
-import org.jboss.netty.handler.codec.http.HttpHeaders;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.minnal.core.FilterChain;
+import javax.servlet.FilterChain;
+
 import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.core.server.exception.UnauthorizedException;

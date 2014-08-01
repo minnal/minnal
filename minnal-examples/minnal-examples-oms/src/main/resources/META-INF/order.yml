@@ -13,7 +13,7 @@ db:
     hibernate.hbm2ddl.auto: create-drop
   packagesToScan:
     - org.minnal.examples.oms
-    - org.minnal.security.session
+    # - org.minnal.security.session
 packagesToScan:
   - org.minnal.examples.oms
 instrumentationEnabled: true

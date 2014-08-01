@@ -6,7 +6,6 @@ package org.minnal.metrics;
 import java.util.concurrent.TimeUnit;
 
 import org.minnal.core.MessageListenerAdapter;
-import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
 
 import com.codahale.metrics.Clock;
@@ -49,12 +48,12 @@ public class ResponseMetricCollector extends MessageListenerAdapter {
 			name = context.getApplication().getConfiguration().getName();
 		}
 		name = formatName(name);
-		return MetricRegistry.name(name, context.getRequest().getHttpMethod().toString(), metricName);
+		return MetricRegistry.name(name, context.getRequest().getMethod().toString(), metricName);
 	}
 
 	@Override
 	public void onSuccess(MessageContext context) {
-		context.addAttribute(SUCCESSFUL, context.getResponse().getStatus().getCode() < 400);
+		context.addAttribute(SUCCESSFUL, context.getResponse().getStatus().code() < 400);
 	}
 
 	@Override
@@ -66,7 +65,7 @@ public class ResponseMetricCollector extends MessageListenerAdapter {
 			MetricRegistries.getRegistry(context.getApplication().getConfiguration().getName()).meter(name).mark();
 		} else {
 			if (! successful) {
-				name = getMetricName(context, Integer.toString(context.getResponse().getStatus().getCode()));
+				name = getMetricName(context, Integer.toString(context.getResponse().getStatus().code()));
 				MetricRegistries.getRegistry(context.getApplication().getConfiguration().getName()).meter(name).mark();
 			}
 			name = getMetricName(context, RESPONSE_TIME);

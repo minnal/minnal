@@ -5,7 +5,6 @@ package org.minnal.security.filter.basic;
 
 import java.util.List;
 
-import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.minnal.core.Request;
 import org.minnal.core.Response;
 import org.minnal.security.auth.User;

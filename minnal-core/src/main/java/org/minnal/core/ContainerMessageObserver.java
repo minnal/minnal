@@ -6,9 +6,11 @@ package org.minnal.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.WebApplicationException;
+
 import org.minnal.core.server.ConnectorListener;
 import org.minnal.core.server.MessageContext;
-import org.minnal.core.server.exception.ApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,28 +94,14 @@ public class ContainerMessageObserver implements RouterListener, ConnectorListen
 		}
 	}
 
-	@Override
-	public void onRouteResolved(MessageContext context) {
-		ApplicationContext.instance().setResourceConfiguration(context.getResourceClass().getConfiguration());
-		ApplicationContext.instance().setRouteConfiguration(context.getRoute().getConfiguration());
-		for (final MessageListener listener : messageListeners) {
-			invoke(new ListenerInvoker(){
-				@Override
-				public void invoke(MessageContext context) {
-					listener.onRouteResolved(context);
-				}
-			}, context);
-		}
-	}
-	
 	protected void invoke(ListenerInvoker invoker, MessageContext context) {
 		try {
 			invoker.invoke(context);
-		} catch (ApplicationException e) {
+		} catch (WebApplicationException e) {
 			throw e;
 		} catch (Exception e) {
 			logger.warn("Failed while handling the event", e);
-			throw new MinnalException(e);
+			throw new InternalServerErrorException(e);
 		}
 	}
 

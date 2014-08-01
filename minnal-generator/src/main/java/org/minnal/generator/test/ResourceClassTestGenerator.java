@@ -8,18 +8,18 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.HttpMethod;
+
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.javalite.common.Inflector;
-import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.minnal.core.MinnalException;
-import org.minnal.core.resource.ResourceClass;
-import org.minnal.core.route.RoutePattern;
 import org.minnal.core.util.Node.PathVisitor;
 import org.minnal.generator.core.AbstractTemplateGenerator;
 import org.minnal.generator.util.CodeUtils;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
+import org.minnal.utils.route.RoutePattern;
 
 /**
  * @author ganeshs
@@ -112,7 +112,7 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 		}
 	}
 	
-	protected StringWriter createMethod(EntityNodePath path, boolean bulk, HttpMethod method) throws Exception {
+	protected StringWriter createMethod(EntityNodePath path, boolean bulk, String method) throws Exception {
 		Template template = getMethodTemplate(path, bulk, method);
 		if (template == null) {
 			// TODO Can't get here. Handle if it still gets here
@@ -134,7 +134,7 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 		return writer;
 	}
 
-	protected Template getMethodTemplate(EntityNodePath path, boolean bulk, HttpMethod method) {
+	protected Template getMethodTemplate(EntityNodePath path, boolean bulk, String method) {
 		if (bulk) {
 			if (method.equals(HttpMethod.GET)) {
 				return listMethodTestTemplate;

@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterators;
 
 /**
  * @author ganeshs
@@ -120,7 +121,54 @@ public class HttpUtil {
 		return url;
 	}
 	
+	/**
+	 * Returns the first segment from the path
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static String getRootSegment(String path) {
+		String[] segments = Iterators.toArray(Splitter.on('/').omitEmptyStrings().split(path).iterator(), String.class);
+		return structureUrl(segments.length > 0 ? segments[0] : "");
+	}
+	
+	/**
+	 * Concats the given paths 
+	 * 
+	 * @param paths
+	 * @return
+	 */
+	public static String concatPaths(String... paths) {
+		if (paths == null || paths.length == 0) {
+			return SEPARATOR;
+		}
+		String path = "";
+		for (int i = 0; i < paths.length; i++) {
+			if (! Strings.isNullOrEmpty(paths[i])) {
+				path += structureUrl(paths[i]);
+			}
+		}
+		return structureUrl(path);
+	}
+	
+	/**
+	 * Returns the relative path given the base path and absolute path
+	 * 
+	 * @param basePath
+	 * @param absolutePath
+	 * @return
+	 */
+	public static String deriveRelativePath(String basePath, String absolutePath) {
+		absolutePath = structureUrl(absolutePath);
+		basePath = structureUrl(basePath);
+		String relativePath = absolutePath;
+		if (absolutePath.startsWith(basePath)) {
+			relativePath = absolutePath.substring(basePath.length());
+		}
+		return relativePath.startsWith("/") ? relativePath.substring(1) : relativePath; 
+	}
+	
 	public static void main(String[] args) {
-		System.out.println(structureUrl("/"));
+		System.out.println(concatPaths("", "", ""));
 	}
 }

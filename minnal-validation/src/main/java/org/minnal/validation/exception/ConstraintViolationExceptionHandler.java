@@ -10,31 +10,56 @@ import java.util.Map;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status.Family;
+import javax.ws.rs.core.Response.StatusType;
+import javax.ws.rs.ext.ExceptionMapper;
 
 import org.javalite.common.Inflector;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.minnal.core.Request;
-import org.minnal.core.Response;
-import org.minnal.core.server.exception.ExceptionHandler;
 import org.minnal.validation.FieldError;
 
 /**
  * @author ganeshs
- *
+ * 
  */
-public class ConstraintViolationExceptionHandler implements ExceptionHandler {
-	
+public class ConstraintViolationExceptionHandler implements ExceptionMapper<ConstraintViolationException> {
+
 	@Override
-	public void handle(Request request, Response response, Throwable exception) {
+	public Response toResponse(ConstraintViolationException exception) {
 		ConstraintViolationException ex = (ConstraintViolationException) exception;
 		List<FieldError> errors = new ArrayList<FieldError>();
 		for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
 			errors.add(new FieldError(Inflector.underscore(violation.getPropertyPath().toString()), violation.getMessage(), violation.getInvalidValue()));
 		}
 		Map<String, List<FieldError>> message = new HashMap<String, List<FieldError>>();
-		message.put("field_errors", errors);
-		response.setStatus(HttpResponseStatus.UNPROCESSABLE_ENTITY);
-		response.setContent(message);
+		message.put("fieldErrors", errors);
+		return Response.status(UnprocessableEntityStatusType.INSTANCE).entity(message).build();
+	}
+
+	private static class UnprocessableEntityStatusType implements StatusType {
+		
+		private static UnprocessableEntityStatusType INSTANCE = new UnprocessableEntityStatusType();
+		
+		/**
+		 * Singleton constructor
+		 */
+		private UnprocessableEntityStatusType() {
+		}
+		
+		@Override
+		public int getStatusCode() {
+			return 422;
+		}
+
+		@Override
+		public String getReasonPhrase() {
+			return "Unprocessable Entity";
+		}
+
+		@Override
+		public Family getFamily() {
+			return Family.CLIENT_ERROR;
+		}
 	}
 
 }

@@ -3,10 +3,11 @@
  */
 package org.minnal.core.serializer;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.Collection;
 import java.util.Set;
 
-import org.jboss.netty.buffer.ChannelBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,16 +35,16 @@ public abstract class Serializer {
 	
 	public static final Serializer DEFAULT_YAML_SERIALIZER = new DefaultYamlSerializer();
 	
-	public abstract ChannelBuffer serialize(Object object);
+	public abstract ByteBuf serialize(Object object);
 	
-	public ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes) {
+	public ByteBuf serialize(Object object, Set<String> excludes, Set<String> includes) {
 		logger.warn("WARNING: {} doesn't support exlcuding and including the fields in the response", this.getClass());
 		return serialize(object);
 	}
 	
-	public abstract <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass);
+	public abstract <T> T deserialize(ByteBuf buffer, Class<T> targetClass);
 	
-	public abstract <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType);
+	public abstract <T extends Collection<E>, E> T deserializeCollection(ByteBuf buffer, Class<T> collectionType, Class<E> elementType);
 	
 	public static Serializer getSerializer(MediaType mediaType) {
 		if (mediaType.is(MediaType.JSON_UTF_8)) {

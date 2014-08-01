@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.minnal.core.MinnalException;
 import org.slf4j.Logger;

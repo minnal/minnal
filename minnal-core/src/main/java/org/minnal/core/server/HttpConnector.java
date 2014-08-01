@@ -3,7 +3,8 @@
  */
 package org.minnal.core.server;
 
-import org.jboss.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelPipeline;
+
 import org.minnal.core.Router;
 import org.minnal.core.config.ConnectorConfiguration;
 

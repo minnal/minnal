@@ -3,6 +3,10 @@
  */
 package org.minnal.generator.core;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.Unpooled;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -11,9 +15,6 @@ import java.util.List;
 
 import org.codehaus.plexus.util.IOUtil;
 import org.javalite.common.Inflector;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBufferInputStream;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.minnal.core.MinnalException;
 import org.minnal.core.serializer.Serializer;
 import org.slf4j.Logger;
@@ -153,11 +154,11 @@ public abstract class AbstractGenerator implements Generator {
 	}
 	
 	protected void serializeTo(File file, Object content, Serializer serializer) {
-		ChannelBuffer buffer = serializer.serialize(content);
+		ByteBuf buffer = serializer.serialize(content);
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter(file);
-			IOUtil.copy(new ChannelBufferInputStream(buffer), writer);
+			IOUtil.copy(new ByteBufInputStream(buffer), writer);
 		} catch (Exception e) {
 			throw new MinnalException("Failed while writing the file " + file.getAbsolutePath(), e);
 		} finally {
@@ -174,7 +175,7 @@ public abstract class AbstractGenerator implements Generator {
 	protected <T> T deserializeFrom(File file, Serializer serializer, Class<T> clazz) {
 		try {
 			if (file.exists()) {
-				return serializer.deserialize(ChannelBuffers.wrappedBuffer(IOUtil.toByteArray(new FileInputStream(file))), clazz);
+				return serializer.deserialize(Unpooled.copiedBuffer(IOUtil.toByteArray(new FileInputStream(file))), clazz);
 			}
 		} catch (Exception e) {
 			throw new MinnalException("Failed while creating the file " + file.getAbsolutePath());

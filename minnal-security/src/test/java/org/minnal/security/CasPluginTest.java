@@ -3,13 +3,11 @@
  */
 package org.minnal.security;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import org.jasig.cas.client.ssl.AnyHostnameVerifier;
 import org.minnal.core.Application;
-import org.minnal.core.resource.ResourceClass;
 import org.minnal.security.auth.cas.AbstractPgtTicketStorage;
 import org.minnal.security.config.CasConfiguration;
 import org.minnal.security.config.SecurityConfiguration;

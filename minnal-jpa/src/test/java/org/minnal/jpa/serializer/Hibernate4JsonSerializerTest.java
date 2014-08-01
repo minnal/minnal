@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
-import org.minnal.jpa.serializer.Hibernate4JsonSerializer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

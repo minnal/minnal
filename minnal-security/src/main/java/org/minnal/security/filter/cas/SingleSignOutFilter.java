@@ -3,15 +3,15 @@
  */
 package org.minnal.security.filter.cas;
 
+import io.netty.handler.codec.http.HttpResponseStatus;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.minnal.core.Filter;
-import org.minnal.core.FilterChain;
+import javax.servlet.FilterChain;
+
 import org.minnal.core.MinnalException;
 import org.minnal.core.Request;
 import org.minnal.core.Response;

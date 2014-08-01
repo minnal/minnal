@@ -3,7 +3,9 @@
  */
 package org.minnal.security.auth.cas;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
 import org.activejpa.entity.testng.BaseModelTest;
 import org.activejpa.jpa.JPA;
 import org.testng.annotations.BeforeClass;
