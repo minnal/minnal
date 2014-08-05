@@ -1,5 +1,5 @@
 #set($method_name = "read$path.getName()")
-public Object $method_name(javax.ws.rs.core.HttpHeaders httpHeaders, javax.ws.rs.core.UriInfo uriInfo, javax.ws.rs.ext.Providers jaxrsProviders, byte[] rawContent) {
+public Object $method_name(javax.ws.rs.core.UriInfo uriInfo) {
 #set($i = 0)
 #foreach($node in $path)
 	#set($param_name = $param_names.get($i))

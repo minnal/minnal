@@ -165,7 +165,8 @@ public class HttpUtil {
 		if (absolutePath.startsWith(basePath)) {
 			relativePath = absolutePath.substring(basePath.length());
 		}
-		return relativePath.startsWith("/") ? relativePath.substring(1) : relativePath; 
+//		return relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
+		return relativePath;
 	}
 	
 	public static void main(String[] args) {

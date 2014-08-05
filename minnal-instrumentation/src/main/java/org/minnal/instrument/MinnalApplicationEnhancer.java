@@ -18,7 +18,7 @@ public class MinnalApplicationEnhancer extends ApplicationEnhancer {
 	 * @param namingStrategy
 	 */
 	public MinnalApplicationEnhancer(Application<ApplicationConfiguration> application, NamingStrategy namingStrategy) {
-		super(application.getResourceConfig(), namingStrategy, application.getConfiguration().getDatabaseConfiguration().getPackagesToScan().toArray(new String[0]));
+		super(application.getResourceConfig(), namingStrategy, getPackagesToScan(application), getPackagesToScan(application));
 	}
 
 	/**
@@ -26,5 +26,9 @@ public class MinnalApplicationEnhancer extends ApplicationEnhancer {
 	 */
 	protected void addResource(Class<?> resourceClass) {
 		((ResourceConfig) getApplication()).register(resourceClass);
+	}
+	
+	private static String[] getPackagesToScan(Application<ApplicationConfiguration> application) {
+		return application.getConfiguration().getDatabaseConfiguration().getPackagesToScan().toArray(new String[0]);
 	}
 }

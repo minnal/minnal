@@ -4,7 +4,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import io.netty.handler.codec.http.HttpResponseStatus;
 
-import org.minnal.core.Response;
 import org.minnal.core.resource.BaseJPAResourceTest;
 import org.minnal.core.serializer.Serializer;
 import org.minnal.examples.petclinic.JodatimeJsonSerializer;

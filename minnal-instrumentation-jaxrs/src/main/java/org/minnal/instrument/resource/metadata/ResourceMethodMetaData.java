@@ -3,6 +3,8 @@
  */
 package org.minnal.instrument.resource.metadata;
 
+import java.lang.reflect.Method;
+
 import org.minnal.utils.route.RoutePattern;
 
 /**
@@ -16,15 +18,19 @@ public class ResourceMethodMetaData {
 	private String httpMethod;
 	
 	private RoutePattern pattern;
+	
+	private Method method;
 
 	/**
 	 * @param path
 	 * @param httpMethod
+	 * @param method
 	 */
-	public ResourceMethodMetaData(String path, String httpMethod) {
+	public ResourceMethodMetaData(String path, String httpMethod, Method method) {
 		this.path = path;
 		this.httpMethod = httpMethod;
 		this.pattern = new RoutePattern(path);
+		this.method = method;
 	}
 
 	/**
@@ -60,6 +66,13 @@ public class ResourceMethodMetaData {
 	 */
 	public RoutePattern getPattern() {
 		return pattern;
+	}
+
+	/**
+	 * @return the method
+	 */
+	public Method getMethod() {
+		return method;
 	}
 
 	@Override

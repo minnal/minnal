@@ -20,5 +20,5 @@ public interface Authorizer {
 	 * @param permissions
 	 * @return
 	 */
-	boolean authorize(Principal principal, List<Permission> permissions);
+	boolean authorize(java.security.Principal principal, List<Permission> permissions);
 }

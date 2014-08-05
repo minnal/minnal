@@ -3,15 +3,23 @@
  */
 package org.minnal.security.filter;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.http.FullHttpRequest;
+
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.FilterChain;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.Response;
 
-import org.minnal.core.Request;
-import org.minnal.core.Response;
 import org.minnal.core.serializer.Serializer;
-import org.minnal.core.server.exception.UnauthorizedException;
 import org.minnal.security.auth.Authenticator;
 import org.minnal.security.auth.Credential;
 import org.minnal.security.auth.Principal;
@@ -26,7 +34,7 @@ import com.google.common.collect.Maps;
  * @author ganeshs
  *
  */
-public abstract class AbstractAuthenticationFilter<C extends Credential, P extends Principal, A extends Authenticator<C, P>> implements Filter {
+public abstract class AbstractAuthenticationFilter<C extends Credential, P extends Principal, A extends Authenticator<C, P>> implements ContainerRequestFilter, ContainerResponseFilter {
 	
 	private SecurityConfiguration configuration;
 	
@@ -34,6 +42,45 @@ public abstract class AbstractAuthenticationFilter<C extends Credential, P exten
 	
 	public AbstractAuthenticationFilter(SecurityConfiguration configuration) {
 		this.configuration = configuration;
+	}
+	
+	@Override
+	public void filter(ContainerRequestContext request) throws IOException {
+		boolean whiteListed = isWhiteListed(request);
+		boolean alreadyAuthenticated = false;
+		
+		Session session = null;
+		if (! whiteListed) {
+			session = getSession(request, true);
+			request.setProperty(Authenticator.SESSION, session);
+			
+			P principal = retrievePrincipal(session);
+			if (principal != null) {
+				alreadyAuthenticated = true;
+				session.addAttribute(Authenticator.PRINCIPAL, principal);
+			}
+			
+			if (! alreadyAuthenticated) {
+				principal = getAuthenticator().authenticate(getCredential(request));
+				if (principal == null) {
+					handleAuthFailure(request, response, session);
+				} else {
+					session.addAttribute(Authenticator.PRINCIPAL, principal);
+					handleAuthSuccess(request, response, session);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+		if (! whiteListed) {
+			if (! alreadyAuthenticated) {
+				Map<String, String> map = Maps.newHashMap();
+				map.put(AUTH_COOKIE, session.getId());
+				response.addCookies(map);
+			}
+		}
 	}
 
 	public void doFilter(Request request, Response response, FilterChain chain) {
@@ -73,40 +120,41 @@ public abstract class AbstractAuthenticationFilter<C extends Credential, P exten
 		}
 	}
 	
-	protected boolean isWhiteListed(Request request) {
+	protected boolean isWhiteListed(ContainerRequestContext request) {
 		for (String url : configuration.getWhiteListedUrls()) {
-			if (request.getUri().getPath().startsWith(url)) {
+			if (request.getUriInfo().getPath().startsWith(url)) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	protected void handleAuthSuccess(Request request, Response response, Session session) {
+	protected void handleAuthSuccess(ContainerRequestContext request, ContainerResponseContext response, Session session) {
 		configuration.getSessionStore().save(session);
 	}
 	
-	protected void handleAuthFailure(Request request, Response response, Session session) {
-		throw new UnauthorizedException();
+	protected void handleAuthFailure(ContainerRequestContext request, ContainerResponseContext response, Session session) {
+		throw new NotAuthorizedException(response.);
 	}
 
-	protected abstract C getCredential(Request request);
+	protected abstract C getCredential(ContainerRequestContext request);
 	
-	protected Session getSession(Request request, boolean create) {
+	protected Session getSession(ContainerRequestContext request, boolean create) {
 		Session session = null;
-		String sessionCookie = request.getCookie(AUTH_COOKIE);
-		if (Strings.isNullOrEmpty(sessionCookie)) {
-			sessionCookie = UUID.randomUUID().toString();
+		Cookie sessionCookie = request.getCookies().get(AUTH_COOKIE);
+		String sessionId = null;
+		if (sessionCookie == null) {
+			sessionId = UUID.randomUUID().toString();
 		} else {
-			session = configuration.getSessionStore().getSession(sessionCookie);
+			session = configuration.getSessionStore().getSession(sessionCookie.getValue());
 		}
 		
 		if (session != null && session.hasExpired(configuration.getSessionExpiryTimeInSecs())) {
 			session = null;
-			sessionCookie = UUID.randomUUID().toString();
+			sessionId = UUID.randomUUID().toString();
 		}
 		if (session == null && create) {
-			session = configuration.getSessionStore().createSession(sessionCookie);
+			session = configuration.getSessionStore().createSession(sessionId);
 		}
 		return session;
 	}
@@ -129,7 +177,7 @@ public abstract class AbstractAuthenticationFilter<C extends Credential, P exten
 			return (P) principal;
 		}
 		if (principal instanceof Map) {
-			ChannelBuffer buffer = Serializer.DEFAULT_JSON_SERIALIZER.serialize(principal);
+			ByteBuf buffer = Serializer.DEFAULT_JSON_SERIALIZER.serialize(principal);
 			principal = Serializer.DEFAULT_JSON_SERIALIZER.deserialize(buffer, type);
 			session.addAttribute(Authenticator.PRINCIPAL, principal);
 			return (P) principal;

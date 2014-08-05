@@ -14,16 +14,15 @@ import static org.testng.Assert.assertNull;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.ForbiddenException;
+
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.server.MessageContext;
-import org.minnal.core.server.ServerRequest;
-import org.minnal.core.server.ServerResponse;
-import org.minnal.core.server.exception.ForbiddenException;
-import org.minnal.core.server.exception.UnauthorizedException;
 import org.minnal.security.config.SecurityAware;
 import org.minnal.security.config.SecurityConfiguration;
 import org.minnal.security.session.Session;
+import org.omg.CORBA.ServerRequest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

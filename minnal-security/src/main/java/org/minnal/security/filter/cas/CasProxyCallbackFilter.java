@@ -9,8 +9,6 @@ import java.net.URI;
 
 import javax.servlet.FilterChain;
 
-import org.minnal.core.Request;
-import org.minnal.core.Response;
 import org.minnal.security.config.SecurityConfiguration;
 import org.minnal.utils.http.HttpUtil;
 

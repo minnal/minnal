@@ -119,8 +119,8 @@ public class Router {
 	protected ContainerRequest createContainerRequest(MessageContext context) {
 		Application<ApplicationConfiguration> application = context.getApplication();
 		FullHttpRequest httpRequest = context.getRequest();
-		URI baseUri = context.getBaseUri().resolve(application.getPath());
-		URI requestUri = application.getPath().relativize(HttpUtil.createURI(httpRequest.getUri()));
+		URI baseUri = URI.create(context.getBaseUri().resolve(application.getPath()) + "/");
+		URI requestUri = HttpUtil.createURI(httpRequest.getUri());
 		ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, httpRequest.getMethod().name(), null, new MapPropertiesDelegate());
 //		containerRequest.setProperty(REQUEST_PROPERTY_REMOTE_ADDR, context.getRequest().channel().remoteAddress());
 		containerRequest.setEntityStream(new ByteBufInputStream(httpRequest.content()));

@@ -24,7 +24,7 @@ public abstract class HttpMethodAnnotationHandler extends AbstractResourceAnnota
 	public void handle(ResourceMetaData metaData, Annotation annotation, Method method) {
 		Path path = ClassUtils.getAnnotation(method, Path.class);
 		String methodPath = HttpUtil.concatPaths(metaData.getPath(), path != null ? path.value() : null);
-		ResourceMethodMetaData resourceMethod = new ResourceMethodMetaData(methodPath, getHttpMethod());
+		ResourceMethodMetaData resourceMethod = new ResourceMethodMetaData(methodPath, getHttpMethod(), method);
 		metaData.addResourceMethod(resourceMethod);
 	}
 

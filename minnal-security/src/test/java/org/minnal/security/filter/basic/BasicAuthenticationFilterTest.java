@@ -11,9 +11,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 
 import javax.servlet.FilterChain;
 
-import org.minnal.core.Request;
-import org.minnal.core.Response;
-import org.minnal.core.server.exception.UnauthorizedException;
 import org.minnal.security.auth.Authenticator;
 import org.minnal.security.auth.User;
 import org.minnal.security.auth.basic.AbstractBasicAuthenticator;

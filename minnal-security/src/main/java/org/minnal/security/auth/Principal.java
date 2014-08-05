@@ -9,7 +9,7 @@ import java.util.List;
  * @author ganeshs
  *
  */
-public interface Principal {
+public interface Principal extends java.security.Principal {
 	
 	List<Role> getRoles();
 	

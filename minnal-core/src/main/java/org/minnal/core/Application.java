@@ -14,7 +14,9 @@ import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.ConfigurationProvider;
 import org.minnal.utils.reflection.Generics;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
@@ -102,8 +104,11 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		addFilters();
 		defineResources();
 		mapExceptions();
+		addProviders();
 		
-		resourceConfig.register(new JacksonJaxbJsonProvider(objectMapper, null));
+		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.NONE);
+		objectMapper.setVisibility(PropertyAccessor.GETTER, Visibility.PROTECTED_AND_PUBLIC);
+		objectMapper.setVisibility(PropertyAccessor.SETTER, Visibility.PROTECTED_AND_PUBLIC);
 		
 		for (Plugin plugin : plugins) {
 			plugin.init(this);
@@ -124,6 +129,31 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	protected abstract void addFilters();
 	
 	protected abstract void defineResources();
+	
+	/**
+	 * Adds the providers
+	 */
+	protected void addProviders() {
+		resourceConfig.register(new JacksonJaxbJsonProvider(objectMapper, null));
+	}
+	
+	/**
+	 * Adds the provider class
+	 * 
+	 * @param provider
+	 */
+	public void addProvider(Class<?> provider) {
+		resourceConfig.register(provider);
+	}
+	
+	/**
+	 * Adds the provider
+	 * 
+	 * @param provider
+	 */
+	public void addProvider(Object provider) {
+		resourceConfig.register(provider);
+	}
 	
 	protected void mapExceptions() {
 	}

@@ -5,8 +5,6 @@ package org.minnal.security.filter.basic;
 
 import java.util.List;
 
-import org.minnal.core.Request;
-import org.minnal.core.Response;
 import org.minnal.security.auth.User;
 import org.minnal.security.auth.basic.AbstractBasicAuthenticator;
 import org.minnal.security.auth.basic.BasicCredential;

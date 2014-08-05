@@ -3,25 +3,13 @@
  */
 package org.minnal.instrument.resource;
 
-import io.netty.handler.codec.http.HttpHeaders;
-
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 
 import javassist.ClassPool;
 import javassist.CtClass;
-import javassist.CtMethod;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ConstPool;
-import javassist.bytecode.MethodInfo;
-import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
 
@@ -33,16 +21,7 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.Providers;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.javalite.common.Inflector;
 import org.minnal.instrument.DefaultNamingStrategy;
 import org.minnal.instrument.MinnalInstrumentationException;
@@ -50,16 +29,18 @@ import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.ActionMetaData;
-import org.minnal.instrument.entity.metadata.CollectionMetaData;
-import org.minnal.instrument.entity.metadata.PermissionMetaData;
+import org.minnal.instrument.resource.creator.ActionMethodCreator;
+import org.minnal.instrument.resource.creator.CreateMethodCreator;
+import org.minnal.instrument.resource.creator.DeleteMethodCreator;
+import org.minnal.instrument.resource.creator.ListMethodCreator;
+import org.minnal.instrument.resource.creator.ReadMethodCreator;
+import org.minnal.instrument.resource.creator.UpdateMethodCreator;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
-import org.minnal.instrument.resource.metadata.ResourceMethodMetaData;
-import org.minnal.utils.http.HttpUtil;
-import org.minnal.utils.route.RoutePattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.wordnik.swagger.annotations.Api;
 
 /**
  * @author ganeshs
@@ -67,41 +48,11 @@ import com.google.common.base.Strings;
  */
 public class ResourceWrapper {
 	
-	private static Template createMethodTemplate;
-	
-	private static Template readMethodTemplate;
-	
-	private static Template deleteMethodTemplate;
-	
-	private static Template updateMethodTemplate;
-	
-	private static Template listMethodTemplate;
-	
-	private static Template actionMethodTemplate;
-	
-	static {
-		Properties properties = new Properties();
-		properties.put("runtime.log.logsystem.class", "org.minnal.core.util.Slf4jLogChute");
-		VelocityEngine ve = new VelocityEngine(properties);
-		ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
-		ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-		readMethodTemplate = ve.getTemplate("META-INF/templates/read_method.vm");
-		createMethodTemplate = ve.getTemplate("META-INF/templates/create_method.vm");
-		updateMethodTemplate = ve.getTemplate("META-INF/templates/update_method.vm");
-		deleteMethodTemplate = ve.getTemplate("META-INF/templates/delete_method.vm");
-		listMethodTemplate = ve.getTemplate("META-INF/templates/list_method.vm");
-		actionMethodTemplate = ve.getTemplate("META-INF/templates/action_method.vm");
-	}
-	
 	private CtClass generatedClass;
-	
-	private Map<ResourcePath, List<MethodMetaData>> paths = new HashMap<ResourcePath, List<MethodMetaData>>();
 	
 	private ClassPool classPool = ClassPool.getDefault();
 	
 	private ResourceMetaData resource;
-	
-	private Map<ResourceMethodMetaData, RoutePattern> routes = new HashMap<ResourceMethodMetaData, RoutePattern>();
 	
 	private Class<?> entityClass;
 	
@@ -161,8 +112,7 @@ public class ResourceWrapper {
 		this.resource = resource;
 		this.entityClass = entityClass;
 		this.path = resource != null ? resource.getPath() : namingStrategy.getResourceName(namingStrategy.getEntityName(entityClass));
-		constructRoutes(resource);
-		generatedClass = createGeneratedClass();
+		this.generatedClass = createGeneratedClass();
 	}
 	
 	/**
@@ -194,31 +144,52 @@ public class ResourceWrapper {
 			logger.debug("Creating the generated class for the entity {}", entityClass);
 			generatedClass = classPool.makeClass(entityClass.getName() + "Resource");
 		}
+		
 		ConstPool constPool = generatedClass.getClassFile().getConstPool();
-		AnnotationsAttribute attr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
-		Annotation resourceAnnotation = new Annotation(Path.class.getCanonicalName(), constPool);
-		resourceAnnotation.addMemberValue("value", new StringMemberValue(path, constPool));
-		attr.setAnnotation(resourceAnnotation);
-		generatedClass.getClassFile().addAttribute(attr);
+		Annotation pathAnnotation = new Annotation(Path.class.getCanonicalName(), constPool);
+		pathAnnotation.addMemberValue("value", new StringMemberValue(path, constPool));
+		
+		Annotation apiAnnotation = new Annotation(Api.class.getCanonicalName(), constPool);
+		apiAnnotation.addMemberValue("value", new StringMemberValue(path, constPool));
+		
+		addClassAnnotation(generatedClass, apiAnnotation);
+		addClassAnnotation(generatedClass, pathAnnotation);
+		
 		return generatedClass;
+	}
+	
+	/**
+	 * Adds the annotation to the clazz
+	 * 
+	 * @param clazz
+	 * @param annotation
+	 */
+	protected void addClassAnnotation(CtClass clazz, Annotation annotation) {
+		ConstPool constPool = clazz.getClassFile().getConstPool();
+		AnnotationsAttribute attr = (AnnotationsAttribute) clazz.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
+		if (attr == null) {
+			attr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
+			clazz.getClassFile().addAttribute(attr);
+		}
+		attr.addAnnotation(annotation);
 	}
 	
 	public void addPath(EntityNodePath path) {
 		logger.debug("Adding the path {}", path);
 		try {
 			if (path.isReadAllowed()) { 
-				addCrudMethod(new ResourcePath(path, true), HTTPMethod.get);
-				addCrudMethod(new ResourcePath(path, false), HTTPMethod.get);
+				getReadMethodCreator(new ResourcePath(path, false)).create();
+				getListMethodCreator(new ResourcePath(path, true)).create();
 			}
 			if (path.isCreateAllowed()) {
-				addCrudMethod(new ResourcePath(path, true), HTTPMethod.post);
+				getCreateMethodCreator(new ResourcePath(path, true)).create();
 			}
 			if (path.isUpdateAllowed()) {
-				addCrudMethod(new ResourcePath(path, false), HTTPMethod.put);
+				getUpdateMethodCreator(new ResourcePath(path, false)).create();
 				addActionMethods(new ResourcePath(path, false), HTTPMethod.put);
 			}
 			if (path.isDeleteAllowed()) {
-				addCrudMethod(new ResourcePath(path, false), HTTPMethod.delete);
+				getDeleteMethodCreator(new ResourcePath(path, false)).create();
 			}
 		} catch (Exception e) {
 			logger.error("Failed while adding the path", e);
@@ -226,29 +197,28 @@ public class ResourceWrapper {
 		}
 	}
 	
-	protected Template getMethodTemplate(ResourcePath resourcePath, HTTPMethod httpMethod) {
-		logger.debug("Getting the method template for the resource path {} and method {}", resourcePath, httpMethod);
-		if (resourcePath.isAction()) {
-			return actionMethodTemplate;
-		} else if (resourcePath.isBulk()) {
-			if (httpMethod.equals(HTTPMethod.get)) {
-				return listMethodTemplate;
-			}
-			if (httpMethod.equals(HTTPMethod.post)) {
-				return createMethodTemplate;
-			}
-		} else {
-			if (httpMethod.equals(HTTPMethod.get)) {
-				return readMethodTemplate;
-			}
-			if (httpMethod.equals(HTTPMethod.put)) {
-				return updateMethodTemplate;
-			}
-			if (httpMethod.equals(HTTPMethod.delete)) {
-				return deleteMethodTemplate;
-			}
-		}
-		return null;
+	protected ReadMethodCreator getReadMethodCreator(ResourcePath path) {
+		return new ReadMethodCreator(generatedClass, resource, path, this.path, HTTPMethod.get);
+	}
+	
+	protected ListMethodCreator getListMethodCreator(ResourcePath path) {
+		return new ListMethodCreator(generatedClass, resource, path, this.path, HTTPMethod.get);
+	}
+	
+	protected CreateMethodCreator getCreateMethodCreator(ResourcePath path) {
+		return new CreateMethodCreator(generatedClass, resource, path, this.path, HTTPMethod.post);
+	}
+	
+	protected UpdateMethodCreator getUpdateMethodCreator(ResourcePath path) {
+		return new UpdateMethodCreator(generatedClass, resource, path, this.path, HTTPMethod.put);
+	}
+	
+	protected DeleteMethodCreator getDeleteMethodCreator(ResourcePath path) {
+		return new DeleteMethodCreator(generatedClass, resource, path, this.path, HTTPMethod.delete);
+	}
+	
+	protected ActionMethodCreator getActionMethodCreator(ResourcePath path, ActionMetaData action) {
+		return new ActionMethodCreator(generatedClass, resource, path, this.path, HTTPMethod.put, action);
 	}
 	
 	protected void addActionMethods(ResourcePath resourcePath, HTTPMethod httpMethod) throws Exception {
@@ -264,200 +234,8 @@ public class ResourceWrapper {
 			EntityNode node = resourcePath.getNodePath().get(0);
 			EntityNodePath path = node.getEntityNodePath(action.getPath());
 			actionPath = new ResourcePath(path, action.getName());
-			if (! shouldCreateMethod(actionPath, httpMethod, action)) {
-				logger.debug("Method seem to exist for resource path {}, method {} and action {}", actionPath, httpMethod, action.getName());
-				continue;
-			}
-			addActionMethod(actionPath, httpMethod, action);
+			getActionMethodCreator(actionPath, action).create();
 		}
-	}
-	
-	protected void addActionMethod(ResourcePath resourcePath, HTTPMethod httpMethod, ActionMetaData action) throws Exception {
-		logger.debug("Adding the action method {} for the resource path {} and method {}", action.getName(), resourcePath, httpMethod);
-		VelocityContext context = new VelocityContext();
-		context.put("action", action);
-		String methodName = addMethod(resourcePath, httpMethod, context);
-		if (methodName != null) {
-			addMethodToPath(resourcePath, httpMethod, methodName, action.getPermissionMetaData());
-		}
-	}
-	
-	protected String addMethod(ResourcePath resourcePath, HTTPMethod httpMethod, VelocityContext context) throws Exception {
-		Template template = getMethodTemplate(resourcePath, httpMethod);
-		if (template == null) {
-			logger.error("FATAL!! Template not found for the resource path {} and method {}", resourcePath, httpMethod);
-			// TODO Can't get here. Handle if it still gets here
-			return null;
-		}
-
-		context.put("inflector", Inflector.class);
-		context.put("generator", this);
-		context.put("path", resourcePath.getNodePath());
-		if (resourcePath.isBulk()) {
-			context.put("param_names", new RoutePattern(resourcePath.getBulkPath()).getParameterNames());
-		} else {
-			context.put("param_names", new RoutePattern(resourcePath.getSinglePath()).getParameterNames());
-		}
-		
-		logger.debug("Adding the method with context {} and template {} for the resource path {} and method {}", context, template.getName(), resourcePath, httpMethod);
-		
-		StringWriter writer = new StringWriter();
-		template.merge(context, writer);
-		
-		logger.trace("Constructed method string {}", writer);
-		return makeMethod(writer, httpMethod, resourcePath);
-	}
-	
-	protected void addCrudMethod(ResourcePath resourcePath, HTTPMethod httpMethod) throws Exception {
-		logger.debug("Adding the crud method for the resource path {} and method {}", resourcePath, httpMethod);
-		
-		if (! shouldCreateMethod(resourcePath, httpMethod)) {
-			logger.debug("Method seem to exist for resource path {}, method {}", resourcePath, httpMethod);
-			return;
-		}
-		
-		VelocityContext context = new VelocityContext();
-		String methodName = addMethod(resourcePath, httpMethod, context);
-		if (methodName != null) {
-			Set<PermissionMetaData> permissions = null;
-			if (resourcePath.getNodePath().size() == 1) {
-				permissions = resourcePath.getNodePath().get(0).getEntityMetaData().getPermissionMetaData();
-			} else {
-				CollectionMetaData source = resourcePath.getNodePath().get(resourcePath.getNodePath().size() - 1).getSource();
-				if (source != null) {
-					permissions = source.getPermissionMetaData();
-				}
-			}
-			if (methodName != null) {
-				addMethodToPath(resourcePath, httpMethod, methodName, permissions);
-			}
-		}
-	}
-	
-	protected boolean methodExists(String methodName) {
-		logger.debug("Checking if a method exists with the name {} under the class {}", methodName, generatedClass);
-		try {
-			CtMethod[] methods = generatedClass.getMethods();
-			CtClass[] params = new CtClass[]{ClassPool.getDefault().get(HttpHeaders.class.getName()),
-					ClassPool.getDefault().get(UriInfo.class.getName()),
-					ClassPool.getDefault().get(Providers.class.getName()),
-					ClassPool.getDefault().get(byte[].class.getName())};
-			for (CtMethod method : methods) {
-				if (method.getName().equals(methodName) && Arrays.equals(method.getParameterTypes(), params)) {
-					return true;
-				}
-			}
-			return false;
-		} catch (javassist.NotFoundException e) {
-			logger.debug("Method not found with the name {} under the class {}", methodName, generatedClass);
-			return false;
-		}
-	}
-	
-	protected String makeMethod(StringWriter writer, HTTPMethod httpMethod, ResourcePath resourcePath) throws Exception {
-		logger.trace("Adding the method {} to the class {}", writer, generatedClass);
-		CtMethod ctMethod = CtMethod.make(writer.toString(), generatedClass);
-		String path = ! Strings.isNullOrEmpty(resourcePath.action) ? resourcePath.getActionPath() : resourcePath.bulk ? resourcePath.getBulkPath() : resourcePath.getSinglePath();
-		String relativePath = HttpUtil.deriveRelativePath(this.path, path);
-		if (! Strings.isNullOrEmpty(relativePath)) {
-			addAnnotationToMethod(ctMethod, Path.class, HttpUtil.deriveRelativePath(this.path, path));
-		}
-		addAnnotationToMethod(ctMethod, httpMethod.getAnnotation(), null);
-		addAnnotationToMethodAttributes(ctMethod.getMethodInfo().getConstPool(), ctMethod.getMethodInfo(), Context.class, Context.class, Context.class, null);
-		if (! methodExists(ctMethod.getName())) {
-			generatedClass.addMethod(ctMethod);
-		}
-		return ctMethod.getName();
-	}
-	
-	private void addAnnotationToMethod(CtMethod method, Class<? extends java.lang.annotation.Annotation> annotationClass, String value) {
-		ConstPool constPool = generatedClass.getClassFile().getConstPool();
-		MethodInfo methodInfo = method.getMethodInfo();
-		
-		AnnotationsAttribute attr = (AnnotationsAttribute) methodInfo.getAttribute(AnnotationsAttribute.visibleTag);
-		if (attr == null) {
-			attr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
-			methodInfo.addAttribute(attr);
-		}
-		
-		Annotation annotation = new Annotation(annotationClass.getCanonicalName(), constPool);
-		if (value != null) {
-			annotation.addMemberValue("value", new StringMemberValue(value, constPool));
-		}
-		attr.addAnnotation(annotation);
-	}
-	
-	private void addAnnotationToMethodAttributes(ConstPool constPool, MethodInfo methodInfo, Class<? extends java.lang.annotation.Annotation>... annotationClasses) {
-		if (annotationClasses == null) {
-			return;
-		}
-		ParameterAnnotationsAttribute paramAtrributeInfo = (ParameterAnnotationsAttribute) methodInfo.getAttribute(ParameterAnnotationsAttribute.visibleTag);
-		if (paramAtrributeInfo == null) {
-			paramAtrributeInfo = new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
-			methodInfo.addAttribute(paramAtrributeInfo);
-		}
-		Annotation[][] annotations = new Annotation[annotationClasses.length][0];
-		for (int i = 0; i < annotationClasses.length; i++) {
-			if (annotationClasses[i] == null) {
-				continue;
-			}
-			Annotation parameterAnnotation = new Annotation(annotationClasses[i].getCanonicalName(), constPool);
-			annotations[i] = new Annotation[1];
-			annotations[i][0] = parameterAnnotation;
-		}
-		paramAtrributeInfo.setAnnotations(annotations);
-	}
-	
-	protected boolean shouldCreateMethod(ResourcePath rPath, HTTPMethod httpMethod, ActionMetaData action) {
-		String path = rPath.getActionPath();
-		return shouldCreateMethod(path, httpMethod);
-	}
-	
-	protected boolean shouldCreateMethod(ResourcePath path, HTTPMethod httpMethod) {
-		return shouldCreateMethod(path.isBulk() ? path.getBulkPath() : 
-				path.getSinglePath(), httpMethod);
-	}
-	
-	/**
-	 * Checks if a method for the given path should be created in the generated class
-	 * 
-	 * @param path
-	 * @param httpMethod
-	 * @return
-	 */
-	protected boolean shouldCreateMethod(String path, HTTPMethod httpMethod) {
-		return resource != null ? !hasRoute(path, httpMethod) : true;
-	}
-	
-	/**
-	 * Constructs the routes from the resource
-	 * 
-	 * @param resource
-	 */
-	protected void constructRoutes(ResourceMetaData resource) {
-		if (resource != null) {
-			for (ResourceMethodMetaData resourceMethod : resource.getAllResourceMethods()) {
-				routes.put(resourceMethod, resourceMethod.getPattern());
-			}
-		}
-	}
-	
-	/**
-	 * Checks if a route with the given path and method exist in the resource
-	 * 
-	 * @param resource
-	 * @param path
-	 * @param method
-	 * @return
-	 */
-	protected boolean hasRoute(String path, HTTPMethod httpMethod) {
-		RoutePattern pattern = new RoutePattern(path);
-		for (Entry<ResourceMethodMetaData, RoutePattern> entry : routes.entrySet()) {
-			if (entry.getValue().equals(pattern) && entry.getKey().getHttpMethod().equalsIgnoreCase(httpMethod.getMethod())) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/**
@@ -481,24 +259,6 @@ public class ResourceWrapper {
 		return handlerClass;
 	}
 
-	private void addMethodToPath(ResourcePath resourcePath, HTTPMethod httpMethod, String action, Set<PermissionMetaData> permissions) {
-		logger.debug("Adding the method {} with the http Method {} to the path {}", action, httpMethod, resourcePath);
-		
-		List<String> perms = new ArrayList<String>();
-		for (PermissionMetaData metaData : permissions) {
-			if (metaData.getMethod().equals(httpMethod)) {
-				perms = metaData.getPermissions();
-			}
-		}
-		MethodMetaData metaData = new MethodMetaData(action, httpMethod.getMethod(), perms);
-		List<MethodMetaData> methods = paths.get(resourcePath);
-		if (methods == null) {
-			methods = new ArrayList<MethodMetaData>();
-			paths.put(resourcePath, methods);
-		}
-		methods.add(metaData);
-	}
-	
 	/**
 	 * @author ganeshs
 	 *
@@ -547,7 +307,7 @@ public class ResourceWrapper {
 		 * @return the action
 		 */
 		public boolean isAction() {
-			return StringUtils.isNotBlank(action);
+			return ! Strings.isNullOrEmpty(action);
 		}
 
 		/**

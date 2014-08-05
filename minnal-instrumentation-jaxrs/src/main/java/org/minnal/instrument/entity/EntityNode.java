@@ -260,7 +260,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 			QueryParam param = null;
 			prefix = prefix.isEmpty() ? prefix : prefix + ".";
 			for (ParameterMetaData meta : node.getEntityMetaData().getSearchFields()) {
-				param = new QueryParam(prefix + Inflector.underscore(meta.getFieldName()), Type.typeOf(meta.getType()));
+				param = new QueryParam(prefix + Inflector.underscore(meta.getFieldName()), Type.typeOf(meta.getType()), "The " + meta.getFieldName());
 				queryParams.add(param);
 			}
 			for (AssociationMetaData meta : node.getEntityMetaData().getAssociations()) {
@@ -268,7 +268,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 					String assocPrefix = prefix + Inflector.underscore(meta.getName()) + ".";
 					EntityMetaData data = EntityMetaDataProvider.instance().getEntityMetaData(meta.getType());
 					for (ParameterMetaData paramMeta : data.getSearchFields()) {
-						param = new QueryParam(assocPrefix + Inflector.underscore(paramMeta.getFieldName()), Type.typeOf(paramMeta.getType()));
+						param = new QueryParam(assocPrefix + Inflector.underscore(paramMeta.getFieldName()), Type.typeOf(paramMeta.getType()), "The " + paramMeta.getFieldName());
 						queryParams.add(param);
 					}
 				}

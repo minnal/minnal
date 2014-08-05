@@ -14,8 +14,6 @@ import javax.servlet.FilterChain;
 
 import org.jasig.cas.client.ssl.AnyHostnameVerifier;
 import org.minnal.core.MinnalException;
-import org.minnal.core.Request;
-import org.minnal.core.Response;
 import org.minnal.security.auth.cas.AbstractPgtTicketStorage;
 import org.minnal.security.config.CasConfiguration;
 import org.minnal.security.config.SecurityConfiguration;

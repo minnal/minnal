@@ -25,7 +25,6 @@ public class OrderApplication extends Application<OrderConfiguration> {
 
 	@Override
 	protected void defineResources() {
-//		addResource(OrderResource.class);
 	}
 	
 	@Override

@@ -10,7 +10,7 @@ import org.minnal.instrument.entity.Secure.Method;
 import org.minnal.instrument.entity.metadata.PermissionMetaData;
 import org.minnal.instrument.entity.metadata.SecurableMetaData;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * @author ganeshs
@@ -25,6 +25,6 @@ public class SecureAnnotationHandler {
 	protected PermissionMetaData constructPermissionMetaData(Annotation annotation) {
 		Method method = ((Secure) annotation).method();
 		String[] permissions = ((Secure) annotation).permissions();
-		return new PermissionMetaData(method.getMethod(), Lists.newArrayList(permissions));
+		return new PermissionMetaData(method.getMethod(), Sets.newHashSet(permissions));
 	}
 }

@@ -135,7 +135,7 @@ public abstract class AbstractHttpConnector extends SimpleChannelInboundHandler<
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest httpRequest) throws Exception {
 		logger.trace("Received a {} message {} from the remote address {}", configuration.getScheme().name(), httpRequest, ctx.channel().remoteAddress());
-		URI baseUri = HttpUtil.createURI(configuration.getScheme().name(), httpRequest.headers().get(HttpHeaders.Names.HOST), "");
+		URI baseUri = HttpUtil.createURI(configuration.getScheme().name(), httpRequest.headers().get(HttpHeaders.Names.HOST), "//");
 		MessageContext context = new MessageContext(httpRequest, baseUri);
 		ctx.attr(MESSAGE_CONTEXT).set(context);
 		listener.onReceived(context);

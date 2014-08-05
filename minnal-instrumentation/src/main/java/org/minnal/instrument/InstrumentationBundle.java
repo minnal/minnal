@@ -34,7 +34,7 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle<In
 	}
 
 	@Override
-	public void preMount(Application<ApplicationConfiguration> application) {
+	public void postMount(Application<ApplicationConfiguration> application) {
 		application.addFilter(ResponseTransformationFilter.class);
 		application.getObjectMapper().registerModule(new MinnalModule());
 		

@@ -3,7 +3,7 @@
  */
 package org.minnal.instrument.entity.metadata;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author ganeshs
@@ -13,13 +13,13 @@ public class PermissionMetaData {
 	
 	private String method;
 	
-	private List<String> permissions;
+	private Set<String> permissions;
 
 	/**
 	 * @param method
 	 * @param permissions
 	 */
-	public PermissionMetaData(String method, List<String> permissions) {
+	public PermissionMetaData(String method, Set<String> permissions) {
 		this.method = method;
 		this.permissions = permissions;
 	}
@@ -41,14 +41,14 @@ public class PermissionMetaData {
 	/**
 	 * @return the permissions
 	 */
-	public List<String> getPermissions() {
+	public Set<String> getPermissions() {
 		return permissions;
 	}
 
 	/**
 	 * @param permissions the permissions to set
 	 */
-	public void setPermissions(List<String> permissions) {
+	public void setPermissions(Set<String> permissions) {
 		this.permissions = permissions;
 	}
 
