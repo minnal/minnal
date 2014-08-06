@@ -3,10 +3,10 @@
  */
 package org.minnal.instrument.resource;
 
-import org.minnal.core.util.Node.PathVisitor;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
+import org.minnal.utils.Node.PathVisitor;
 
 /**
  * @author ganeshs

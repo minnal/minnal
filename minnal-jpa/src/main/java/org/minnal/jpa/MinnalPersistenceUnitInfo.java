@@ -19,8 +19,8 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 
 import org.minnal.core.config.DatabaseConfiguration;
-import org.minnal.core.scanner.Scanner.Listener;
 import org.minnal.jpa.entity.EntityScanner;
+import org.minnal.utils.scanner.Scanner.Listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

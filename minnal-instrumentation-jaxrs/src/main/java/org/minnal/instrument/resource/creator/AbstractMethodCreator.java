@@ -39,7 +39,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.javalite.common.Inflector;
-import org.minnal.core.route.QueryParam;
 import org.minnal.instrument.entity.metadata.CollectionMetaData;
 import org.minnal.instrument.entity.metadata.PermissionMetaData;
 import org.minnal.instrument.resource.ResourceWrapper.HTTPMethod;
@@ -47,6 +46,7 @@ import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.instrument.resource.metadata.ResourceMethodMetaData;
 import org.minnal.utils.http.HttpUtil;
+import org.minnal.utils.route.QueryParam;
 import org.minnal.utils.route.RoutePattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public abstract class AbstractMethodCreator {
 	
 	static {
 		Properties properties = new Properties();
-		properties.put("runtime.log.logsystem.class", "org.minnal.core.util.Slf4jLogChute");
+		properties.put("runtime.log.logsystem.class", "org.minnal.utils.Slf4jLogChute");
 		engine = new VelocityEngine(properties);
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());

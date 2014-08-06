@@ -17,9 +17,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.activejpa.entity.Model;
-import org.minnal.core.route.QueryParam;
-import org.minnal.core.route.QueryParam.Type;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
+import org.minnal.utils.route.QueryParam;
+import org.minnal.utils.route.QueryParam.Type;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

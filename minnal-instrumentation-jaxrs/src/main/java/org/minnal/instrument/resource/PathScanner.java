@@ -5,18 +5,18 @@ package org.minnal.instrument.resource;
 
 import javax.ws.rs.Path;
 
-import org.minnal.core.scanner.AbstractScanner;
+import org.minnal.utils.scanner.AbstractScanner;
 
 /**
  * @author ganeshs
  *
  */
-public class ResourceScanner extends AbstractScanner {
+public class PathScanner extends AbstractScanner {
 
 	/**
 	 * @param packages
 	 */
-	public ResourceScanner(String... packages) {
+	public PathScanner(String... packages) {
 		super(packages);
 	}
 
@@ -24,7 +24,7 @@ public class ResourceScanner extends AbstractScanner {
 	 * @param classLoader
 	 * @param packages
 	 */
-	public ResourceScanner(ClassLoader classLoader, String... packages) {
+	public PathScanner(ClassLoader classLoader, String... packages) {
 		super(classLoader, packages);
 	}
 

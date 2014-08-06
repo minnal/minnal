@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.core.scanner;
+package org.minnal.utils.scanner;
 
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;

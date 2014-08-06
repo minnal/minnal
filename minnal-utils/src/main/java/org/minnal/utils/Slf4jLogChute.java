@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.core.util;
+package org.minnal.utils;
 
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.log.LogChute;

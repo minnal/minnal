@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.minnal.core.MessageListenerAdapter;
 import org.minnal.core.server.MessageContext;
+import org.testng.util.Strings;
 
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.MetricRegistry;
@@ -40,10 +41,9 @@ public class ResponseMetricCollector extends MessageListenerAdapter {
 	}
 	
 	protected String getMetricName(MessageContext context, String metricName) {
-		Route route = context.getRoute();
 		String name = null;
-		if (route != null) {
-			name = context.getRequest().getApplicationPath() + route.getRoutePattern().getPathPattern();
+		if (! Strings.isNullOrEmpty(context.getMatchedRoute())) {
+			name = context.getMatchedRoute();
 		} else {
 			name = context.getApplication().getConfiguration().getName();
 		}

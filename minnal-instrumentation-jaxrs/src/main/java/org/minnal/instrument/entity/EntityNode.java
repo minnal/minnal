@@ -13,9 +13,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.javalite.common.Inflector;
-import org.minnal.core.route.QueryParam;
-import org.minnal.core.route.QueryParam.Type;
-import org.minnal.core.util.Node;
 import org.minnal.instrument.MinnalInstrumentationException;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.AssociationMetaData;
@@ -23,7 +20,10 @@ import org.minnal.instrument.entity.metadata.CollectionMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.instrument.entity.metadata.EntityMetaDataProvider;
 import org.minnal.instrument.entity.metadata.ParameterMetaData;
+import org.minnal.utils.Node;
 import org.minnal.utils.reflection.ClassUtils;
+import org.minnal.utils.route.QueryParam;
+import org.minnal.utils.route.QueryParam.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

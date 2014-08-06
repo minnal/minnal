@@ -18,21 +18,21 @@ import org.testng.annotations.Test;
 public class ResourceMetaDataBuilderTest {
 	
 	@Test
-	public void shouldBuildResourceMetaData() {
+	public void shouldBuildResourceMetaData() throws Exception {
 		ResourceMetaDataBuilder builder = new ResourceMetaDataBuilder(DummyResource.class);
 		ResourceMetaData metaData = builder.build();
 		assertEquals(metaData.getResourceMethods().size(), 1);
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/sub1", HttpMethod.GET));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/sub1", HttpMethod.GET, DummyResource.class.getMethod("getMethod")));
 	}
 	
 	@Test
-	public void shouldBuildSubResourceMetaData() {
+	public void shouldBuildSubResourceMetaData() throws Exception {
 		ResourceMetaDataBuilder builder = new ResourceMetaDataBuilder(DummyResource.class);
 		ResourceMetaData metaData = builder.build();
 		assertEquals(metaData.getSubResources().size(), 1);
 		ResourceMetaData subResource = metaData.getSubResources().iterator().next();
 		assertEquals(subResource.getResourceMethods().size(), 1);
-		assertEquals(subResource.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/sub/get", HttpMethod.GET));
+		assertEquals(subResource.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/sub/get", HttpMethod.GET, DummySubResource.class.getMethod("subGetMethod")));
 	}
 	
 	@Path("/dummy")

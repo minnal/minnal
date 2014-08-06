@@ -18,9 +18,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import org.activejpa.entity.Model;
-import org.minnal.core.util.Node.PathVisitor;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.EntityMetaDataProvider;
+import org.minnal.utils.Node.PathVisitor;
 import org.testng.annotations.Test;
 
 /**

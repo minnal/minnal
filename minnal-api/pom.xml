@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.minnal</groupId>
@@ -12,18 +12,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<dependency>
 			<groupId>org.minnal</groupId>
 			<artifactId>minnal-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
+			<version>1.2.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.minnal</groupId>
 			<artifactId>minnal-utils</artifactId>
+			<version>1.2.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wordnik</groupId>
@@ -51,28 +45,4 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<version>3.1.0</version>
 		</dependency>
 	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.minnal</groupId>
-				<artifactId>minnal-core</artifactId>
-				<version>1.2.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>1.8.3</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>3.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.minnal</groupId>
-				<artifactId>minnal-utils</artifactId>
-				<version>1.2.1-SNAPSHOT</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 </project>

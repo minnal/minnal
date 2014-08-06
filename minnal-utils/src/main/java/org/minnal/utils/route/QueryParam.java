@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.core.route;
+package org.minnal.utils.route;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

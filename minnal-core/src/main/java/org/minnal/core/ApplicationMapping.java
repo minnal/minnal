@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.minnal.core.config.ApplicationConfiguration;
-import org.minnal.core.util.Comparators;
+import org.minnal.utils.Comparators;
 import org.minnal.utils.http.HttpUtil;
 
 /**

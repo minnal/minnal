@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.server.MessageContext;
-import org.minnal.utils.route.RoutePattern;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -71,12 +70,7 @@ public class ResponseMetricCollectorTest {
 		FullHttpResponse response = mock(FullHttpResponse.class);
 		when(response.getStatus()).thenReturn(HttpResponseStatus.OK);
 		when(context.getResponse()).thenReturn(response);
-		Route route = mock(Route.class);
-		RoutePattern pattern = mock(RoutePattern.class);
-		when(pattern.getPathPattern()).thenReturn("/facilities/{id}/stations/{station_id}");
-		when(route.getRoutePattern()).thenReturn(pattern);
-		when(context.getRoute()).thenReturn(route);
-		when(request.getApplicationPath()).thenReturn("/");
+		when(context.getMatchedRoute()).thenReturn("/facilities/{id}/stations/{station_id}");
 		when(request.getMethod()).thenReturn(HttpMethod.GET);
 		assertEquals("facilities.id.stations.station_id.GET.responseTime",collector.getMetricName(context, collector.RESPONSE_TIME));
 	}

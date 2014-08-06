@@ -8,14 +8,14 @@ import java.util.List;
 
 import javax.ws.rs.core.Application;
 
-import org.minnal.core.scanner.Scanner;
-import org.minnal.core.scanner.Scanner.Listener;
 import org.minnal.instrument.entity.AggregateRootScanner;
 import org.minnal.instrument.resource.ResourceEnhancer;
-import org.minnal.instrument.resource.ResourceScanner;
+import org.minnal.instrument.resource.PathScanner;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.instrument.resource.metadata.ResourceMetaDataProvider;
 import org.minnal.utils.http.HttpUtil;
+import org.minnal.utils.scanner.Scanner;
+import org.minnal.utils.scanner.Scanner.Listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +58,8 @@ public class ApplicationEnhancer {
 	 * Enhances the application
 	 */
 	public void enhance() {
-		List<Class<?>> entities = scanClasses(new AggregateRootScanner(entityPackages));
-		List<Class<?>> resources = scanClasses(new ResourceScanner(resourcePackages));
+		List<Class<?>> entities = scanEntities();
+		List<Class<?>> resources = scanResources();
 		
 		for (Class<?> resourceClass : resources) {
 			ResourceMetaData resource = ResourceMetaDataProvider.instance().getResourceMetaData(resourceClass);
@@ -84,6 +84,24 @@ public class ApplicationEnhancer {
 	 */
 	protected void addResource(Class<?> resourceClass) {
 		application.getClasses().add(resourceClass);
+	}
+	
+	/**
+	 * Returns the entities defined under the entity packages
+	 * 
+	 * @return
+	 */
+	protected List<Class<?>> scanEntities() {
+		return scanClasses(new AggregateRootScanner(entityPackages));
+	}
+	
+	/**
+	 * Returns the resources defined under the resource packages
+	 * 
+	 * @return
+	 */
+	protected List<Class<?>> scanResources() {
+		return scanClasses(new PathScanner(resourcePackages));
 	}
 	
 	/**

@@ -10,21 +10,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 
-import org.minnal.core.scanner.Scanner;
-import org.minnal.core.scanner.Scanner.Listener;
 import org.minnal.instrument.entity.AggregateRoot;
 import org.minnal.instrument.resource.ResourceEnhancer;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.instrument.resource.metadata.ResourceMetaDataProvider;
+import org.minnal.utils.scanner.Scanner;
+import org.minnal.utils.scanner.Scanner.Listener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -54,13 +51,13 @@ public class ApplicationEnhancerTest {
 		rc2 = ResourceMetaDataProvider.instance().getResourceMetaData(DummyResource1.class);
 		when(application.getClasses()).thenReturn(Sets.newHashSet(DummyResource.class, DummyResource1.class));
 		namingStrategy = new DefaultNamingStrategy();
-		enhancer = spy(new ApplicationEnhancer(application, namingStrategy, new String[]{"org.minnal.instrument"}));
+		enhancer = spy(new ApplicationEnhancer(application, namingStrategy, new String[]{"org.minnal.instrument"}, new String[]{"org.minnal.instrument"}));
 	}
 
 	@Test
 	public void shouldEnhanceResourceClass() {
-		doReturn(Lists.newArrayList(DummyModel.class)).when(enhancer).scanClasses(any(Scanner.class));
-		doReturn(Sets.newHashSet(rc2)).when(enhancer).getDefinedResources();
+		doReturn(Lists.newArrayList(DummyModel.class)).when(enhancer).scanEntities();
+		doReturn(Lists.newArrayList(DummyResource1.class)).when(enhancer).scanResources();
 		ResourceEnhancer resEnhancer1 = mock(ResourceEnhancer.class);
 		doReturn(resEnhancer1).when(enhancer).createEnhancer(null, DummyModel.class);
 		enhancer.enhance();
@@ -69,8 +66,8 @@ public class ApplicationEnhancerTest {
 	
 	@Test
 	public void shouldEnhanceResourceClassIgnoringEntityClassWithSamePath() {
-		doReturn(Lists.newArrayList(DummyModel.class)).when(enhancer).scanClasses(any(Scanner.class));
-		doReturn(Sets.newHashSet(rc1)).when(enhancer).getDefinedResources();
+		doReturn(Lists.newArrayList(DummyModel.class)).when(enhancer).scanEntities();
+		doReturn(Lists.newArrayList(DummyResource.class)).when(enhancer).scanResources();
 		ResourceEnhancer resEnhancer1 = mock(ResourceEnhancer.class);
 		doReturn(resEnhancer1).when(enhancer).createEnhancer(rc1, DummyModel.class);
 		enhancer.enhance();
@@ -79,8 +76,8 @@ public class ApplicationEnhancerTest {
 	
 	@Test
 	public void shouldEnhanceResourceClassIgnoringResourceClassNotMatchingEntityPath() {
-		doReturn(Lists.newArrayList(DummyModel.class)).when(enhancer).scanClasses(any(Scanner.class));
-		doReturn(Sets.newHashSet(rc2)).when(enhancer).getDefinedResources();
+		doReturn(Lists.newArrayList(DummyModel.class)).when(enhancer).scanEntities();
+		doReturn(Lists.newArrayList(DummyResource1.class)).when(enhancer).scanResources();
 		ResourceEnhancer resEnhancer1 = mock(ResourceEnhancer.class);
 		ResourceEnhancer resEnhancer2 = mock(ResourceEnhancer.class);
 		doReturn(resEnhancer1).when(enhancer).createEnhancer(null, DummyModel.class);
@@ -88,26 +85,6 @@ public class ApplicationEnhancerTest {
 		enhancer.enhance();
 		verify(resEnhancer1).enhance();
 		verify(resEnhancer2, never()).enhance();
-	}
-	
-	@Test
-	public void shouldGetDefinedResources() {
-		Set<ResourceMetaData> resources = enhancer.getDefinedResources();
-		assertEquals(resources.size(), 2);
-	}
-	
-	@Test
-	public void shouldGetDefinedResourcesIncludingSingletons() {
-		when(application.getSingletons()).thenReturn(Sets.<Object>newHashSet(new DummyResource2()));
-		Set<ResourceMetaData> resources = enhancer.getDefinedResources();
-		assertEquals(resources.size(), 3);
-	}
-	
-	@Test
-	public void shouldGetDefinedResourcesExcludingResourcesWithoutPathAnnotation() {
-		when(application.getSingletons()).thenReturn(Sets.<Object>newHashSet(new DummyResource2(), new DummyResource3()));
-		Set<ResourceMetaData> resources = enhancer.getDefinedResources();
-		assertEquals(resources.size(), 3);
 	}
 	
 	@Test

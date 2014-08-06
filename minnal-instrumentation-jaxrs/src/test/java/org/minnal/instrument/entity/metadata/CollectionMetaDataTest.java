@@ -7,7 +7,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import org.minnal.instrument.entity.Collection;
@@ -42,15 +41,15 @@ public class CollectionMetaDataTest {
 	public void shouldPopulatePermissionMetaDataFromField() {
 		CollectionMetaData data = new CollectionMetaData(DummyModel.class, "dummyModels", DummyModel.class, Set.class, true);
 		assertEquals(data.getPermissionMetaData().size(), 1);
-		assertEquals(data.getPermissionMetaData().iterator().next(), new PermissionMetaData(Method.POST.getMethod(), Arrays.asList("permission1")));
+		assertEquals(data.getPermissionMetaData().iterator().next(), new PermissionMetaData(Method.POST.getMethod(), Sets.newHashSet("permission1")));
 	}
 	
 	@Test
 	public void shouldPopulatePermissionMetaDataFromMethod() {
 		CollectionMetaData data = new CollectionMetaData(DummyModel.class, "anotherDummyModels", DummyModel.class, Set.class, true);
 		assertEquals(data.getPermissionMetaData().size(), 2);
-		assertEquals(data.getPermissionMetaData(), Sets.newHashSet(new PermissionMetaData(Method.GET.getMethod(), Arrays.asList("permission2", "permission3")), 
-				new PermissionMetaData(Method.PUT.getMethod(), Arrays.asList("permission2"))));
+		assertEquals(data.getPermissionMetaData(), Sets.newHashSet(new PermissionMetaData(Method.GET.getMethod(), Sets.newHashSet("permission2", "permission3")), 
+				new PermissionMetaData(Method.PUT.getMethod(), Sets.newHashSet("permission2"))));
 	}
 
 	

@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface UserRoleMapper {
 
-	List<Role> getRoles(User user);
+	List<String> getRoles(User user);
 }

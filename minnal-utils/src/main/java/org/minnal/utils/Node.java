@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.core.util;
+package org.minnal.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

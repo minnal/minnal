@@ -39,7 +39,7 @@ public class HttpMethodAnnotationHandlerTest {
 		GETAnnotationHandler handler = new GETAnnotationHandler();
 		handler.handle(metaData, mock(GET.class), DummyResource.class.getMethod("get"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.GET));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.GET, DummyResource.class.getMethod("get")));
 	}
 	
 	@Test
@@ -47,7 +47,7 @@ public class HttpMethodAnnotationHandlerTest {
 		GETAnnotationHandler handler = new GETAnnotationHandler();
 		handler.handle(metaData, mock(GET.class), DummyResource.class.getMethod("getWithPath"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/get", HttpMethod.GET));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/get", HttpMethod.GET, DummyResource.class.getMethod("getWithPath")));
 	}
 	
 	@Test
@@ -55,7 +55,7 @@ public class HttpMethodAnnotationHandlerTest {
 		POSTAnnotationHandler handler = new POSTAnnotationHandler();
 		handler.handle(metaData, mock(POST.class), DummyResource.class.getMethod("post"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.POST));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.POST, DummyResource.class.getMethod("post")));
 	}
 	
 	@Test
@@ -63,7 +63,7 @@ public class HttpMethodAnnotationHandlerTest {
 		POSTAnnotationHandler handler = new POSTAnnotationHandler();
 		handler.handle(metaData, mock(POST.class), DummyResource.class.getMethod("postWithPath"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/post", HttpMethod.POST));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/post", HttpMethod.POST, DummyResource.class.getMethod("postWithPath")));
 	}
 	
 	@Test
@@ -71,7 +71,7 @@ public class HttpMethodAnnotationHandlerTest {
 		PUTAnnotationHandler handler = new PUTAnnotationHandler();
 		handler.handle(metaData, mock(PUT.class), DummyResource.class.getMethod("put"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.PUT));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.PUT, DummyResource.class.getMethod("put")));
 	}
 	
 	@Test
@@ -79,7 +79,7 @@ public class HttpMethodAnnotationHandlerTest {
 		PUTAnnotationHandler handler = new PUTAnnotationHandler();
 		handler.handle(metaData, mock(PUT.class), DummyResource.class.getMethod("putWithPath"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/put", HttpMethod.PUT));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/put", HttpMethod.PUT, DummyResource.class.getMethod("putWithPath")));
 	}
 	
 	@Test
@@ -87,7 +87,7 @@ public class HttpMethodAnnotationHandlerTest {
 		DELETEAnnotationHandler handler = new DELETEAnnotationHandler();
 		handler.handle(metaData, mock(DELETE.class), DummyResource.class.getMethod("delete"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.DELETE));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.DELETE, DummyResource.class.getMethod("delete")));
 	}
 	
 	@Test
@@ -95,7 +95,7 @@ public class HttpMethodAnnotationHandlerTest {
 		DELETEAnnotationHandler handler = new DELETEAnnotationHandler();
 		handler.handle(metaData, mock(DELETE.class), DummyResource.class.getMethod("deleteWithPath"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/delete", HttpMethod.DELETE));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/delete", HttpMethod.DELETE, DummyResource.class.getMethod("deleteWithPath")));
 	}
 	
 	@Test
@@ -103,7 +103,7 @@ public class HttpMethodAnnotationHandlerTest {
 		HEADAnnotationHandler handler = new HEADAnnotationHandler();
 		handler.handle(metaData, mock(HEAD.class), DummyResource.class.getMethod("head"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.HEAD));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.HEAD, DummyResource.class.getMethod("head")));
 	}
 	
 	@Test
@@ -111,7 +111,7 @@ public class HttpMethodAnnotationHandlerTest {
 		HEADAnnotationHandler handler = new HEADAnnotationHandler();
 		handler.handle(metaData, mock(HEAD.class), DummyResource.class.getMethod("headWithPath"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/head", HttpMethod.HEAD));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/head", HttpMethod.HEAD, DummyResource.class.getMethod("headWithPath")));
 	}
 	
 	@Test
@@ -119,7 +119,7 @@ public class HttpMethodAnnotationHandlerTest {
 		OPTIONSAnnotationHandler handler = new OPTIONSAnnotationHandler();
 		handler.handle(metaData, mock(OPTIONS.class), DummyResource.class.getMethod("options"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.OPTIONS));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy", HttpMethod.OPTIONS, DummyResource.class.getMethod("options")));
 	}
 	
 	@Test
@@ -127,7 +127,7 @@ public class HttpMethodAnnotationHandlerTest {
 		OPTIONSAnnotationHandler handler = new OPTIONSAnnotationHandler();
 		handler.handle(metaData, mock(OPTIONS.class), DummyResource.class.getMethod("optionsWithPath"));
 		assertTrue(! metaData.getResourceMethods().isEmpty());
-		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/options", HttpMethod.OPTIONS));
+		assertEquals(metaData.getResourceMethods().iterator().next(), new ResourceMethodMetaData("/dummy/options", HttpMethod.OPTIONS, DummyResource.class.getMethod("optionsWithPath")));
 	}
 	
 	@Path("/dummy")

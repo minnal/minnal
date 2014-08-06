@@ -8,17 +8,16 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
-import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,7 +33,6 @@ import org.minnal.core.MinnalException;
 import org.minnal.core.Router;
 import org.minnal.core.serializer.Serializer;
 import org.minnal.core.server.MessageContext;
-import org.omg.CORBA.ServerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -119,7 +117,7 @@ public abstract class BaseResourceTest {
 		router.route(context);
 	}
 	
-	protected ServerRequest request(String uri, HttpMethod method, ByteBuf content) {
+	protected FullHttpRequest request(String uri, HttpMethod method, ByteBuf content) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
 			ByteStreams.copy(new ByteBufInputStream(content), bos);
@@ -129,31 +127,25 @@ public abstract class BaseResourceTest {
 		}
 	}
 	
-	protected ServerRequest request(String uri, HttpMethod method) {
+	protected FullHttpRequest request(String uri, HttpMethod method) {
 		return request(uri, method, "", MediaType.JSON_UTF_8);
 	}
 	
-	protected ServerRequest request(String uri, HttpMethod method, String content) {
+	protected FullHttpRequest request(String uri, HttpMethod method, String content) {
 		return request(uri, method, content, MediaType.JSON_UTF_8);
 	}
 
-	protected ServerRequest request(String uri, HttpMethod method, String content, MediaType contentType) {
+	protected FullHttpRequest request(String uri, HttpMethod method, String content, MediaType contentType) {
 		return request(uri, method, content, contentType, Maps.<String, String>newHashMap());
 	}
 	
-	protected ServerRequest request(String uri, HttpMethod method, String content, MediaType contentType, Map<String, String> headers) {
+	protected FullHttpRequest request(String uri, HttpMethod method, String content, MediaType contentType, Map<String, String> headers) {
 		FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, method, uri);
 		request.content().writeBytes(buffer(content));
 		request.headers().add(HttpHeaders.Names.CONTENT_TYPE, contentType.toString());
 		request.headers().add(HttpHeaders.Names.CONTENT_LENGTH, content.length());
 		request.headers().add(HttpHeaders.Names.ACCEPT, MediaType.ANY_TYPE);
-		ServerRequest serverRequest = new ServerRequest(request, InetSocketAddress.createUnresolved("localhost", 80));
-		serverRequest.addHeaders(headers);
-		return serverRequest;
-	}
-	
-	protected ServerResponse response(ServerRequest request) {
-		return new ServerResponse(request, new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.PROCESSING));
+		return request;
 	}
 	
 	protected ByteBuf buffer(String content) {
@@ -167,11 +159,10 @@ public abstract class BaseResourceTest {
 		return buffer;
 	}
 	
-	protected Response call(ServerRequest request) {
-		ServerResponse response = response(request);
-		MessageContext context = new MessageContext(request, response);
+	protected FullHttpResponse call(FullHttpRequest request) {
+		MessageContext context = new MessageContext(request, URI.create("/"));
 		route(context);
-		return response;
+		return context.getResponse();
 	}
 	
 	protected <T> T createDomain(Class<T> clazz, Class<?>... genericTypes) {

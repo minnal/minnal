@@ -122,7 +122,7 @@ public class RouterTest {
 	@Test
 	public void shouldCreateContainerRequestFromHttpRequestWithBaseAndRequestUri() {
 		ContainerRequest containerRequest = router.createContainerRequest(context);
-		assertEquals(containerRequest.getBaseUri(), URI.create("http://localhost:8080/app"));
+		assertEquals(containerRequest.getBaseUri(), URI.create("http://localhost:8080/app/"));
 		assertEquals(containerRequest.getRequestUri(), URI.create("/test"));
 	}
 	

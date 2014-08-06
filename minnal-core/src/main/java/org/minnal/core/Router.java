@@ -21,12 +21,14 @@ import java.util.Map;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.server.ApplicationHandler;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.internal.routing.RoutingContext;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.server.MessageContext;
 import org.minnal.utils.http.HttpUtil;
@@ -82,6 +84,11 @@ public class Router {
 		} catch (Exception e) {
 			logger.debug("Failed while handling the request - " + containerRequest, e);
 			response = new ContainerResponse(containerRequest, Response.serverError().build());
+		}
+		UriInfo uriInfo = containerRequest.getUriInfo();
+		List<String> matchedUris = uriInfo.getMatchedURIs();
+		if (matchedUris != null && ! matchedUris.isEmpty()) {
+			context.setMatchedRoute(matchedUris.get(0));
 		}
 		FullHttpResponse httpResponse = createHttpResponse(context, response, buffer);
 		context.setResponse(httpResponse);

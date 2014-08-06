@@ -7,14 +7,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-
 import org.minnal.instrument.entity.Secure;
 import org.minnal.instrument.entity.Secure.Method;
 import org.minnal.instrument.entity.SecureMultiple;
 import org.minnal.instrument.entity.metadata.PermissionMetaData;
 import org.minnal.instrument.entity.metadata.SecurableMetaData;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author ganeshs
@@ -35,7 +35,7 @@ public class SecureMultipleAnnotationHandlerTest {
 		when(secure2.method()).thenReturn(Method.POST);
 		when(multiple.value()).thenReturn(new Secure[]{secure1, secure2});
 		handler.handle(metaData, multiple);
-		verify(metaData).addPermissionMetaData(new PermissionMetaData(Method.GET.getMethod(), Arrays.asList("permission1", "permission2")));
-		verify(metaData).addPermissionMetaData(new PermissionMetaData(Method.POST.getMethod(), Arrays.asList("permission3")));
+		verify(metaData).addPermissionMetaData(new PermissionMetaData(Method.GET.getMethod(), Sets.newHashSet("permission1", "permission2")));
+		verify(metaData).addPermissionMetaData(new PermissionMetaData(Method.POST.getMethod(), Sets.newHashSet("permission3")));
 	}
 }

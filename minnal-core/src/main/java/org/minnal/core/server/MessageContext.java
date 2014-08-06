@@ -26,6 +26,8 @@ public class MessageContext {
 	
 	private FullHttpResponse response;
 	
+	private String matchedRoute;
+	
 	private Application<ApplicationConfiguration> application;
 	
 	private Map<String, Object> attributes = new HashMap<String, Object>();
@@ -91,6 +93,20 @@ public class MessageContext {
 	
 	public Object getAttribute(String name) {
 		return this.attributes.get(name);
+	}
+
+	/**
+	 * @return the matchedRoute
+	 */
+	public String getMatchedRoute() {
+		return matchedRoute;
+	}
+
+	/**
+	 * @param matchedRoute the matchedRoute to set
+	 */
+	public void setMatchedRoute(String matchedRoute) {
+		this.matchedRoute = matchedRoute;
 	}
 
 	@Override

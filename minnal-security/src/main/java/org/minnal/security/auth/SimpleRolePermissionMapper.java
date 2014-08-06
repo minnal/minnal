@@ -15,9 +15,7 @@ import org.minnal.core.MinnalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -30,7 +28,7 @@ public class SimpleRolePermissionMapper implements RolePermissionMapper {
 	
 	private String mappingFile = DEFAULT_FILE;
 	
-	private Map<Role, List<Permission>> permissions;
+	private Map<String, List<String>> permissions;
 	
 	private static final Logger logger = LoggerFactory.getLogger(SimpleRolePermissionMapper.class);
 	
@@ -45,7 +43,7 @@ public class SimpleRolePermissionMapper implements RolePermissionMapper {
 	}
 
 	@Override
-	public List<Permission> getPermissions(Role role) {
+	public List<String> getPermissions(String role) {
 		if (permissions == null) {
 			loadPermissions();
 		}
@@ -54,7 +52,7 @@ public class SimpleRolePermissionMapper implements RolePermissionMapper {
 	
 	protected void loadPermissions() {
 		Properties properties = new Properties();
-		permissions = new HashMap<Role, List<Permission>>();
+		permissions = new HashMap<String, List<String>>();
 		
 		InputStream is = null;
 		try {
@@ -65,12 +63,7 @@ public class SimpleRolePermissionMapper implements RolePermissionMapper {
 			properties.load(is);
 			for (Entry<Object, Object> entry : properties.entrySet()) {
 				Iterable<String> perms = Splitter.on(",").omitEmptyStrings().split((String) entry.getValue());
-				permissions.put(new Role((String) entry.getKey()), Lists.newArrayList(Iterables.transform(perms, new Function<String, Permission>() {
-					@Override
-					public Permission apply(String input) {
-						return new Permission(input);
-					}
-				})));
+				permissions.put((String) entry.getKey(), Lists.newArrayList(perms));
 			}
 		} catch (IOException e) {
 			logger.error("Failed while loading the property file - " + mappingFile, e);

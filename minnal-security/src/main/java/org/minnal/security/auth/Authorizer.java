@@ -14,11 +14,20 @@ public interface Authorizer {
 	public static final String PERMISSIONS = "permissions";
 
 	/**
-	 * Authorize the user against the given roles
+	 * Authorize the user against the given permissions
 	 * 
-	 * @param principal
+	 * @param user
 	 * @param permissions
 	 * @return
 	 */
-	boolean authorize(java.security.Principal principal, List<Permission> permissions);
+	boolean authorize(User user, List<String> permissions);
+	
+	/**
+	 * Authorize the user against the given permission
+	 * 
+	 * @param user
+	 * @param permission
+	 * @return
+	 */
+	boolean authorize(User user, String permission);
 }
