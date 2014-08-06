@@ -53,6 +53,7 @@ public class OpenSessionInViewFilterTest {
 	
 	@Test
 	public void shouldRollbackTransactionIfTrasactionIsOpenInResponseFilter() throws IOException {
+		filter.filter(request);
 		when(context.isTxnOpen()).thenReturn(true);
 		filter.filter(request, response);
 		verify(context).closeTxn(true);
@@ -60,6 +61,7 @@ public class OpenSessionInViewFilterTest {
 	
 	@Test
 	public void shouldCloseContextInResponseFilter() throws IOException {
+		filter.filter(request);
 		filter.filter(request, response);
 		verify(context).close();
 	}

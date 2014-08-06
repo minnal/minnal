@@ -58,7 +58,7 @@ public class InstrumentationBundleTest {
 		ApplicationConfiguration configuration = application.getConfiguration();
 		when(configuration.isInstrumentationEnabled()).thenReturn(true);
 		doReturn(enhancer).when(bundle).createApplicationEnhancer(application);
-		bundle.preMount(application);
+		bundle.postMount(application);
 		verify(enhancer).enhance();
 	}
 	

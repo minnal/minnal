@@ -34,6 +34,12 @@
 			<groupId>org.pac4j</groupId>
 			<artifactId>pac4j-saml</artifactId>
 			<version>1.5.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.pac4j</groupId>
