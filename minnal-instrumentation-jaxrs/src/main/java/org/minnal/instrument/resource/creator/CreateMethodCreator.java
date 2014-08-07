@@ -14,14 +14,15 @@ import javassist.bytecode.annotation.ClassMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.POST;
 import javax.ws.rs.core.Context;
 
 import org.apache.velocity.Template;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
-import org.minnal.instrument.resource.ResourceWrapper.HTTPMethod;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
+import org.minnal.instrument.util.JavassistUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,10 +44,9 @@ public class CreateMethodCreator extends AbstractMethodCreator {
 	 * @param resource
 	 * @param resourcePath
 	 * @param basePath
-	 * @param httpMethod
 	 */
-	public CreateMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath, HTTPMethod httpMethod) {
-		super(ctClass, resource, resourcePath, basePath, httpMethod);
+	public CreateMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath) {
+		super(ctClass, resource, resourcePath, basePath);
 	}
 
 	private static Template createMethodTemplate = engine.getTemplate("META-INF/templates/create_method.vm");
@@ -70,7 +70,7 @@ public class CreateMethodCreator extends AbstractMethodCreator {
 		apiParam.addMemberValue("access", new StringMemberValue("internal", ctMethod.getMethodInfo().getConstPool()));
 		apiParam.addMemberValue("paramType", new StringMemberValue("body", ctMethod.getMethodInfo().getConstPool()));
 		annotations[3][0] = apiParam;
-		addParameterAnnotation(ctMethod, annotations);
+		JavassistUtils.addParameterAnnotation(ctMethod, annotations);
 	}
 
 	@Override
@@ -87,16 +87,19 @@ public class CreateMethodCreator extends AbstractMethodCreator {
 	@Override
 	protected List<Annotation> getApiAdditionalParamAnnotations() {
 		List<Annotation> annotations = super.getApiAdditionalParamAnnotations();
+		annotations.add(getBodyParamAnnotation());
+		return annotations;
+	}
+	
+	protected Annotation getBodyParamAnnotation() {
 		EntityNodePath path = getResourcePath().getNodePath();
 		EntityMetaData metaData = path.get(path.size() - 1).getEntityMetaData();
-		
 		Annotation annotation = new Annotation(ApiImplicitParam.class.getCanonicalName(), getCtClass().getClassFile().getConstPool());
 		annotation.addMemberValue("name", new StringMemberValue("body", getCtClass().getClassFile().getConstPool()));
 		annotation.addMemberValue("paramType", new StringMemberValue("body", getCtClass().getClassFile().getConstPool()));
 		annotation.addMemberValue("dataType", new StringMemberValue(metaData.getEntityClass().getCanonicalName(), getCtClass().getClassFile().getConstPool()));
 		annotation.addMemberValue("value", new StringMemberValue(metaData.getName() + " payload", getCtClass().getClassFile().getConstPool()));
-		annotations.add(annotation);
-		return annotations;
+		return annotation;
 	}
 	
 	@Override
@@ -109,5 +112,15 @@ public class CreateMethodCreator extends AbstractMethodCreator {
 		EntityNodePath path = getResourcePath().getNodePath();
 		EntityMetaData metaData = path.get(path.size() - 1).getEntityMetaData();
 		return Lists.newArrayList(getOkResponseAnnotation(metaData.getEntityClass()), getBadRequestResponseAnnotation());
+	}
+	
+	@Override
+	protected String getHttpMethod() {
+		return HttpMethod.POST;
+	}
+
+	@Override
+	protected Class<?> getHttpAnnotation() {
+		return POST.class;
 	}
 }

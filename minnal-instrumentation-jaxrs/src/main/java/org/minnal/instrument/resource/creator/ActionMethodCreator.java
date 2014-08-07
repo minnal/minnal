@@ -14,7 +14,6 @@ import javassist.bytecode.annotation.StringMemberValue;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.minnal.instrument.entity.metadata.ActionMetaData;
-import org.minnal.instrument.resource.ResourceWrapper.HTTPMethod;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.utils.route.RoutePattern;
@@ -40,10 +39,10 @@ public class ActionMethodCreator extends UpdateMethodCreator {
 	 * @param resource
 	 * @param resourcePath
 	 * @param basePath
-	 * @param httpMethod
+	 * @param action
 	 */
-	public ActionMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath, HTTPMethod httpMethod, ActionMetaData action) {
-		super(ctClass, resource, resourcePath, basePath, httpMethod);
+	public ActionMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath, ActionMetaData action) {
+		super(ctClass, resource, resourcePath, basePath);
 		this.action = action;
 	}
 
@@ -68,15 +67,13 @@ public class ActionMethodCreator extends UpdateMethodCreator {
 	}
 	
 	@Override
-	protected List<Annotation> getApiAdditionalParamAnnotations() {
-		List<Annotation> annotations = super.getApiAdditionalParamAnnotations();
+	protected Annotation getBodyParamAnnotation() {
 		Annotation annotation = new Annotation(ApiImplicitParam.class.getCanonicalName(), getCtClass().getClassFile().getConstPool());
 		annotation.addMemberValue("name", new StringMemberValue("body", getCtClass().getClassFile().getConstPool()));
 		annotation.addMemberValue("paramType", new StringMemberValue("body", getCtClass().getClassFile().getConstPool()));
 		annotation.addMemberValue("dataType", new StringMemberValue(Map.class.getCanonicalName(), getCtClass().getClassFile().getConstPool()));
 		annotation.addMemberValue("value", new StringMemberValue("Request payload", getCtClass().getClassFile().getConstPool()));
-		annotations.add(annotation);
-		return annotations;
+		return annotation;
 	}
 
 	@Override
@@ -94,5 +91,12 @@ public class ActionMethodCreator extends UpdateMethodCreator {
 			annotations.add(getOkResponseAnnotation(action.getMethod().getReturnType()));
 		}
 		return annotations;
+	}
+
+	/**
+	 * @return the action
+	 */
+	public ActionMetaData getAction() {
+		return action;
 	}
 }

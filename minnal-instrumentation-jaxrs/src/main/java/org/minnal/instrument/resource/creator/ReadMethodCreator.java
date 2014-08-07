@@ -13,15 +13,16 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.ClassMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Context;
 
 import org.apache.velocity.Template;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
-import org.minnal.instrument.resource.ResourceWrapper.HTTPMethod;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
+import org.minnal.instrument.util.JavassistUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +42,9 @@ public class ReadMethodCreator extends AbstractMethodCreator {
 	 * @param resource
 	 * @param resourcePath
 	 * @param basePath
-	 * @param httpMethod
 	 */
-	public ReadMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath, HTTPMethod httpMethod) {
-		super(ctClass, resource, resourcePath, basePath, httpMethod);
+	public ReadMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath) {
+		super(ctClass, resource, resourcePath, basePath);
 	}
 
 	private static Template readMethodTemplate = engine.getTemplate("META-INF/templates/read_method.vm");
@@ -60,7 +60,7 @@ public class ReadMethodCreator extends AbstractMethodCreator {
 		Annotation parameterAnnotation = new Annotation(Context.class.getCanonicalName(), ctMethod.getMethodInfo().getConstPool());
 		annotations[0] = new Annotation[1];
 		annotations[0][0] = parameterAnnotation;
-		addParameterAnnotation(ctMethod, annotations);
+		JavassistUtils.addParameterAnnotation(ctMethod, annotations);
 	}
 
 	@Override
@@ -84,5 +84,15 @@ public class ReadMethodCreator extends AbstractMethodCreator {
 		EntityNodePath path = getResourcePath().getNodePath();
 		EntityMetaData metaData = path.get(path.size() - 1).getEntityMetaData();
 		return Lists.newArrayList(getOkResponseAnnotation(metaData.getEntityClass()), getNotFoundResponseAnnotation());
+	}
+
+	@Override
+	protected String getHttpMethod() {
+		return HttpMethod.GET;
+	}
+
+	@Override
+	protected Class<?> getHttpAnnotation() {
+		return GET.class;
 	}
 }

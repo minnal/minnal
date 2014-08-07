@@ -12,9 +12,9 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
 
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.PUT;
 
 import org.apache.velocity.Template;
-import org.minnal.instrument.resource.ResourceWrapper.HTTPMethod;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.slf4j.Logger;
@@ -36,10 +36,9 @@ public class UpdateMethodCreator extends CreateMethodCreator {
 	 * @param resource
 	 * @param resourcePath
 	 * @param basePath
-	 * @param httpMethod
 	 */
-	public UpdateMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath, HTTPMethod httpMethod) {
-		super(ctClass, resource, resourcePath, basePath, httpMethod);
+	public UpdateMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath) {
+		super(ctClass, resource, resourcePath, basePath);
 	}
 
 	private static Template updateMethodTemplate = engine.getTemplate("META-INF/templates/update_method.vm");
@@ -65,5 +64,15 @@ public class UpdateMethodCreator extends CreateMethodCreator {
 	@Override
 	protected List<Annotation> getApiResponseAnnotations() {
 		return Lists.newArrayList(getNoContentResponseAnnotation(), getNotFoundResponseAnnotation(), getBadRequestResponseAnnotation());
+	}
+	
+	@Override
+	protected String getHttpMethod() {
+		return HttpMethod.PUT;
+	}
+
+	@Override
+	protected Class<?> getHttpAnnotation() {
+		return PUT.class;
 	}
 }

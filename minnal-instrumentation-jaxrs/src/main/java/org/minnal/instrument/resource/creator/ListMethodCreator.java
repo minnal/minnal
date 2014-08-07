@@ -14,7 +14,6 @@ import javassist.bytecode.annotation.StringMemberValue;
 import org.apache.velocity.Template;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
-import org.minnal.instrument.resource.ResourceWrapper.HTTPMethod;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.slf4j.Logger;
@@ -37,10 +36,9 @@ public class ListMethodCreator extends ReadMethodCreator {
 	 * @param resource
 	 * @param resourcePath
 	 * @param basePath
-	 * @param httpMethod
 	 */
-	public ListMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath, HTTPMethod httpMethod) {
-		super(ctClass, resource, resourcePath, basePath, httpMethod);
+	public ListMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath) {
+		super(ctClass, resource, resourcePath, basePath);
 	}
 
 	private static Template listMethodTemplate = engine.getTemplate("META-INF/templates/list_method.vm");

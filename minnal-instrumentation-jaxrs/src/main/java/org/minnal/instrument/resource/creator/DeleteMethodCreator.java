@@ -12,13 +12,14 @@ import javassist.bytecode.ConstPool;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Context;
 
 import org.apache.velocity.Template;
-import org.minnal.instrument.resource.ResourceWrapper.HTTPMethod;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
+import org.minnal.instrument.util.JavassistUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +39,9 @@ public class DeleteMethodCreator extends AbstractMethodCreator {
 	 * @param resource
 	 * @param resourcePath
 	 * @param basePath
-	 * @param httpMethod
 	 */
-	public DeleteMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath, HTTPMethod httpMethod) {
-		super(ctClass, resource, resourcePath, basePath, httpMethod);
+	public DeleteMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath) {
+		super(ctClass, resource, resourcePath, basePath);
 	}
 
 	private static Template deleteMethodTemplate = engine.getTemplate("META-INF/templates/delete_method.vm");
@@ -57,7 +57,7 @@ public class DeleteMethodCreator extends AbstractMethodCreator {
 		Annotation parameterAnnotation = new Annotation(Context.class.getCanonicalName(), ctMethod.getMethodInfo().getConstPool());
 		annotations[0] = new Annotation[1];
 		annotations[0][0] = parameterAnnotation;
-		addParameterAnnotation(ctMethod, annotations);
+		JavassistUtils.addParameterAnnotation(ctMethod, annotations);
 	}
 
 	@Override
@@ -76,5 +76,15 @@ public class DeleteMethodCreator extends AbstractMethodCreator {
 	@Override
 	protected List<Annotation> getApiResponseAnnotations() {
 		return Lists.newArrayList(getNoContentResponseAnnotation(), getNotFoundResponseAnnotation());
+	}
+	
+	@Override
+	protected String getHttpMethod() {
+		return HttpMethod.DELETE;
+	}
+
+	@Override
+	protected Class<?> getHttpAnnotation() {
+		return DELETE.class;
 	}
 }

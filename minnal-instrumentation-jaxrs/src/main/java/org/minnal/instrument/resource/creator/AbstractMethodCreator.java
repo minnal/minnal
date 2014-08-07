@@ -13,10 +13,7 @@ import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
-import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ConstPool;
-import javassist.bytecode.MethodInfo;
-import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.AnnotationMemberValue;
 import javassist.bytecode.annotation.ArrayMemberValue;
@@ -41,10 +38,10 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.javalite.common.Inflector;
 import org.minnal.instrument.entity.metadata.CollectionMetaData;
 import org.minnal.instrument.entity.metadata.PermissionMetaData;
-import org.minnal.instrument.resource.ResourceWrapper.HTTPMethod;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.instrument.resource.metadata.ResourceMethodMetaData;
+import org.minnal.instrument.util.JavassistUtils;
 import org.minnal.utils.http.HttpUtil;
 import org.minnal.utils.route.QueryParam;
 import org.minnal.utils.route.RoutePattern;
@@ -82,8 +79,6 @@ public abstract class AbstractMethodCreator {
 	
 	private ResourcePath resourcePath;
 	
-	private HTTPMethod httpMethod;
-	
 	private String basePath;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AbstractMethodCreator.class);
@@ -92,30 +87,43 @@ public abstract class AbstractMethodCreator {
 	 * @param ctClass
 	 * @param resource
 	 * @param resourcePath
-	 * @param httpMethod
+	 * @param basePath
 	 */
-	public AbstractMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath, HTTPMethod httpMethod) {
+	public AbstractMethodCreator(CtClass ctClass, ResourceMetaData resource, ResourcePath resourcePath, String basePath) {
 		this.ctClass = ctClass;
 		this.resource = resource;
 		this.resourcePath = resourcePath;
-		this.httpMethod = httpMethod;
 		this.basePath = basePath;
 	}
 	
 	/**
 	 * @return
 	 */
-	protected CtClass getCtClass() {
+	public CtClass getCtClass() {
 		return ctClass;
 	}
 	
 	/**
 	 * @return
 	 */
-	protected ResourcePath getResourcePath() {
+	public ResourcePath getResourcePath() {
 		return resourcePath;
 	}
 	
+	/**
+	 * @return the resource
+	 */
+	public ResourceMetaData getResource() {
+		return resource;
+	}
+
+	/**
+	 * @return the basePath
+	 */
+	public String getBasePath() {
+		return basePath;
+	}
+
 	/**
 	 * Checks if the method already exists in the class
 	 * 
@@ -127,7 +135,7 @@ public abstract class AbstractMethodCreator {
 		}
 		RoutePattern pattern = getRoutePattern();
 		for (ResourceMethodMetaData resourceMethod : resource.getAllResourceMethods()) {
-			if (resourceMethod.getPattern().equals(pattern) && resourceMethod.getHttpMethod().equalsIgnoreCase(httpMethod.getMethod())) {
+			if (resourceMethod.getPattern().equals(pattern) && resourceMethod.getHttpMethod().equalsIgnoreCase(getHttpMethod())) {
 				return false;
 			}
 		}
@@ -179,7 +187,7 @@ public abstract class AbstractMethodCreator {
 		Template template = getTemplate();
 		StringWriter writer = new StringWriter();
 		
-		logger.debug("Creating the method body with context {} and template {} for the resource path {} and method {}", context, template.getName(), resourcePath, httpMethod);
+		logger.debug("Creating the method body with context {} and template {} for the resource path {} and method {}", context, template.getName(), resourcePath, getHttpMethod());
 		template.merge(context, writer);
 		return writer.toString();
 	}
@@ -224,12 +232,8 @@ public abstract class AbstractMethodCreator {
 	 * @param ctMethod
 	 */
 	protected void addAnnotations(CtMethod ctMethod) {
-		addAnnotation(ctMethod, getMethodAnnotation());
-		addAnnotation(ctMethod, getPathAnnotation());
-		addAnnotation(ctMethod, getApiOperationAnnotation());
-		addAnnotation(ctMethod, getApiParamAnnotations());
-		addAnnotation(ctMethod, getSecurityAnnotation());
-		addAnnotation(ctMethod, getApiResponsesAnnotation());
+		JavassistUtils.addMethodAnnotations(ctMethod, getMethodAnnotation(), getPathAnnotation(), getApiOperationAnnotation(), 
+				getApiParamAnnotations(), getSecurityAnnotation(), getApiResponsesAnnotation());
 	}
 	
 	/**
@@ -238,7 +242,7 @@ public abstract class AbstractMethodCreator {
 	 * @return
 	 */
 	protected Annotation getMethodAnnotation() {
-		return new Annotation(httpMethod.getAnnotation().getCanonicalName(), ctClass.getClassFile().getConstPool());
+		return new Annotation(getHttpAnnotation().getCanonicalName(), ctClass.getClassFile().getConstPool());
 	}
 	
 	/**
@@ -263,45 +267,6 @@ public abstract class AbstractMethodCreator {
 	 * @return
 	 */
 	protected abstract Annotation getApiOperationAnnotation();
-	
-	/**
-	 * Adds the given annotation to the method
-	 * 
-	 * @param ctMethod
-	 * @param annotation
-	 */
-	protected void addAnnotation(CtMethod ctMethod, Annotation annotation) {
-		if (annotation == null) {
-			return;
-		}
-		
-		ConstPool constPool = ctClass.getClassFile().getConstPool();
-		MethodInfo methodInfo = ctMethod.getMethodInfo();
-		
-		AnnotationsAttribute attr = (AnnotationsAttribute) methodInfo.getAttribute(AnnotationsAttribute.visibleTag);
-		if (attr == null) {
-			attr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
-			methodInfo.addAttribute(attr);
-		}
-		attr.addAnnotation(annotation);
-	}
-	
-	/**
-	 * Adds the annotations to the method parameters
-	 * 
-	 * @param ctMethod
-	 * @param annotations
-	 */
-	protected void addParameterAnnotation(CtMethod ctMethod, Annotation[][] annotations) {
-		ConstPool constPool = ctClass.getClassFile().getConstPool();
-		MethodInfo methodInfo = ctMethod.getMethodInfo();
-		ParameterAnnotationsAttribute paramAtrributeInfo = (ParameterAnnotationsAttribute) methodInfo.getAttribute(ParameterAnnotationsAttribute.visibleTag);
-		if (paramAtrributeInfo == null) {
-			paramAtrributeInfo = new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
-			methodInfo.addAttribute(paramAtrributeInfo);
-		}
-		paramAtrributeInfo.setAnnotations(annotations);
-	}
 	
 	/**
 	 * Returns the api path parameter annotations
@@ -423,6 +388,10 @@ public abstract class AbstractMethodCreator {
 	}
 	
 	protected abstract List<Annotation> getApiResponseAnnotations();
+	
+	protected abstract String getHttpMethod();
+	
+	protected abstract Class<?> getHttpAnnotation();
 	
 	/**
 	 * Returns the permissions required to access this method
