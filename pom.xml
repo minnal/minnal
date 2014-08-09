@@ -5,11 +5,10 @@
 	<artifactId>minnal</artifactId>
 	<packaging>pom</packaging>
 	<name>Minnal Framework</name>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 
 	<modules>
 		<module>minnal-core</module>
-		
 		<module>minnal-examples</module>
 		<module>minnal-jpa</module>
 		<module>minnal-test</module>

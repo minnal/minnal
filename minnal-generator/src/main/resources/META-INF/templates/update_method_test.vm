@@ -39,7 +39,7 @@ public void $method_name() {
 	${field_name}.persist(); 
 #end
 	$model_class modified${field_name} = createDomain(${model_class}.class, 1);
-	Response response = call(request($url, HttpMethod.PUT, Serializer.DEFAULT_JSON_SERIALIZER.serialize(modified${field_name})));
+	FullHttpResponse response = call(request($url, HttpMethod.PUT, serialize(modified${field_name})));
 	assertEquals(response.getStatus(), HttpResponseStatus.NO_CONTENT);
 	${field_name}.merge();
 	assertTrue(compare(modified${field_name}, $field_name, 1));

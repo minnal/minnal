@@ -16,6 +16,7 @@ import io.netty.handler.codec.http.HttpVersion;
 
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.util.Collection;
@@ -28,10 +29,12 @@ import org.minnal.autopojo.AutoPojoFactory;
 import org.minnal.autopojo.Configuration;
 import org.minnal.autopojo.GenerationStrategy;
 import org.minnal.autopojo.util.PropertyUtil;
+import org.minnal.core.Application;
 import org.minnal.core.Container;
+import org.minnal.core.JacksonProvider;
 import org.minnal.core.MinnalException;
 import org.minnal.core.Router;
-import org.minnal.core.serializer.Serializer;
+import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.server.MessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +83,7 @@ public abstract class BaseResourceTest {
 	
 	private Router router;
 	
-	protected Serializer serializer;
+	protected JacksonProvider provider;
 	
 	private static Container container = new Container();
 	
@@ -92,8 +95,9 @@ public abstract class BaseResourceTest {
 	
 	@BeforeMethod
 	public void beforeMethod() {
-		serializer = container.getConfiguration().getSerializer(container.getConfiguration().getDefaultMediaType());
 		router = container.getRouter();
+		Application<ApplicationConfiguration> application = container.getApplications().iterator().next();
+		provider = new JacksonProvider(application.getObjectMapper());
 		setup();
 	}
 	
@@ -155,12 +159,17 @@ public abstract class BaseResourceTest {
 			os.write(content.getBytes());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		} finally {
+			try {
+				os.close();
+			} catch (IOException e) {
+			}
 		}
 		return buffer;
 	}
 	
 	protected FullHttpResponse call(FullHttpRequest request) {
-		MessageContext context = new MessageContext(request, URI.create("/"));
+		MessageContext context = new MessageContext(request, URI.create(""));
 		route(context);
 		return context.getResponse();
 	}
@@ -191,5 +200,17 @@ public abstract class BaseResourceTest {
 			}
 		}
 		return true;
+	}
+	
+	protected ByteBuf serialize(Object value) {
+		return provider.serialize(value, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
+	}
+	
+	protected <T> T deserialize(ByteBuf byteBuf, Class<T> type) {
+		return (T) provider.deserialize(byteBuf, type, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
+	}
+	
+	protected <T> T deserializeCollection(ByteBuf byteBuf, Class<T> type, Class elementType) {
+		return (T) provider.deserializeCollection(byteBuf, type, elementType, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
 	}
 }

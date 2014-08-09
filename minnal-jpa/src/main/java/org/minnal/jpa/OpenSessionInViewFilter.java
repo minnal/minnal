@@ -3,27 +3,31 @@
  */
 package org.minnal.jpa;
 
-import java.io.IOException;
-
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.PreMatching;
 
 import org.activejpa.jpa.JPA;
 import org.activejpa.jpa.JPAContext;
+import org.glassfish.jersey.server.ContainerRequest;
+import org.glassfish.jersey.server.ContainerResponse;
+import org.glassfish.jersey.server.monitoring.RequestEvent;
+import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.minnal.core.config.DatabaseConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * @author ganeshs
  *
  */
-public class OpenSessionInViewFilter implements ContainerRequestFilter, ContainerResponseFilter {
+@PreMatching
+public class OpenSessionInViewFilter implements RequestEventListener {
 	
 	private DatabaseConfiguration configuration;
 	
 	private ThreadLocal<Boolean> contextCreated = new ThreadLocal<Boolean>();
+	
+	private static final Logger logger = LoggerFactory.getLogger(OpenSessionInViewFilter.class);
 	
 	public OpenSessionInViewFilter(DatabaseConfiguration configuration) {
 		this.configuration = configuration;
@@ -33,15 +37,13 @@ public class OpenSessionInViewFilter implements ContainerRequestFilter, Containe
 		return JPA.instance.getDefaultConfig().getContext(configuration.isReadOnly());
 	}
 
-	@Override
-	public void filter(ContainerRequestContext requestContext) throws IOException {
+	protected void requestReceived(ContainerRequest request) {
 		JPAContext context = getContext();
 		context.getEntityManager();
 		contextCreated.set(true);
 	}
 	
-	@Override
-	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+	protected void requestCompleted(ContainerRequest request, ContainerResponse response) {
 		if (contextCreated.get() == null) {
 			return;
 		}
@@ -51,6 +53,21 @@ public class OpenSessionInViewFilter implements ContainerRequestFilter, Containe
 			context.closeTxn(true);
 		}
 		context.close();
+	}
+
+	@Override
+	public void onEvent(RequestEvent event) {
+		logger.trace("Received the event {}", event);
+		switch (event.getType()) {
+		case REQUEST_MATCHED:
+			requestReceived(event.getContainerRequest());
+			break;
+		case FINISHED:
+			requestCompleted(event.getContainerRequest(), event.getContainerResponse());
+			break;
+		default:
+			break;
+		}
 	}
 
 }

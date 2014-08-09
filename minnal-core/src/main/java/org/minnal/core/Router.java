@@ -28,7 +28,6 @@ import org.glassfish.jersey.server.ApplicationHandler;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.internal.routing.RoutingContext;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.server.MessageContext;
 import org.minnal.utils.http.HttpUtil;

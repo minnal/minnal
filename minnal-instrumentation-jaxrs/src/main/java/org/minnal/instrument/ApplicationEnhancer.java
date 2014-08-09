@@ -9,8 +9,8 @@ import java.util.List;
 import javax.ws.rs.core.Application;
 
 import org.minnal.instrument.entity.AggregateRootScanner;
-import org.minnal.instrument.resource.ResourceEnhancer;
 import org.minnal.instrument.resource.PathScanner;
+import org.minnal.instrument.resource.ResourceEnhancer;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.instrument.resource.metadata.ResourceMetaDataProvider;
 import org.minnal.utils.http.HttpUtil;

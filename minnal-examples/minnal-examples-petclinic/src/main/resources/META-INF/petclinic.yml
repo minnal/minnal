@@ -1,7 +1,5 @@
 ---
 name: "petclinics"
-serializers: {}
-defaultMediaType: "application/json; charset=utf-8"
 packagesToScan:
 - "org.minnal.examples.petclinic"
 instrumentationEnabled: true

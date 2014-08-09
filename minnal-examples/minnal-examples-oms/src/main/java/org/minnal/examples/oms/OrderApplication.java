@@ -9,7 +9,9 @@ import org.minnal.core.Application;
 import org.minnal.examples.oms.domain.Order;
 import org.minnal.examples.oms.domain.OrderItem;
 import org.minnal.jpa.JPAPlugin;
-import org.minnal.jpa.OpenSessionInViewFilter;
+
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 
 /**
  * @author ganeshs
@@ -23,16 +25,7 @@ public class OrderApplication extends Application<OrderConfiguration> {
 	}
 
 
-	@Override
 	protected void defineResources() {
-	}
-	
-	@Override
-	protected void addFilters() {
-		addFilter(new OpenSessionInViewFilter(getConfiguration().getDatabaseConfiguration()));
-//		if (getConfiguration().getSecurityConfiguration() != null) {
-//			addFilter(new BasicAuthenticationFilter(new BasicAuthenticator(), getConfiguration().getSecurityConfiguration()));
-//		}
 	}
 	
 	@Override
@@ -41,7 +34,10 @@ public class OrderApplication extends Application<OrderConfiguration> {
 	}
 	
 	@Override
-	protected void mapExceptions() {
-		super.mapExceptions();
+	public void init() {
+		super.init();
+		Hibernate4Module module = new Hibernate4Module();
+		module.configure(Feature.FORCE_LAZY_LOADING, true);
+		getObjectMapper().registerModule(module);
 	}
 }

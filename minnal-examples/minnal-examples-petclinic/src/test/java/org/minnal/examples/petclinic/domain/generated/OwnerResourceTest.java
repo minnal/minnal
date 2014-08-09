@@ -2,11 +2,11 @@ package org.minnal.examples.petclinic.domain.generated;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 
 import org.minnal.core.resource.BaseJPAResourceTest;
-import org.minnal.core.serializer.Serializer;
-import org.minnal.examples.petclinic.JodatimeJsonSerializer;
 import org.testng.annotations.Test;
 
 /**
@@ -17,13 +17,13 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 	public void listOwnerTest() {
 		org.minnal.examples.petclinic.domain.Owner owner = createDomain(org.minnal.examples.petclinic.domain.Owner.class);
 		owner.persist();
-		Response response = call(request("/owners/", HttpMethod.GET));
+		FullHttpResponse response = call(request("/owners/",
+				HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer
-				.deserializeCollection(
-						response.getContent(),
-						java.util.List.class,
-						org.minnal.examples.petclinic.domain.Owner.class)
+		assertEquals(deserializeCollection(
+				response.content(),
+				java.util.List.class,
+				org.minnal.examples.petclinic.domain.Owner.class)
 				.size(),
 				(int) org.minnal.examples.petclinic.domain.Owner
 						.count());
@@ -33,20 +33,20 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 	public void readOwnerTest() {
 		org.minnal.examples.petclinic.domain.Owner owner = createDomain(org.minnal.examples.petclinic.domain.Owner.class);
 		owner.persist();
-		Response response = call(request("/owners/" + owner.getId(),
-				HttpMethod.GET));
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId(), HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer
-				.deserialize(response.getContent(),
-						org.minnal.examples.petclinic.domain.Owner.class)
+		assertEquals(deserialize(
+				response.content(),
+				org.minnal.examples.petclinic.domain.Owner.class)
 				.getId(), owner.getId());
 	}
 
 	@Test
 	public void createOwnerTest() {
 		org.minnal.examples.petclinic.domain.Owner owner = createDomain(org.minnal.examples.petclinic.domain.Owner.class);
-		Response response = call(request("/owners/", HttpMethod.POST,
-				new JodatimeJsonSerializer().serialize(owner)));
+		FullHttpResponse response = call(request("/owners/",
+				HttpMethod.POST, serialize(owner)));
 		assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
 	}
 
@@ -57,10 +57,9 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Owner modifiedowner = createDomain(
 				org.minnal.examples.petclinic.domain.Owner.class,
 				1);
-		Response response = call(request("/owners/" + owner.getId(),
-				HttpMethod.PUT,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(modifiedowner)));
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId(), HttpMethod.PUT,
+				serialize(modifiedowner)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		owner.merge();
@@ -71,14 +70,12 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 	public void deleteOwnerTest() {
 		org.minnal.examples.petclinic.domain.Owner owner = createDomain(org.minnal.examples.petclinic.domain.Owner.class);
 		owner.persist();
-		Response response = call(request("/owners/" + owner.getId(),
-				HttpMethod.DELETE));
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId(), HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/owners/" + owner.getId(),
-				HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(owner)));
+				HttpMethod.GET, serialize(owner)));
 		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 	}
 
@@ -91,11 +88,12 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		owner.collection("pets").add(pet);
 		owner.persist();
 
-		Response response = call(request("/owners/" + owner.getId()
-				+ "/pets/", HttpMethod.GET));
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId() + "/pets/",
+				HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer.deserializeCollection(
-				response.getContent(), java.util.List.class,
+		assertEquals(deserializeCollection(response.content(),
+				java.util.List.class,
 				org.minnal.examples.petclinic.domain.Pet.class)
 				.size(), owner.getPets().size());
 	}
@@ -107,10 +105,11 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Pet pet = createDomain(org.minnal.examples.petclinic.domain.Pet.class);
 		owner.collection("pets").add(pet);
 		owner.persist();
-		Response response = call(request("/owners/" + owner.getId()
-				+ "/pets/" + pet.getId(), HttpMethod.GET));
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId() + "/pets/"
+						+ pet.getId(), HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer.deserialize(response.getContent(),
+		assertEquals(deserialize(response.content(),
 				org.minnal.examples.petclinic.domain.Pet.class)
 				.getId(), pet.getId());
 	}
@@ -120,9 +119,9 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Owner owner = createDomain(org.minnal.examples.petclinic.domain.Owner.class);
 		owner.persist();
 		org.minnal.examples.petclinic.domain.Pet pet = createDomain(org.minnal.examples.petclinic.domain.Pet.class);
-		Response response = call(request("/owners/" + owner.getId()
-				+ "/pets/", HttpMethod.POST,
-				new JodatimeJsonSerializer().serialize(pet)));
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId() + "/pets/",
+				HttpMethod.POST, serialize(pet)));
 		assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
 	}
 
@@ -136,10 +135,10 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Pet modifiedpet = createDomain(
 				org.minnal.examples.petclinic.domain.Pet.class,
 				1);
-		Response response = call(request("/owners/" + owner.getId()
-				+ "/pets/" + pet.getId(), HttpMethod.PUT,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(modifiedpet)));
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId() + "/pets/"
+						+ pet.getId(), HttpMethod.PUT,
+				serialize(modifiedpet)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		pet.merge();
@@ -153,14 +152,14 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Pet pet = createDomain(org.minnal.examples.petclinic.domain.Pet.class);
 		owner.collection("pets").add(pet);
 		owner.persist();
-		Response response = call(request("/owners/" + owner.getId()
-				+ "/pets/" + pet.getId(), HttpMethod.DELETE));
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId() + "/pets/"
+						+ pet.getId(),
+				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/owners/" + owner.getId() + "/pets/"
-				+ pet.getId(), HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(pet)));
+				+ pet.getId(), HttpMethod.GET, serialize(pet)));
 		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 	}
 
@@ -177,15 +176,15 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		pet.collection("visits").add(visit);
 		pet.persist();
 
-		Response response = call(request("/owners/" + owner.getId()
-				+ "/pets/" + pet.getId() + "/visits/",
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId() + "/pets/"
+						+ pet.getId() + "/visits/",
 				HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer
-				.deserializeCollection(
-						response.getContent(),
-						java.util.List.class,
-						org.minnal.examples.petclinic.domain.Visit.class)
+		assertEquals(deserializeCollection(
+				response.content(),
+				java.util.List.class,
+				org.minnal.examples.petclinic.domain.Visit.class)
 				.size(), pet.getVisits().size());
 	}
 
@@ -199,14 +198,14 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Visit visit = createDomain(org.minnal.examples.petclinic.domain.Visit.class);
 		pet.collection("visits").add(visit);
 		pet.persist();
-		Response response = call(request(
+		FullHttpResponse response = call(request(
 				"/owners/" + owner.getId() + "/pets/"
 						+ pet.getId() + "/visits/"
 						+ visit.getId(), HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer
-				.deserialize(response.getContent(),
-						org.minnal.examples.petclinic.domain.Visit.class)
+		assertEquals(deserialize(
+				response.content(),
+				org.minnal.examples.petclinic.domain.Visit.class)
 				.getId(), visit.getId());
 	}
 
@@ -218,10 +217,10 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		owner.collection("pets").add(pet);
 		owner.persist();
 		org.minnal.examples.petclinic.domain.Visit visit = createDomain(org.minnal.examples.petclinic.domain.Visit.class);
-		Response response = call(request("/owners/" + owner.getId()
-				+ "/pets/" + pet.getId() + "/visits/",
-				HttpMethod.POST,
-				new JodatimeJsonSerializer().serialize(visit)));
+		FullHttpResponse response = call(request(
+				"/owners/" + owner.getId() + "/pets/"
+						+ pet.getId() + "/visits/",
+				HttpMethod.POST, serialize(visit)));
 		assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
 	}
 
@@ -238,13 +237,11 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Visit modifiedvisit = createDomain(
 				org.minnal.examples.petclinic.domain.Visit.class,
 				1);
-		Response response = call(request(
+		FullHttpResponse response = call(request(
 				"/owners/" + owner.getId() + "/pets/"
 						+ pet.getId() + "/visits/"
 						+ visit.getId(),
-				HttpMethod.PUT,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(modifiedvisit)));
+				HttpMethod.PUT, serialize(modifiedvisit)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		visit.merge();
@@ -261,7 +258,7 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Visit visit = createDomain(org.minnal.examples.petclinic.domain.Visit.class);
 		pet.collection("visits").add(visit);
 		pet.persist();
-		Response response = call(request(
+		FullHttpResponse response = call(request(
 				"/owners/" + owner.getId() + "/pets/"
 						+ pet.getId() + "/visits/"
 						+ visit.getId(),
@@ -270,9 +267,7 @@ public class OwnerResourceTest extends BaseJPAResourceTest {
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/owners/" + owner.getId() + "/pets/"
 				+ pet.getId() + "/visits/" + visit.getId(),
-				HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(visit)));
+				HttpMethod.GET, serialize(visit)));
 		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 	}
 

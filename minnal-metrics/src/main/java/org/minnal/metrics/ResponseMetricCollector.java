@@ -7,12 +7,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.minnal.core.MessageListenerAdapter;
 import org.minnal.core.server.MessageContext;
-import org.testng.util.Strings;
 
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Strings;
 
 /**
  * @author ganeshs

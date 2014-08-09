@@ -108,7 +108,7 @@ public class PomGenerator extends AbstractGenerator {
 		Plugin plugin = new Plugin();
 		plugin.setGroupId("org.codehaus.mojo");
 		plugin.setArtifactId("exec-maven-plugin");
-		plugin.setVersion("1.2");
+		plugin.setVersion("1.3.2");
 		
 		Xpp3Dom configuration = new Xpp3Dom("configuration");
 		Xpp3Dom executable = new Xpp3Dom("executable");
@@ -116,13 +116,16 @@ public class PomGenerator extends AbstractGenerator {
 		configuration.addChild(executable);
 		Xpp3Dom arguments = new Xpp3Dom("arguments");
 		Xpp3Dom classpath = new Xpp3Dom("argument");
+		Xpp3Dom classpathScope = new Xpp3Dom("classpathScope");
 		classpath.setValue("-classpath");
 		arguments.addChild(classpath);
 		arguments.addChild(new Xpp3Dom("classpath"));
 		Xpp3Dom mainClass = new Xpp3Dom("argument");
 		mainClass.setValue("${mainClass}");
 		arguments.addChild(mainClass);
+		classpathScope.setValue("compile");
 		configuration.addChild(arguments);
+		configuration.addChild(classpathScope);
 		plugin.setConfiguration(configuration);
 		PluginExecution execution = new PluginExecution();
 		execution.addGoal("java");

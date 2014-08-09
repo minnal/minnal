@@ -33,6 +33,7 @@ public class JPAPlugin implements Plugin {
 		PersistenceUnitInfo info = createPersistenceUnitInfo(application.getConfiguration(), provider); 
 		factory = provider.createContainerEntityManagerFactory(info, null);
 		JPA.instance.addPersistenceUnit(info.getPersistenceUnitName(), factory);
+		application.addListener(new JerseyApplicationEventListener(application.getConfiguration().getDatabaseConfiguration()));
 	}
 
 	public void destroy() {

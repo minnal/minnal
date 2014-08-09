@@ -1,18 +1,7 @@
 ---
 name: "My Container"
-serializers:
-  application/json:
-    class: "org.minnal.examples.petclinic.JodatimeJsonSerializer"
-  text/xml:
-    class: "org.minnal.core.serializer.DefaultXmlSerializer"
-  application/x-www-form-urlencoded:
-    class: "org.minnal.core.serializer.DefaultFormSerializer"
-  text/plain:
-    class: "org.minnal.core.serializer.DefaultTextSerializer"
-defaultMediaType: "application/json; charset=utf-8"
 mounts:
   com.petclinic.PetclinicApplication: "/"
-  org.minnal.admin.AdminApplication: "/admin"
 basePath: "/"
 bundleOverrides: {}
 server:

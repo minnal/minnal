@@ -34,7 +34,7 @@ public void $method_name() {
 	#set($url = """/$node.getResourceName()/""")
 	$model_class $field_name = createDomain(${model_class}.class); 
 #end
-	Response response = call(request($url, HttpMethod.POST, Serializer.DEFAULT_JSON_SERIALIZER.serialize(${field_name})));
+	FullHttpResponse response = call(request($url, HttpMethod.POST, serialize(${field_name})));
 	assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
 #set ($parent = false)
 }

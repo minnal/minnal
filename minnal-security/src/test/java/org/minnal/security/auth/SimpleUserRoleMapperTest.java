@@ -5,10 +5,6 @@ package org.minnal.security.auth;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.HashMap;
-
-import javax.management.relation.Role;
-
 import org.pac4j.core.profile.UserProfile;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

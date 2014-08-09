@@ -14,11 +14,8 @@ import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.ConfigurationProvider;
 import org.minnal.utils.reflection.Generics;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 /**
  * @author ganeshs
@@ -70,6 +67,20 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	}
 	
 	/**
+	 * @param listener
+	 */
+	public void addListener(Object listener) {
+		resourceConfig.register(listener);
+	}
+	
+	/**
+	 * @param listener
+	 */
+	public void addListener(Class<?> listener) {
+		resourceConfig.register(listener);
+	}
+	
+	/**
 	 * @param mapper
 	 */
 	@SuppressWarnings("rawtypes")
@@ -106,10 +117,6 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		mapExceptions();
 		addProviders();
 		
-		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.NONE);
-		objectMapper.setVisibility(PropertyAccessor.GETTER, Visibility.PROTECTED_AND_PUBLIC);
-		objectMapper.setVisibility(PropertyAccessor.SETTER, Visibility.PROTECTED_AND_PUBLIC);
-		
 		for (Plugin plugin : plugins) {
 			plugin.init(this);
 		}
@@ -126,7 +133,8 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	
 	protected abstract void registerPlugins();
 	
-	protected abstract void addFilters();
+	protected void addFilters() {
+	}
 	
 	protected abstract void defineResources();
 	
@@ -134,7 +142,7 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	 * Adds the providers
 	 */
 	protected void addProviders() {
-		resourceConfig.register(new JacksonJaxbJsonProvider(objectMapper, null));
+		resourceConfig.register(new JacksonProvider(objectMapper, null));
 	}
 	
 	/**

@@ -11,10 +11,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-
 import org.activejpa.jpa.JPAContext;
+import org.glassfish.jersey.server.ContainerRequest;
+import org.glassfish.jersey.server.ContainerResponse;
 import org.minnal.core.config.DatabaseConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -27,9 +26,9 @@ public class OpenSessionInViewFilterTest {
 	
 	private OpenSessionInViewFilter filter;
 	
-	private ContainerRequestContext request;
+	private ContainerRequest request;
 	
-	private ContainerResponseContext response;
+	private ContainerResponse response;
 	
 	private JPAContext context;
 	
@@ -40,29 +39,29 @@ public class OpenSessionInViewFilterTest {
 		configuration = mock(DatabaseConfiguration.class);
 		filter = spy(new OpenSessionInViewFilter(configuration));
 		context = mock(JPAContext.class);
-		request = mock(ContainerRequestContext.class);
-		response = mock(ContainerResponseContext.class);
+		request = mock(ContainerRequest.class);
+		response = mock(ContainerResponse.class);
 		doReturn(context).when(filter).getContext();
 	}
 	
 	@Test
-	public void shouldInitializeEntityManagerOnRequestFilter() throws IOException {
-		filter.filter(request);
+	public void shouldInitializeEntityManagerWhenRequestReceived() throws IOException {
+		filter.requestReceived(request);
 		verify(context).getEntityManager();
 	}
 	
 	@Test
-	public void shouldRollbackTransactionIfTrasactionIsOpenInResponseFilter() throws IOException {
-		filter.filter(request);
+	public void shouldRollbackTransactionIfTrasactionIsOpenWhenRequestCompleted() throws IOException {
+		filter.requestReceived(request);
 		when(context.isTxnOpen()).thenReturn(true);
-		filter.filter(request, response);
+		filter.requestCompleted(request, response);
 		verify(context).closeTxn(true);
 	}
 	
 	@Test
 	public void shouldCloseContextInResponseFilter() throws IOException {
-		filter.filter(request);
-		filter.filter(request, response);
+		filter.requestReceived(request);
+		filter.requestCompleted(request, response);
 		verify(context).close();
 	}
 }
