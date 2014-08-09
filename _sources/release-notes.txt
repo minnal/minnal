@@ -4,6 +4,47 @@
 Release Notes
 #############
 
+minnal-1.2.1 / 9-Aug-2014
+==========================
+
+* Fixed issue `#95 <https://github.com/minnal/minnal/issues/95>`_ (minnal auto generated resource tests doesn't set back references while test objects)
+* Fixed issue `#96 <https://github.com/minnal/minnal/issues/96>`_ (Exception Mapping is broken)
+
+  **Exception Handling**
+
+  This version supports custom exception handling for specific exceptions,
+
+  .. code-block:: java
+	:linenos:
+	
+	public class MyApplication extends Application {
+
+		protected void mapExceptions() {
+    			addExceptionHandler(ConstraintViolationException.class, new ConstraintViolationExceptionHandler());
+		}
+
+		public static class ConstraintViolationExceptionHandler implements ExceptionHandler {
+    		
+			@Override
+    			public void handle(Request request, Response response, Throwable exception) {
+        			ConstraintViolationException ex = (ConstraintViolationException) exception;
+        			List<FieldError> errors = new ArrayList<FieldError>();
+        			for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            				errors.add(new FieldError(Inflector.underscore(violation.getPropertyPath().toString()), violation.getMessage(), violation
+                    				.getInvalidValue()));
+        			}
+        			Map<String, List<FieldError>> message = new HashMap<String, List<FieldError>>();
+        			message.put("field_errors", errors);
+        			response.setStatus(HttpResponseStatus.UNPROCESSABLE_ENTITY);
+        			response.setContent(message);
+    			}
+		}
+	}
+  
+* Fixed issue `#97 <https://github.com/minnal/minnal/issues/97>`_ (Add support javax.validation)
+* Fixed issue `#98 <https://github.com/minnal/minnal/issues/98>`_ (Sort APIs in the Swagger)
+
+
 minnal-1.2.0 / 1-Jul-2014
 ==========================
 This release has upgrades to the latest version of Swagger and ActiveJPA. With these upgrades, minnal has support for Swagger spec version 1.2 and JPA 2.1.
