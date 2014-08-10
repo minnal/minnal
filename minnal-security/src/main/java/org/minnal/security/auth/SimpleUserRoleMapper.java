@@ -8,16 +8,14 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.minnal.core.MinnalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -30,7 +28,7 @@ public class SimpleUserRoleMapper implements UserRoleMapper {
 	
 	private String mappingFile = DEFAULT_FILE;
 	
-	private Map<String, List<Role>> roles;
+	private Map<String, List<String>> roles;
 	
 	private static final Logger logger = LoggerFactory.getLogger(SimpleRolePermissionMapper.class);
 	
@@ -45,7 +43,7 @@ public class SimpleUserRoleMapper implements UserRoleMapper {
 	}
 
 	@Override
-	public List<Role> getRoles(User user) {
+	public List<String> getRoles(User user) {
 		if (roles == null) {
 			loadRoles();
 		}
@@ -54,7 +52,7 @@ public class SimpleUserRoleMapper implements UserRoleMapper {
 	
 	protected void loadRoles() {
 		Properties properties = new Properties();
-		roles = new HashMap<String, List<Role>>();
+		roles = new HashMap<String, List<String>>();
 		
 		InputStream is = null;
 		try {
@@ -65,12 +63,7 @@ public class SimpleUserRoleMapper implements UserRoleMapper {
 			properties.load(is);
 			for (Entry<Object, Object> entry : properties.entrySet()) {
 				Iterable<String> rols = Splitter.on(",").omitEmptyStrings().split((String) entry.getValue());
-				roles.put((String) entry.getKey(), Lists.newArrayList(Iterables.transform(rols, new Function<String, Role>() {
-					@Override
-					public Role apply(String input) {
-						return new Role(input);
-					}
-				})));
+				roles.put((String) entry.getKey(), Lists.newArrayList(rols));
 			}
 		} catch (IOException e) {
 			logger.error("Failed while loading the property file - " + mappingFile, e);

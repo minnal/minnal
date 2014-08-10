@@ -3,14 +3,15 @@
  */
 package org.minnal.core.serializer;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBufferInputStream;
-import org.jboss.netty.buffer.ChannelBufferOutputStream;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.minnal.core.MinnalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,12 +59,12 @@ public abstract class AbstractJacksonSerializer extends Serializer {
 	@JsonFilter("property_filter")  
 	public class PropertyFilterMixIn {} 
 
-	public ChannelBuffer serialize(Object object) {
+	public ByteBuf serialize(Object object) {
 		return serialize(object,null,null);
 	}
 
-	public <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass) {
-		ChannelBufferInputStream is = new ChannelBufferInputStream(buffer);
+	public <T> T deserialize(ByteBuf buffer, Class<T> targetClass) {
+		ByteBufInputStream is = new ByteBufInputStream(buffer);
 		try {
 			return mapper.readValue(is, targetClass);
 		} catch (Exception e) {
@@ -72,8 +73,8 @@ public abstract class AbstractJacksonSerializer extends Serializer {
 	}
 
 	@Override
-	public <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType) {
-		ChannelBufferInputStream is = new ChannelBufferInputStream(buffer);
+	public <T extends Collection<E>, E> T deserializeCollection(ByteBuf buffer, Class<T> collectionType, Class<E> elementType) {
+		ByteBufInputStream is = new ByteBufInputStream(buffer);
 		JavaType javaType = mapper.getTypeFactory().constructCollectionType(collectionType, elementType);
 		try {
 			return mapper.readValue(is, javaType);
@@ -88,9 +89,9 @@ public abstract class AbstractJacksonSerializer extends Serializer {
 	}
 
 	@Override
-	public ChannelBuffer serialize(Object object, Set<String> excludes, Set<String> includes) {
-		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
-		ChannelBufferOutputStream os = new ChannelBufferOutputStream(buffer);
+	public ByteBuf serialize(Object object, Set<String> excludes, Set<String> includes) {
+		ByteBuf buffer = Unpooled.buffer();
+		ByteBufOutputStream os = new ByteBufOutputStream(buffer);
 
 		SimpleBeanPropertyFilter filter = null;
 		try {

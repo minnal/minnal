@@ -14,8 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import org.activejpa.entity.Model;
-import org.minnal.core.scanner.Scanner.Listener;
-import org.minnal.jpa.entity.EntityScanner;
+import org.minnal.utils.scanner.Scanner.Listener;
 import org.testng.annotations.Test;
 
 /**

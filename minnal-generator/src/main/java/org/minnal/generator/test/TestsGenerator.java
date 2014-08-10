@@ -5,12 +5,10 @@ package org.minnal.generator.test;
 
 import java.io.File;
 
-import org.minnal.core.config.ResourceConfiguration;
-import org.minnal.core.resource.ResourceClass;
-import org.minnal.core.scanner.Scanner;
-import org.minnal.core.scanner.Scanner.Listener;
 import org.minnal.generator.core.AbstractGenerator;
 import org.minnal.instrument.entity.AggregateRootScanner;
+import org.minnal.utils.scanner.Scanner;
+import org.minnal.utils.scanner.Scanner.Listener;
 
 /**
  * @author ganeshs
@@ -32,9 +30,8 @@ public class TestsGenerator extends AbstractGenerator {
 	public void init() {
 		Scanner<Class<?>> scanner = new AggregateRootScanner(packages);
 		scanner.scan(new Listener<Class<?>>() {
-			public void handle(Class<?> t) {
-				ResourceClass resourceClass = new ResourceClass(t, new ResourceConfiguration(""));
-				addGenerator(new ResourceClassTestGenerator(projectDir, resourceClass));
+			public void handle(Class<?> entityClass) {
+				addGenerator(new ResourceClassTestGenerator(projectDir, entityClass));
 			}
 		});
 	}

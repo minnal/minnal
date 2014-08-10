@@ -11,19 +11,16 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.minnal.core.Application;
-import org.minnal.core.Request;
 import org.minnal.core.config.ApplicationConfiguration;
-import org.minnal.core.route.Route;
-import org.minnal.core.route.RoutePattern;
 import org.minnal.core.server.MessageContext;
-import org.minnal.core.server.ServerRequest;
-import org.minnal.core.server.ServerResponse;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -46,7 +43,7 @@ public class ResponseMetricCollectorTest {
 	
 	private MetricRegistry metricRegistry;
 	
-	private ServerRequest request;
+	private FullHttpRequest request;
 	
 	@BeforeMethod
 	public void setup() {
@@ -58,7 +55,7 @@ public class ResponseMetricCollectorTest {
 		when(application.getConfiguration()).thenReturn(configuration);
 		metricRegistry = mock(MetricRegistry.class);
 		when(context.getApplication()).thenReturn(application);
-		request = mock(ServerRequest.class);
+		request = mock(FullHttpRequest.class);
 		when(context.getRequest()).thenReturn(request);
 		MetricRegistries.addRegistry(application, metricRegistry);
 	}
@@ -70,16 +67,11 @@ public class ResponseMetricCollectorTest {
 	
 	@Test 
 	void shouldFormatMetricName(){
-		ServerResponse response = mock(ServerResponse.class);
+		FullHttpResponse response = mock(FullHttpResponse.class);
 		when(response.getStatus()).thenReturn(HttpResponseStatus.OK);
 		when(context.getResponse()).thenReturn(response);
-		Route route = mock(Route.class);
-		RoutePattern pattern = mock(RoutePattern.class);
-		when(pattern.getPathPattern()).thenReturn("/facilities/{id}/stations/{station_id}");
-		when(route.getRoutePattern()).thenReturn(pattern);
-		when(context.getRoute()).thenReturn(route);
-		when(request.getApplicationPath()).thenReturn("/");
-		when(request.getHttpMethod()).thenReturn(HttpMethod.GET);
+		when(context.getMatchedRoute()).thenReturn("/facilities/{id}/stations/{station_id}");
+		when(request.getMethod()).thenReturn(HttpMethod.GET);
 		assertEquals("facilities.id.stations.station_id.GET.responseTime",collector.getMetricName(context, collector.RESPONSE_TIME));
 	}
 	
@@ -91,7 +83,7 @@ public class ResponseMetricCollectorTest {
 	
 	@Test
 	public void shouldSetSuccessfulOnSuccess() {
-		ServerResponse response = mock(ServerResponse.class);
+		FullHttpResponse response = mock(FullHttpResponse.class);
 		when(response.getStatus()).thenReturn(HttpResponseStatus.OK);
 		when(context.getResponse()).thenReturn(response);
 		collector.onSuccess(context);
@@ -100,7 +92,7 @@ public class ResponseMetricCollectorTest {
 	
 	@Test
 	public void shouldSetNotSuccessfulOn4xx() {
-		ServerResponse response = mock(ServerResponse.class);
+		FullHttpResponse response = mock(FullHttpResponse.class);
 		when(response.getStatus()).thenReturn(HttpResponseStatus.NOT_FOUND);
 		when(context.getResponse()).thenReturn(response);
 		collector.onSuccess(context);
@@ -120,7 +112,7 @@ public class ResponseMetricCollectorTest {
 	
 	@Test
 	public void shouldLogFailureOnCompletion() {
-		ServerResponse response = mock(ServerResponse.class);
+		FullHttpResponse response = mock(FullHttpResponse.class);
 		when(response.getStatus()).thenReturn(HttpResponseStatus.NOT_FOUND);
 		when(context.getResponse()).thenReturn(response);
 		when(context.getAttribute(ResponseMetricCollector.SUCCESSFUL)).thenReturn(Boolean.FALSE);

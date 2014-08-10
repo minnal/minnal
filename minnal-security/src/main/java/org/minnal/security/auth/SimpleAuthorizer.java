@@ -6,6 +6,8 @@ package org.minnal.security.auth;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 /**
  * @author ganeshs
  *
@@ -30,15 +32,14 @@ public class SimpleAuthorizer implements Authorizer {
 	}
 
 	@Override
-	public boolean authorize(Principal principal, List<Permission> permissions) {
-		User user = (User) principal;
-		if (user.getRoles() == null) {
+	public boolean authorize(User user, List<String> permissions) {
+		if (user.getRoles() != null || user.getRoles().isEmpty()) {
 			user.setRoles(roleMapper.getRoles(user));
 		}
-		if (user.getPermissions() == null) {
-			List<Permission> perms = new ArrayList<Permission>();
+		if (user.getPermissions() == null || user.getPermissions().isEmpty()) {
+			List<String> perms = new ArrayList<String>();
 			if (user.getRoles() != null) {
-				for (Role role : user.getRoles()) {
+				for (String role : user.getRoles()) {
 					perms.addAll(permissionMapper.getPermissions(role));
 				}
 			}
@@ -73,6 +74,11 @@ public class SimpleAuthorizer implements Authorizer {
 	 */
 	public void setRoleMapper(UserRoleMapper roleMapper) {
 		this.roleMapper = roleMapper;
+	}
+
+	@Override
+	public boolean authorize(User user, String permission) {
+		return authorize(user, Lists.newArrayList(permission));
 	}
 
 }

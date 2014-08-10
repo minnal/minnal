@@ -3,6 +3,9 @@
  */
 package org.minnal.security.session;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.activejpa.entity.Model;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.minnal.core.serializer.Serializer;
 
 import com.google.common.io.BaseEncoding;
@@ -106,13 +107,13 @@ public class JpaSession extends Model implements Session {
 	}
 	
 	void encodeData() {
-		ChannelBuffer buffer = Serializer.DEFAULT_JSON_SERIALIZER.serialize(attributes);
+		ByteBuf buffer = Serializer.DEFAULT_JSON_SERIALIZER.serialize(attributes);
 		data = BaseEncoding.base64().encode(buffer.array());
 	}
 	
 	void decodeData(String data) {
 		byte[] bytes = BaseEncoding.base64().decode(data);
-		setAttributes(Serializer.DEFAULT_JSON_SERIALIZER.deserialize(ChannelBuffers.wrappedBuffer(bytes), Map.class));
+		setAttributes(Serializer.DEFAULT_JSON_SERIALIZER.deserialize(Unpooled.wrappedBuffer(bytes), Map.class));
 	}
 	
 	public boolean hasExpired(long timeoutInSecs) {

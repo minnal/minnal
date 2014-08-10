@@ -37,13 +37,13 @@ public void $method_name() {
 	$model_class $field_name = createDomain(${model_class}.class);
 	${field_name}.persist(); 
 #end
-	Response response = call(request($url, HttpMethod.GET));
+	FullHttpResponse response = call(request($url, HttpMethod.GET));
 	assertEquals(response.getStatus(), HttpResponseStatus.OK);
 	#if ($path.size() > 1)
 		#set($collection = "get" + $resource_name.substring(0, 1).toUpperCase() + $resource_name.substring(1) + "()")
-		assertEquals(serializer.deserializeCollection(response.getContent(), java.util.List.class, ${model_class}.class).size(), ${parent}.${collection}.size());
+		assertEquals(deserializeCollection(response.content(), java.util.List.class, ${model_class}.class).size(), ${parent}.${collection}.size());
 	#else
-		assertEquals(serializer.deserializeCollection(response.getContent(), java.util.List.class, ${model_class}.class).size(), (int) ${model_class}.count());
+		assertEquals(deserializeCollection(response.content(), java.util.List.class, ${model_class}.class).size(), (int) ${model_class}.count());
 	#end
 #set ($parent = false)
 }

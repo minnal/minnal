@@ -1,16 +1,18 @@
 package org.minnal.core.serializer;
 
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
-
-import static org.mockito.Mockito.*;
+import io.netty.buffer.ByteBuf;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jboss.netty.buffer.ChannelBuffer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -34,14 +36,14 @@ public class DefaultJsonSerializerTest {
 	
 	@Test
 	public void shouldSerializeModel(){
-		ChannelBuffer channelBuffer = serializer.serialize(model);
+		ByteBuf channelBuffer = serializer.serialize(model);
 		assertEquals("{\"name\":\"name\",\"value\":\"value\",\"composites\":null,\"association\":null}", 
 				channelBuffer.toString(Charsets.UTF_8)); 
 	}
 	
 	@Test
 	public void shouldDeserializeModel(){
-		ChannelBuffer channelBuffer = serializer.serialize(model);
+		ByteBuf channelBuffer = serializer.serialize(model);
 		DummyModel dummyModel= serializer.deserialize(channelBuffer, DummyModel.class);
 		assertEquals(dummyModel.name,model.name); 
 	}
@@ -50,7 +52,7 @@ public class DefaultJsonSerializerTest {
 	public void shouldSerializeModelWithEmptySets(){
 		Set<String> includes = new HashSet<String>();
 		includes.add("name");
-		ChannelBuffer channelBuffer = serializer.serialize(model, new HashSet<String>(), new HashSet<String>());
+		ByteBuf channelBuffer = serializer.serialize(model, new HashSet<String>(), new HashSet<String>());
 		assertTrue(channelBuffer.toString(Charsets.UTF_8).contains("value")); 
 	}
 	
@@ -58,7 +60,7 @@ public class DefaultJsonSerializerTest {
 	public void shouldSerializeModelWithIncludes(){
 		Set<String> includes = new HashSet<String>();
 		includes.add("name");
-		ChannelBuffer channelBuffer = serializer.serialize(model, null, includes);
+		ByteBuf channelBuffer = serializer.serialize(model, null, includes);
 		assertFalse(channelBuffer.toString(Charsets.UTF_8).contains("value")); 
 	}
 	
@@ -66,7 +68,7 @@ public class DefaultJsonSerializerTest {
 	public void shouldSerializeModelWithExcludes(){
 		Set<String> excludes = new HashSet<String>();
 		excludes.add("name");
-		ChannelBuffer channelBuffer = serializer.serialize(model, excludes, null);
+		ByteBuf channelBuffer = serializer.serialize(model, excludes, null);
 		assertFalse(channelBuffer.toString(Charsets.UTF_8).contains("name")); 
 	}
 	
@@ -85,7 +87,7 @@ public class DefaultJsonSerializerTest {
 		model = createNestedDummyModel();
 		Set<String> includes = new HashSet<String>();
 		includes.add("name");
-		ChannelBuffer channelBuffer = serializer.serialize(model, null, includes);
+		ByteBuf channelBuffer = serializer.serialize(model, null, includes);
 		assertFalse(channelBuffer.toString(Charsets.UTF_8).contains("value")); 
 	}
 	
@@ -94,7 +96,7 @@ public class DefaultJsonSerializerTest {
 		model = createNestedDummyModel();
 		Set<String> excludes = new HashSet<String>();
 		excludes.add("name");
-		ChannelBuffer channelBuffer = serializer.serialize(model, excludes, null);
+		ByteBuf channelBuffer = serializer.serialize(model, excludes, null);
 		assertFalse(channelBuffer.toString(Charsets.UTF_8).contains("name")); 
 	}
 	

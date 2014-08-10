@@ -6,13 +6,13 @@ package org.minnal.metrics;
 import java.util.concurrent.TimeUnit;
 
 import org.minnal.core.MessageListenerAdapter;
-import org.minnal.core.route.Route;
 import org.minnal.core.server.MessageContext;
 
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Strings;
 
 /**
  * @author ganeshs
@@ -41,20 +41,19 @@ public class ResponseMetricCollector extends MessageListenerAdapter {
 	}
 	
 	protected String getMetricName(MessageContext context, String metricName) {
-		Route route = context.getRoute();
 		String name = null;
-		if (route != null) {
-			name = context.getRequest().getApplicationPath() + route.getRoutePattern().getPathPattern();
+		if (! Strings.isNullOrEmpty(context.getMatchedRoute())) {
+			name = context.getMatchedRoute();
 		} else {
 			name = context.getApplication().getConfiguration().getName();
 		}
 		name = formatName(name);
-		return MetricRegistry.name(name, context.getRequest().getHttpMethod().toString(), metricName);
+		return MetricRegistry.name(name, context.getRequest().getMethod().toString(), metricName);
 	}
 
 	@Override
 	public void onSuccess(MessageContext context) {
-		context.addAttribute(SUCCESSFUL, context.getResponse().getStatus().getCode() < 400);
+		context.addAttribute(SUCCESSFUL, context.getResponse().getStatus().code() < 400);
 	}
 
 	@Override
@@ -66,7 +65,7 @@ public class ResponseMetricCollector extends MessageListenerAdapter {
 			MetricRegistries.getRegistry(context.getApplication().getConfiguration().getName()).meter(name).mark();
 		} else {
 			if (! successful) {
-				name = getMetricName(context, Integer.toString(context.getResponse().getStatus().getCode()));
+				name = getMetricName(context, Integer.toString(context.getResponse().getStatus().code()));
 				MetricRegistries.getRegistry(context.getApplication().getConfiguration().getName()).meter(name).mark();
 			}
 			name = getMetricName(context, RESPONSE_TIME);

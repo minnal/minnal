@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>minnal-examples-oms</artifactId>
 	<name>minnal-examples-oms</name>
@@ -6,9 +7,32 @@
 	<parent>
 		<artifactId>minnal-examples</artifactId>
 		<groupId>org.minnal</groupId>
-		<version>1.2.2-SNAPSHOT</version>
+		<version>2.0.0-SNAPSHOT</version>
 	</parent>
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-classpath</argument>
+						<classpath />
+						<argument>${mainClass}</argument>
+					</arguments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.minnal</groupId>
@@ -56,17 +80,20 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.minnal</groupId>
-			<artifactId>minnal-admin</artifactId>
+			<groupId>org.activejpa</groupId>
+			<artifactId>activejpa-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.minnal</groupId>
 			<artifactId>minnal-api</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.activejpa</groupId>
-			<artifactId>activejpa-test</artifactId>
-			<scope>test</scope>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate4</artifactId>
+			<optional>true</optional>
+			<version>2.4.0</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -74,12 +101,12 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-core</artifactId>
-				<version>1.2.2-SNAPSHOT</version>
+				<version>2.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-instrumentation</artifactId>
-				<version>1.2.2-SNAPSHOT</version>
+				<version>2.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
@@ -89,7 +116,7 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-jpa</artifactId>
-				<version>1.2.2-SNAPSHOT</version>
+				<version>2.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hsqldb</groupId>
@@ -109,22 +136,12 @@
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-test</artifactId>
-				<version>1.2.2-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.minnal</groupId>
-				<artifactId>minnal-admin</artifactId>
-				<version>1.2.2-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.minnal</groupId>
-				<artifactId>minnal-api</artifactId>
-				<version>1.2.2-SNAPSHOT</version>
+				<version>2.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.minnal</groupId>
 				<artifactId>minnal-generator</artifactId>
-				<version>1.2.2-SNAPSHOT</version>
+				<version>2.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.activejpa</groupId>
@@ -132,6 +149,7 @@
 				<version>0.2.2</version>
 				<scope>test</scope>
 			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 </project>

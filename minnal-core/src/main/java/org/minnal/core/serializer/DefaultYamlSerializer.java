@@ -3,13 +3,14 @@
  */
 package org.minnal.core.serializer;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
+
 import java.io.IOException;
 import java.util.Collection;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBufferInputStream;
-import org.jboss.netty.buffer.ChannelBufferOutputStream;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.minnal.core.MinnalException;
 import org.minnal.core.config.MediaTypeMixin;
 
@@ -70,9 +71,9 @@ public class DefaultYamlSerializer extends Serializer {
 		mapper.setSerializationInclusion(Include.NON_NULL);
 	}
 	
-	public ChannelBuffer serialize(Object object) {
-		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
-		ChannelBufferOutputStream os = new ChannelBufferOutputStream(buffer);
+	public ByteBuf serialize(Object object) {
+		ByteBuf buffer = Unpooled.buffer();
+		ByteBufOutputStream os = new ByteBufOutputStream(buffer);
 		try {
 			mapper.writeValue(os, object);
 		} catch (Exception e) {
@@ -81,8 +82,8 @@ public class DefaultYamlSerializer extends Serializer {
 		return buffer;
 	}
 
-	public <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass) {
-		ChannelBufferInputStream is = new ChannelBufferInputStream(buffer);
+	public <T> T deserialize(ByteBuf buffer, Class<T> targetClass) {
+		ByteBufInputStream is = new ByteBufInputStream(buffer);
 		try {
 			return mapper.readValue(is, targetClass);
 		} catch (Exception e) {
@@ -91,8 +92,8 @@ public class DefaultYamlSerializer extends Serializer {
 	}
 	
 	@Override
-	public <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType) {
-		ChannelBufferInputStream is = new ChannelBufferInputStream(buffer);
+	public <T extends Collection<E>, E> T deserializeCollection(ByteBuf buffer, Class<T> collectionType, Class<E> elementType) {
+		ByteBufInputStream is = new ByteBufInputStream(buffer);
 		JavaType javaType = mapper.getTypeFactory().constructCollectionType(collectionType, elementType);
 		try {
 			return mapper.readValue(is, javaType);

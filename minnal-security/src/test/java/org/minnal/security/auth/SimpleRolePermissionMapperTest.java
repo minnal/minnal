@@ -5,8 +5,6 @@ package org.minnal.security.auth;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.HashMap;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -27,22 +25,22 @@ public class SimpleRolePermissionMapperTest {
 	
 	@Test
 	public void shouldLoadRolePermissionsFromDefaultProperties() {
-		Role role = new Role("role1");
+		String role = "role1";
 		assertEquals(mapper.getPermissions(role).size(), 2);
-		assertEquals(mapper.getPermissions(role), Lists.newArrayList(new Permission("permission1"), new Permission("permission2")));
+		assertEquals(mapper.getPermissions(role), Lists.newArrayList("permission1", "permission2"));
 	}
 	
 	@Test
 	public void shouldLoadUserRolesFromCustomPropertiesFile() {
 		mapper = new SimpleRolePermissionMapper("role_permissions.properties");
-		Role role = new Role("role1");
+		String role = "role1";
 		assertEquals(mapper.getPermissions(role).size(), 2);
-		assertEquals(mapper.getPermissions(role), Lists.newArrayList(new Permission("permission1"), new Permission("permission2")));
+		assertEquals(mapper.getPermissions(role), Lists.newArrayList("permission1", "permission2"));
 	}
 	
 	@Test
 	public void shouldReturnEmptyListForRoleWithoutPermission() {
-		Role role = new Role("role3");
+		String role = "role3";
 		assertEquals(mapper.getPermissions(role).size(), 0);
 	}
 

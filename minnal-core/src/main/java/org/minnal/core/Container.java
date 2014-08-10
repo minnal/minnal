@@ -4,6 +4,7 @@
 package org.minnal.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -58,6 +59,10 @@ public class Container implements Lifecycle {
 	public void init() {
 		loadBundles();
 		loadApplications();	
+	}
+	
+	public Collection<Application<ApplicationConfiguration>> getApplications() {
+		return applicationMapping.getApplications();
 	}
 	
 	protected void loadApplications() {

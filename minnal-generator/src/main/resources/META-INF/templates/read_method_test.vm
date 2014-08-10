@@ -38,8 +38,8 @@ public void $method_name() {
 	$model_class $field_name = createDomain(${model_class}.class);
 	${field_name}.persist(); 
 #end
-	Response response = call(request($url, HttpMethod.GET));
+	FullHttpResponse response = call(request($url, HttpMethod.GET));
 	assertEquals(response.getStatus(), HttpResponseStatus.OK);
-	assertEquals(serializer.deserialize(response.getContent(), ${model_class}.class).getId(), ${field_name}.getId());
+	assertEquals(deserialize(response.content(), ${model_class}.class).getId(), ${field_name}.getId());
 #set ($parent = false)
 }

@@ -3,11 +3,12 @@
  */
 package org.minnal.core.server;
 
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.Slf4JLoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.netty.logging.InternalLoggerFactory;
-import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.minnal.core.Bundle;
 import org.minnal.core.Container;
 import org.minnal.core.Router;

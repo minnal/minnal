@@ -3,11 +3,12 @@
  */
 package org.minnal.core.serializer;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
+
 import java.util.Collection;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBufferOutputStream;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.minnal.core.MinnalException;
 
 import com.google.common.base.Charsets;
@@ -21,9 +22,9 @@ public class DefaultTextSerializer extends Serializer {
 	public DefaultTextSerializer() {
 	}
 	
-	public ChannelBuffer serialize(Object object) {
-		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
-		ChannelBufferOutputStream os = new ChannelBufferOutputStream(buffer);
+	public ByteBuf serialize(Object object) {
+		ByteBuf buffer = Unpooled.buffer();
+		ByteBufOutputStream os = new ByteBufOutputStream(buffer);
 		try {
 			os.write(object.toString().getBytes());
 		} catch (Exception e) {
@@ -32,7 +33,7 @@ public class DefaultTextSerializer extends Serializer {
 		return buffer;
 	}
 
-	public <T> T deserialize(ChannelBuffer buffer, Class<T> targetClass) {
+	public <T> T deserialize(ByteBuf buffer, Class<T> targetClass) {
 		if (! targetClass.equals(String.class)) {
 			throw new IllegalArgumentException("Target class is not string");
 		}
@@ -44,7 +45,7 @@ public class DefaultTextSerializer extends Serializer {
 	}
 	
 	@Override
-	public <T extends Collection<E>, E> T deserializeCollection(ChannelBuffer buffer, Class<T> collectionType, Class<E> elementType) {
+	public <T extends Collection<E>, E> T deserializeCollection(ByteBuf buffer, Class<T> collectionType, Class<E> elementType) {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 }

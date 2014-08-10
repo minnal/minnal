@@ -3,6 +3,13 @@
  */
 package org.minnal.core.server;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.FutureListener;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,12 +21,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelStateEvent;
-import org.jboss.netty.handler.ssl.SslHandler;
 import org.minnal.core.MinnalException;
 import org.minnal.core.Router;
 import org.minnal.core.config.ConnectorConfiguration;
@@ -56,11 +57,16 @@ public class HttpsConnector extends AbstractHttpConnector {
 	}
 	
 	@Override
-	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
 		logger.trace("Performing a handshake on channel connect");
-		final SslHandler sslHandler = ctx.getPipeline().get(SslHandler.class);
-		ChannelFuture future = sslHandler.handshake();
-		future.addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+		final SslHandler sslHandler = ctx.pipeline().get(SslHandler.class);
+		Future<Channel> future = sslHandler.handshakeFuture();
+		future.addListener(new FutureListener<Channel>() {
+			@Override
+			public void operationComplete(Future<Channel> future) throws Exception {
+				future.get().close();
+			}
+		});
 	}
 	
 	/**
@@ -74,7 +80,7 @@ public class HttpsConnector extends AbstractHttpConnector {
 			logger.trace("ssl.KeyManagerFactory.algorithm algorithm is not set. Defaulting to {}", algorithm);
 		}
 		SSLContext serverContext = null;
-		SSLConfiguration configuration = getConfiguration().getSslConfiguration();
+		SSLConfiguration configuration = getConnectorConfiguration().getSslConfiguration();
 		InputStream stream = null;
 		try {
 			File file = new File(configuration.getKeyStoreFile());

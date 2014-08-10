@@ -4,19 +4,18 @@
 package org.minnal.metrics;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.concurrent.TimeUnit;
 
 import org.minnal.core.Application;
 import org.minnal.core.Container;
 import org.minnal.core.config.ApplicationConfiguration;
-import org.minnal.metrics.GraphiteReporterConfiguration;
-import org.minnal.metrics.MetricsBundle;
-import org.minnal.metrics.MetricsBundleConfiguration;
-import org.minnal.metrics.ResponseMetricCollector;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

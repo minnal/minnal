@@ -17,6 +17,8 @@ import org.minnal.core.config.ApplicationConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * @author ganeshs
  *
@@ -27,10 +29,19 @@ public class InstrumentationBundleTest {
 	
 	private InstrumentationBundle bundle;
 	
+	private Application<ApplicationConfiguration> application;
+	
+	private MinnalApplicationEnhancer enhancer;
+	
 	@BeforeMethod
 	public void setup() {
 		container = mock(Container.class);
 		bundle = spy(new InstrumentationBundle());
+		enhancer = mock(MinnalApplicationEnhancer.class);
+		application = mock(Application.class);
+		when(application.getObjectMapper()).thenReturn(mock(ObjectMapper.class));
+		ApplicationConfiguration configuration = mock(ApplicationConfiguration.class);
+		when(application.getConfiguration()).thenReturn(configuration);
 	}
 
 	@Test
@@ -44,22 +55,15 @@ public class InstrumentationBundleTest {
 	
 	@Test
 	public void shouldEnhanceApplicationOnMount() {
-		ApplicationEnhancer enhancer = mock(ApplicationEnhancer.class);
-		Application<ApplicationConfiguration> application = mock(Application.class);
-		ApplicationConfiguration configuration = mock(ApplicationConfiguration.class);
-		when(application.getConfiguration()).thenReturn(configuration);
+		ApplicationConfiguration configuration = application.getConfiguration();
 		when(configuration.isInstrumentationEnabled()).thenReturn(true);
 		doReturn(enhancer).when(bundle).createApplicationEnhancer(application);
-		bundle.preMount(application);
+		bundle.postMount(application);
 		verify(enhancer).enhance();
 	}
 	
 	@Test
 	public void shouldNotEnhanceApplicationIfInstrumentationIsDisabled() {
-		ApplicationEnhancer enhancer = mock(ApplicationEnhancer.class);
-		Application<ApplicationConfiguration> application = mock(Application.class);
-		ApplicationConfiguration configuration = mock(ApplicationConfiguration.class);
-		when(application.getConfiguration()).thenReturn(configuration);
 		doReturn(enhancer).when(bundle).createApplicationEnhancer(application);
 		bundle.preMount(application);
 		verify(enhancer, never()).enhance();

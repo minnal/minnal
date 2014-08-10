@@ -16,8 +16,6 @@ import org.minnal.security.session.SessionStore;
  */
 public class SecurityConfiguration {
 
-	private CasConfiguration casConfiguration;
-	
 	private SessionStore sessionStore;
 	
 	private long sessionExpiryTimeInSecs;
@@ -26,37 +24,16 @@ public class SecurityConfiguration {
 	
 	private Authorizer authorizer = new SimpleAuthorizer();
 	
-	private String realm = DEFAULT_REALM;
-	
-	private static final String DEFAULT_REALM = "Service Apis";
-	
 	public SecurityConfiguration() {
 	}
 
 	/**
-	 * @param casConfiguration
 	 * @param sessionStore
 	 * @param sessionExpiryTimeInSecs
 	 */
-	public SecurityConfiguration(CasConfiguration casConfiguration,
-			SessionStore sessionStore, long sessionExpiryTimeInSecs) {
-		this.casConfiguration = casConfiguration;
+	public SecurityConfiguration(SessionStore sessionStore, long sessionExpiryTimeInSecs) {
 		this.sessionStore = sessionStore;
 		this.sessionExpiryTimeInSecs = sessionExpiryTimeInSecs;
-	}
-
-	/**
-	 * @return the casConfiguration
-	 */
-	public CasConfiguration getCasConfiguration() {
-		return casConfiguration;
-	}
-
-	/**
-	 * @param casConfiguration the casConfiguration to set
-	 */
-	public void setCasConfiguration(CasConfiguration casConfiguration) {
-		this.casConfiguration = casConfiguration;
 	}
 
 	/**
@@ -113,26 +90,5 @@ public class SecurityConfiguration {
 	 */
 	public void setAuthorizer(Authorizer authorizer) {
 		this.authorizer = authorizer;
-	}
-
-	/**
-	 * @return the realm
-	 */
-	public String getRealm() {
-		return realm;
-	}
-
-	/**
-	 * @param realm the realm to set
-	 */
-	public void setRealm(String realm) {
-		this.realm = realm;
-	}
-
-	/**
-	 * @return the defaultRealm
-	 */
-	public static String getDefaultRealm() {
-		return DEFAULT_REALM;
 	}
 }

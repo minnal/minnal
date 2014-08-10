@@ -32,7 +32,7 @@ public abstract class AbstractTemplateGenerator extends AbstractGenerator {
 	static {
 		logger.debug("Loading the velocity templates");
 		Properties properties = new Properties();
-		properties.put("runtime.log.logsystem.class", "org.minnal.core.util.Slf4jLogChute");
+		properties.put("runtime.log.logsystem.class", "org.minnal.utils.Slf4jLogChute");
 		engine = new VelocityEngine(properties);
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());

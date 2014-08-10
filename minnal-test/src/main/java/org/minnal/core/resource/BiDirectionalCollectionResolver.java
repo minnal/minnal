@@ -4,14 +4,11 @@
 package org.minnal.core.resource;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.minnal.autopojo.AttributeMetaData;
-import org.minnal.autopojo.Configuration;
-import org.minnal.autopojo.GenerationStrategy;
 import org.minnal.autopojo.resolver.CollectionResolver;
 import org.minnal.autopojo.util.PropertyUtil;
 import org.slf4j.Logger;

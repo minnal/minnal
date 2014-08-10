@@ -3,26 +3,19 @@
  */
 package org.minnal.core;
 
+import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.javalite.common.Inflector;
+import javax.ws.rs.ext.ExceptionMapper;
+
+import org.glassfish.jersey.server.ResourceConfig;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.ConfigurationProvider;
-import org.minnal.core.config.ResourceConfiguration;
-import org.minnal.core.resource.ResourceClass;
-import org.minnal.core.route.RouteBuilder;
-import org.minnal.core.route.Routes;
-import org.minnal.core.server.exception.ApplicationException;
-import org.minnal.core.server.exception.ExceptionHandler;
-import org.minnal.core.server.exception.ExceptionResolver;
 import org.minnal.utils.reflection.Generics;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ganeshs
@@ -30,13 +23,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public abstract class Application<T extends ApplicationConfiguration> implements Lifecycle {
 
-	private List<Filter> filters = new ArrayList<Filter>();
-	
-	private Map<ResourceClass, Routes> routes = new HashMap<ResourceClass, Routes>();
-	
-	private Map<Class<?>, ResourceClass> resources = new HashMap<Class<?>, ResourceClass>();
-	
-	private String path;
+	private URI path;
 	
 	private T configuration;
 	
@@ -44,31 +31,91 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	
 	private ConfigurationProvider configurationProvider = ConfigurationProvider.getDefault();
 	
-	private ExceptionResolver exceptionResolver = new ExceptionResolver();
+	private ResourceConfig resourceConfig;
+	
+	private ObjectMapper objectMapper = new ObjectMapper();
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Application() {
 		this.configuration = (T) configurationProvider.provide((Class)Generics.getTypeParameter(getClass(), ApplicationConfiguration.class));
+		resourceConfig =  new ResourceConfig();
 	}
 	
 	public Application(T configuration) {
 		this.configuration = configuration;
 	}
 	
-	public ExceptionResolver getExceptionResolver() {
-		return exceptionResolver;
+	/**
+	 * @return the resourceConfig
+	 */
+	public ResourceConfig getResourceConfig() {
+		return resourceConfig;
 	}
 	
-	public void addFilter(Filter filter) {
-		filters.add(filter);
+	/**
+	 * @param filter
+	 */
+	public void addFilter(Class<?> filter) {
+		resourceConfig.register(filter);
 	}
 	
+	/**
+	 * @param filter
+	 */
+	public void addFilter(Object filter) {
+		resourceConfig.register(filter);
+	}
+	
+	/**
+	 * @param listener
+	 */
+	public void addListener(Object listener) {
+		resourceConfig.register(listener);
+	}
+	
+	/**
+	 * @param listener
+	 */
+	public void addListener(Class<?> listener) {
+		resourceConfig.register(listener);
+	}
+	
+	/**
+	 * @param mapper
+	 */
+	@SuppressWarnings("rawtypes")
+	public void addExceptionMapper(Class<? extends ExceptionMapper> mapper) {
+		resourceConfig.register(mapper);
+	}
+	
+	/**
+	 * @param mapper
+	 */
+	@SuppressWarnings("rawtypes")
+	public void addExceptionMapper(ExceptionMapper mapper) {
+		resourceConfig.register(mapper);
+	}
+	
+	/**
+	 * @return the objectMapper
+	 */
+	public ObjectMapper getObjectMapper() {
+		return objectMapper;
+	}
+
+	/**
+	 * @param objectMapper the objectMapper to set
+	 */
+	public void setObjectMapper(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
+
 	public void init() {
 		registerPlugins();
 		addFilters();
 		defineResources();
-		defineRoutes();
 		mapExceptions();
+		addProviders();
 		
 		for (Plugin plugin : plugins) {
 			plugin.init(this);
@@ -76,17 +123,6 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	}
 	
 	public void start() {
-		for (ResourceClass resource : getResources()) {
-			Routes routes = this.routes.get(resource);
-			if (routes == null) {
-				routes = new Routes();
-				this.routes.put(resource, routes);
-			}
-			
-			for (RouteBuilder builder : resource.getRouteBuilders()) {
-				routes.addRoute(builder);
-			}
-		}
 	}
 	
 	public void stop() {
@@ -97,67 +133,49 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	
 	protected abstract void registerPlugins();
 	
-	protected abstract void addFilters();
-	
-	protected abstract void defineRoutes();
+	protected void addFilters() {
+	}
 	
 	protected abstract void defineResources();
+	
+	/**
+	 * Adds the providers
+	 */
+	protected void addProviders() {
+		resourceConfig.register(new JacksonProvider(objectMapper, null));
+	}
+	
+	/**
+	 * Adds the provider class
+	 * 
+	 * @param provider
+	 */
+	public void addProvider(Class<?> provider) {
+		resourceConfig.register(provider);
+	}
+	
+	/**
+	 * Adds the provider
+	 * 
+	 * @param provider
+	 */
+	public void addProvider(Object provider) {
+		resourceConfig.register(provider);
+	}
 	
 	protected void mapExceptions() {
 	}
 	
-	public void addExceptionMapping(Class<? extends Exception> from, Class<? extends ApplicationException> to) {
-		exceptionResolver.mapException(from, to);
-	}
-	
-	public void addExceptionHandler(Class<? extends Exception> exception, ExceptionHandler handler) {
-		exceptionResolver.addExceptionHandler(exception, handler);
-	}
-	
 	public void addResource(Class<?> resourceClass) {
-		addResource(resourceClass, "/");
+		resourceConfig.register(resourceClass);
 	}
 	
-	public void addResource(Class<?> resourceClass, String basePath) {
-		addResource(resourceClass, new ResourceConfiguration(getResourceName(resourceClass), configuration), basePath);
-	}
-	
-	public void addResource(Class<?> resourceClass, ResourceConfiguration resourceConfiguration) {
-		addResource(resourceClass, resourceConfiguration, "/");
-	}
-	
-	public void addResource(Class<?> resourceClass, ResourceConfiguration resourceConfiguration, String basePath) {
-		resourceConfiguration.setParent(configuration);
-		ResourceClass resource = new ResourceClass(resourceConfiguration, resourceClass, basePath);
-		addResource(resource);
-	}
-	
-	public void addResource(ResourceClass resourceClass) {
-		if (resourcePathExists(resourceClass.getBasePath())) {
-			throw new MinnalException("Resource Path - " + resourceClass.getBasePath() + " already exists in the application");
-		}
-		resources.put(resourceClass.getResourceClass(), resourceClass);
-	}
-	
-	private boolean resourcePathExists(String path) {
-		for (ResourceClass clazz : resources.values()) {
-			if (clazz.getBasePath().equals(path)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public Routes getRoutes(ResourceClass clazz) {
-		return routes.get(clazz);
-	}
-
 	/**
 	 * Will be used by the container to set the absolute path for this application
 	 * 
 	 * @return the path
 	 */
-	public String getPath() {
+	public URI getPath() {
 		return path;
 	}
 
@@ -166,38 +184,10 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 	 * 
 	 * @param path the path to set
 	 */
-	void setPath(String path) {
+	void setPath(URI path) {
 		this.path = path;
 	}
 	
-	/**
-	 * If a resource class for the given class is found, returns the resource class. If not found, and if a sub class for the given class
-	 * exists, returns that. Else throws an exception
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-	public ResourceClass resource(Class<?> clazz) {
-		if (! resources.containsKey(clazz)) {
-			for (ResourceClass resourceClass : resources.values()) {
-				if (clazz.isAssignableFrom(resourceClass.getResourceClass())) {
-					return resourceClass;
-				}
-			}
-			throw new MinnalException("Resource - " + clazz.getName() + " not found");
-		}
-		return resources.get(clazz);
-	}
-	
-	/**
-	 * Returns all the resources managed by this application
-	 * 
-	 * @return
-	 */
-	public Collection<ResourceClass> getResources() {
-		return resources.values();
-	}
-
 	/**
 	 * @return the configuration
 	 */
@@ -209,29 +199,9 @@ public abstract class Application<T extends ApplicationConfiguration> implements
 		plugins.add(plugin);
 	}
 	
-	/**
-	 * @return the filters
-	 */
-	public List<Filter> getFilters() {
-		return Collections.unmodifiableList(filters);
-	}
-	
-	@Deprecated
-	public boolean shouldInstrument() {
-		return false;
-	}
-
 	@JsonValue
 	@Override
 	public String toString() {
 		return configuration.getName();
-	}
-	
-	private String getResourceName(Class<?> resourceClass) {
-		String resourceName = resourceClass.getSimpleName();
-		if (resourceName.toLowerCase().endsWith("resource")) {
-			resourceName = resourceName.substring(0, resourceName.toLowerCase().indexOf("resource"));
-		}
-		return Inflector.tableize(resourceName);
 	}
 }

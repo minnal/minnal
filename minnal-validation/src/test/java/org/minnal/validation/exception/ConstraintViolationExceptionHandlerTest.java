@@ -4,8 +4,8 @@
 package org.minnal.validation.exception;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,10 +15,8 @@ import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
+import javax.ws.rs.core.Response;
 
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.minnal.core.Request;
-import org.minnal.core.Response;
 import org.minnal.validation.FieldError;
 import org.testng.annotations.Test;
 
@@ -40,11 +38,10 @@ public class ConstraintViolationExceptionHandlerTest {
 		when(violation.getInvalidValue()).thenReturn("dummy");
 		ConstraintViolationException exception = new ConstraintViolationException(Sets.newHashSet(violation));
 		ConstraintViolationExceptionHandler handler = new ConstraintViolationExceptionHandler();
-		Response response = mock(Response.class);
-		handler.handle(mock(Request.class), response, exception);
+		Response response = handler.toResponse(exception);
 		Map<String, List<FieldError>> message = new HashMap<String, List<FieldError>>();
-		message.put("field_errors", Arrays.asList(new FieldError("dummy_field", "dummy message", "dummy")));
-		verify(response).setContent(message);
-		verify(response).setStatus(HttpResponseStatus.UNPROCESSABLE_ENTITY);
+		message.put("fieldErrors", Arrays.asList(new FieldError("dummy_field", "dummy message", "dummy")));
+		assertEquals(response.getEntity(), message);
+		assertEquals(response.getStatus(), 422);
 	}
 }

@@ -9,6 +9,8 @@ import org.minnal.core.Bundle;
 import org.minnal.core.Container;
 import org.minnal.core.ContainerAdapter;
 import org.minnal.core.config.ApplicationConfiguration;
+import org.minnal.instrument.filter.ResponseTransformationFilter;
+import org.minnal.instrument.util.MinnalModule;
 
 /**
  * @author ganeshs
@@ -32,14 +34,17 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle<In
 	}
 
 	@Override
-	public void preMount(Application<ApplicationConfiguration> application) {
+	public void postMount(Application<ApplicationConfiguration> application) {
+		application.addFilter(ResponseTransformationFilter.class);
+		application.getObjectMapper().registerModule(new MinnalModule());
+		
 		if (application.getConfiguration().isInstrumentationEnabled()) {
 			createApplicationEnhancer(application).enhance();
 		}
 	}
 	
 	protected ApplicationEnhancer createApplicationEnhancer(Application<ApplicationConfiguration> application) {
-		return new ApplicationEnhancer(application);
+		return new MinnalApplicationEnhancer(application, new DefaultNamingStrategy());
 	}
 	
 	@Override

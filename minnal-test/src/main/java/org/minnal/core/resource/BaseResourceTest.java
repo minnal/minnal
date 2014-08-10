@@ -3,39 +3,39 @@
  */
 package org.minnal.core.resource;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpVersion;
+
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBufferInputStream;
-import org.jboss.netty.buffer.ChannelBufferOutputStream;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.handler.codec.http.DefaultHttpRequest;
-import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
-import org.jboss.netty.handler.codec.http.HttpHeaders;
-import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.jboss.netty.handler.codec.http.HttpRequest;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.minnal.autopojo.AutoPojoFactory;
 import org.minnal.autopojo.Configuration;
 import org.minnal.autopojo.GenerationStrategy;
 import org.minnal.autopojo.util.PropertyUtil;
+import org.minnal.core.Application;
 import org.minnal.core.Container;
+import org.minnal.core.JacksonProvider;
 import org.minnal.core.MinnalException;
-import org.minnal.core.Response;
 import org.minnal.core.Router;
-import org.minnal.core.serializer.Serializer;
+import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.server.MessageContext;
-import org.minnal.core.server.ServerRequest;
-import org.minnal.core.server.ServerResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -83,7 +83,7 @@ public abstract class BaseResourceTest {
 	
 	private Router router;
 	
-	protected Serializer serializer;
+	protected JacksonProvider provider;
 	
 	private static Container container = new Container();
 	
@@ -95,8 +95,9 @@ public abstract class BaseResourceTest {
 	
 	@BeforeMethod
 	public void beforeMethod() {
-		serializer = container.getConfiguration().getSerializer(container.getConfiguration().getDefaultMediaType());
 		router = container.getRouter();
+		Application<ApplicationConfiguration> application = container.getApplications().iterator().next();
+		provider = new JacksonProvider(application.getObjectMapper());
 		setup();
 	}
 	
@@ -120,59 +121,57 @@ public abstract class BaseResourceTest {
 		router.route(context);
 	}
 	
-	protected ServerRequest request(String uri, HttpMethod method, ChannelBuffer content) {
+	protected FullHttpRequest request(String uri, HttpMethod method, ByteBuf content) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
-			ByteStreams.copy(new ChannelBufferInputStream(content), bos);
+			ByteStreams.copy(new ByteBufInputStream(content), bos);
 			return request(uri, method, bos.toString(Charsets.UTF_8.name()), MediaType.JSON_UTF_8);
 		} catch (Exception e) {
 			throw new MinnalException(e);
 		}
 	}
 	
-	protected ServerRequest request(String uri, HttpMethod method) {
+	protected FullHttpRequest request(String uri, HttpMethod method) {
 		return request(uri, method, "", MediaType.JSON_UTF_8);
 	}
 	
-	protected ServerRequest request(String uri, HttpMethod method, String content) {
+	protected FullHttpRequest request(String uri, HttpMethod method, String content) {
 		return request(uri, method, content, MediaType.JSON_UTF_8);
 	}
 
-	protected ServerRequest request(String uri, HttpMethod method, String content, MediaType contentType) {
+	protected FullHttpRequest request(String uri, HttpMethod method, String content, MediaType contentType) {
 		return request(uri, method, content, contentType, Maps.<String, String>newHashMap());
 	}
 	
-	protected ServerRequest request(String uri, HttpMethod method, String content, MediaType contentType, Map<String, String> headers) {
-		HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, method, uri);
-		request.setContent(buffer(content));
-		request.setHeader(HttpHeaders.Names.CONTENT_TYPE, contentType.toString());
-		request.setHeader(HttpHeaders.Names.CONTENT_LENGTH, content.length());
-		request.setHeader(HttpHeaders.Names.ACCEPT, MediaType.ANY_TYPE);
-		ServerRequest serverRequest = new ServerRequest(request, InetSocketAddress.createUnresolved("localhost", 80));
-		serverRequest.addHeaders(headers);
-		return serverRequest;
+	protected FullHttpRequest request(String uri, HttpMethod method, String content, MediaType contentType, Map<String, String> headers) {
+		FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, method, uri);
+		request.content().writeBytes(buffer(content));
+		request.headers().add(HttpHeaders.Names.CONTENT_TYPE, contentType.toString());
+		request.headers().add(HttpHeaders.Names.CONTENT_LENGTH, content.length());
+		request.headers().add(HttpHeaders.Names.ACCEPT, MediaType.ANY_TYPE);
+		return request;
 	}
 	
-	protected ServerResponse response(ServerRequest request) {
-		return new ServerResponse(request, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.PROCESSING));
-	}
-	
-	protected ChannelBuffer buffer(String content) {
-		ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
-		ChannelBufferOutputStream os = new ChannelBufferOutputStream(buffer);
+	protected ByteBuf buffer(String content) {
+		ByteBuf buffer = Unpooled.buffer();
+		ByteBufOutputStream os = new ByteBufOutputStream(buffer);
 		try {
 			os.write(content.getBytes());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		} finally {
+			try {
+				os.close();
+			} catch (IOException e) {
+			}
 		}
 		return buffer;
 	}
 	
-	protected Response call(ServerRequest request) {
-		ServerResponse response = response(request);
-		MessageContext context = new MessageContext(request, response);
+	protected FullHttpResponse call(FullHttpRequest request) {
+		MessageContext context = new MessageContext(request, URI.create(""));
 		route(context);
-		return response;
+		return context.getResponse();
 	}
 	
 	protected <T> T createDomain(Class<T> clazz, Class<?>... genericTypes) {
@@ -201,5 +200,17 @@ public abstract class BaseResourceTest {
 			}
 		}
 		return true;
+	}
+	
+	protected ByteBuf serialize(Object value) {
+		return provider.serialize(value, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
+	}
+	
+	protected <T> T deserialize(ByteBuf byteBuf, Class<T> type) {
+		return (T) provider.deserialize(byteBuf, type, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
+	}
+	
+	protected <T> T deserializeCollection(ByteBuf byteBuf, Class<T> type, Class elementType) {
+		return (T) provider.deserializeCollection(byteBuf, type, elementType, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
 	}
 }

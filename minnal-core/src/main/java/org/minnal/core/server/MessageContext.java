@@ -3,13 +3,15 @@
  */
 package org.minnal.core.server;
 
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.minnal.core.Application;
 import org.minnal.core.config.ApplicationConfiguration;
-import org.minnal.core.resource.ResourceClass;
-import org.minnal.core.route.Route;
 
 
 /**
@@ -17,16 +19,16 @@ import org.minnal.core.route.Route;
  *
  */
 public class MessageContext {
-
-	private ServerRequest request;
 	
-	private ServerResponse response;
+	private URI baseUri;
+
+	private FullHttpRequest request;
+	
+	private FullHttpResponse response;
+	
+	private String matchedRoute;
 	
 	private Application<ApplicationConfiguration> application;
-	
-	private ResourceClass resourceClass;
-	
-	private Route route;
 	
 	private Map<String, Object> attributes = new HashMap<String, Object>();
 
@@ -34,23 +36,37 @@ public class MessageContext {
 	 * @param request
 	 * @param response
 	 */
-	public MessageContext(ServerRequest request, ServerResponse response) {
+	public MessageContext(FullHttpRequest request, URI baseUri) {
 		this.request = request;
-		this.response = response;
+		this.baseUri = baseUri;
 	}
 	
 	/**
+	 * @return the baseUri
+	 */
+	public URI getBaseUri() {
+		return baseUri;
+	}
+
+	/**
 	 * @return the request
 	 */
-	public ServerRequest getRequest() {
+	public FullHttpRequest getRequest() {
 		return request;
 	}
 
 	/**
 	 * @return the response
 	 */
-	public ServerResponse getResponse() {
+	public FullHttpResponse getResponse() {
 		return response;
+	}
+
+	/**
+	 * @param response the response to set
+	 */
+	public void setResponse(FullHttpResponse response) {
+		this.response = response;
 	}
 
 	/**
@@ -66,34 +82,6 @@ public class MessageContext {
 	public void setApplication(Application<ApplicationConfiguration> application) {
 		this.application = application;
 	}
-
-	/**
-	 * @return the route
-	 */
-	public Route getRoute() {
-		return route;
-	}
-
-	/**
-	 * @param route the route to set
-	 */
-	public void setRoute(Route route) {
-		this.route = route;
-	}
-
-	/**
-	 * @return the resourceClass
-	 */
-	public ResourceClass getResourceClass() {
-		return resourceClass;
-	}
-
-	/**
-	 * @param resourceClass the resourceClass to set
-	 */
-	public void setResourceClass(ResourceClass resourceClass) {
-		this.resourceClass = resourceClass;
-	}
 	
 	public void addAttribute(String name, Object value) {
 		this.attributes.put(name, value);
@@ -107,13 +95,26 @@ public class MessageContext {
 		return this.attributes.get(name);
 	}
 
+	/**
+	 * @return the matchedRoute
+	 */
+	public String getMatchedRoute() {
+		return matchedRoute;
+	}
+
+	/**
+	 * @param matchedRoute the matchedRoute to set
+	 */
+	public void setMatchedRoute(String matchedRoute) {
+		this.matchedRoute = matchedRoute;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("MessageContext [request=").append(request)
 				.append(", response=").append(response)
-				.append(", application=").append(application)
-				.append(", route=").append(route).append("]");
+				.append(", application=").append(application);
 		return builder.toString();
 	}
 

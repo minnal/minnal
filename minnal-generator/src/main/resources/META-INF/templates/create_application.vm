@@ -3,7 +3,6 @@ package $packageName;
 import org.minnal.core.Application;
 #if ($enableJpa)
 import org.minnal.jpa.JPAPlugin;
-import org.minnal.jpa.OpenSessionInViewFilter;
 #end
 
 public class ${applicationClassName} extends Application<${applicationConfigClassName}> {
@@ -15,17 +14,6 @@ public class ${applicationClassName} extends Application<${applicationConfigClas
 #end
 	}
 	
-	@Override
-	protected void addFilters() {
-#if ($enableJpa)
-		addFilter(new OpenSessionInViewFilter(getConfiguration().getDatabaseConfiguration()));
-#end
-	}
-
-	@Override
-	protected void defineRoutes() {
-	}
-
 	@Override
 	protected void defineResources() {
 	}

@@ -3,21 +3,21 @@
  */
 package org.minnal.examples.oms.resource;
 
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.minnal.core.Request;
-import org.minnal.core.Response;
-import org.minnal.core.resource.Resource;
-import org.minnal.examples.oms.domain.Order;
+import javax.ws.rs.Path;
+
+import com.wordnik.swagger.annotations.Api;
+
 
 /**
  * @author ganeshs
  * 
  */
-@Resource(Order.class)
+@Path("/orders")
+@Api("/orders")
 public class OrderResource {
 	
-	public void helloWorld(Request request, Response response) {
-		response.setContent("Hello");
-		response.setStatus(HttpResponseStatus.OK);
-	}
+//	@GET
+//	public Response getOrders() {
+//		return Response.ok("test").build();
+//	}
 }

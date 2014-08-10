@@ -38,9 +38,9 @@ public void $method_name() {
 	$model_class $field_name = createDomain(${model_class}.class);
 	${field_name}.persist(); 
 #end
-	Response response = call(request($url, HttpMethod.DELETE));
+	FullHttpResponse response = call(request($url, HttpMethod.DELETE));
 	assertEquals(response.getStatus(), HttpResponseStatus.NO_CONTENT);
-	response = call(request($url, HttpMethod.GET, Serializer.DEFAULT_JSON_SERIALIZER.serialize(${field_name})));
+	response = call(request($url, HttpMethod.GET, serialize(${field_name})));
 	assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 #set ($parent = false)
 }

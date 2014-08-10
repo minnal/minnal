@@ -1,12 +1,13 @@
 package org.minnal.examples.petclinic.domain.generated;
 
-import org.minnal.core.serializer.Serializer;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
+
 import org.minnal.core.resource.BaseJPAResourceTest;
 import org.testng.annotations.Test;
-import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.minnal.core.Response;
-import static org.testng.Assert.*;
 
 /**
  * This is an auto generated test class by minnal-generator
@@ -16,10 +17,11 @@ public class VetResourceTest extends BaseJPAResourceTest {
 	public void listVetTest() {
 		org.minnal.examples.petclinic.domain.Vet vet = createDomain(org.minnal.examples.petclinic.domain.Vet.class);
 		vet.persist();
-		Response response = call(request("/vets/", HttpMethod.GET));
+		FullHttpResponse response = call(request("/vets/",
+				HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer.deserializeCollection(
-				response.getContent(), java.util.List.class,
+		assertEquals(deserializeCollection(response.content(),
+				java.util.List.class,
 				org.minnal.examples.petclinic.domain.Vet.class)
 				.size(),
 				(int) org.minnal.examples.petclinic.domain.Vet
@@ -30,10 +32,10 @@ public class VetResourceTest extends BaseJPAResourceTest {
 	public void readVetTest() {
 		org.minnal.examples.petclinic.domain.Vet vet = createDomain(org.minnal.examples.petclinic.domain.Vet.class);
 		vet.persist();
-		Response response = call(request("/vets/" + vet.getId(),
-				HttpMethod.GET));
+		FullHttpResponse response = call(request(
+				"/vets/" + vet.getId(), HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer.deserialize(response.getContent(),
+		assertEquals(deserialize(response.content(),
 				org.minnal.examples.petclinic.domain.Vet.class)
 				.getId(), vet.getId());
 	}
@@ -41,9 +43,8 @@ public class VetResourceTest extends BaseJPAResourceTest {
 	@Test
 	public void createVetTest() {
 		org.minnal.examples.petclinic.domain.Vet vet = createDomain(org.minnal.examples.petclinic.domain.Vet.class);
-		Response response = call(request("/vets/", HttpMethod.POST,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(vet)));
+		FullHttpResponse response = call(request("/vets/",
+				HttpMethod.POST, serialize(vet)));
 		assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
 	}
 
@@ -54,10 +55,9 @@ public class VetResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Vet modifiedvet = createDomain(
 				org.minnal.examples.petclinic.domain.Vet.class,
 				1);
-		Response response = call(request("/vets/" + vet.getId(),
-				HttpMethod.PUT,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(modifiedvet)));
+		FullHttpResponse response = call(request(
+				"/vets/" + vet.getId(), HttpMethod.PUT,
+				serialize(modifiedvet)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		vet.merge();
@@ -68,13 +68,12 @@ public class VetResourceTest extends BaseJPAResourceTest {
 	public void deleteVetTest() {
 		org.minnal.examples.petclinic.domain.Vet vet = createDomain(org.minnal.examples.petclinic.domain.Vet.class);
 		vet.persist();
-		Response response = call(request("/vets/" + vet.getId(),
-				HttpMethod.DELETE));
+		FullHttpResponse response = call(request(
+				"/vets/" + vet.getId(), HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/vets/" + vet.getId(), HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(vet)));
+				serialize(vet)));
 		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 	}
 
@@ -87,14 +86,13 @@ public class VetResourceTest extends BaseJPAResourceTest {
 		vet.collection("specialties").add(specialty);
 		vet.persist();
 
-		Response response = call(request("/vets/" + vet.getId()
+		FullHttpResponse response = call(request("/vets/" + vet.getId()
 				+ "/specialties/", HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer
-				.deserializeCollection(
-						response.getContent(),
-						java.util.List.class,
-						org.minnal.examples.petclinic.domain.Specialty.class)
+		assertEquals(deserializeCollection(
+				response.content(),
+				java.util.List.class,
+				org.minnal.examples.petclinic.domain.Specialty.class)
 				.size(), vet.getSpecialties().size());
 	}
 
@@ -105,13 +103,13 @@ public class VetResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Specialty specialty = createDomain(org.minnal.examples.petclinic.domain.Specialty.class);
 		vet.collection("specialties").add(specialty);
 		vet.persist();
-		Response response = call(request("/vets/" + vet.getId()
+		FullHttpResponse response = call(request("/vets/" + vet.getId()
 				+ "/specialties/" + specialty.getId(),
 				HttpMethod.GET));
 		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(serializer
-				.deserialize(response.getContent(),
-						org.minnal.examples.petclinic.domain.Specialty.class)
+		assertEquals(deserialize(
+				response.content(),
+				org.minnal.examples.petclinic.domain.Specialty.class)
 				.getId(), specialty.getId());
 	}
 
@@ -120,10 +118,9 @@ public class VetResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Vet vet = createDomain(org.minnal.examples.petclinic.domain.Vet.class);
 		vet.persist();
 		org.minnal.examples.petclinic.domain.Specialty specialty = createDomain(org.minnal.examples.petclinic.domain.Specialty.class);
-		Response response = call(request("/vets/" + vet.getId()
+		FullHttpResponse response = call(request("/vets/" + vet.getId()
 				+ "/specialties/", HttpMethod.POST,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(specialty)));
+				serialize(specialty)));
 		assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
 	}
 
@@ -137,11 +134,9 @@ public class VetResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Specialty modifiedspecialty = createDomain(
 				org.minnal.examples.petclinic.domain.Specialty.class,
 				1);
-		Response response = call(request("/vets/" + vet.getId()
+		FullHttpResponse response = call(request("/vets/" + vet.getId()
 				+ "/specialties/" + specialty.getId(),
-				HttpMethod.PUT,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(modifiedspecialty)));
+				HttpMethod.PUT, serialize(modifiedspecialty)));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		specialty.merge();
@@ -155,16 +150,14 @@ public class VetResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.Specialty specialty = createDomain(org.minnal.examples.petclinic.domain.Specialty.class);
 		vet.collection("specialties").add(specialty);
 		vet.persist();
-		Response response = call(request("/vets/" + vet.getId()
+		FullHttpResponse response = call(request("/vets/" + vet.getId()
 				+ "/specialties/" + specialty.getId(),
 				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
 				HttpResponseStatus.NO_CONTENT);
 		response = call(request("/vets/" + vet.getId()
 				+ "/specialties/" + specialty.getId(),
-				HttpMethod.GET,
-				Serializer.DEFAULT_JSON_SERIALIZER
-						.serialize(specialty)));
+				HttpMethod.GET, serialize(specialty)));
 		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
 	}
 

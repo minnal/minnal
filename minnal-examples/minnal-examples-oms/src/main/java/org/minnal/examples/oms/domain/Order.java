@@ -21,6 +21,8 @@ import org.activejpa.entity.Model;
 import org.minnal.instrument.entity.Action;
 import org.minnal.instrument.entity.AggregateRoot;
 import org.minnal.instrument.entity.Searchable;
+import org.minnal.instrument.entity.Secure;
+import org.minnal.instrument.entity.Secure.Method;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -31,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @AggregateRoot
 @Entity
 @Table(name="Orders")
+@Secure(method=Method.GET, permissions={"test"})
 public class Order extends Model {
 	
 	/**

@@ -1,11 +1,10 @@
 package $package_name;
 
-import org.minnal.core.serializer.Serializer;
 import org.minnal.core.resource.BaseJPAResourceTest;
 import org.testng.annotations.Test;
-import org.jboss.netty.handler.codec.http.HttpMethod;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
-import org.minnal.core.Response;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.FullHttpResponse;
 import static org.testng.Assert.*;
 
 /**

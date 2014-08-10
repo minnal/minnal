@@ -1,0 +1,14 @@
+org.minnal.instrument.entity.metadata.handler.SearchableAnnotationHandler
+org.minnal.instrument.entity.metadata.handler.ActionAnnotationHandler
+org.minnal.instrument.entity.metadata.handler.OneToManyAnnotationHandler
+org.minnal.instrument.entity.metadata.handler.ManyToManyAnnotationHandler
+org.minnal.instrument.entity.metadata.handler.ManyToOneAnnotationHandler
+org.minnal.instrument.entity.metadata.handler.OneToOneAnnotationHandler
+org.minnal.instrument.entity.metadata.handler.EntityKeyAnnotationHandler
+org.minnal.instrument.resource.metadata.handler.PathAnnotationHandler
+org.minnal.instrument.resource.metadata.handler.GETAnnotationHandler
+org.minnal.instrument.resource.metadata.handler.POSTAnnotationHandler
+org.minnal.instrument.resource.metadata.handler.PUTAnnotationHandler
+org.minnal.instrument.resource.metadata.handler.DELETEAnnotationHandler
+org.minnal.instrument.resource.metadata.handler.HEADAnnotationHandler
+org.minnal.instrument.resource.metadata.handler.OPTIONSAnnotationHandler

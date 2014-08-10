@@ -3,62 +3,54 @@
  */
 package org.minnal.security.auth;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+
+import org.pac4j.core.profile.UserProfile;
 
 /**
  * @author ganeshs
  *
  */
 public class User implements Principal {
+	
+	private UserProfile profile;
 
-	private String name;
-	
-	private Map<String, Object> attributes;
-	
-	private List<Role> roles;
-	
-	private List<Permission> permissions;
-	
 	public User() {
 	}
 	
 	/**
-	 * @param name
-	 * @param attributes
+	 * @param profile
 	 */
-	public User(String name, Map<String, Object> attributes) {
-		this.name = name;
-		this.attributes = attributes;
+	public User(UserProfile profile) {
+		this.profile = profile;
 	}
 
 	/**
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return profile.getId();
 	}
 
 	/**
 	 * @return the attributes
 	 */
 	public Map<String, Object> getAttributes() {
-		return Collections.unmodifiableMap(attributes);
+		return profile.getAttributes();
 	}
 	
 	public Object getAttribute(String attribute) {
-		return attributes.get(attribute);
+		return profile.getAttribute(attribute);
 	}
 	
-	public List<Role> getRoles() {
-		return roles;
+	public List<String> getRoles() {
+		return profile.getRoles();
 	}
 	
-	@Override
-	public List<Permission> getPermissions() {
-		return permissions;
+	public List<String> getPermissions() {
+		return profile.getPermissions();
 	}
 	
 	/**
@@ -67,11 +59,11 @@ public class User implements Principal {
 	 * @param permissions
 	 * @return
 	 */
-	public boolean hasPermissions(List<Permission> permissions) {
+	public boolean hasPermissions(List<String> permissions) {
 		if (permissions == null) {
 			return false;
 		}
-		return this.permissions.containsAll(permissions);
+		return getPermissions().containsAll(permissions);
 	}
 	
 	/**
@@ -80,38 +72,28 @@ public class User implements Principal {
 	 * @param permission
 	 * @return
 	 */
-	public boolean hasPermission(Permission permission) {
-		if (permissions == null) {
+	public boolean hasPermission(String permission) {
+		if (getPermissions() == null) {
 			return false;
 		}
-		return this.roles.contains(permission);
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * @param attributes the attributes to set
-	 */
-	void setAttributes(Map<String, Object> attributes) {
-		this.attributes = attributes;
+		return getPermissions().contains(permission);
 	}
 
 	/**
 	 * @param roles the roles to set
 	 */
-	void setRoles(List<Role> roles) {
-		this.roles = roles;
+	void setRoles(List<String> roles) {
+		for (String role : roles) {
+			profile.addRole(role);
+		}
 	}
 
 	/**
 	 * @param permissions the permissions to set
 	 */
-	void setPermissions(List<Permission> permissions) {
-		this.permissions = permissions;
+	void setPermissions(List<String> permissions) {
+		for (String permission : permissions) {
+			profile.addPermission(permission);
+		}
 	}
 }

@@ -5,8 +5,8 @@ package org.minnal.jpa.entity;
 
 import javax.persistence.Entity;
 
-import org.minnal.core.scanner.AbstractScanner;
-import org.minnal.core.scanner.Scanner;
+import org.minnal.utils.scanner.AbstractScanner;
+import org.minnal.utils.scanner.Scanner;
 
 /**
  * @author ganeshs
