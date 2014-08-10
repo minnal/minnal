@@ -1,8 +1,8 @@
 language: java
+after_success: mvn cobertura:cobertura coveralls:cobertura
 jdk:
   - oraclejdk7
   - openjdk7
-  - openjdk6
 branches:
   only:
     - master
