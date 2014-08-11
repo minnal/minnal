@@ -33,14 +33,20 @@ public class SimpleAuthorizer implements Authorizer {
 
 	@Override
 	public boolean authorize(User user, List<String> permissions) {
-		if (user.getRoles() != null || user.getRoles().isEmpty()) {
-			user.setRoles(roleMapper.getRoles(user));
+		if (user.getRoles() == null || user.getRoles().isEmpty()) {
+			List<String> roles = roleMapper.getRoles(user);
+			if (roles != null) {
+				user.setRoles(roles);
+			}
 		}
 		if (user.getPermissions() == null || user.getPermissions().isEmpty()) {
 			List<String> perms = new ArrayList<String>();
 			if (user.getRoles() != null) {
 				for (String role : user.getRoles()) {
-					perms.addAll(permissionMapper.getPermissions(role));
+					List<String> rolePerms = permissionMapper.getPermissions(role);
+					if (rolePerms != null) {
+						perms.addAll(rolePerms);
+					}
 				}
 			}
 			user.setPermissions(perms);

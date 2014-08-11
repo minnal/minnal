@@ -11,8 +11,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.StatusType;
+import javax.ws.rs.core.Response.Status.Family;
 
+import org.glassfish.jersey.message.internal.OutboundJaxrsResponse;
+import org.glassfish.jersey.message.internal.OutboundMessageContext;
 import org.minnal.core.MinnalException;
 import org.minnal.security.session.Session;
 import org.pac4j.core.context.WebContext;
@@ -25,7 +29,9 @@ public class JaxrsWebContext implements WebContext {
 	
 	private ContainerRequestContext request;
 	
-	private ContainerResponseContext response;
+	private Response response;
+	
+	private OutboundMessageContext context;
 	
 	private Session session;
 
@@ -34,10 +40,11 @@ public class JaxrsWebContext implements WebContext {
 	 * @param response
 	 * @param session
 	 */
-	public JaxrsWebContext(ContainerRequestContext request, ContainerResponseContext response, Session session) {
+	public JaxrsWebContext(ContainerRequestContext request, OutboundMessageContext context, Session session) {
 		this.request = request;
-		this.response = response;
+		this.context = context;
 		this.session = session;
+		this.response = new OutboundJaxrsResponse.Builder(context).build();
 	}
 
 	/**
@@ -50,7 +57,7 @@ public class JaxrsWebContext implements WebContext {
 	/**
 	 * @return the response
 	 */
-	public ContainerResponseContext getResponse() {
+	public Response getResponse() {
 		return response;
 	}
 
@@ -99,7 +106,7 @@ public class JaxrsWebContext implements WebContext {
 	@Override
 	public void writeResponseContent(String content) {
 		try {
-			response.getEntityStream().write(content.getBytes());
+			context.getEntityStream().write(content.getBytes());
 		} catch (IOException e) {
 			// TODO log error
 			throw new MinnalException(e);
@@ -107,8 +114,27 @@ public class JaxrsWebContext implements WebContext {
 	}
 
 	@Override
-	public void setResponseStatus(int code) {
-		response.setStatus(code);
+	public void setResponseStatus(final int code) {
+		StatusType type = Response.Status.fromStatusCode(code);
+		if (type == null) {
+			type = new StatusType() {
+				@Override
+				public int getStatusCode() {
+					return code;
+				}
+				
+				@Override
+				public String getReasonPhrase() {
+					return null;
+				}
+				
+				@Override
+				public Family getFamily() {
+					return Family.familyOf(code);
+				}
+			};
+		}
+		response = new OutboundJaxrsResponse(type, context);
 	}
 
 	@Override
@@ -134,5 +160,4 @@ public class JaxrsWebContext implements WebContext {
 	public String getFullRequestURL() {
 		return request.getUriInfo().getRequestUri().toASCIIString();
 	}
-
 }

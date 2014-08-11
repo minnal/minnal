@@ -3,7 +3,6 @@
  */
 package org.minnal.security.filter;
 
-import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Priority;
@@ -11,7 +10,6 @@ import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.minnal.security.auth.JaxrsWebContext;
 import org.minnal.security.config.SecurityConfiguration;
@@ -38,25 +36,28 @@ public class CallbackFilter extends AuthenticationFilter {
 	}
 
 	@Override
-	public void filter(ContainerRequestContext request) throws IOException {
+	public void filter(ContainerRequestContext request) {
 		URI uri = URI.create(getClients().getCallbackUrl());
-		if (! request.getUriInfo().getRequestUri().getPath().equalsIgnoreCase(uri.getPath())) {
+		if (! request.getUriInfo().getPath().equalsIgnoreCase(uri.getPath())) {
 			return;
 		}
 		Session session = getSession(request, true);
 		Client client = getClient(session);
-		
-		Response resp = RuntimeDelegate.getInstance().createResponseBuilder().build();
-		JaxrsWebContext context = getContext(request, resp, session);
-		try {
-			Credentials credentials = client.getCredentials(context);
-			UserProfile userProfile = client.getUserProfile(credentials, context);
-			session.addAttribute(PRINCIPAL, userProfile);
-			context.getResponse().setStatusInfo(Response.Status.OK);
-		} catch (RequiresHttpAction e) {
-			context.getResponse().setStatus(e.getCode());
+		JaxrsWebContext context = getContext(request, session);
+		if (client == null) {
+			context.setResponseStatus(422);
+		} else {
+			try {
+				Credentials credentials = client.getCredentials(context);
+				UserProfile userProfile = client.getUserProfile(credentials, context);
+				session.addAttribute(PRINCIPAL, userProfile);
+				getConfiguration().getSessionStore().save(session);
+				context.setResponseStatus(Response.Status.OK.getStatusCode());
+			} catch (RequiresHttpAction e) {
+				context.setResponseStatus(e.getCode());
+			}
 		}
-		request.abortWith(resp);
+		request.abortWith(context.getResponse());
 	}
 
 }

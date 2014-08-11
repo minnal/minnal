@@ -28,6 +28,13 @@ public class User implements Principal {
 	}
 
 	/**
+	 * @return the profile
+	 */
+	public UserProfile getProfile() {
+		return profile;
+	}
+
+	/**
 	 * @return the name
 	 */
 	public String getName() {

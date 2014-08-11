@@ -9,6 +9,7 @@ import org.minnal.security.auth.Authorizer;
 import org.minnal.security.auth.User;
 import org.minnal.security.filter.AuthenticationFilter;
 import org.minnal.security.session.Session;
+import org.pac4j.core.profile.UserProfile;
 
 /**
  * @author ganeshs
@@ -31,7 +32,11 @@ public class MinnalSecurityContext implements SecurityContext {
 
 	@Override
 	public User getUserPrincipal() {
-		return session.getAttribute(AuthenticationFilter.PRINCIPAL);
+		UserProfile profile = session.getAttribute(AuthenticationFilter.PRINCIPAL);
+		if (profile != null) {
+			return new User(profile);
+		}
+		return null;
 	}
 
 	@Override

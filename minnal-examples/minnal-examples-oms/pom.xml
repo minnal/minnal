@@ -95,6 +95,11 @@
 			<optional>true</optional>
 			<version>2.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.minnal</groupId>
+			<artifactId>minnal-security</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @AggregateRoot
 @Entity
 @Table(name="Orders")
-@Secure(method=Method.GET, permissions={"test"})
+@Secure(method=Method.GET, permissions={"view_order"})
 public class Order extends Model {
 	
 	/**

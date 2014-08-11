@@ -3,8 +3,6 @@
  */
 package org.minnal.security.filter;
 
-import java.io.IOException;
-
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -31,7 +29,7 @@ public class SecurityContextFilter extends AbstractSecurityFilter implements Con
 	}
 
 	@Override
-	public void filter(ContainerRequestContext request) throws IOException {
+	public void filter(ContainerRequestContext request) {
 		Session session = getSession(request, true);
 		MinnalSecurityContext context = new MinnalSecurityContext(getConfiguration().getAuthorizer(), session);
 		request.setSecurityContext(context);
