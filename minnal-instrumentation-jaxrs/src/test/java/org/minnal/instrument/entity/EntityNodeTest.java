@@ -18,6 +18,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import org.activejpa.entity.Model;
+import org.minnal.instrument.DefaultNamingStrategy;
+import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.EntityMetaDataProvider;
 import org.minnal.utils.Node.PathVisitor;
@@ -30,49 +32,51 @@ import org.testng.annotations.Test;
 public class EntityNodeTest {
 	
 	private EntityNode entityNode;
+	
+	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
 
 	@Test
 	public void shouldConstructEntityTree() {
-		entityNode = new EntityNode(CompositeModel.class);
+		entityNode = new EntityNode(CompositeModel.class, namingStrategy);
 		entityNode.construct();
 		assertEquals(entityNode.getChildren().size(), 2);
 	}
 	
 	@Test
 	public void shouldPopulateEntityNodeName() {
-		entityNode = new EntityNode(CompositeModel.class);
+		entityNode = new EntityNode(CompositeModel.class, namingStrategy);
 		assertEquals(entityNode.getName(), "compositeModel");
 	}
 	
 	@Test
 	public void shouldPopulateEntityResourceName() {
-		entityNode = new EntityNode(CompositeModel.class);
+		entityNode = new EntityNode(CompositeModel.class, namingStrategy);
 		assertEquals(entityNode.getResourceName(), "composite_models");
 	}
 	
 	@Test
 	public void shouldPopulateEntityMetaData() {
-		entityNode = new EntityNode(Parent.class);
+		entityNode = new EntityNode(Parent.class, namingStrategy);
 		assertEquals(entityNode.getEntityMetaData(), EntityMetaDataProvider.instance().getEntityMetaData(Parent.class));
 	}
 	
 	@Test
 	public void shouldPopulateEntityMetaDataWithoutLooping() {
-		entityNode = new EntityNode(CompositeModel.class);
+		entityNode = new EntityNode(CompositeModel.class, namingStrategy);
 		entityNode.construct();
 		assertEquals(entityNode.getEntityMetaData(), EntityMetaDataProvider.instance().getEntityMetaData(CompositeModel.class));
 	}
 	
 	@Test
 	public void shouldPopulateEntityMetaDataWithBidirectionalAssociation() {
-		entityNode = new EntityNode(Employee.class);
+		entityNode = new EntityNode(Employee.class, namingStrategy);
 		entityNode.construct();
 		assertEquals(entityNode.getEntityMetaData(), EntityMetaDataProvider.instance().getEntityMetaData(Employee.class));
 	}
 	
 	@Test
 	public void shouldCreateEntityNodePath() {
-		entityNode = new EntityNode(Parent.class);
+		entityNode = new EntityNode(Parent.class, namingStrategy);
 		entityNode.construct();
 		List<EntityNode> path = Arrays.asList(entityNode, entityNode.getChildren().iterator().next());
 		assertEquals(entityNode.createNodePath(path), entityNode.new EntityNodePath(path));
@@ -80,7 +84,7 @@ public class EntityNodeTest {
 	
 	@Test
 	public void shouldTraverseEntityTree() {
-		entityNode = new EntityNode(Parent.class);
+		entityNode = new EntityNode(Parent.class, namingStrategy);
 		entityNode.construct();
 		PathVisitor<EntityNodePath, EntityNode> visitor = mock(PathVisitor.class);
 		entityNode.traverse(visitor);
@@ -90,7 +94,7 @@ public class EntityNodeTest {
 	
 	@Test
 	public void shouldGetEntityNodePathForPathString() {
-		entityNode = new EntityNode(Parent.class);
+		entityNode = new EntityNode(Parent.class, namingStrategy);
 		entityNode.construct();
 		EntityNodePath path = entityNode.getEntityNodePath("children");
 		assertEquals(path.getBulkPath(), "/parents/{parent_id}/children");

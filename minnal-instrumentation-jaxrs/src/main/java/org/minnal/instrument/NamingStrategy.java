@@ -30,11 +30,47 @@ public interface NamingStrategy {
 	String getResourceName(String entityName);
 	
 	/**
-	 * Return back the sub resource name given a collection field name
-	 * 
-	 * @param collectionName
+	 * @param entityName
 	 * @return
 	 */
-	String getSubResourceName(String collectionName);
+	String getResourceName(Class<?> entityClass);
+	
+	/**
+	 * @param entityName
+	 * @return
+	 */
+	String getPathSegment(String segment);
+	
+	/**
+	 * Return back the entity resource name given a collection field name
+	 * 
+	 * @param name
+	 * @return
+	 */
+	String getEntityCollectionName(String name);
+	
+	/**
+	 * Returns the resource class name from the entity class
+	 * 
+	 * @param entityClass
+	 * @return
+	 */
+	String getResourceClassName(Class<?> entityClass);
+	
+	/**
+	 * Returns the resource wrapper class name from the resource class
+	 * 
+	 * @param resourceClass
+	 * @return
+	 */
+	String getResourceWrapperClassName(Class<?> resourceClass);
+	
+	/**
+	 * Returns the query param name
+	 * 
+	 * @param name
+	 * @return
+	 */
+	String getQueryParamName(String name);
 	
 }

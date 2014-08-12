@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.activejpa.entity.Model;
+import org.minnal.instrument.DefaultNamingStrategy;
+import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.utils.route.QueryParam;
 import org.minnal.utils.route.QueryParam.Type;
@@ -31,9 +33,11 @@ public class EntityNodePathTest {
 	
 	private EntityNode node;
 	
+	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	
 	@BeforeMethod
 	public void setup() {
-		node = new EntityNode(Parent.class);
+		node = new EntityNode(Parent.class, namingStrategy);
 		node.construct();
 	}
 	

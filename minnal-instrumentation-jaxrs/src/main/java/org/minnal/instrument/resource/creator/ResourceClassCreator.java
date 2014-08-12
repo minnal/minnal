@@ -12,6 +12,7 @@ import javassist.bytecode.annotation.StringMemberValue;
 import javax.ws.rs.Path;
 
 import org.minnal.instrument.MinnalInstrumentationException;
+import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.instrument.util.JavassistUtils;
 import org.slf4j.Logger;
@@ -34,16 +35,19 @@ public class ResourceClassCreator {
 	private static final Logger logger = LoggerFactory.getLogger(ResourceClassCreator.class);
 	
 	private ClassPool classPool = ClassPool.getDefault();
+	
+	private NamingStrategy namingStrategy;
 
 	/**
 	 * @param resource
 	 * @param entityClass
 	 * @param path
 	 */
-	public ResourceClassCreator(ResourceMetaData resource, Class<?> entityClass, String path) {
+	public ResourceClassCreator(ResourceMetaData resource, NamingStrategy namingStrategy, Class<?> entityClass, String path) {
 		this.resource = resource;
 		this.entityClass = entityClass;
 		this.path = path;
+		this.namingStrategy = namingStrategy;
 	}
 	
 	/**
@@ -75,7 +79,7 @@ public class ResourceClassCreator {
 			try {
 				CtClass superClass = classPool.get(resource.getResourceClass().getName());
 				superClass.defrost();
-				ctClass = classPool.makeClass(resource.getResourceClass().getName() + "Wrapper", superClass);
+				ctClass = classPool.makeClass(namingStrategy.getResourceWrapperClassName(resource.getResourceClass()), superClass);
 			} catch (Exception e) {
 				logger.error("Failed while creating the generated class for the resource - " + resource.getResourceClass(), e);
 				throw new MinnalInstrumentationException("Failed while creating the generated class", e);
@@ -87,7 +91,7 @@ public class ResourceClassCreator {
 			}
 			
 			logger.debug("Creating the generated class for the entity {}", entityClass);
-			ctClass = classPool.makeClass(entityClass.getName() + "Resource");
+			ctClass = classPool.makeClass(namingStrategy.getResourceClassName(entityClass));
 		}
 		
 		ConstPool constPool = ctClass.getClassFile().getConstPool();

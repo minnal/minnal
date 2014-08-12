@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.minnal</groupId>
 	<artifactId>minnal</artifactId>
@@ -118,7 +119,7 @@
 					<merge>true</merge>
 				</configuration>
 				<executions>
-					<!-- run site-maven-plugin's 'site' target as part of the build's normal
+					<!-- run site-maven-plugin's 'site' target as part of the build's normal 
 						'deploy' phase -->
 					<execution>
 						<goals>
@@ -129,22 +130,22 @@
 				</executions>
 			</plugin>
 			<plugin>
-		                <groupId>org.codehaus.mojo</groupId>
-		                <artifactId>cobertura-maven-plugin</artifactId>
-		                <version>2.6</version>
-		                <configuration>
-		                	<formats>
-		                    		<format>xml</format>
-		                    		<format>html</format>
-		                    	</formats>
-		                    	<aggregate>true</aggregate>
-                		</configuration>
-            		</plugin>
-            		<plugin>
-                		<groupId>org.eluder.coveralls</groupId>
-                		<artifactId>coveralls-maven-plugin</artifactId>
-                		<version>2.2.0</version>
-            		</plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<formats>
+						<format>xml</format>
+						<format>html</format>
+					</formats>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>2.2.0</version>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -179,7 +180,7 @@
 			</properties>
 		</profile>
 
-    <profile>
+		<profile>
 			<id>default-alt-profile</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
@@ -218,7 +219,7 @@
 		</repository>
 		<repository>
 			<id>autopojo-releases-repo</id>
-      <url>https://raw.github.com/minnal/mvn-repo/master/releases</url>
+			<url>https://raw.github.com/minnal/mvn-repo/master/releases</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
@@ -230,12 +231,12 @@
 		<repository>
 			<id>github-releases-repo</id>
 			<name>GitHub ${project.artifactId} Releases Repository</name>
-      <url>https://raw.github.com/minnal/mvn-repo/master/releases</url>
+			<url>https://raw.github.com/minnal/mvn-repo/master/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>github-snapshots-repo</id>
 			<name>GitHub ${project.artifactId} Snapshots Repository</name>
-      <url>https://raw.github.com/minnal/mvn-repo/master/snapshots</url>
+			<url>https://raw.github.com/minnal/mvn-repo/master/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 </project>

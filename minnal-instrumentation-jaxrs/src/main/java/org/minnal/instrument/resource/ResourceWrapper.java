@@ -5,7 +5,6 @@ package org.minnal.instrument.resource;
 
 import java.util.Set;
 
-import javassist.ClassPool;
 import javassist.CtClass;
 
 import org.javalite.common.Inflector;
@@ -36,8 +35,6 @@ public class ResourceWrapper {
 	
 	private CtClass generatedClass;
 	
-	private ClassPool classPool = ClassPool.getDefault();
-	
 	private ResourceMetaData resource;
 	
 	private Class<?> entityClass;
@@ -64,7 +61,7 @@ public class ResourceWrapper {
 	 * Initializes the wrapper
 	 */
 	protected void init() {
-		this.path = resource != null ? resource.getPath() : namingStrategy.getResourceName(namingStrategy.getEntityName(entityClass));
+		this.path = resource != null ? resource.getPath() : namingStrategy.getResourceName(entityClass);
 		this.generatedClass = getResourceClassCreator().create();
 	}
 	
@@ -74,25 +71,25 @@ public class ResourceWrapper {
 	 * @return
 	 */
 	protected ResourceClassCreator getResourceClassCreator() {
-		return new ResourceClassCreator(resource, entityClass, path);
+		return new ResourceClassCreator(resource, namingStrategy, entityClass, path);
 	}
 	
 	public void addPath(EntityNodePath path) {
 		logger.debug("Adding the path {}", path);
 		try {
 			if (path.isReadAllowed()) { 
-				getReadMethodCreator(new ResourcePath(path, false)).create();
-				getListMethodCreator(new ResourcePath(path, true)).create();
+				getReadMethodCreator(new ResourcePath(path, false, namingStrategy)).create();
+				getListMethodCreator(new ResourcePath(path, true, namingStrategy)).create();
 			}
 			if (path.isCreateAllowed()) {
-				getCreateMethodCreator(new ResourcePath(path, true)).create();
+				getCreateMethodCreator(new ResourcePath(path, true, namingStrategy)).create();
 			}
 			if (path.isUpdateAllowed()) {
-				getUpdateMethodCreator(new ResourcePath(path, false)).create();
-				addActionMethods(new ResourcePath(path, false));
+				getUpdateMethodCreator(new ResourcePath(path, false, namingStrategy)).create();
+				addActionMethods(new ResourcePath(path, false, namingStrategy));
 			}
 			if (path.isDeleteAllowed()) {
-				getDeleteMethodCreator(new ResourcePath(path, false)).create();
+				getDeleteMethodCreator(new ResourcePath(path, false, namingStrategy)).create();
 			}
 		} catch (Exception e) {
 			logger.error("Failed while adding the path", e);
@@ -136,7 +133,7 @@ public class ResourceWrapper {
 		ResourcePath actionPath = null;
 		for (ActionMetaData action : actions) {
 			EntityNodePath path = node.getEntityNodePath(action.getPath());
-			actionPath = new ResourcePath(path, action.getName());
+			actionPath = new ResourcePath(path, action.getName(), namingStrategy);
 			getActionMethodCreator(actionPath, action).create();
 		}
 	}
@@ -181,21 +178,26 @@ public class ResourceWrapper {
 		
 		private String action;
 		
+		private NamingStrategy namingStrategy;
+		
 		/**
 		 * @param nodePath
 		 * @param bulk
+		 * @param namingStrategy
 		 */
-		public ResourcePath(EntityNodePath nodePath, boolean bulk) {
+		public ResourcePath(EntityNodePath nodePath, boolean bulk, NamingStrategy namingStrategy) {
 			this.nodePath = nodePath;
 			this.bulk = bulk;
+			this.namingStrategy = namingStrategy;
 		}
 		
 		/**
 		 * @param nodePath
 		 * @param action
+		 * @param namingStrategy
 		 */
-		public ResourcePath(EntityNodePath nodePath, String action) {
-			this(nodePath, false);
+		public ResourcePath(EntityNodePath nodePath, String action, NamingStrategy namingStrategy) {
+			this(nodePath, false, namingStrategy);
 			this.action = action;
 		}
 		
@@ -224,7 +226,7 @@ public class ResourceWrapper {
 		 * @return the action
 		 */
 		public String getActionPath() {
-			return getSinglePath() + "/" + Inflector.underscore(action);
+			return getSinglePath() + "/" + namingStrategy.getPathSegment(action);
 		}
 		
 		public String getSinglePath() {

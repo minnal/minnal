@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.javalite.common.Inflector;
 import org.minnal.instrument.MinnalInstrumentationException;
+import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.AssociationMetaData;
 import org.minnal.instrument.entity.metadata.CollectionMetaData;
@@ -43,20 +44,23 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	
 	private CollectionMetaData source;
 	
+	private NamingStrategy namingStrategy;
+	
 	private static final Logger logger = LoggerFactory.getLogger(EntityNode.class);
 	
-	public EntityNode(Class<?> entityClass) {
-		this(entityClass, Inflector.camelize(Inflector.underscore(entityClass.getSimpleName()), false));
+	public EntityNode(Class<?> entityClass, NamingStrategy namingStrategy) {
+		this(entityClass, namingStrategy.getEntityName(entityClass), namingStrategy);
 	}
 	
-	public EntityNode(Class<?> entityClass, String name) {
+	public EntityNode(Class<?> entityClass, String name, NamingStrategy namingStrategy) {
 		super(EntityMetaDataProvider.instance().getEntityMetaData(entityClass));
 		this.name = name;
-		this.resourceName = Inflector.tableize(name);
+		this.resourceName = namingStrategy.getResourceName(name);
+		this.namingStrategy = namingStrategy;
 	}
 	
-	EntityNode(CollectionMetaData collection) {
-		this(collection.getElementType(), Inflector.singularize(collection.getName()));
+	EntityNode(CollectionMetaData collection, NamingStrategy namingStrategy) {
+		this(collection.getElementType(), namingStrategy.getEntityCollectionName(collection.getName()), namingStrategy);
 		this.source = collection;
 	}
 	
@@ -71,7 +75,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 				if (! collection.isEntity()) {
 					continue;
 				}
-				EntityNode child = new EntityNode(collection);
+				EntityNode child = new EntityNode(collection, namingStrategy);
 				if (node.addChild(child) != null) {
 					queue.offer(child);
 				}
@@ -148,7 +152,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		if (nodes != null) {
 			for (String node : nodes ) {
 				list.add(lastNode);
-				lastNode = lastNode.getChild(node);
+				lastNode = lastNode.getChild(namingStrategy.getEntityCollectionName(node));
 				if (lastNode == null) {
 					logger.error("Invalid path - {} for the node - {}", path, getName());
 					throw new MinnalInstrumentationException("Invalid path - " + path + " for the node - " + getName());
@@ -160,7 +164,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 	}
 	
 	protected EntityNode getChild(String name) {
-		name = Inflector.underscore(name);
+		name = namingStrategy.getResourceName(name);
 		for (EntityNode child : getChildren()) {
 			if (child.getResourceName().equals(name)) {
 				return child;
@@ -239,7 +243,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 				pathName.append(node.getName());
 				writer.append("/").append(name);
 				if (iterator.hasNext()) {
-					writer.append("/{" + Inflector.underscore(node.getName()) + "_id}");
+					writer.append("/{" + namingStrategy.getPathSegment(node.getName() + "Id") + "}");
 					pathName.append("_");
 				}
 				
@@ -260,15 +264,15 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 			QueryParam param = null;
 			prefix = prefix.isEmpty() ? prefix : prefix + ".";
 			for (ParameterMetaData meta : node.getEntityMetaData().getSearchFields()) {
-				param = new QueryParam(prefix + Inflector.underscore(meta.getFieldName()), Type.typeOf(meta.getType()), "The " + meta.getFieldName());
+				param = new QueryParam(prefix + namingStrategy.getQueryParamName(meta.getFieldName()), Type.typeOf(meta.getType()), "The " + meta.getFieldName());
 				queryParams.add(param);
 			}
 			for (AssociationMetaData meta : node.getEntityMetaData().getAssociations()) {
 				if (meta.isEntity()) {
-					String assocPrefix = prefix + Inflector.underscore(meta.getName()) + ".";
+					String assocPrefix = prefix + namingStrategy.getQueryParamName(meta.getName()) + ".";
 					EntityMetaData data = EntityMetaDataProvider.instance().getEntityMetaData(meta.getType());
 					for (ParameterMetaData paramMeta : data.getSearchFields()) {
-						param = new QueryParam(assocPrefix + Inflector.underscore(paramMeta.getFieldName()), Type.typeOf(paramMeta.getType()), "The " + paramMeta.getFieldName());
+						param = new QueryParam(assocPrefix + namingStrategy.getQueryParamName(paramMeta.getFieldName()), Type.typeOf(paramMeta.getType()), "The " + paramMeta.getFieldName());
 						queryParams.add(param);
 					}
 				}

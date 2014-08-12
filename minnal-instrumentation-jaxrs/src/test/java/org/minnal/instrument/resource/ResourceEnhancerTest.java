@@ -19,6 +19,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.activejpa.entity.Model;
+import org.minnal.instrument.DefaultNamingStrategy;
+import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.instrument.resource.metadata.ResourceMetaDataProvider;
@@ -37,6 +39,8 @@ public class ResourceEnhancerTest {
 	
 	private Class<?> entityClass;
 	
+	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	
 	@BeforeMethod
 	public void setup() {
 		wrapper = mock(ResourceWrapper.class);
@@ -46,7 +50,7 @@ public class ResourceEnhancerTest {
 
 	@Test
 	public void shouldEnhanceResource() {
-		ResourceEnhancer enhancer = spy(new ResourceEnhancer(resource, entityClass));
+		ResourceEnhancer enhancer = spy(new ResourceEnhancer(resource, entityClass, namingStrategy));
 		doReturn(wrapper).when(enhancer).createResourceWrapper();
 		enhancer.enhance();
 		verify(wrapper, times(2)).addPath(any(EntityNodePath.class));

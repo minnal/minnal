@@ -16,6 +16,8 @@ import org.javalite.common.Inflector;
 import org.minnal.core.MinnalException;
 import org.minnal.generator.core.AbstractTemplateGenerator;
 import org.minnal.generator.util.CodeUtils;
+import org.minnal.instrument.DefaultNamingStrategy;
+import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.utils.Node.PathVisitor;
@@ -30,6 +32,8 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 	private Class<?> entityClass;
 	
 	private List<EntityNodePath> paths = new ArrayList<EntityNode.EntityNodePath>();
+	
+	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
 	
 	private static Template createMethodTestTemplate = engine.getTemplate("META-INF/templates/create_method_test.vm");
 	
@@ -52,7 +56,7 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 	}
 	
 	public void init() {
-		EntityNode tree = new EntityNode(entityClass);
+		EntityNode tree = new EntityNode(entityClass, namingStrategy);
 		tree.construct();
 		tree.traverse(new PathVisitor<EntityNodePath, EntityNode>() {
 			@Override

@@ -28,7 +28,32 @@ public class DefaultNamingStrategy implements NamingStrategy {
 	}
 
 	@Override
-	public String getSubResourceName(String collectionName) {
-		return Inflector.underscore(collectionName);
+	public String getEntityCollectionName(String name) {
+		return Inflector.singularize(name);
+	}
+
+	@Override
+	public String getResourceClassName(Class<?> entityClass) {
+		return entityClass.getName() + "Resource";
+	}
+
+	@Override
+	public String getResourceWrapperClassName(Class<?> resourceClass) {
+		return resourceClass.getName() + "Wrapper";
+	}
+
+	@Override
+	public String getPathSegment(String segment) {
+		return Inflector.underscore(segment);
+	}
+
+	@Override
+	public String getResourceName(Class<?> entityClass) {
+		return getResourceName(getEntityName(entityClass));
+	}
+
+	@Override
+	public String getQueryParamName(String name) {
+		return Inflector.underscore(name);
 	}
 }

@@ -65,7 +65,7 @@ public class ApplicationEnhancer {
 			ResourceMetaData resource = ResourceMetaDataProvider.instance().getResourceMetaData(resourceClass);
 			String path = HttpUtil.getRootSegment(resource.getPath());
 			for (Class<?> entityClass : entities) {
-				String rootPath = HttpUtil.structureUrl(namingStrategy.getResourceName(entityClass.getSimpleName()));
+				String rootPath = HttpUtil.structureUrl(namingStrategy.getResourceName(entityClass));
 				if (path.equals(rootPath)) {
 					entities.remove(entityClass);
 					addResource(createEnhancer(resource, entityClass).enhance());
@@ -128,6 +128,6 @@ public class ApplicationEnhancer {
 	 * @return
 	 */
 	protected ResourceEnhancer createEnhancer(ResourceMetaData resource, Class<?> entityClass) {
-		return new ResourceEnhancer(resource, entityClass);
+		return new ResourceEnhancer(resource, entityClass, namingStrategy);
 	}
 }

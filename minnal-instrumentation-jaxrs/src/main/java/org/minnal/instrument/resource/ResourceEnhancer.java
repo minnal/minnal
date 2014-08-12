@@ -3,6 +3,7 @@
  */
 package org.minnal.instrument.resource;
 
+import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
@@ -19,21 +20,17 @@ public class ResourceEnhancer implements PathVisitor<EntityNodePath, EntityNode>
 	private Class<?> entityClass;
 	
 	private ResourceWrapper resourceWrapper;
+	
+	private NamingStrategy namingStrategy;
 
 	/**
 	 * @param resource
 	 * @param entityClass
 	 */
-	public ResourceEnhancer(ResourceMetaData resource, Class<?> entityClass) {
+	public ResourceEnhancer(ResourceMetaData resource, Class<?> entityClass, NamingStrategy namingStrategy) {
 		this.resource = resource;
 		this.entityClass = entityClass;
-	}
-
-	/**
-	 * @param entityClass
-	 */
-	public ResourceEnhancer(Class<?> entityClass) {
-		this(null, entityClass);
+		this.namingStrategy = namingStrategy;
 	}
 
 	/**
@@ -43,7 +40,7 @@ public class ResourceEnhancer implements PathVisitor<EntityNodePath, EntityNode>
 	 */
 	public Class<?> enhance() {
 		resourceWrapper = createResourceWrapper();
-		EntityNode tree = new EntityNode(entityClass);
+		EntityNode tree = new EntityNode(entityClass, namingStrategy);
 		tree.construct();
 		tree.traverse(this);
 		return resourceWrapper.wrap();
