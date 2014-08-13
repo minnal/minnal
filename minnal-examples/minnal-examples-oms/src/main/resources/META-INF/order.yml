@@ -17,7 +17,7 @@ db:
 packagesToScan:
   - org.minnal.examples.oms
 instrumentationEnabled: true
-enableSecurity: true
+enableSecurity: false
 security:
  sessionStore:
    class: org.minnal.security.session.JpaSessionStore

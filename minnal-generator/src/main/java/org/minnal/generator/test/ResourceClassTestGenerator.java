@@ -13,10 +13,10 @@ import javax.ws.rs.HttpMethod;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.javalite.common.Inflector;
-import org.minnal.core.MinnalException;
 import org.minnal.generator.core.AbstractTemplateGenerator;
 import org.minnal.generator.util.CodeUtils;
 import org.minnal.instrument.DefaultNamingStrategy;
+import org.minnal.instrument.MinnalInstrumentationException;
 import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
@@ -112,7 +112,7 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 				buffer.append(createMethod(path, false, HttpMethod.DELETE)).append("\n");
 			}
 		} catch (Exception e) {
-			throw new MinnalException(e);
+			throw new MinnalInstrumentationException(e);
 		}
 	}
 	
