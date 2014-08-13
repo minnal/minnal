@@ -47,13 +47,13 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>6.8.1</version>
+			<version>6.8.8</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.javalite</groupId>
 			<artifactId>javalite-common</artifactId>
-			<version>1.4.6</version>
+			<version>1.4.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
@@ -68,7 +68,7 @@
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
-			<version>3.18.1-GA</version>
+			<version>3.18.2-GA</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -79,13 +79,7 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-server</artifactId>
-			<version>2.10</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
-			<scope>provided</scope>
+			<version>2.11</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wordnik</groupId>

@@ -7,7 +7,6 @@ import java.util.Set;
 
 import javassist.CtClass;
 
-import org.javalite.common.Inflector;
 import org.minnal.instrument.DefaultNamingStrategy;
 import org.minnal.instrument.MinnalInstrumentationException;
 import org.minnal.instrument.NamingStrategy;

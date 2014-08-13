@@ -14,27 +14,12 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>14.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.paranamer</groupId>
-			<artifactId>paranamer</artifactId>
-			<version>2.5.2</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>javax.inject</artifactId>
-			<version>1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.atteo</groupId>
-			<artifactId>evo-inflector</artifactId>
-			<version>1.0.1</version>
+			<version>17.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>6.8.1</version>
+			<version>6.8.8</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -59,20 +44,15 @@
 			<version>1.7.5</version>
 		</dependency>
 		<dependency>
-			<groupId>c3p0</groupId>
+			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
-			<version>0.9.1.2</version>
+			<version>0.9.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>2.2.9</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.javalite</groupId>
-			<artifactId>javalite-common</artifactId>
-			<version>1.4.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.minnal</groupId>
@@ -93,11 +73,6 @@
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-server</artifactId>
 			<version>2.11</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-servlet</artifactId>
-			<version>1.18.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
