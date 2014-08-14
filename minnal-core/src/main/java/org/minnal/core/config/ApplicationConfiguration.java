@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -24,6 +25,8 @@ public class ApplicationConfiguration extends Configuration {
 	private String basePath = "/";
 	
 	private String apiVersion = "1.0";
+	
+	private List<String> responsePropertiesToExclude = Lists.newArrayList();
 
 	public ApplicationConfiguration() {
 	}
@@ -101,6 +104,21 @@ public class ApplicationConfiguration extends Configuration {
 	 */
 	public void setApiVersion(String apiVersion) {
 		this.apiVersion = apiVersion;
+	}
+
+	/**
+	 * @return the responsePropertiesToExclude
+	 */
+	public List<String> getResponsePropertiesToExclude() {
+		return responsePropertiesToExclude;
+	}
+
+	/**
+	 * @param responsePropertiesToExclude the responsePropertiesToExclude to set
+	 */
+	public void setResponsePropertiesToExclude(
+			List<String> responsePropertiesToExclude) {
+		this.responsePropertiesToExclude = responsePropertiesToExclude;
 	}
 
 }

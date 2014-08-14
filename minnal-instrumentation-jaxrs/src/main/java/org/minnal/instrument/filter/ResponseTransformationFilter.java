@@ -5,6 +5,7 @@ package org.minnal.instrument.filter;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -41,6 +42,15 @@ public class ResponseTransformationFilter implements ContainerResponseFilter {
 	public static final String INCLUDE = "include";
 
 	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	
+	private List<String> propertiesToExclude;
+
+	/**
+	 * @param propertiesToExclude
+	 */
+	public ResponseTransformationFilter(List<String> propertiesToExclude) {
+		this.propertiesToExclude = propertiesToExclude;
+	}
 
 	private Set<String> splitParams(String paramValue) {
 		final Iterable<String> values = Splitter.on(",").trimResults().omitEmptyStrings().split(Strings.nullToEmpty(paramValue));
@@ -58,6 +68,7 @@ public class ResponseTransformationFilter implements ContainerResponseFilter {
 		MultivaluedMap<String, String> queryParams = requestContext.getUriInfo().getQueryParameters();
 		Set<String> excludes = splitParams(queryParams.getFirst(EXCLUDE));
 		Set<String> includes = splitParams(queryParams.getFirst(INCLUDE));
+		excludes.addAll(propertiesToExclude);
 		ExclusionObjectModifier modifier = new ExclusionObjectModifier(excludes, includes);
 		ObjectWriterInjector.set(modifier);
 	}
