@@ -70,4 +70,11 @@ public class OpenSessionInViewFilter implements RequestEventListener {
 		}
 	}
 
+	/**
+	 * @return the configuration
+	 */
+	public DatabaseConfiguration getConfiguration() {
+		return configuration;
+	}
+
 }

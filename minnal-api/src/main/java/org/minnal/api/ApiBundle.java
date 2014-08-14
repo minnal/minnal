@@ -3,7 +3,9 @@
  */
 package org.minnal.api;
 
+import java.lang.annotation.Annotation;
 import java.net.InetAddress;
+import java.util.List;
 
 import org.minnal.api.filter.JacksonModelConvertor;
 import org.minnal.api.filter.MinnalApiSpecFilter;
@@ -15,6 +17,8 @@ import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.ConnectorConfiguration;
 import org.minnal.core.config.ConnectorConfiguration.Scheme;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.config.ConfigFactory;
 import com.wordnik.swagger.config.FilterFactory;
 import com.wordnik.swagger.config.ScannerFactory;
@@ -50,7 +54,18 @@ public class ApiBundle extends ContainerAdapter implements Bundle<ApiBundleConfi
 		ScannerFactory.setScanner(new DefaultJaxrsScanner());
 		ClassReaders.setReader(new DefaultJaxrsApiReader());
 		FilterFactory.setFilter(new MinnalApiSpecFilter());
-		ModelConverters.addConverter(new JacksonModelConvertor(), true);
+		ModelConverters.addConverter(getModelConvertor(), true);
+	}
+	
+	/**
+	 * Returns the model convertor
+	 * 
+	 * @return
+	 */
+	protected JacksonModelConvertor getModelConvertor() {
+		List<Class<? extends Annotation>> excludedAnnotations = Lists.<Class<? extends Annotation>>newArrayList(JsonBackReference.class);
+		excludedAnnotations.addAll(configuration.getExcludedAnnotations());
+		return new JacksonModelConvertor(excludedAnnotations);
 	}
 
 	@Override
