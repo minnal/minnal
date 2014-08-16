@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.minnal.core.Application;
-import org.minnal.core.serializer.Serializer;
+import org.minnal.utils.serializer.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

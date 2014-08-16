@@ -11,7 +11,7 @@ import java.util.Map;
 import org.javalite.common.Inflector;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.core.config.DatabaseConfiguration;
-import org.minnal.core.serializer.Serializer;
+import org.minnal.utils.serializer.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

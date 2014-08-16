@@ -10,6 +10,7 @@ import static org.testng.Assert.assertEquals;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.minnal.utils.serializer.DefaultJsonSerializer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

@@ -11,7 +11,7 @@ import org.minnal.core.config.ConnectorConfiguration;
 import org.minnal.core.config.ConnectorConfiguration.Scheme;
 import org.minnal.core.config.ContainerConfiguration;
 import org.minnal.core.config.ServerConfiguration;
-import org.minnal.core.serializer.Serializer;
+import org.minnal.utils.serializer.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

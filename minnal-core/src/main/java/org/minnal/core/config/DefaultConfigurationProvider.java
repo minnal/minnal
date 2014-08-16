@@ -6,7 +6,7 @@ package org.minnal.core.config;
 import java.io.InputStream;
 
 import org.minnal.core.MinnalException;
-import org.minnal.core.serializer.Serializer;
+import org.minnal.utils.serializer.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

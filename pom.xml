@@ -46,7 +46,7 @@
 		<javalite.version>1.4.9</javalite.version>
 		<velocity.version>1.7</velocity.version>
 	</properties>
-	
+
 	<scm>
 		<developerConnection>scm:git:https://github.com/minnal/minnal.git</developerConnection>
 		<tag>HEAD</tag>
@@ -67,6 +67,21 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+                    <effort>Max</effort>
+                    <threshold>Default</threshold>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 
 	<build>
 		<plugins>

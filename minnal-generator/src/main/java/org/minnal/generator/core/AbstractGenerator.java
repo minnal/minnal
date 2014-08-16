@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.javalite.common.Inflector;
 import org.minnal.core.MinnalException;
-import org.minnal.core.serializer.Serializer;
+import org.minnal.utils.serializer.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

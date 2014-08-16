@@ -14,12 +14,12 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.message.internal.OutboundMessageContext;
-import org.minnal.core.serializer.Serializer;
 import org.minnal.security.auth.JaxrsWebContext;
 import org.minnal.security.auth.User;
 import org.minnal.security.config.SecurityConfiguration;
 import org.minnal.security.session.Session;
 import org.minnal.utils.reflection.Generics;
+import org.minnal.utils.serializer.Serializer;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.RequiresHttpAction;

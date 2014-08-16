@@ -17,6 +17,6 @@ defaultMediaType: application/json
 # The serializers to use for the supported media types
 serializers:
   application/json: 
-    class: org.minnal.core.serializer.DefaultJsonSerializer
+    class: org.minnal.utils.serializer.DefaultJsonSerializer
   application/xml:
-    class: org.minnal.core.serializer.DefaultXmlSerializer
+    class: org.minnal.utils.serializer.DefaultXmlSerializer

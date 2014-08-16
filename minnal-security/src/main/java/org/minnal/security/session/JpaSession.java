@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.activejpa.entity.Model;
-import org.minnal.core.serializer.Serializer;
+import org.minnal.utils.serializer.Serializer;
 
 import com.google.common.io.BaseEncoding;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.core.serializer;
+package org.minnal.utils.serializer;
 
 import java.io.IOException;
 
