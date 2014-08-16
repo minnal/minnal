@@ -53,62 +53,60 @@
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-generator</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.8.8</version>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-instrumentation</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-test</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-jpa</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-migrations</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-core</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.minnal</groupId>
       <artifactId>minnal-api</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
-      <version>1.9.5</version>
-      <scope>compile</scope>
+      <version>${mockito.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.2.9</version>
-      <scope>compile</scope>
+      <version>${hsqldb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -127,18 +125,13 @@
     </dependency>
     <dependency>
     	<groupId>com.fasterxml.jackson.datatype</groupId>
-    	<artifactId>jackson-datatype-joda</artifactId>
-    	<version>2.4.0</version>
-    </dependency>
-    <dependency>
-    	<groupId>com.fasterxml.jackson.datatype</groupId>
     	<artifactId>jackson-datatype-hibernate4</artifactId>
-    	<version>2.4.0</version>
+    	<version>${jackson.version}</version>
     </dependency>
     <dependency>
     	<groupId>org.activejpa</groupId>
     	<artifactId>activejpa-test</artifactId>
-    	<version>0.2.2</version>
+    	<version>${activejpa.version}</version>
     	<scope>test</scope>
     </dependency>
   </dependencies>
