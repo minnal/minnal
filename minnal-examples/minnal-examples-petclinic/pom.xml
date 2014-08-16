@@ -113,17 +113,12 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-      <version>4.3.5.Final</version>
+      <version>4.3.6.Final</version>
     </dependency>
     <dependency>
     	<groupId>org.hibernate</groupId>
     	<artifactId>hibernate-validator</artifactId>
     	<version>5.0.1.Final</version>
-    </dependency>
-    <dependency>
-    	<groupId>joda-time</groupId>
-    	<artifactId>joda-time</artifactId>
-    	<version>2.3</version>
     </dependency>
     <dependency>
     	<groupId>org.jadira.usertype</groupId>

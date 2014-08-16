@@ -3,16 +3,10 @@
  */
 package org.minnal.core.serializer;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
-
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.minnal.core.MinnalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +17,10 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.google.common.collect.Sets;
 
 /**
  * @author ganeshs
@@ -52,6 +45,9 @@ public abstract class AbstractJacksonSerializer extends Serializer {
 		registerModules(mapper);
 		mapper.configure(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS, true);
 		mapper.setPropertyNamingStrategy(getPropertyNamingStrategy());
+		SimpleFilterProvider provider = new SimpleFilterProvider();
+		provider.addFilter("property_filter", SimpleBeanPropertyFilter.serializeAllExcept(Sets.<String>newHashSet()));
+		mapper.setFilters(provider);
 	}
 	
 	protected abstract void registerModules(ObjectMapper mapper);
@@ -59,28 +55,33 @@ public abstract class AbstractJacksonSerializer extends Serializer {
 	@JsonFilter("property_filter")  
 	public class PropertyFilterMixIn {} 
 
-	public ByteBuf serialize(Object object) {
-		return serialize(object,null,null);
-	}
-
-	public <T> T deserialize(ByteBuf buffer, Class<T> targetClass) {
-		ByteBufInputStream is = new ByteBufInputStream(buffer);
+	public <T> T deserialize(InputStream stream, Class<T> targetClass) {
 		try {
-			return mapper.readValue(is, targetClass);
+			return mapper.readValue(stream, targetClass);
 		} catch (Exception e) {
-			throw new MinnalException("Failed while deserializing the buffer to type - " + targetClass, e);
+			throw new SerializationException("Failed while deserializing the buffer to type - " + targetClass, e);
+		} finally {
+			closeStream(stream);
 		}
 	}
 
 	@Override
-	public <T extends Collection<E>, E> T deserializeCollection(ByteBuf buffer, Class<T> collectionType, Class<E> elementType) {
-		ByteBufInputStream is = new ByteBufInputStream(buffer);
+	public <T extends Collection<E>, E> T deserializeCollection(InputStream stream, Class<T> collectionType, Class<E> elementType) {
 		JavaType javaType = mapper.getTypeFactory().constructCollectionType(collectionType, elementType);
 		try {
-			return mapper.readValue(is, javaType);
+			return mapper.readValue(stream, javaType);
 		} catch (Exception e) {
-			throw new MinnalException("Failed while deserializing the buffer to type - " + javaType, e);
+			throw new SerializationException("Failed while deserializing the buffer to type - " + javaType, e);
+		} finally {
+			closeStream(stream);
 		}
+	}
+
+	/**
+	 * @return the mapper
+	 */
+	protected ObjectMapper getMapper() {
+		return mapper;
 	}
 
 	@JsonIgnore
@@ -89,27 +90,14 @@ public abstract class AbstractJacksonSerializer extends Serializer {
 	}
 
 	@Override
-	public ByteBuf serialize(Object object, Set<String> excludes, Set<String> includes) {
-		ByteBuf buffer = Unpooled.buffer();
-		ByteBufOutputStream os = new ByteBufOutputStream(buffer);
-
-		SimpleBeanPropertyFilter filter = null;
+	public void serialize(Object object, OutputStream stream) {
 		try {
-			if (includes != null && !includes.isEmpty()){
-				filter = new SimpleBeanPropertyFilter.FilterExceptFilter(includes);
-			} else if (excludes != null && !excludes.isEmpty()){
-				filter = SimpleBeanPropertyFilter.serializeAllExcept(excludes);
-			} else{
-				filter = SimpleBeanPropertyFilter.serializeAllExcept(new HashSet<String>());
-			}
-			FilterProvider filters = new SimpleFilterProvider().addFilter("property_filter", filter);  
-			ObjectWriter writer = mapper.writer(filters);  
-			writer.writeValue(os, object);
+			mapper.writeValue(stream, object);  
 		} catch (Exception e) {
-			logger.error("Unable to serialize object to channel buffer with object :{} " +
-					"includes : {} and excludes : {}", object.toString(), includes.toString(), excludes.toString());
-			throw new MinnalException("Failed while serializing the object", e);
+			logger.error("Unable to serialize object", e);
+			throw new SerializationException("Failed while serializing the object", e);
+		} finally {
+			closeStream(stream);
 		}
-		return buffer;
 	}
 }

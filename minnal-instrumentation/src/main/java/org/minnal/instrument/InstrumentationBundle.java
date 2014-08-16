@@ -44,7 +44,7 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle<In
 	}
 	
 	protected ApplicationEnhancer createApplicationEnhancer(Application<ApplicationConfiguration> application) {
-		return new MinnalApplicationEnhancer(application, new DefaultNamingStrategy());
+		return new MinnalApplicationEnhancer(application, new UnderscoreNamingStrategy());
 	}
 	
 	@Override

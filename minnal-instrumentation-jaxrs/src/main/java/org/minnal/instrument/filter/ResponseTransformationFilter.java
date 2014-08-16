@@ -13,8 +13,8 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.minnal.instrument.DefaultNamingStrategy;
 import org.minnal.instrument.NamingStrategy;
+import org.minnal.instrument.UnderscoreNamingStrategy;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -41,7 +41,7 @@ public class ResponseTransformationFilter implements ContainerResponseFilter {
 
 	public static final String INCLUDE = "include";
 
-	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	private NamingStrategy namingStrategy = new UnderscoreNamingStrategy();
 	
 	private List<String> propertiesToExclude;
 

@@ -3,10 +3,12 @@
  */
 package org.minnal.core.serializer;
 
-import io.netty.buffer.ByteBuf;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +37,25 @@ public abstract class Serializer {
 	
 	public static final Serializer DEFAULT_YAML_SERIALIZER = new DefaultYamlSerializer();
 	
-	public abstract ByteBuf serialize(Object object);
-	
-	public ByteBuf serialize(Object object, Set<String> excludes, Set<String> includes) {
-		logger.warn("WARNING: {} doesn't support exlcuding and including the fields in the response", this.getClass());
-		return serialize(object);
+	public String serialize(Object object) {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		serialize(object, stream);
+		return new String(stream.toByteArray());
 	}
 	
-	public abstract <T> T deserialize(ByteBuf buffer, Class<T> targetClass);
+	public abstract void serialize(Object object, OutputStream stream);
 	
-	public abstract <T extends Collection<E>, E> T deserializeCollection(ByteBuf buffer, Class<T> collectionType, Class<E> elementType);
+	public <T> T deserialize(String content, Class<T> targetClass) {
+		return deserialize(new ByteArrayInputStream(content.getBytes()), targetClass);
+	}
+	
+	public abstract <T> T deserialize(InputStream stream, Class<T> targetClass);
+	
+	public <T extends Collection<E>, E> T deserializeCollection(String content, Class<T> collectionType, Class<E> elementType) {
+		return deserializeCollection(new ByteArrayInputStream(content.getBytes()), collectionType, elementType);
+	}
+	
+	public abstract <T extends Collection<E>, E> T deserializeCollection(InputStream stream, Class<T> collectionType, Class<E> elementType);
 	
 	public static Serializer getSerializer(MediaType mediaType) {
 		if (mediaType.is(MediaType.JSON_UTF_8)) {
@@ -62,4 +73,14 @@ public abstract class Serializer {
 		return null;
 	}
 	
+	/**
+	 * @param stream
+	 */
+	protected void closeStream(Closeable stream) {
+		try {
+			stream.close();
+		} catch (Exception e) {
+			logger.trace("Failed while closing the stream", e);
+		}
+	}
 }

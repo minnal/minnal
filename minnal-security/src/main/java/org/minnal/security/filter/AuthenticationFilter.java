@@ -3,8 +3,6 @@
  */
 package org.minnal.security.filter;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.Map;
 
 import javax.annotation.Priority;
@@ -137,7 +135,7 @@ public class AuthenticationFilter extends AbstractSecurityFilter implements Cont
 			return new User((UserProfile) profile);
 		}
 		if (profile instanceof Map) {
-			ByteBuf buffer = Serializer.DEFAULT_JSON_SERIALIZER.serialize(profile);
+			String buffer = Serializer.DEFAULT_JSON_SERIALIZER.serialize(profile);
 			profile = Serializer.DEFAULT_JSON_SERIALIZER.deserialize(buffer, type);
 			User user = new User((UserProfile) profile);
 			session.addAttribute(PRINCIPAL, profile);

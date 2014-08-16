@@ -3,11 +3,8 @@
  */
 package org.minnal.core.config;
 
-import io.netty.buffer.Unpooled;
-
 import java.io.InputStream;
 
-import org.apache.log4j.lf5.util.StreamUtils;
 import org.minnal.core.MinnalException;
 import org.minnal.core.serializer.Serializer;
 import org.slf4j.Logger;
@@ -29,7 +26,7 @@ public class DefaultConfigurationProvider extends ConfigurationProvider {
 	public <T extends Configuration> T provide(Class<T> clazz, String path) {
 		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
 		try {
-			return Serializer.DEFAULT_YAML_SERIALIZER.deserialize(Unpooled.wrappedBuffer(StreamUtils.getBytes(is)), clazz);
+			return Serializer.DEFAULT_YAML_SERIALIZER.deserialize(is, clazz);
 		} catch (Exception e) {
 			logger.error("Failed while reading the config file - " + path, e);
 			throw new MinnalException(e);

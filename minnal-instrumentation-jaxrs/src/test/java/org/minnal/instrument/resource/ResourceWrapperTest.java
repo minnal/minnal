@@ -26,8 +26,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.activejpa.entity.Model;
-import org.minnal.instrument.DefaultNamingStrategy;
 import org.minnal.instrument.NamingStrategy;
+import org.minnal.instrument.UnderscoreNamingStrategy;
 import org.minnal.instrument.entity.Action;
 import org.minnal.instrument.entity.AggregateRoot;
 import org.minnal.instrument.entity.EntityNode;
@@ -67,7 +67,7 @@ public class ResourceWrapperTest {
 	
 	private EntityNodePath rootPath;
 	
-	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	private NamingStrategy namingStrategy = new UnderscoreNamingStrategy();
 	
 	@BeforeMethod
 	public void setup() throws Exception {

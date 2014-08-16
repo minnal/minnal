@@ -50,7 +50,7 @@ public class ApplicationEnhancerTest {
 		rc1 = ResourceMetaDataProvider.instance().getResourceMetaData(DummyResource.class);
 		rc2 = ResourceMetaDataProvider.instance().getResourceMetaData(DummyResource1.class);
 		when(application.getClasses()).thenReturn(Sets.newHashSet(DummyResource.class, DummyResource1.class));
-		namingStrategy = new DefaultNamingStrategy();
+		namingStrategy = new UnderscoreNamingStrategy();
 		enhancer = spy(new ApplicationEnhancer(application, namingStrategy, new String[]{"org.minnal.instrument"}, new String[]{"org.minnal.instrument"}));
 	}
 
@@ -122,6 +122,6 @@ public class ApplicationEnhancerTest {
 	class DummyModel {
 	}
 	
-	static class TestNamingStrategy extends DefaultNamingStrategy {
+	static class TestNamingStrategy extends UnderscoreNamingStrategy {
 	}
 }

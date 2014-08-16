@@ -15,9 +15,9 @@ import org.apache.velocity.VelocityContext;
 import org.javalite.common.Inflector;
 import org.minnal.generator.core.AbstractTemplateGenerator;
 import org.minnal.generator.util.CodeUtils;
-import org.minnal.instrument.DefaultNamingStrategy;
 import org.minnal.instrument.MinnalInstrumentationException;
 import org.minnal.instrument.NamingStrategy;
+import org.minnal.instrument.UnderscoreNamingStrategy;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.utils.Node.PathVisitor;
@@ -33,7 +33,7 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 	
 	private List<EntityNodePath> paths = new ArrayList<EntityNode.EntityNodePath>();
 	
-	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	private NamingStrategy namingStrategy = new UnderscoreNamingStrategy();
 	
 	private static Template createMethodTestTemplate = engine.getTemplate("META-INF/templates/create_method_test.vm");
 	

@@ -7,9 +7,9 @@ import java.util.Set;
 
 import javassist.CtClass;
 
-import org.minnal.instrument.DefaultNamingStrategy;
 import org.minnal.instrument.MinnalInstrumentationException;
 import org.minnal.instrument.NamingStrategy;
+import org.minnal.instrument.UnderscoreNamingStrategy;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.ActionMetaData;
@@ -42,7 +42,7 @@ public class ResourceWrapper {
 	
 	private String path;
 	
-	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	private NamingStrategy namingStrategy = new UnderscoreNamingStrategy();
 	
 	private static final Logger logger = LoggerFactory.getLogger(ResourceWrapper.class);
 	

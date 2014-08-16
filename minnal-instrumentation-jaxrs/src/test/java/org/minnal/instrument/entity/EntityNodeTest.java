@@ -18,8 +18,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import org.activejpa.entity.Model;
-import org.minnal.instrument.DefaultNamingStrategy;
 import org.minnal.instrument.NamingStrategy;
+import org.minnal.instrument.UnderscoreNamingStrategy;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.EntityMetaDataProvider;
 import org.minnal.utils.Node.PathVisitor;
@@ -33,7 +33,7 @@ public class EntityNodeTest {
 	
 	private EntityNode entityNode;
 	
-	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	private NamingStrategy namingStrategy = new UnderscoreNamingStrategy();
 
 	@Test
 	public void shouldConstructEntityTree() {

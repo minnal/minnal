@@ -19,8 +19,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.activejpa.entity.Model;
-import org.minnal.instrument.DefaultNamingStrategy;
 import org.minnal.instrument.NamingStrategy;
+import org.minnal.instrument.UnderscoreNamingStrategy;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.instrument.resource.metadata.ResourceMetaDataProvider;
@@ -39,7 +39,7 @@ public class ResourceEnhancerTest {
 	
 	private Class<?> entityClass;
 	
-	private NamingStrategy namingStrategy = new DefaultNamingStrategy();
+	private NamingStrategy namingStrategy = new UnderscoreNamingStrategy();
 	
 	@BeforeMethod
 	public void setup() {

@@ -28,7 +28,7 @@ public class MinnalApplicationEnhancer extends ApplicationEnhancer {
 		((ResourceConfig) getApplication()).register(resourceClass);
 	}
 	
-	private static String[] getPackagesToScan(Application<ApplicationConfiguration> application) {
+	protected static String[] getPackagesToScan(Application<ApplicationConfiguration> application) {
 		return application.getConfiguration().getDatabaseConfiguration().getPackagesToScan().toArray(new String[0]);
 	}
 }

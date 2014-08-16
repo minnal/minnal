@@ -10,7 +10,7 @@ import org.minnal.instrument.entity.metadata.CollectionMetaData;
  * @author ganeshs
  *
  */
-public class DefaultNamingStrategy implements NamingStrategy {
+public class UnderscoreNamingStrategy implements NamingStrategy {
 
 	@Override
 	public String getEntityName(Class<?> entityClass) {
