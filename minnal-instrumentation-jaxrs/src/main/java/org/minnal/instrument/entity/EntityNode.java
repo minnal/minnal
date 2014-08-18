@@ -249,7 +249,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 				
 				if (! iterator.hasNext()) {
 					if (parent != null) {
-						prefix = prefix.length() > 0 ? prefix.append(name) : prefix.append(".").append(name);
+						prefix = prefix.length() == 0 ? prefix.append(name) : prefix.append(".").append(name);
 					}
 					addSearchFields(prefix.toString(), node);
 				}

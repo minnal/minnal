@@ -157,7 +157,7 @@ public abstract class BaseResourceTest {
 		ByteBuf buffer = Unpooled.buffer();
 		ByteBufOutputStream os = new ByteBufOutputStream(buffer);
 		try {
-			os.writeUTF(content);
+			os.write(content.getBytes(Charsets.UTF_8));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
