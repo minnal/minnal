@@ -142,13 +142,13 @@ public class HttpUtil {
 		if (paths == null || paths.length == 0) {
 			return SEPARATOR;
 		}
-		String path = "";
+		StringBuilder path = new StringBuilder();
 		for (int i = 0; i < paths.length; i++) {
 			if (! Strings.isNullOrEmpty(paths[i])) {
-				path += structureUrl(paths[i]);
+				path.append(structureUrl(paths[i]));
 			}
 		}
-		return structureUrl(path);
+		return structureUrl(path.toString());
 	}
 	
 	/**

@@ -160,7 +160,7 @@ public class Router {
 			length = encodedBytes.length;
 		}
 		if (! containerResponse.getHeaders().containsKey(HttpHeaders.Names.CONTENT_LENGTH)) {
-			HttpHeaders.setContentLength(httpResponse, containerResponse.getLength());
+			HttpHeaders.setContentLength(httpResponse, length);
 			logger.trace("Writing response status and headers {}, length {}", containerResponse, containerResponse.getLength());
 		}
 

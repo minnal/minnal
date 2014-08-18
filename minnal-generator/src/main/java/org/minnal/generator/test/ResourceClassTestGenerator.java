@@ -90,7 +90,10 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
 		String fileName = testClass + ".java";
 		File file = new File(folder, fileName);
 		if (file.exists()) {
-			file.renameTo(new File(folder, fileName + ".bk"));
+			File renamedFile = new File(folder, fileName + ".bk");
+			if (! file.renameTo(renamedFile)) {
+				throw new IllegalStateException("Failed while renaming the file " + file.getPath() + " to " + renamedFile.getPath());
+			}
 			file = new File(folder, fileName);
 		}
 		writeFile(CodeUtils.format(writer.toString()), file);

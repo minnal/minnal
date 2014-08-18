@@ -21,7 +21,7 @@ public abstract class AbstractAnnotationHandler<T extends MetaData> {
 	
 	private static Map<Class<?>, AbstractAnnotationHandler> handlers;
 	
-	public static AbstractAnnotationHandler handlerFor(Annotation annotation) {
+	public synchronized static AbstractAnnotationHandler handlerFor(Annotation annotation) {
 		if (handlers == null) {
 			 handlers = new HashMap<Class<?>, AbstractAnnotationHandler>();
 			 ServiceLoader<AbstractAnnotationHandler> loader = ServiceLoader.load(AbstractAnnotationHandler.class);

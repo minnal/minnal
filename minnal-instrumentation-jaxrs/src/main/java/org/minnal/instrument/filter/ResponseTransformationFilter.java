@@ -14,7 +14,6 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.minnal.instrument.NamingStrategy;
-import org.minnal.instrument.UnderscoreNamingStrategy;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -24,7 +23,6 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.jaxrs.cfg.EndpointConfigBase;
 import com.fasterxml.jackson.jaxrs.cfg.ObjectWriterInjector;
 import com.fasterxml.jackson.jaxrs.cfg.ObjectWriterModifier;
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -41,15 +39,16 @@ public class ResponseTransformationFilter implements ContainerResponseFilter {
 
 	public static final String INCLUDE = "include";
 
-	private NamingStrategy namingStrategy = new UnderscoreNamingStrategy();
+	private NamingStrategy namingStrategy;
 	
 	private List<String> propertiesToExclude;
 
 	/**
 	 * @param propertiesToExclude
 	 */
-	public ResponseTransformationFilter(List<String> propertiesToExclude) {
+	public ResponseTransformationFilter(List<String> propertiesToExclude, NamingStrategy namingStrategy) {
 		this.propertiesToExclude = propertiesToExclude;
+		this.namingStrategy = namingStrategy;
 	}
 
 	private Set<String> splitParams(String paramValue) {
@@ -57,8 +56,7 @@ public class ResponseTransformationFilter implements ContainerResponseFilter {
 		return Sets.newHashSet(Iterables.transform(values, new Function<String, String>() {
 			@Override
 			public String apply(String input) {
-				// TODO use naming strategy instead
-				return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, input);
+				return namingStrategy.getQueryParamName(input);
 			}
 		}));
 	}

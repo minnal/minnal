@@ -22,11 +22,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.minnal</groupId>
-			<artifactId>minnal-migrations</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.minnal</groupId>
 			<artifactId>minnal-jpa</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>

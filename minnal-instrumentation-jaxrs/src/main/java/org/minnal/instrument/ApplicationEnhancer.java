@@ -4,6 +4,7 @@
 package org.minnal.instrument;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.core.Application;
@@ -43,8 +44,8 @@ public class ApplicationEnhancer {
 	public ApplicationEnhancer(Application application, NamingStrategy namingStrategy, String[] entityPackages, String[] resourcePackages) {
 		this.application = application;
 		this.namingStrategy = namingStrategy;
-		this.entityPackages = entityPackages;
-		this.resourcePackages = resourcePackages;
+		this.entityPackages = Arrays.copyOf(entityPackages, entityPackages.length);
+		this.resourcePackages = Arrays.copyOf(resourcePackages, resourcePackages.length);
 	}
 	
 	/**
@@ -58,6 +59,7 @@ public class ApplicationEnhancer {
 	 * Enhances the application
 	 */
 	public void enhance() {
+		logger.info("Enhancing the application");
 		List<Class<?>> entities = scanEntities();
 		List<Class<?>> resources = scanResources();
 		

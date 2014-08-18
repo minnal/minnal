@@ -13,6 +13,8 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.google.common.base.Strings;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 /**
  * @author ganeshs
  *
@@ -49,7 +51,7 @@ public class MinnalGenerator {
 			logger.trace("Parsing the args {}", (Object) args);
 			jc.parse(args);
 		} catch (ParameterException e) {
-			logger.debug("Failed while parsing the args " + args, e);
+			logger.debug("Failed while parsing the args " + Arrays.toString(args), e);
 			showHelp(jc.getParsedCommand());
 			return;
 		}

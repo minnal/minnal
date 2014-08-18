@@ -233,7 +233,7 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 		private void buildPath(List<EntityNode> path) {
 			StringWriter writer = new StringWriter();
 			Iterator<EntityNode> iterator = iterator();
-			String prefix = "";
+			StringBuffer prefix = new StringBuffer();
 			EntityNode parent = null;
 			StringWriter pathName = new StringWriter();
 			while (iterator.hasNext()) {
@@ -249,9 +249,9 @@ public class EntityNode extends Node<EntityNode, EntityNodePath, EntityMetaData>
 				
 				if (! iterator.hasNext()) {
 					if (parent != null) {
-						prefix = prefix.isEmpty() ? name : prefix + "." + name;
+						prefix = prefix.length() > 0 ? prefix.append(name) : prefix.append(".").append(name);
 					}
-					addSearchFields(prefix, node);
+					addSearchFields(prefix.toString(), node);
 				}
 				parent = node;
 			}

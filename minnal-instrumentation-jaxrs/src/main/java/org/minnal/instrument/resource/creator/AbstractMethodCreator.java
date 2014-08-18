@@ -65,7 +65,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
  */
 public abstract class AbstractMethodCreator {
 	
-	protected static VelocityEngine engine;
+	protected final static VelocityEngine engine;
 	
 	static {
 		Properties properties = new Properties();
@@ -418,7 +418,7 @@ public abstract class AbstractMethodCreator {
 	 * @return
 	 */
 	protected Set<String> getPermissions(String httpMethod) {
-		Set<PermissionMetaData> permissions = null;
+		Set<PermissionMetaData> permissions = Sets.newHashSet();
 		if (resourcePath.getNodePath().size() == 1) {
 			permissions = resourcePath.getNodePath().get(0).getEntityMetaData().getPermissionMetaData();
 		} else {

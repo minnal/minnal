@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import com.google.common.net.MediaType;
+import com.google.common.base.Charsets;
 
 /**
  * @author ganeshs
@@ -40,38 +40,22 @@ public abstract class Serializer {
 	public String serialize(Object object) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		serialize(object, stream);
-		return new String(stream.toByteArray());
+		return new String(stream.toByteArray(), Charsets.UTF_8);
 	}
 	
 	public abstract void serialize(Object object, OutputStream stream);
 	
 	public <T> T deserialize(String content, Class<T> targetClass) {
-		return deserialize(new ByteArrayInputStream(content.getBytes()), targetClass);
+		return deserialize(new ByteArrayInputStream(content.getBytes(Charsets.UTF_8)), targetClass);
 	}
 	
 	public abstract <T> T deserialize(InputStream stream, Class<T> targetClass);
 	
 	public <T extends Collection<E>, E> T deserializeCollection(String content, Class<T> collectionType, Class<E> elementType) {
-		return deserializeCollection(new ByteArrayInputStream(content.getBytes()), collectionType, elementType);
+		return deserializeCollection(new ByteArrayInputStream(content.getBytes(Charsets.UTF_8)), collectionType, elementType);
 	}
 	
 	public abstract <T extends Collection<E>, E> T deserializeCollection(InputStream stream, Class<T> collectionType, Class<E> elementType);
-	
-	public static Serializer getSerializer(MediaType mediaType) {
-		if (mediaType.is(MediaType.JSON_UTF_8)) {
-			return DEFAULT_JSON_SERIALIZER;
-		}
-		if (mediaType.is(MediaType.XML_UTF_8)) {
-			return DEFAULT_XML_SERIALIZER;
-		}
-		if (mediaType.is(MediaType.PLAIN_TEXT_UTF_8)) {
-			return DEFAULT_TEXT_SERIALIZER;
-		}
-		if (mediaType.is(MediaType.FORM_DATA)) {
-			return DEFAULT_FORM_SERIALIZER;
-		}
-		return null;
-	}
 	
 	/**
 	 * @param stream

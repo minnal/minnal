@@ -10,6 +10,8 @@ import java.util.Scanner;
 
 import org.minnal.core.MinnalException;
 
+import com.google.common.base.Charsets;
+
 /**
  * @author ganeshs
  *
@@ -30,10 +32,11 @@ public abstract class ExecutableCommand implements Command {
 	private void inheritIO(final InputStream src, final PrintStream dest) {
 	    new Thread(new Runnable() {
 	        public void run() {
-	            Scanner sc = new Scanner(src);
+	            Scanner sc = new Scanner(src, Charsets.UTF_8.name());
 	            while (sc.hasNextLine()) {
 	                dest.println(sc.nextLine());
 	            }
+	            sc.close();
 	        }
 	    }).start();
 	}

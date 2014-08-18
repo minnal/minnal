@@ -23,6 +23,8 @@ import java.util.Map;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.reflect.TypeToken;
 
@@ -31,6 +33,8 @@ import com.google.common.reflect.TypeToken;
  *
  */
 public class PropertyUtil {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PropertyUtil.class);
 	
 	/**
 	 * Check if the given type represents a "simple" property:
@@ -103,8 +107,10 @@ public class PropertyUtil {
 			if (Map.class.isAssignableFrom(rawType)) {
 				return TypeToken.of(type).resolveType(Map.class.getMethod("put", Object.class, Object.class).getGenericParameterTypes()[1]).getRawType();
 			}
-		} catch (Exception e) {
-			// TODO logo exception and ignore
+		} catch (RuntimeException e) {
+			logger.trace("Failed while getting the collection element type - " + type, e);
+		} catch (NoSuchMethodException e) {
+			logger.trace("Failed while getting the collection element type - " + type, e);
 		}
 		return Object.class;
 	}
@@ -144,8 +150,10 @@ public class PropertyUtil {
 			for (Enum<?> enm : enums) {
 				values.add(enm.name());
 			}
+		} catch (RuntimeException e) {
+			logger.trace("Failed while getting the enum values for the descriptor - " + descriptor, e);
 		} catch (Exception e) {
-			// TODO Log exception and ignore
+			logger.trace("Failed while getting the enum values for the descriptor - " + descriptor, e);
 		}
 		return values;
 	}

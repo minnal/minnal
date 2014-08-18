@@ -5,7 +5,9 @@ package org.minnal.generator.core;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,6 +23,8 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.minnal.core.MinnalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Charsets;
 
 /**
  * @author ganeshs
@@ -63,10 +67,14 @@ public class PomGenerator extends AbstractGenerator {
 			logger.trace("pom already exist. Reading it");
 			
 			MavenXpp3Reader reader = new MavenXpp3Reader();
+			FileInputStream stream = null;
 			try {
-				model = reader.read(new FileInputStream(pom));
+				stream = new FileInputStream(pom);
+				model = reader.read(stream);
 			} catch (Exception e) {
 				throw new MinnalException("Failed while reading the pom - " + pom.getName(), e);
+			} finally {
+				closeStream(stream);
 			}
 		} else {
 			model = createMavenModel();
@@ -154,12 +162,16 @@ public class PomGenerator extends AbstractGenerator {
 	public void generate() {
 		logger.info("Creating the pom file {}", POM_FILE);
 		File pom = new File(baseDir, POM_FILE);
+		OutputStreamWriter fileWriter = null;
 		try {
+			fileWriter = new OutputStreamWriter(new FileOutputStream(pom), Charsets.UTF_8);
 			logger.debug("Writing the generated pom file {}", POM_FILE);
 			MavenXpp3Writer writer = new MavenXpp3Writer();
-			writer.write(new FileWriter(pom), model);
+			writer.write(fileWriter, model);
 		} catch (Exception e) {
 			throw new MinnalException("Failed while writing the pom - " + pom.getName(), e);
+		} finally {
+			closeStream(fileWriter);
 		}
 	}
 

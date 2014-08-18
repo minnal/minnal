@@ -3,18 +3,12 @@
  */
 package org.minnal.core.config;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.minnal.core.BundleConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.common.net.MediaType;
 
 /**
  * @author ganeshs
@@ -93,12 +87,5 @@ public class ContainerConfiguration extends Configuration {
 	 */
 	public void setBasePath(String basePath) {
 		this.basePath = basePath;
-	}
-	
-	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-		mapper.addMixInAnnotations(MediaType.class, MediaTypeMixin.class);
-		ContainerConfiguration configuration = mapper.readValue(Thread.currentThread().getContextClassLoader().getResourceAsStream("META-INF/container.sample.yml"), ContainerConfiguration.class);
-		System.out.println(configuration);
 	}
 }

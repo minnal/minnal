@@ -3,9 +3,11 @@
  */
 package org.minnal.generator.core;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +112,9 @@ public abstract class AbstractGenerator implements Generator {
 		File srcDir = getFile(baseDir, sourceFolder, true);
 		File pkg = new File(srcDir, packageName.replace('.', '/'));
 		if (! pkg.exists()) {
-			pkg.mkdirs();
+			if (! pkg.mkdirs()) {
+				throw new IllegalStateException("Failed while creating the package - " + pkg.getPath());
+			}
 		}
 		return pkg;
 	}
@@ -126,7 +130,9 @@ public abstract class AbstractGenerator implements Generator {
 	protected File createFolder(File basedir, String folderName) {
 		logger.info("Creating the folder {} under {}", folderName, basedir);
 		File folder = new File(basedir, folderName);
-		folder.mkdirs();
+		if (! folder.mkdirs()) {
+			throw new IllegalStateException("Failed while creating the folder - " + folder.getPath());
+		}
 		return folder;
 	}
 	
@@ -149,21 +155,41 @@ public abstract class AbstractGenerator implements Generator {
 	}
 	
 	protected void serializeTo(File file, Object content, Serializer serializer) {
+		FileOutputStream stream = null;
 		try {
-			serializer.serialize(new FileOutputStream(file));
+			stream = new FileOutputStream(file);
+			serializer.serialize(content, stream);
 		} catch (Exception e) {
 			throw new MinnalException("Failed while writing the file " + file.getAbsolutePath(), e);
+		} finally {
+			if (stream != null) {
+				closeStream(stream);
+			}
 		}
 	}
 	
 	protected <T> T deserializeFrom(File file, Serializer serializer, Class<T> clazz) {
+		if (! file.exists()) {
+			return null;
+		}
+		
+		InputStream stream = null;
 		try {
-			if (file.exists()) {
-				return serializer.deserialize(new FileInputStream(file), clazz);
-			}
+			stream = new FileInputStream(file);
+			return serializer.deserialize(stream, clazz);
 		} catch (Exception e) {
 			throw new MinnalException("Failed while creating the file " + file.getAbsolutePath());
+		} finally {
+			closeStream(stream);
 		}
-		return null;
+	}
+	
+	protected void closeStream(Closeable closeable) {
+		try {
+			if (closeable != null) {
+				closeable.close();
+			}
+		} catch (Exception e) {
+		}
 	}
 }

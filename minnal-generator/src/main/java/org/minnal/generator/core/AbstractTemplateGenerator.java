@@ -4,9 +4,9 @@
 package org.minnal.generator.core;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.OutputStreamWriter;
 import java.util.Properties;
 
 import org.apache.velocity.Template;
@@ -18,6 +18,8 @@ import org.minnal.core.MinnalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Charsets;
+
 
 /**
  * @author ganeshs
@@ -27,7 +29,7 @@ public abstract class AbstractTemplateGenerator extends AbstractGenerator {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractTemplateGenerator.class);
 	
-	protected static VelocityEngine engine;
+	protected final static VelocityEngine engine;
 	
 	static {
 		logger.debug("Loading the velocity templates");
@@ -44,39 +46,27 @@ public abstract class AbstractTemplateGenerator extends AbstractGenerator {
 	
 	protected void writeFile(String content, File file) {
 		logger.info("Creating the file {}", file.getAbsolutePath());
-		Writer writer = null;
+		OutputStreamWriter writer = null;
 		try {
-			writer = new FileWriter(file);
+			writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
 			writer.write(content);
 		} catch (IOException e) {
 			throw new MinnalException(e);
 		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (Exception e) {
-					// Ignore
-				}
-			}
+			closeStream(writer);
 		}
 	}
 	
 	protected void writeFile(Template template, VelocityContext context, File file) {
 		logger.info("Creating the file {}", file.getAbsolutePath());
-		Writer writer = null;
+		OutputStreamWriter writer = null;
 		try {
-			writer = new FileWriter(file);
+			writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
 			template.merge(context, writer);
 		} catch (IOException e) {
 			throw new MinnalException(e);
 		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (Exception e) {
-					// Ignore
-				}
-			}
+			closeStream(writer);
 		}
 	}
 }

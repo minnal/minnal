@@ -40,7 +40,7 @@ public class DefaultTextSerializer extends Serializer {
 	@Override
 	public void serialize(Object object, OutputStream stream) {
 		try {
-			stream.write(object.toString().getBytes());
+			stream.write(object.toString().getBytes(Charsets.UTF_8));
 		} catch (Exception e) {
 			throw new SerializationException("Failed while serializing the object", e);
 		} finally {

@@ -18,6 +18,8 @@ import org.minnal.instrument.util.MinnalModule;
  */
 public class InstrumentationBundle extends ContainerAdapter implements Bundle<InstrumentationBundleConfiguration> {
 	
+	private NamingStrategy namingStrategy = new UnderscoreNamingStrategy();
+	
 	public void init(Container container, InstrumentationBundleConfiguration configuration) {
 		getActiveJpaAgentLoader().loadAgent();
 		container.registerListener(this);
@@ -35,7 +37,7 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle<In
 
 	@Override
 	public void postMount(Application<ApplicationConfiguration> application) {
-		application.addFilter(new ResponseTransformationFilter(application.getConfiguration().getResponsePropertiesToExclude()));
+		application.addFilter(new ResponseTransformationFilter(application.getConfiguration().getResponsePropertiesToExclude(), namingStrategy));
 		application.getObjectMapper().registerModule(new MinnalModule());
 		
 		if (application.getConfiguration().isInstrumentationEnabled()) {
@@ -44,7 +46,7 @@ public class InstrumentationBundle extends ContainerAdapter implements Bundle<In
 	}
 	
 	protected ApplicationEnhancer createApplicationEnhancer(Application<ApplicationConfiguration> application) {
-		return new MinnalApplicationEnhancer(application, new UnderscoreNamingStrategy());
+		return new MinnalApplicationEnhancer(application, namingStrategy);
 	}
 	
 	@Override

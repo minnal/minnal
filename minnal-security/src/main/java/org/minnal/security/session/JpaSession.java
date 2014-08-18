@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.activejpa.entity.Model;
 import org.minnal.utils.serializer.Serializer;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.BaseEncoding;
 
 /**
@@ -96,21 +97,21 @@ public class JpaSession extends Model implements Session {
 	}
 	
 	public Timestamp getCreatedAt() {
-		return createdAt;
+		return createdAt != null ? new Timestamp(createdAt.getTime()) : null;
 	}
 	
-	public void setCreatedAt(Timestamp timestamp) {
-		createdAt = timestamp;
+	public void setCreatedAt(Timestamp createdAt) {
+		this.createdAt = createdAt != null ? new Timestamp(createdAt.getTime()) : null;
 	}
 	
 	void encodeData() {
 		String content = Serializer.DEFAULT_JSON_SERIALIZER.serialize(attributes);
-		data = BaseEncoding.base64().encode(content.getBytes());
+		data = BaseEncoding.base64().encode(content.getBytes(Charsets.UTF_8));
 	}
 	
 	void decodeData(String data) {
 		byte[] bytes = BaseEncoding.base64().decode(data);
-		setAttributes(Serializer.DEFAULT_JSON_SERIALIZER.deserialize(new String(bytes), Map.class));
+		setAttributes(Serializer.DEFAULT_JSON_SERIALIZER.deserialize(new String(bytes, Charsets.UTF_8), Map.class));
 	}
 	
 	public boolean hasExpired(long timeoutInSecs) {

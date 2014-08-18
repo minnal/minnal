@@ -4,6 +4,7 @@
 package org.minnal.generator.test;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.minnal.generator.core.AbstractGenerator;
 import org.minnal.instrument.entity.AggregateRootScanner;
@@ -22,7 +23,7 @@ public class TestsGenerator extends AbstractGenerator {
 	
 	public TestsGenerator(String projectDir, String[] packages) {
 		super(new File(projectDir));
-		this.packages = packages;
+		this.packages = Arrays.copyOf(packages, packages.length);
 		this.projectDir = projectDir;
 	}
 	

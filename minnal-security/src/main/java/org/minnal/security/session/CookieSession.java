@@ -64,14 +64,14 @@ public class CookieSession implements Session {
 	 * @return the createdAt
 	 */
 	public Timestamp getCreatedAt() {
-		return createdAt;
+		return createdAt != null ? new Timestamp(createdAt.getTime()) : null;
 	}
 
 	/**
 	 * @param createdAt the createdAt to set
 	 */
 	public void setCreatedAt(Timestamp createdAt) {
-		this.createdAt = createdAt;
+		this.createdAt = createdAt != null ? new Timestamp(createdAt.getTime()) : null;
 	}
 
 	public boolean hasExpired(long timeoutInSecs) {

@@ -166,7 +166,7 @@ public class ResourceUtil {
 		List<Class<?>> types = Lists.transform(parameters, new Function<ParameterMetaData, Class<?>>() {
 			@Override
 			public Class<?> apply(ParameterMetaData input) {
-				return input.getType();
+				return input == null ? null : input.getType();
 			}
 		});
 		Method method = MethodUtils.getAccessibleMethod(model.getClass(), actionName, types.toArray(new Class[0]));

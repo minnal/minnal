@@ -71,7 +71,9 @@ public class ProjectGenerator extends AbstractGenerator {
 		File dir = new File(command.getBaseDir());
 		if (! dir.exists()) {
 			logger.trace("Directory {} doesn't exist. Creating one.", command.getBaseDir());
-			dir.mkdirs();
+			if (! dir.mkdirs()) {
+				throw new IllegalStateException("Failed while creating the dir - " + dir.getPath());
+			}
 		} else if (! dir.isDirectory()) {
 			logger.trace("Path {} is not a directory", command.getBaseDir());
 			throw new MinnalException("Path " + command.getBaseDir() + " is not a directory");
@@ -81,7 +83,9 @@ public class ProjectGenerator extends AbstractGenerator {
 			logger.trace("Project directory {} already exists", projectDir.getAbsolutePath());
 			throw new MinnalException("Project dir " + projectDir.getAbsolutePath() + " already exists");
 		}
-		projectDir.mkdirs();
+		if (! projectDir.mkdirs()) {
+			throw new IllegalStateException("Failed while creating the project dir - " + projectDir.getPath());
+		}
 		return projectDir;
 	}
 	

@@ -20,6 +20,10 @@ import org.glassfish.jersey.message.internal.OutboundMessageContext;
 import org.minnal.core.MinnalException;
 import org.minnal.security.session.Session;
 import org.pac4j.core.context.WebContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Charsets;
 
 /**
  * @author ganeshs
@@ -34,6 +38,8 @@ public class JaxrsWebContext implements WebContext {
 	private OutboundMessageContext context;
 	
 	private Session session;
+	
+	private static final Logger logger = LoggerFactory.getLogger(JaxrsWebContext.class);
 
 	/**
 	 * @param request
@@ -106,10 +112,10 @@ public class JaxrsWebContext implements WebContext {
 	@Override
 	public void writeResponseContent(String content) {
 		try {
-			context.getEntityStream().write(content.getBytes());
+			context.getEntityStream().write(content.getBytes(Charsets.UTF_8));
 		} catch (IOException e) {
-			// TODO log error
-			throw new MinnalException(e);
+			logger.error("Failed while writing the response content", e);
+			throw new MinnalException("Failed while writing the response content", e);
 		}
 	}
 

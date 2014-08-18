@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.minnal.autopojo.AutoPojoFactory;
 import org.minnal.autopojo.Configuration;
@@ -49,7 +51,6 @@ import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
-import com.google.common.net.MediaType;
 
 /**
  * @author ganeshs
@@ -125,18 +126,18 @@ public abstract class BaseResourceTest {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
 			ByteStreams.copy(new ByteBufInputStream(content), bos);
-			return request(uri, method, bos.toString(Charsets.UTF_8.name()), MediaType.JSON_UTF_8);
+			return request(uri, method, bos.toString(Charsets.UTF_8.name()), MediaType.APPLICATION_JSON_TYPE);
 		} catch (Exception e) {
 			throw new MinnalException(e);
 		}
 	}
 	
 	protected FullHttpRequest request(String uri, HttpMethod method) {
-		return request(uri, method, "", MediaType.JSON_UTF_8);
+		return request(uri, method, "", MediaType.APPLICATION_JSON_TYPE);
 	}
 	
 	protected FullHttpRequest request(String uri, HttpMethod method, String content) {
-		return request(uri, method, content, MediaType.JSON_UTF_8);
+		return request(uri, method, content, MediaType.APPLICATION_JSON_TYPE);
 	}
 
 	protected FullHttpRequest request(String uri, HttpMethod method, String content, MediaType contentType) {
@@ -148,7 +149,7 @@ public abstract class BaseResourceTest {
 		request.content().writeBytes(buffer(content));
 		request.headers().add(HttpHeaders.Names.CONTENT_TYPE, contentType.toString());
 		request.headers().add(HttpHeaders.Names.CONTENT_LENGTH, content.length());
-		request.headers().add(HttpHeaders.Names.ACCEPT, MediaType.ANY_TYPE);
+		request.headers().add(HttpHeaders.Names.ACCEPT, MediaType.WILDCARD);
 		return request;
 	}
 	
@@ -156,7 +157,7 @@ public abstract class BaseResourceTest {
 		ByteBuf buffer = Unpooled.buffer();
 		ByteBufOutputStream os = new ByteBufOutputStream(buffer);
 		try {
-			os.write(content.getBytes());
+			os.writeUTF(content);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
