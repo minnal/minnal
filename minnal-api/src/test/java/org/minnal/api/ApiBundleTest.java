@@ -15,8 +15,10 @@ import static org.testng.Assert.assertTrue;
 import java.lang.annotation.Annotation;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
+import java.util.Date;
 
-import org.minnal.api.filter.JacksonModelConvertor;
+import org.minnal.api.filter.ExcludeAnnotationsConvertor;
 import org.minnal.api.filter.MinnalApiSpecFilter;
 import org.minnal.core.Application;
 import org.minnal.core.Container;
@@ -37,6 +39,7 @@ import com.wordnik.swagger.config.ScannerFactory;
 import com.wordnik.swagger.config.SwaggerConfig;
 import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.converter.OverrideConverter;
 import com.wordnik.swagger.jaxrs.config.DefaultJaxrsScanner;
 import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader;
 import com.wordnik.swagger.reader.ClassReaders;
@@ -74,8 +77,10 @@ public class ApiBundleTest {
 	
 	@Test
 	public void shouldConfigureSwagger() {
-		ModelConverter converter = mock(JacksonModelConvertor.class);
-		doReturn(converter).when(apiBundle).getModelConvertor();
+		ModelConverter converter = mock(ExcludeAnnotationsConvertor.class);
+		doReturn(converter).when(apiBundle).getExcludeAnnotationsConvertor();
+		OverrideConverter overrideConverter = mock(OverrideConverter.class);
+		doReturn(overrideConverter).when(apiBundle).getOverrideConverter();
 		doReturn("localhost").when(apiBundle).getHostName();
 		apiBundle.init(container, bundleConfiguration);
 		SwaggerConfig config = ConfigFactory.config();
@@ -84,7 +89,8 @@ public class ApiBundleTest {
 		assertTrue(ScannerFactory.scanner().get() instanceof DefaultJaxrsScanner);
 		assertTrue(ClassReaders.reader().get() instanceof DefaultJaxrsApiReader);
 		assertTrue(FilterFactory.filter() instanceof MinnalApiSpecFilter);
-		ModelConverters.addConverter(converter, true);
+		assertTrue(ModelConverters.converters().contains(converter));
+		assertTrue(ModelConverters.converters().contains(overrideConverter));
 	}
 
 	@Test
@@ -93,10 +99,20 @@ public class ApiBundleTest {
 	}
 	
 	@Test
-	public void shouldGetModelConverter() {
+	public void shouldGetExcludeAnnotationsConverter() {
 		apiBundle.init(container, bundleConfiguration);
-		JacksonModelConvertor convertor = apiBundle.getModelConvertor();
+		ExcludeAnnotationsConvertor convertor = apiBundle.getExcludeAnnotationsConvertor();
 		assertEquals(convertor.getExcludeAnnotations(), Lists.newArrayList(JsonBackReference.class, JsonIgnore.class));
+	}
+	
+	@Test
+	public void shouldGetOverrideConverter() {
+		apiBundle.init(container, bundleConfiguration);
+		OverrideConverter convertor = apiBundle.getOverrideConverter();
+		assertTrue(convertor.overrides().contains(Date.class.getCanonicalName()));
+		assertTrue(convertor.overrides().contains(Timestamp.class.getCanonicalName()));
+		assertEquals(convertor.overrides().get(Timestamp.class.getCanonicalName()).get().get().name(), "date-time");
+		assertEquals(convertor.overrides().get(Date.class.getCanonicalName()).get().get().name(), "date-time");
 	}
 	
 	@Test

@@ -11,11 +11,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.sql.Timestamp;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -33,9 +31,9 @@ import com.wordnik.swagger.model.ModelProperty;
  * @author ganeshs
  *
  */
-public class JacksonModelConvertorTest {
+public class ExcludeAnnotationsConvertorTest {
 
-	private JacksonModelConvertor convertor;
+	private ExcludeAnnotationsConvertor convertor;
 	
 	private Model model;
 	
@@ -43,7 +41,7 @@ public class JacksonModelConvertorTest {
 	
 	@BeforeMethod
 	public void setup() {
-		convertor = spy(new JacksonModelConvertor(Lists.<Class<? extends Annotation>>newArrayList(JsonBackReference.class)));
+		convertor = spy(new ExcludeAnnotationsConvertor(Lists.<Class<? extends Annotation>>newArrayList(JsonBackReference.class)));
 		model = mock(Model.class);
 		properties = mock(LinkedHashMap.class);
 		when(model.properties()).thenReturn(properties);
@@ -52,34 +50,12 @@ public class JacksonModelConvertorTest {
 	@Test
 	public void shouldReadFieldsAndHandleThem() throws NoSuchFieldException, SecurityException {
 		doNothing().when(convertor).handleExcludedAnnotations(eq(DummyModel.class), any(Field.class), any(Option.class));
-		doNothing().when(convertor).handleTimestampField(any(Field.class), any(Option.class));
 		convertor.read(DummyModel.class, mock(Map.class));
 		verify(convertor).handleExcludedAnnotations(eq(DummyModel.class), eq(DummyModel.class.getDeclaredField("field1")), any(Option.class));
 		verify(convertor).handleExcludedAnnotations(eq(DummyModel.class), eq(DummyModel.class.getDeclaredField("field2")), any(Option.class));
 		verify(convertor).handleExcludedAnnotations(eq(DummyModel.class), eq(DummyModel.class.getDeclaredField("field3")), any(Option.class));
-		verify(convertor).handleTimestampField(eq(DummyModel.class.getDeclaredField("timestamp")), any(Option.class));
 	}
 	
-	@Test
-	public void shouldHandleTimestampType() throws NoSuchFieldException, SecurityException {
-		properties = new LinkedHashMap<String, ModelProperty>();
-		ModelProperty property = new ModelProperty("java.sql.Timestamp", "java.sql.Timestamp", 1, true, Option.<String>empty(), null, null);
-		properties.put("timestamp", property);
-		when(model.properties()).thenReturn(properties);
-		convertor.handleTimestampField(DummyModel.class.getDeclaredField("timestamp"), Option.apply(model));
-		assertEquals(properties.get("timestamp").get().type(), "date-time");
-	}
-	
-	@Test
-	public void shouldNotHandleNonTimestampType() throws NoSuchFieldException, SecurityException {
-		properties = new LinkedHashMap<String, ModelProperty>();
-		ModelProperty property = new ModelProperty("string", "string", 1, true, Option.<String>empty(), null, null);
-		properties.put("field1", property);
-		when(model.properties()).thenReturn(properties);
-		convertor.handleTimestampField(DummyModel.class.getDeclaredField("field1"), Option.apply(model));
-		assertEquals(properties.get("field1").get().type(), "string");
-	}
-
 	@Test
 	public void shouldRemoveExcludedFieldAnnotationsFromModel() throws NoSuchFieldException, SecurityException {
 		convertor.handleExcludedAnnotations(DummyModel.class, DummyModel.class.getDeclaredField("field1"), Option.apply(model));
@@ -111,8 +87,6 @@ public class JacksonModelConvertorTest {
 		
 		private String field3;
 		
-		private Timestamp timestamp;
-
 		/**
 		 * @return the field1
 		 */

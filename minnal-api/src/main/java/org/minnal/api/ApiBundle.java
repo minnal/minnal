@@ -5,9 +5,11 @@ package org.minnal.api;
 
 import java.lang.annotation.Annotation;
 import java.net.InetAddress;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
-import org.minnal.api.filter.JacksonModelConvertor;
+import org.minnal.api.filter.ExcludeAnnotationsConvertor;
 import org.minnal.api.filter.MinnalApiSpecFilter;
 import org.minnal.core.Application;
 import org.minnal.core.Bundle;
@@ -24,6 +26,7 @@ import com.wordnik.swagger.config.FilterFactory;
 import com.wordnik.swagger.config.ScannerFactory;
 import com.wordnik.swagger.config.SwaggerConfig;
 import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.converter.OverrideConverter;
 import com.wordnik.swagger.jaxrs.config.DefaultJaxrsScanner;
 import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader;
 import com.wordnik.swagger.reader.ClassReaders;
@@ -54,7 +57,21 @@ public class ApiBundle extends ContainerAdapter implements Bundle<ApiBundleConfi
 		ScannerFactory.setScanner(new DefaultJaxrsScanner());
 		ClassReaders.setReader(new DefaultJaxrsApiReader());
 		FilterFactory.setFilter(new MinnalApiSpecFilter());
-		ModelConverters.addConverter(getModelConvertor(), true);
+		ModelConverters.addConverter(getExcludeAnnotationsConvertor(), true);
+		ModelConverters.addConverter(getOverrideConverter(), true);
+	}
+	
+	/**
+	 * Returns the override converter
+	 * 
+	 * @return
+	 */
+	protected OverrideConverter getOverrideConverter() {
+		OverrideConverter converter = new OverrideConverter();
+		String dateJson = "{\"id\": \"date-time\", \"name\": \"date-time\", \"qualifiedType\": \"date-time\"}";
+		converter.add(Date.class.getCanonicalName(), dateJson);
+		converter.add(Timestamp.class.getCanonicalName(), dateJson);
+		return converter;
 	}
 	
 	/**
@@ -62,10 +79,10 @@ public class ApiBundle extends ContainerAdapter implements Bundle<ApiBundleConfi
 	 * 
 	 * @return
 	 */
-	protected JacksonModelConvertor getModelConvertor() {
+	protected ExcludeAnnotationsConvertor getExcludeAnnotationsConvertor() {
 		List<Class<? extends Annotation>> excludedAnnotations = Lists.<Class<? extends Annotation>>newArrayList(JsonBackReference.class);
 		excludedAnnotations.addAll(configuration.getExcludedAnnotations());
-		return new JacksonModelConvertor(excludedAnnotations);
+		return new ExcludeAnnotationsConvertor(excludedAnnotations);
 	}
 
 	@Override
