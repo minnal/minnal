@@ -22,7 +22,8 @@
 		<module>minnal-metrics</module>
 		<module>minnal-utils</module>
 		<module>minnal-validation</module>
-	</modules>
+        <module>minna-jaxrs-test</module>
+    </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
