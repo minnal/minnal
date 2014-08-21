@@ -22,7 +22,7 @@
 		<module>minnal-metrics</module>
 		<module>minnal-utils</module>
 		<module>minnal-validation</module>
-        <module>minna-jaxrs-test</module>
+        <module>minnal-jaxrs-test</module>
     </modules>
 
 	<properties>

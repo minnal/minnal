@@ -7,7 +7,6 @@ import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
-import org.minnal.core.MinnalException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class CodeUtil {
         try {
             te.apply(dc);
         } catch (Exception e) {
-            throw new MinnalException("Failed while formatting the code", e);
+            throw new RuntimeException("Failed while formatting the code", e);
         }
         return dc.get();
     }

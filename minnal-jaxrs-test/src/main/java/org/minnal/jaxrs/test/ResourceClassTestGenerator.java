@@ -8,6 +8,7 @@ import org.minnal.instrument.NamingStrategy;
 import org.minnal.instrument.UnderscoreNamingStrategy;
 import org.minnal.instrument.entity.EntityNode;
 import org.minnal.jaxrs.test.core.AbstractTemplateGenerator;
+import org.minnal.jaxrs.test.utils.CodeUtil;
 import org.minnal.utils.route.RoutePattern;
 
 import javax.ws.rs.HttpMethod;
@@ -87,7 +88,7 @@ public class ResourceClassTestGenerator extends AbstractTemplateGenerator {
             }
             file = new File(folder, fileName);
         }
-        writeFile(CodeUtils.format(writer.toString()), file);
+        writeFile(CodeUtil.format(writer.toString()), file);
     }
 
     private void createMethods(EntityNode.EntityNodePath path, StringBuffer buffer) {
