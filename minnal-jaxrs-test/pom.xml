@@ -18,7 +18,6 @@
             <version>1.7</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.minnal</groupId>
             <artifactId>minnal-instrumentation-jaxrs</artifactId>
@@ -36,7 +35,6 @@
             <artifactId>minnal-instrumentation</artifactId>
             <version>${project.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -63,6 +61,12 @@
             <groupId>com.sun.jersey.jersey-test-framework</groupId>
             <artifactId>jersey-test-framework-core</artifactId>
             <version>1.18.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.minnal</groupId>
+            <artifactId>autopojo</artifactId>
+            <version>0.0.8</version>
         </dependency>
 
 

@@ -11,7 +11,7 @@ import org.testng.internal.ObjectFactoryImpl;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-public abstract class BaseJPAResourceTest extends BaseResourceTest{
+public abstract class BaseJPAResourceTest extends BaseResourceTest {
 
     /**
      * Note: Kind of hack to ensure that ActiveJPAAgent instruments all the models before they are loaded.
@@ -28,7 +28,7 @@ public abstract class BaseJPAResourceTest extends BaseResourceTest{
 
     protected void setup() {
         super.setup();
-        if (! disableForeignKeyChecks()) {
+        if (!disableForeignKeyChecks()) {
             return;
         }
 
