@@ -54,6 +54,16 @@
             <artifactId>core</artifactId>
             <version>3.3.0-v_771</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-core</artifactId>
+            <version>1.18.1</version>
+        </dependency>
 
 
     </dependencies>
