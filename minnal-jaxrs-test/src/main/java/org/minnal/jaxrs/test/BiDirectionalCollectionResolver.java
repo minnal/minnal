@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * @author ganeshs
+ *
  */
 public class BiDirectionalCollectionResolver extends CollectionResolver {
 

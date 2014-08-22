@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.minnal.autopojo.AttributeMetaData;
-import org.minnal.autopojo.resolver.CollectionResolver;
+import org.minnal.autopojo.resolver.ObjectResolver;
 import org.minnal.autopojo.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,11 @@ import org.slf4j.LoggerFactory;
 import java.beans.PropertyDescriptor;
 import java.util.List;
 
-public class BiDirectionalObjectResolver extends CollectionResolver {
+/**
+ * @author ganeshs
+ *
+ */
+public class BiDirectionalObjectResolver extends ObjectResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(BiDirectionalObjectResolver.class);
 
@@ -44,6 +48,5 @@ public class BiDirectionalObjectResolver extends CollectionResolver {
         }
         return null;
     }
-
 
 }

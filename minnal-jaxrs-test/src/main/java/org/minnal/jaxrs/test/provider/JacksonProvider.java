@@ -7,11 +7,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.jaxrs.cfg.Annotations;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
 import org.minnal.jaxrs.test.exception.MinnalJaxrsTestException;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 public class JacksonProvider extends JacksonJaxbJsonProvider {
@@ -50,12 +56,23 @@ public class JacksonProvider extends JacksonJaxbJsonProvider {
         return PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES;
     }
 
-    /**
-     * @param object
-     */
-    public ByteBuffer serialize(Object object, MediaType mediaType) {
-        ByteBuffer byteBuf = ByteBuffer.allocate(48);
-        OutputStream stream = new ByteArrayOutputStream();
+//    /**
+//     * @param object
+//     */
+//    public ByteBuffer serialize(Object object, MediaType mediaType) {
+//        ByteBuffer byteBuf = ByteBuffer.allocate(48);
+//        OutputStream stream = new ByteArrayOutputStream(48);
+//        try {
+//            writeTo(object, object.getClass(), object.getClass(), null, mediaType, new MultivaluedHashMap<String, Object>(), stream);
+//        } catch (IOException e) {
+//            throw new MinnalJaxrsTestException(e);
+//        }
+//        return byteBuf;
+//    }
+
+    public ByteBuf serialize(Object object, MediaType mediaType) {
+        ByteBuf byteBuf = Unpooled.buffer();
+        OutputStream stream = new ByteBufOutputStream(byteBuf);
         try {
             writeTo(object, object.getClass(), object.getClass(), null, mediaType, new MultivaluedHashMap<String, Object>(), stream);
         } catch (IOException e) {

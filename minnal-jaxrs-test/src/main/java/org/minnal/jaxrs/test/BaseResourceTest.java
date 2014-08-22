@@ -2,12 +2,14 @@ package org.minnal.jaxrs.test;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.Futures;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.internal.PropertiesDelegate;
@@ -42,6 +44,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class BaseResourceTest {
 
@@ -52,7 +55,7 @@ public abstract class BaseResourceTest {
     private static AutoPojoFactory factory;
 
     static {
-        Set<Class<? extends Annotation>> excludeAnnotations = new HashSet<>();
+        Set<Class<? extends Annotation>> excludeAnnotations = new HashSet<Class<? extends Annotation>>();
         excludeAnnotations.add(JsonIgnore.class);
         excludeAnnotations.add(JsonBackReference.class);
         try {
@@ -68,18 +71,12 @@ public abstract class BaseResourceTest {
         factory = new AutoPojoFactory(strategy);
     }
 
-    protected JacksonProvider provider;
+    public JacksonProvider provider;
 
     private ApplicationHandler handler;
 
-    private ResourceConfig resourceConfig;
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @BeforeSuite
     public void beforeSuite() {
-        provider = new JacksonProvider(MAPPER);
-        handler = createApplicationHandler(resourceConfig);
     }
 
     @BeforeMethod
@@ -96,18 +93,18 @@ public abstract class BaseResourceTest {
     public void afterSuite() {
     }
 
-    protected void init(ResourceConfig resourceConfig) {
-        this.resourceConfig = resourceConfig;
+    public void init(ResourceConfig resourceConfig, JacksonProvider provider) {
+        this.provider = provider;
+        handler = createApplicationHandler(resourceConfig);
     }
 
-    protected void setup() {
+    public void setup() {
     }
 
-
-    protected void destroy() {
+    public void destroy() {
     }
 
-    protected ContainerRequest request(String uri, String method, ByteBuffer content) {
+    public ContainerRequest request(String uri, String method, ByteBuf content) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             ByteStreams.copy(new ByteArrayInputStream(content.array()), bos);
@@ -117,32 +114,32 @@ public abstract class BaseResourceTest {
         }
     }
 
-    protected ContainerRequest request(String uri, String method) {
+    public ContainerRequest request(String uri, String method) {
         return request(uri, method, "", MediaType.APPLICATION_JSON_TYPE);
     }
 
-    protected ContainerRequest request(String uri, String method, String content) {
+    public ContainerRequest request(String uri, String method, String content) {
         return request(uri, method, content, MediaType.APPLICATION_JSON_TYPE);
     }
 
-    protected ContainerRequest request(String uri, String method, String content, MediaType contentType) {
+    public ContainerRequest request(String uri, String method, String content, MediaType contentType) {
         return request(uri, method, content, contentType, Maps.<String, String>newHashMap());
     }
 
-    protected ContainerRequest request(String uri, String method, String content, MediaType contentType, Map<String, String> headers) {
+    public ContainerRequest request(String uri, String method, String content, MediaType contentType, Map<String, String> headers) {
         return createContainerRequest(URI.create(""), URI.create(uri), method, content, headers,
                 null, new MapPropertiesDelegate());
     }
 
-    protected <T> T createDomain(Class<T> clazz, Class<?>... genericTypes) {
+    public <T> T createDomain(Class<T> clazz, Class<?>... genericTypes) {
         return factory.populate(clazz, MAX_DEPTH, genericTypes);
     }
 
-    protected <T> T createDomain(Class<T> clazz, int maxDepth, Class<?>... genericTypes) {
+    public <T> T createDomain(Class<T> clazz, int maxDepth, Class<?>... genericTypes) {
         return factory.populate(clazz, maxDepth, genericTypes);
     }
 
-    protected <T> boolean compare(T model1, T model2, int depth) {
+    public <T> boolean compare(T model1, T model2, int depth) {
         if (model1 == null || model2 == null) {
             return false;
         }
@@ -162,22 +159,27 @@ public abstract class BaseResourceTest {
         return true;
     }
 
-    protected ByteBuffer serialize(Object value) {
+//    public ByteBuffer serialize(Object value) {
+//        return provider.serialize(value, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
+//    }
+
+    public io.netty.buffer.ByteBuf serialize(Object value) {
         return provider.serialize(value, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
 
-    protected <T> T deserialize(ByteBuffer byteBuf, Class<T> type) {
+    public <T> T deserialize(ByteBuffer byteBuf, Class<T> type) {
         return (T) provider.deserialize(byteBuf, type, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
 
-    protected <T> T deserializeCollection(ByteBuffer byteBuf, Class<T> type, Class elementType) {
+    public <T> T deserializeCollection(ByteBuffer byteBuf, Class<T> type, Class elementType) {
         return (T) provider.deserializeCollection(byteBuf, type, elementType, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
 
-    protected ContainerResponse call(ContainerRequest containerRequest) {
+    public ContainerResponse call(ContainerRequest containerRequest) {
+        ByteBuf buffer = Unpooled.buffer();
         ContainerResponse response;
         try {
-            response = Futures.getUnchecked(handler.apply(containerRequest, new ByteArrayOutputStream()));
+            response = Futures.getUnchecked(handler.apply(containerRequest, new ByteBufOutputStream(buffer)));
         } catch (Exception e) {
             logger.debug("Failed while handling the request - " + containerRequest, e);
             response = new ContainerResponse(containerRequest, Response.serverError().build());

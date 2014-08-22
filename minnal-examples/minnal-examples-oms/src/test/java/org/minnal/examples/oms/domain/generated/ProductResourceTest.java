@@ -1,13 +1,13 @@
 package org.minnal.examples.oms.domain.generated;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
-
-import org.minnal.core.resource.BaseJPAResourceTest;
+import org.minnal.jaxrs.test.BaseJPAResourceTest;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * This is an auto generated test class by minnal-generator
