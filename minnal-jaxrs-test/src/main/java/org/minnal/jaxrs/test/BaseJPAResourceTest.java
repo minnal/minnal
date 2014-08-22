@@ -1,4 +1,4 @@
-package org.minnal.jaxrs.test.baseTest;
+package org.minnal.jaxrs.test;
 
 import org.activejpa.enhancer.ActiveJpaAgentLoader;
 import org.activejpa.jpa.JPA;
@@ -27,8 +27,12 @@ public abstract class BaseJPAResourceTest extends BaseResourceTest {
         return new ObjectFactoryImpl();
     }
 
-    protected void setup(ResourceConfig resourceConfig) {
-        super.setup(resourceConfig);
+    protected void init(ResourceConfig resourceConfig) {
+        super.init(resourceConfig);
+    }
+
+    protected void setup() {
+        super.setup();
         if (!disableForeignKeyChecks()) {
             return;
         }

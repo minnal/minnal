@@ -1,4 +1,4 @@
-package org.minnal.jaxrs.test.baseTest;
+package org.minnal.jaxrs.test;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,8 +19,8 @@ import org.minnal.autopojo.AutoPojoFactory;
 import org.minnal.autopojo.Configuration;
 import org.minnal.autopojo.GenerationStrategy;
 import org.minnal.autopojo.util.PropertyUtil;
-import org.minnal.jaxrs.test.baseTest.exception.MinnalJaxrsTestException;
-import org.minnal.jaxrs.test.baseTest.provider.JacksonProvider;
+import org.minnal.jaxrs.test.exception.MinnalJaxrsTestException;
+import org.minnal.jaxrs.test.provider.JacksonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -84,6 +84,7 @@ public abstract class BaseResourceTest {
 
     @BeforeMethod
     public void beforeMethod() {
+        setup();
     }
 
     @AfterMethod
@@ -95,9 +96,13 @@ public abstract class BaseResourceTest {
     public void afterSuite() {
     }
 
-    protected void setup(ResourceConfig resourceConfig) {
+    protected void init(ResourceConfig resourceConfig) {
         this.resourceConfig = resourceConfig;
     }
+
+    protected void setup() {
+    }
+
 
     protected void destroy() {
     }

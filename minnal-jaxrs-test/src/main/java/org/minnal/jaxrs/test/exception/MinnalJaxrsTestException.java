@@ -1,4 +1,4 @@
-package org.minnal.jaxrs.test.baseTest.exception;
+package org.minnal.jaxrs.test.exception;
 
 public class MinnalJaxrsTestException extends RuntimeException {
     private static final long serialVersionUID = 1L;

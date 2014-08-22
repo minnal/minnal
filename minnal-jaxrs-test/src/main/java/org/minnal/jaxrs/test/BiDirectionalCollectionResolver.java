@@ -1,4 +1,4 @@
-package org.minnal.jaxrs.test.baseTest;
+package org.minnal.jaxrs.test;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
