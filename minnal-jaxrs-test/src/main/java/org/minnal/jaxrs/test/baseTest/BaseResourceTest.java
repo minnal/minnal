@@ -2,16 +2,12 @@ package org.minnal.jaxrs.test.baseTest;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.Futures;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.HttpMethod;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.internal.PropertiesDelegate;
@@ -23,10 +19,8 @@ import org.minnal.autopojo.AutoPojoFactory;
 import org.minnal.autopojo.Configuration;
 import org.minnal.autopojo.GenerationStrategy;
 import org.minnal.autopojo.util.PropertyUtil;
-import org.minnal.core.Application;
-import org.minnal.core.Container;
-import org.minnal.core.JacksonProvider;
-import org.minnal.core.config.ApplicationConfiguration;
+import org.minnal.jaxrs.test.baseTest.exception.MinnalJaxrsTestException;
+import org.minnal.jaxrs.test.baseTest.provider.JacksonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -40,9 +34,9 @@ import javax.ws.rs.core.SecurityContext;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -76,24 +70,20 @@ public abstract class BaseResourceTest {
 
     protected JacksonProvider provider;
 
-    private static Container container = new Container();
-
     private ApplicationHandler handler;
-    private Application<ApplicationConfiguration> application;
+
+    private ResourceConfig resourceConfig;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @BeforeSuite
     public void beforeSuite() {
-        container.init();
-        container.start();
+        provider = new JacksonProvider(MAPPER);
+        handler = createApplicationHandler(resourceConfig);
     }
 
     @BeforeMethod
     public void beforeMethod() {
-        application = container.getApplications().iterator().next();
-        provider = new JacksonProvider(application.getObjectMapper());
-        setup();
-
-        handler = createApplicationHandler(application.getResourceConfig());
     }
 
     @AfterMethod
@@ -103,56 +93,40 @@ public abstract class BaseResourceTest {
 
     @AfterSuite
     public void afterSuite() {
-        container.stop();
     }
 
-    protected void setup() {
+    protected void setup(ResourceConfig resourceConfig) {
+        this.resourceConfig = resourceConfig;
     }
 
     protected void destroy() {
     }
 
-    protected ContainerRequest request(String uri, HttpMethod method, ByteBuf content) {
+    protected ContainerRequest request(String uri, String method, ByteBuffer content) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            ByteStreams.copy(new ByteBufInputStream(content), bos);
+            ByteStreams.copy(new ByteArrayInputStream(content.array()), bos);
             return request(uri, method, bos.toString(Charsets.UTF_8.name()), MediaType.APPLICATION_JSON_TYPE);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MinnalJaxrsTestException(e);
         }
     }
 
-    protected ContainerRequest request(String uri, HttpMethod method) {
+    protected ContainerRequest request(String uri, String method) {
         return request(uri, method, "", MediaType.APPLICATION_JSON_TYPE);
     }
 
-    protected ContainerRequest request(String uri, HttpMethod method, String content) {
+    protected ContainerRequest request(String uri, String method, String content) {
         return request(uri, method, content, MediaType.APPLICATION_JSON_TYPE);
     }
 
-    protected ContainerRequest request(String uri, HttpMethod method, String content, MediaType contentType) {
+    protected ContainerRequest request(String uri, String method, String content, MediaType contentType) {
         return request(uri, method, content, contentType, Maps.<String, String>newHashMap());
     }
 
-    protected ContainerRequest request(String uri, HttpMethod method, String content, MediaType contentType, Map<String, String> headers) {
-        return createContainerRequest(URI.create(""), URI.create(uri), method.name(), content, headers,
+    protected ContainerRequest request(String uri, String method, String content, MediaType contentType, Map<String, String> headers) {
+        return createContainerRequest(URI.create(""), URI.create(uri), method, content, headers,
                 null, new MapPropertiesDelegate());
-    }
-
-    protected ByteBuf buffer(String content) {
-        ByteBuf buffer = Unpooled.buffer();
-        ByteBufOutputStream os = new ByteBufOutputStream(buffer);
-        try {
-            os.write(content.getBytes(Charsets.UTF_8));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                os.close();
-            } catch (IOException ignored) {
-            }
-        }
-        return buffer;
     }
 
     protected <T> T createDomain(Class<T> clazz, Class<?>... genericTypes) {
@@ -183,23 +157,22 @@ public abstract class BaseResourceTest {
         return true;
     }
 
-    protected ByteBuf serialize(Object value) {
+    protected ByteBuffer serialize(Object value) {
         return provider.serialize(value, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
 
-    protected <T> T deserialize(ByteBuf byteBuf, Class<T> type) {
+    protected <T> T deserialize(ByteBuffer byteBuf, Class<T> type) {
         return (T) provider.deserialize(byteBuf, type, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
 
-    protected <T> T deserializeCollection(ByteBuf byteBuf, Class<T> type, Class elementType) {
+    protected <T> T deserializeCollection(ByteBuffer byteBuf, Class<T> type, Class elementType) {
         return (T) provider.deserializeCollection(byteBuf, type, elementType, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
 
     protected ContainerResponse call(ContainerRequest containerRequest) {
-        ByteBuf buffer = Unpooled.buffer();
         ContainerResponse response;
         try {
-            response = Futures.getUnchecked(handler.apply(containerRequest, new ByteBufOutputStream(buffer)));
+            response = Futures.getUnchecked(handler.apply(containerRequest, new ByteArrayOutputStream()));
         } catch (Exception e) {
             logger.debug("Failed while handling the request - " + containerRequest, e);
             response = new ContainerResponse(containerRequest, Response.serverError().build());
@@ -213,7 +186,7 @@ public abstract class BaseResourceTest {
 
     private ContainerRequest createContainerRequest(URI baseUri, URI requestUri, String method, String content, Map<String, String> headers,
                                                     SecurityContext securityContext, PropertiesDelegate propertiesDelegate) {
-        URI uri = URI.create(baseUri.resolve(application.getPath()) + "/");
+        URI uri = URI.create(baseUri.getPath() + "/");
         ContainerRequest containerRequest = new ContainerRequest(uri, requestUri, method, securityContext, propertiesDelegate);
         containerRequest.setEntityStream(new ByteArrayInputStream(content.getBytes()));
 

@@ -1,13 +1,13 @@
 package org.minnal.examples.oms.domain.generated;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
-
 import org.minnal.core.resource.BaseJPAResourceTest;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * This is an auto generated test class by minnal-generator
@@ -117,9 +117,7 @@ public class OrderResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.oms.domain.Order order = createDomain(org.minnal.examples.oms.domain.Order.class);
 		order.persist();
 		org.minnal.examples.oms.domain.OrderItem orderItem = createDomain(org.minnal.examples.oms.domain.OrderItem.class);
-		FullHttpResponse response = call(request(
-				"/orders/" + order.getId() + "/order_items/",
-				HttpMethod.POST, serialize(orderItem)));
+		FullHttpResponse response = call(request("/orders/" + order.getId() + "/order_items/",HttpMethod.POST, serialize(orderItem)));
 		assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
 	}
 

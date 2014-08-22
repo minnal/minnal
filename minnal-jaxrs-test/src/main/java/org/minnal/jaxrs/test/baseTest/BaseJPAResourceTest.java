@@ -3,6 +3,7 @@ package org.minnal.jaxrs.test.baseTest;
 import org.activejpa.enhancer.ActiveJpaAgentLoader;
 import org.activejpa.jpa.JPA;
 import org.activejpa.jpa.JPAContext;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.testng.IObjectFactory;
 import org.testng.ITestContext;
 import org.testng.annotations.ObjectFactory;
@@ -26,8 +27,8 @@ public abstract class BaseJPAResourceTest extends BaseResourceTest {
         return new ObjectFactoryImpl();
     }
 
-    protected void setup() {
-        super.setup();
+    protected void setup(ResourceConfig resourceConfig) {
+        super.setup(resourceConfig);
         if (!disableForeignKeyChecks()) {
             return;
         }
