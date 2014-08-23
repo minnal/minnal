@@ -23,10 +23,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.jaxrs.cfg.EndpointConfigBase;
 import com.fasterxml.jackson.jaxrs.cfg.ObjectWriterInjector;
 import com.fasterxml.jackson.jaxrs.cfg.ObjectWriterModifier;
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -53,12 +51,7 @@ public class ResponseTransformationFilter implements ContainerResponseFilter {
 
 	private Set<String> splitParams(String paramValue) {
 		final Iterable<String> values = Splitter.on(",").trimResults().omitEmptyStrings().split(Strings.nullToEmpty(paramValue));
-		return Sets.newHashSet(Iterables.transform(values, new Function<String, String>() {
-			@Override
-			public String apply(String input) {
-				return namingStrategy.getQueryParamName(input);
-			}
-		}));
+		return Sets.newHashSet(values);
 	}
 
 	@Override
