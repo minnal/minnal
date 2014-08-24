@@ -8,7 +8,6 @@ import org.minnal.examples.petclinic.domain.Specialty;
 import org.minnal.examples.petclinic.domain.Vet;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -29,16 +28,6 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 
     @Test
     public void readVetTest() {
-        org.minnal.examples.petclinic.domain.Vet vet = createDomain(org.minnal.examples.petclinic.domain.Vet.class);
-        vet.persist();
-        ContainerResponse response = call(request("/vets/" + vet.getId(), HttpMethod.GET.name()));
-
-        assertEquals(response.getStatus(), HttpResponseStatus.OK.code());
-        assertEquals(((Vet) response.getEntity()).getId(), vet.getId());
-    }
-
-    @Test
-    public void createVetTest() throws IOException {
         org.minnal.examples.petclinic.domain.Vet vet = createDomain(org.minnal.examples.petclinic.domain.Vet.class);
         ContainerResponse response = call(request("/vets", HttpMethod.POST.name(), serialize(vet)));
         assertEquals(response.getStatus(), HttpResponseStatus.CREATED.code());
@@ -115,17 +104,17 @@ public class VetResourceTest extends BaseMinnalResourceTest {
         assertTrue(compare(modifiedspecialty, specialty, 1));
     }
 
-	@Test
-	public void deleteVetSpecialtyTest() {
-		org.minnal.examples.petclinic.domain.Vet vet = createDomain(org.minnal.examples.petclinic.domain.Vet.class);
-		vet.persist();
-		org.minnal.examples.petclinic.domain.Specialty specialty = createDomain(org.minnal.examples.petclinic.domain.Specialty.class);
-		vet.collection("specialties").add(specialty);
-		vet.persist();
-		ContainerResponse response = call(request("/vets/" + vet.getId() + "/specialties/" + specialty.getId(), HttpMethod.DELETE.name()));
-		assertEquals(response.getStatus(),HttpResponseStatus.NO_CONTENT.code());
-		response = call(request("/vets/" + vet.getId()+ "/specialties/" + specialty.getId(),HttpMethod.GET.name(), serialize(specialty)));
-		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND.code());
-	}
+    @Test
+    public void deleteVetSpecialtyTest() {
+        org.minnal.examples.petclinic.domain.Vet vet = createDomain(org.minnal.examples.petclinic.domain.Vet.class);
+        vet.persist();
+        org.minnal.examples.petclinic.domain.Specialty specialty = createDomain(org.minnal.examples.petclinic.domain.Specialty.class);
+        vet.collection("specialties").add(specialty);
+        vet.persist();
+        ContainerResponse response = call(request("/vets/" + vet.getId() + "/specialties/" + specialty.getId(), HttpMethod.DELETE.name()));
+        assertEquals(response.getStatus(), HttpResponseStatus.NO_CONTENT.code());
+        response = call(request("/vets/" + vet.getId() + "/specialties/" + specialty.getId(), HttpMethod.GET.name(), serialize(specialty)));
+        assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND.code());
+    }
 
 }

@@ -2,13 +2,12 @@ package org.minnal.jaxrs.test;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
+import com.google.common.util.concurrent.Futures;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.internal.PropertiesDelegate;
@@ -70,9 +69,11 @@ public abstract class BaseResourceTest {
         factory = new AutoPojoFactory(strategy);
     }
 
-    public JacksonProvider provider;
+    private JacksonProvider provider;
 
     private ApplicationHandler handler;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @BeforeSuite
     public void beforeSuite() {
@@ -92,9 +93,9 @@ public abstract class BaseResourceTest {
     public void afterSuite() {
     }
 
-    public void init(ResourceConfig resourceConfig, JacksonProvider provider) {
-        this.provider = provider;
-        handler = createApplicationHandler(resourceConfig);
+    protected void init(ResourceConfig resourceConfig) {
+        this.provider = new JacksonProvider(MAPPER);
+        this.handler = createApplicationHandler(resourceConfig);
     }
 
     public void setup() {
@@ -103,7 +104,7 @@ public abstract class BaseResourceTest {
     public void destroy() {
     }
 
-    public ContainerRequest request(String uri, String method, ByteBuf content) {
+    public ContainerRequest request(String uri, String method, ByteBuffer content) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             ByteStreams.copy(new ByteArrayInputStream(content.array()), bos);
@@ -158,11 +159,7 @@ public abstract class BaseResourceTest {
         return true;
     }
 
-//    public ByteBuffer serialize(Object value) {
-//        return provider.serialize(value, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
-//    }
-
-    public io.netty.buffer.ByteBuf serialize(Object value) {
+    public ByteBuffer serialize(Object value) {
         return provider.serialize(value, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
 
@@ -175,10 +172,10 @@ public abstract class BaseResourceTest {
     }
 
     public ContainerResponse call(ContainerRequest containerRequest) {
-        ByteBuf buffer = Unpooled.buffer();
+        ByteBuffer byteBuf = ByteBuffer.allocate(10240);
         ContainerResponse response;
         try {
-            response = handler.apply(containerRequest, new ByteBufOutputStream(buffer)).get();
+            response = Futures.getUnchecked(handler.apply(containerRequest, new ByteBufferOutputStream(byteBuf)));
         } catch (Exception e) {
             logger.debug("Failed while handling the request - " + containerRequest, e);
             response = new ContainerResponse(containerRequest, Response.serverError().build());

@@ -4,7 +4,6 @@ import org.activejpa.enhancer.ActiveJpaAgentLoader;
 import org.activejpa.jpa.JPA;
 import org.activejpa.jpa.JPAContext;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.minnal.jaxrs.test.provider.JacksonProvider;
 import org.testng.IObjectFactory;
 import org.testng.ITestContext;
 import org.testng.annotations.ObjectFactory;
@@ -28,8 +27,8 @@ public abstract class BaseJPAResourceTest extends BaseResourceTest {
         return new ObjectFactoryImpl();
     }
 
-    public void init(ResourceConfig resourceConfig, JacksonProvider provider) {
-        super.init(resourceConfig, provider);
+    protected void init(ResourceConfig resourceConfig) {
+        super.init(resourceConfig);
     }
 
     public void setup() {
