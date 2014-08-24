@@ -10,8 +10,8 @@
 //import org.testng.annotations.Test;
 //
 ///**
-// * This is an auto generated test class by minnal-generator
-// */
+//* This is an auto generated test class by minnal-generator
+//*/
 //public class PetTypeResourceTest extends BaseJPAResourceTest {
 //	@Test
 //	public void listPetTypeTest() {

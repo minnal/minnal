@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
-import com.google.common.util.concurrent.Futures;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
@@ -179,7 +178,7 @@ public abstract class BaseResourceTest {
         ByteBuf buffer = Unpooled.buffer();
         ContainerResponse response;
         try {
-            response = Futures.getUnchecked(handler.apply(containerRequest, new ByteBufOutputStream(buffer)));
+            response = handler.apply(containerRequest, new ByteBufOutputStream(buffer)).get();
         } catch (Exception e) {
             logger.debug("Failed while handling the request - " + containerRequest, e);
             response = new ContainerResponse(containerRequest, Response.serverError().build());

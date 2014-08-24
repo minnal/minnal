@@ -36,8 +36,6 @@ public abstract class BaseMinnalResourceTest extends org.minnal.jaxrs.test.BaseJ
 
     @BeforeMethod
     public void beforeMethod() {
-//        Application<ApplicationConfiguration> application = container.getApplications().iterator().next();
-//        init(application.getResourceConfig());
         setup();
     }
 
