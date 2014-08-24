@@ -15,6 +15,7 @@ import org.glassfish.jersey.server.ApplicationHandler;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.spi.ContainerResponseWriter;
 import org.minnal.autopojo.AutoPojoFactory;
 import org.minnal.autopojo.Configuration;
 import org.minnal.autopojo.GenerationStrategy;
@@ -34,6 +35,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -180,6 +182,9 @@ public abstract class BaseResourceTest {
             logger.debug("Failed while handling the request - " + containerRequest, e);
             response = new ContainerResponse(containerRequest, Response.serverError().build());
         }
+        ContainerResponseWriter responseWriter = containerRequest.getResponseWriter();
+        OutputStream os = responseWriter.writeResponseStatusAndHeaders(response.getLength(), response);
+        response.setEntityStream(os);
         return response;
     }
 
