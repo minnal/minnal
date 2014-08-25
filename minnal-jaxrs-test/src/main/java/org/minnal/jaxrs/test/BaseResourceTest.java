@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ClassUtil;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
-import com.google.common.util.concurrent.Futures;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.internal.PropertiesDelegate;
@@ -44,15 +44,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+;
+
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class BaseResourceTest {
-
-    private static final int MAX_DEPTH = 20;
-
     private static final Logger logger = LoggerFactory.getLogger(BaseResourceTest.class);
-
+    private static final int MAX_DEPTH = 20;
+    private static final int BUFFER_CAPACITY = 10240000;
     private static AutoPojoFactory factory;
+    private JacksonProvider provider;
+    private ApplicationHandler handler;
 
     static {
         Set<Class<? extends Annotation>> excludeAnnotations = new HashSet<Class<? extends Annotation>>();
@@ -70,12 +72,6 @@ public abstract class BaseResourceTest {
         strategy.register(Collection.class, BiDirectionalCollectionResolver.class);
         factory = new AutoPojoFactory(strategy);
     }
-
-    private JacksonProvider provider;
-
-    private ApplicationHandler handler;
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @BeforeSuite
     public void beforeSuite() {
@@ -95,15 +91,22 @@ public abstract class BaseResourceTest {
     public void afterSuite() {
     }
 
+    /**
+     * init method
+     *
+     * @param resourceConfig
+     */
     protected void init(ResourceConfig resourceConfig) {
-        this.provider = new JacksonProvider(MAPPER);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JodaModule());
+        this.provider = new JacksonProvider(mapper);
         this.handler = createApplicationHandler(resourceConfig);
     }
 
-    public void setup() {
+    protected void setup() {
     }
 
-    public void destroy() {
+    protected void destroy() {
     }
 
     public ContainerRequest request(String uri, String method, ByteBuffer content) {
@@ -165,6 +168,7 @@ public abstract class BaseResourceTest {
         return provider.serialize(value, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
 
+
     public <T> T deserialize(ByteBuffer byteBuf, Class<T> type) {
         return (T) provider.deserialize(byteBuf, type, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
@@ -174,10 +178,10 @@ public abstract class BaseResourceTest {
     }
 
     public ContainerResponse call(ContainerRequest containerRequest) {
-        ByteBuffer byteBuf = ByteBuffer.allocate(10240);
+        ByteBuffer byteBuf = ByteBuffer.allocate(BUFFER_CAPACITY);
         ContainerResponse response;
         try {
-            response = Futures.getUnchecked(handler.apply(containerRequest, new ByteBufferOutputStream(byteBuf)));
+            response = handler.apply(containerRequest, new ByteBufferOutputStream(byteBuf)).get();
         } catch (Exception e) {
             logger.debug("Failed while handling the request - " + containerRequest, e);
             response = new ContainerResponse(containerRequest, Response.serverError().build());
@@ -197,10 +201,19 @@ public abstract class BaseResourceTest {
         URI uri = URI.create(baseUri.getPath() + "/");
         ContainerRequest containerRequest = new ContainerRequest(uri, requestUri, method, securityContext, propertiesDelegate);
         containerRequest.setEntityStream(new ByteArrayInputStream(content.getBytes()));
-
         for (Map.Entry<String, String> headerEntry : headers.entrySet()) {
             containerRequest.getHeaders().add(headerEntry.getKey(), headerEntry.getValue());
         }
         return containerRequest;
+    }
+
+    /**
+     * Gets byte buffer from container response
+     *
+     * @param response
+     * @return
+     */
+    protected ByteBuffer getByteBufferFromContainerResp(ContainerResponse response) {
+        return ((ByteBufferOutputStream) response.getEntityStream()).getByteBuffer();
     }
 }

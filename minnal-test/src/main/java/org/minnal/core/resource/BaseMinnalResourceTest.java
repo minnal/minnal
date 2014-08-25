@@ -3,13 +3,13 @@
  */
 package org.minnal.core.resource;
 
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.minnal.core.Application;
 import org.minnal.core.Container;
 import org.minnal.core.config.ApplicationConfiguration;
 import org.minnal.jaxrs.test.BaseJPAResourceTest;
-import org.minnal.jaxrs.test.ByteBufferOutputStream;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
@@ -33,13 +33,13 @@ public abstract class BaseMinnalResourceTest extends BaseJPAResourceTest {
     public void beforeSuite() {
         container.init();
         container.start();
-        Application<ApplicationConfiguration> application = container.getApplications().iterator().next();
-
-        init(application.getResourceConfig());
     }
 
     @BeforeMethod
     public void beforeMethod() {
+        Application<ApplicationConfiguration> application = container.getApplications().iterator().next();
+        application.getObjectMapper().registerModule(new JodaModule());
+        init(application.getResourceConfig());
         setup();
     }
 
@@ -54,7 +54,7 @@ public abstract class BaseMinnalResourceTest extends BaseJPAResourceTest {
     }
 
     @Override
-    public void setup() {
+    protected void setup() {
         super.setup();
     }
 
@@ -63,7 +63,8 @@ public abstract class BaseMinnalResourceTest extends BaseJPAResourceTest {
         return super.disableForeignKeyChecks();
     }
 
-    protected ByteBuffer getByteBuffer(ContainerResponse response) {
-        return ((ByteBufferOutputStream) response.getEntityStream()).getByteBuffer();
+    @Override
+    protected ByteBuffer getByteBufferFromContainerResp(ContainerResponse response) {
+        return super.getByteBufferFromContainerResp(response);
     }
 }

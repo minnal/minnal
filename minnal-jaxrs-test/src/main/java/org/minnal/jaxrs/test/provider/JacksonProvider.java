@@ -55,7 +55,7 @@ public class JacksonProvider extends JacksonJaxbJsonProvider {
     }
 
     public ByteBuffer serialize(Object object, MediaType mediaType) {
-        ByteBuffer byteBuf = ByteBuffer.allocate(10240);
+        ByteBuffer byteBuf = ByteBuffer.allocate(10240000);
         OutputStream stream = new ByteBufferBackedOutputStream(byteBuf);
         try {
             writeTo(object, object.getClass(), object.getClass(), null, mediaType, new MultivaluedHashMap<String, Object>(), stream);
