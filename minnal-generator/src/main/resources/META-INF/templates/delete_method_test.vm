@@ -38,9 +38,9 @@ public void $method_name() {
 	$model_class $field_name = createDomain(${model_class}.class);
 	${field_name}.persist(); 
 #end
-	FullHttpResponse response = call(request($url, HttpMethod.DELETE));
-	assertEquals(response.getStatus(), HttpResponseStatus.NO_CONTENT);
+	ContainerResponse response = call(request($url, HttpMethod.DELETE));
+	assertEquals(response.getStatus(), Response.Status.NO_CONTENT.getStatusCode());
 	response = call(request($url, HttpMethod.GET, serialize(${field_name})));
-	assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
+	assertEquals(response.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
 #set ($parent = false)
 }

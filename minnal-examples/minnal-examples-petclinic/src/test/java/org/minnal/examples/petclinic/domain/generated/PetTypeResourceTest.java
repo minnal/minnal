@@ -1,27 +1,26 @@
 package org.minnal.examples.petclinic.domain.generated;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
-
-import org.minnal.core.resource.BaseJPAResourceTest;
+import org.glassfish.jersey.server.ContainerResponse;
+import org.minnal.core.resource.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.Response;
+import static org.testng.Assert.*;
 
 /**
  * This is an auto generated test class by minnal-generator
  */
-public class PetTypeResourceTest extends BaseJPAResourceTest {
+public class PetTypeResourceTest extends BaseMinnalResourceTest {
 	@Test
 	public void listPetTypeTest() {
 		org.minnal.examples.petclinic.domain.PetType petType = createDomain(org.minnal.examples.petclinic.domain.PetType.class);
 		petType.persist();
-		FullHttpResponse response = call(request("/pet_types/",
+		ContainerResponse response = call(request("/pet_types/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpResponseStatus.OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserializeCollection(
-				response.content(),
+				getContent(response),
 				java.util.List.class,
 				org.minnal.examples.petclinic.domain.PetType.class)
 				.size(),
@@ -33,11 +32,12 @@ public class PetTypeResourceTest extends BaseJPAResourceTest {
 	public void readPetTypeTest() {
 		org.minnal.examples.petclinic.domain.PetType petType = createDomain(org.minnal.examples.petclinic.domain.PetType.class);
 		petType.persist();
-		FullHttpResponse response = call(request("/pet_types/"
+		ContainerResponse response = call(request("/pet_types/"
 				+ petType.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpResponseStatus.OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserialize(
-				response.content(),
+				getContent(response),
 				org.minnal.examples.petclinic.domain.PetType.class)
 				.getId(), petType.getId());
 	}
@@ -45,9 +45,10 @@ public class PetTypeResourceTest extends BaseJPAResourceTest {
 	@Test
 	public void createPetTypeTest() {
 		org.minnal.examples.petclinic.domain.PetType petType = createDomain(org.minnal.examples.petclinic.domain.PetType.class);
-		FullHttpResponse response = call(request("/pet_types/",
+		ContainerResponse response = call(request("/pet_types/",
 				HttpMethod.POST, serialize(petType)));
-		assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
+		assertEquals(response.getStatus(),
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -57,11 +58,11 @@ public class PetTypeResourceTest extends BaseJPAResourceTest {
 		org.minnal.examples.petclinic.domain.PetType modifiedpetType = createDomain(
 				org.minnal.examples.petclinic.domain.PetType.class,
 				1);
-		FullHttpResponse response = call(request("/pet_types/"
+		ContainerResponse response = call(request("/pet_types/"
 				+ petType.getId(), HttpMethod.PUT,
 				serialize(modifiedpetType)));
 		assertEquals(response.getStatus(),
-				HttpResponseStatus.NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		petType.merge();
 		assertTrue(compare(modifiedpetType, petType, 1));
 	}
@@ -70,13 +71,14 @@ public class PetTypeResourceTest extends BaseJPAResourceTest {
 	public void deletePetTypeTest() {
 		org.minnal.examples.petclinic.domain.PetType petType = createDomain(org.minnal.examples.petclinic.domain.PetType.class);
 		petType.persist();
-		FullHttpResponse response = call(request("/pet_types/"
+		ContainerResponse response = call(request("/pet_types/"
 				+ petType.getId(), HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
-				HttpResponseStatus.NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/pet_types/" + petType.getId(),
 				HttpMethod.GET, serialize(petType)));
-		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
+		assertEquals(response.getStatus(),
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 }

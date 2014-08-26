@@ -1,26 +1,25 @@
 package org.minnal.examples.oms.domain.generated;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponseStatus;
-
-import org.minnal.core.resource.BaseJPAResourceTest;
+import org.glassfish.jersey.server.ContainerResponse;
+import org.minnal.core.resource.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.Response;
+import static org.testng.Assert.*;
 
 /**
  * This is an auto generated test class by minnal-generator
  */
-public class ProductResourceTest extends BaseJPAResourceTest {
+public class ProductResourceTest extends BaseMinnalResourceTest {
 	@Test
 	public void listProductTest() {
 		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		product.persist();
-		FullHttpResponse response = call(request("/products/",
+		ContainerResponse response = call(request("/products/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(deserializeCollection(response.content(),
+		assertEquals(response.getStatus(), Response.Status.OK
+				.getStatusCode());
+		assertEquals(deserializeCollection(getContent(response),
 				java.util.List.class,
 				org.minnal.examples.oms.domain.Product.class)
 				.size(),
@@ -32,10 +31,11 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 	public void readProductTest() {
 		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		product.persist();
-		FullHttpResponse response = call(request(
-				"/products/" + product.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpResponseStatus.OK);
-		assertEquals(deserialize(response.content(),
+		ContainerResponse response = call(request("/products/"
+				+ product.getId(), HttpMethod.GET));
+		assertEquals(response.getStatus(), Response.Status.OK
+				.getStatusCode());
+		assertEquals(deserialize(getContent(response),
 				org.minnal.examples.oms.domain.Product.class)
 				.getId(), product.getId());
 	}
@@ -43,9 +43,10 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 	@Test
 	public void createProductTest() {
 		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
-		FullHttpResponse response = call(request("/products/",
+		ContainerResponse response = call(request("/products/",
 				HttpMethod.POST, serialize(product)));
-		assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
+		assertEquals(response.getStatus(), Response.Status.CREATED
+				.getStatusCode());
 	}
 
 	@Test
@@ -54,11 +55,11 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 		product.persist();
 		org.minnal.examples.oms.domain.Product modifiedproduct = createDomain(
 				org.minnal.examples.oms.domain.Product.class, 1);
-		FullHttpResponse response = call(request(
-				"/products/" + product.getId(), HttpMethod.PUT,
+		ContainerResponse response = call(request("/products/"
+				+ product.getId(), HttpMethod.PUT,
 				serialize(modifiedproduct)));
-		assertEquals(response.getStatus(),
-				HttpResponseStatus.NO_CONTENT);
+		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
+				.getStatusCode());
 		product.merge();
 		assertTrue(compare(modifiedproduct, product, 1));
 	}
@@ -67,14 +68,14 @@ public class ProductResourceTest extends BaseJPAResourceTest {
 	public void deleteProductTest() {
 		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		product.persist();
-		FullHttpResponse response = call(request(
-				"/products/" + product.getId(),
-				HttpMethod.DELETE));
-		assertEquals(response.getStatus(),
-				HttpResponseStatus.NO_CONTENT);
+		ContainerResponse response = call(request("/products/"
+				+ product.getId(), HttpMethod.DELETE));
+		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
+				.getStatusCode());
 		response = call(request("/products/" + product.getId(),
 				HttpMethod.GET, serialize(product)));
-		assertEquals(response.getStatus(), HttpResponseStatus.NOT_FOUND);
+		assertEquals(response.getStatus(), Response.Status.NOT_FOUND
+				.getStatusCode());
 	}
 
 }

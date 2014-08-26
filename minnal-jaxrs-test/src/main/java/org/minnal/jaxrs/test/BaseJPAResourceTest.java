@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.minnal.core.resource;
+package org.minnal.jaxrs.test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;

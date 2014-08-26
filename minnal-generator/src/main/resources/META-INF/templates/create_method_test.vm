@@ -34,7 +34,7 @@ public void $method_name() {
 	#set($url = """/$node.getResourceName()/""")
 	$model_class $field_name = createDomain(${model_class}.class); 
 #end
-	FullHttpResponse response = call(request($url, HttpMethod.POST, serialize(${field_name})));
-	assertEquals(response.getStatus(), HttpResponseStatus.CREATED);
+	ContainerResponse response = call(request($url, HttpMethod.POST, serialize(${field_name})));
+	assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
 #set ($parent = false)
 }
