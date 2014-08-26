@@ -40,7 +40,7 @@ public class OrderItem extends Model {
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="orderId")
-	@JsonBackReference
+	@JsonBackReference("items")
 	private Order order;
 	
 	@ManyToOne(fetch=FetchType.LAZY)

@@ -49,7 +49,7 @@ public class ProjectGenerator extends AbstractGenerator {
 		PomGenerator pomGenerator = new PomGenerator(baseDir, command.getProjectName());
 		pomGenerator.addDependency("org.minnal", "minnal-core", command.getVersion());
 		pomGenerator.addDependency("org.hibernate", "hibernate-entitymanager", "4.3.6.Final");
-		pomGenerator.addDependency("org.hsqldb", "hsqldb", "2.2.9");
+		pomGenerator.addDependency("com.h2database", "h2", "1.4.181");
 		pomGenerator.addDependency("org.testng", "testng", "6.8.1", "test");
 		pomGenerator.addDependency("org.minnal", "minnal-test", command.getVersion(), "test");
 		pomGenerator.addDependency("org.minnal", "minnal-migrations", command.getVersion());

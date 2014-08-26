@@ -52,16 +52,16 @@ public class ApplicationConfigGenerator extends AbstractGenerator {
 	private ApplicationConfiguration createApplicationConfiguration() {
 		ApplicationConfiguration configuration = new ApplicationConfiguration(Inflector.tableize(applicationName));
 		DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
-		databaseConfiguration.setDriverClass("org.hsqldb.jdbcDriver");
+		databaseConfiguration.setDriverClass("org.h2.Driver");
 		databaseConfiguration.setIdleConnectionTestPeriod(300);
 		databaseConfiguration.setMinSize(5);
 		databaseConfiguration.setMaxSize(10);
 		databaseConfiguration.setPackagesToScan(Arrays.asList(getBasePackage()));
-		databaseConfiguration.setUrl("jdbc:hsqldb:mem:.");
+		databaseConfiguration.setUrl("jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
 		databaseConfiguration.setUsername("sa");
 		Map<String, String> properties = new HashMap<String, String>();
 		properties.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
-		properties.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
+		properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
 		properties.put("hibernate.current_session_context_class", "thread");
 		properties.put("hibernate.hbm2ddl.auto", "create-drop");
 		databaseConfiguration.setProviderProperties(properties);

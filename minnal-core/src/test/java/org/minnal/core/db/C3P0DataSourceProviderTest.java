@@ -28,8 +28,8 @@ public class C3P0DataSourceProviderTest {
 	@BeforeMethod
 	public void beforeMethod() {
 		configuration = new DatabaseConfiguration();
-		configuration.setDriverClass("org.hsqldb.jdbcDriver");
-		configuration.setUrl("jdbc:hsqldb:mem:.");
+		configuration.setDriverClass("org.h2.Driver");
+		configuration.setUrl("jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
 		configuration.setUsername("sa");
 		provider = spy(new C3P0DataSourceProvider(configuration));
 	}
