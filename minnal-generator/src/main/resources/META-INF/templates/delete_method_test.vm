@@ -39,8 +39,8 @@ public void $method_name() {
 	${field_name}.persist(); 
 #end
 	ContainerResponse response = call(request($url, HttpMethod.DELETE));
-	assertEquals(response.getStatus(), HttpServletResponse.SC_NO_CONTENT);
+	assertEquals(response.getStatus(), Response.Status.NO_CONTENT.getStatusCode());
 	response = call(request($url, HttpMethod.GET, serialize(${field_name})));
-	assertEquals(response.getStatus(), HttpServletResponse.SC_NOT_FOUND);
+	assertEquals(response.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
 #set ($parent = false)
 }

@@ -40,7 +40,7 @@ public void $method_name() {
 #end
 	$model_class modified${field_name} = createDomain(${model_class}.class, 1);
 	ContainerResponse response = call(request($url, HttpMethod.PUT, serialize(modified${field_name})));
-	assertEquals(response.getStatus(), HttpServletResponse.SC_NO_CONTENT);
+	assertEquals(response.getStatus(), Response.Status.NO_CONTENT.getStatusCode());
 	${field_name}.merge();
 	assertTrue(compare(modified${field_name}, $field_name, 1));
 #set ($parent = false)

@@ -3,10 +3,8 @@ package org.minnal.examples.petclinic.domain.generated;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.minnal.core.resource.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.HttpMethod;
-
+import javax.ws.rs.core.Response;
 import static org.testng.Assert.*;
 
 /**
@@ -19,9 +17,10 @@ public class PetTypeResourceTest extends BaseMinnalResourceTest {
 		petType.persist();
 		ContainerResponse response = call(request("/pet_types/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserializeCollection(
-				getByteBufferFromContainerResp(response),
+				getContent(response),
 				java.util.List.class,
 				org.minnal.examples.petclinic.domain.PetType.class)
 				.size(),
@@ -35,9 +34,10 @@ public class PetTypeResourceTest extends BaseMinnalResourceTest {
 		petType.persist();
 		ContainerResponse response = call(request("/pet_types/"
 				+ petType.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserialize(
-				getByteBufferFromContainerResp(response),
+				getContent(response),
 				org.minnal.examples.petclinic.domain.PetType.class)
 				.getId(), petType.getId());
 	}
@@ -48,7 +48,7 @@ public class PetTypeResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request("/pet_types/",
 				HttpMethod.POST, serialize(petType)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_CREATED);
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class PetTypeResourceTest extends BaseMinnalResourceTest {
 				+ petType.getId(), HttpMethod.PUT,
 				serialize(modifiedpetType)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		petType.merge();
 		assertTrue(compare(modifiedpetType, petType, 1));
 	}
@@ -74,11 +74,11 @@ public class PetTypeResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request("/pet_types/"
 				+ petType.getId(), HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/pet_types/" + petType.getId(),
 				HttpMethod.GET, serialize(petType)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NOT_FOUND);
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 }

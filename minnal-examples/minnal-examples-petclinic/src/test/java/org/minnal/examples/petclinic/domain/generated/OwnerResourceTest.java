@@ -3,10 +3,8 @@ package org.minnal.examples.petclinic.domain.generated;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.minnal.core.resource.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.HttpMethod;
-
+import javax.ws.rs.core.Response;
 import static org.testng.Assert.*;
 
 /**
@@ -19,9 +17,10 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 		owner.persist();
 		ContainerResponse response = call(request("/owners/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserializeCollection(
-				getByteBufferFromContainerResp(response),
+				getContent(response),
 				java.util.List.class,
 				org.minnal.examples.petclinic.domain.Owner.class)
 				.size(),
@@ -35,9 +34,10 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 		owner.persist();
 		ContainerResponse response = call(request(
 				"/owners/" + owner.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserialize(
-				getByteBufferFromContainerResp(response),
+				getContent(response),
 				org.minnal.examples.petclinic.domain.Owner.class)
 				.getId(), owner.getId());
 	}
@@ -48,7 +48,7 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request("/owners/",
 				HttpMethod.POST, serialize(owner)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_CREATED);
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 				"/owners/" + owner.getId(), HttpMethod.PUT,
 				serialize(modifiedowner)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		owner.merge();
 		assertTrue(compare(modifiedowner, owner, 1));
 	}
@@ -74,11 +74,11 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request(
 				"/owners/" + owner.getId(), HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/owners/" + owner.getId(),
 				HttpMethod.GET, serialize(owner)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NOT_FOUND);
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 	@Test
@@ -93,9 +93,9 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request(
 				"/owners/" + owner.getId() + "/pets/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
-		assertEquals(deserializeCollection(
-				getByteBufferFromContainerResp(response),
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
+		assertEquals(deserializeCollection(getContent(response),
 				java.util.List.class,
 				org.minnal.examples.petclinic.domain.Pet.class)
 				.size(), owner.getPets().size());
@@ -111,9 +111,9 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request(
 				"/owners/" + owner.getId() + "/pets/"
 						+ pet.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
-		assertEquals(deserialize(
-				getByteBufferFromContainerResp(response),
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
+		assertEquals(deserialize(getContent(response),
 				org.minnal.examples.petclinic.domain.Pet.class)
 				.getId(), pet.getId());
 	}
@@ -127,7 +127,7 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 				"/owners/" + owner.getId() + "/pets/",
 				HttpMethod.POST, serialize(pet)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_CREATED);
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -145,7 +145,7 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 						+ pet.getId(), HttpMethod.PUT,
 				serialize(modifiedpet)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		pet.merge();
 		assertTrue(compare(modifiedpet, pet, 1));
 	}
@@ -162,11 +162,11 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 						+ pet.getId(),
 				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/owners/" + owner.getId() + "/pets/"
 				+ pet.getId(), HttpMethod.GET, serialize(pet)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NOT_FOUND);
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 	@Test
@@ -186,9 +186,10 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 				"/owners/" + owner.getId() + "/pets/"
 						+ pet.getId() + "/visits/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserializeCollection(
-				getByteBufferFromContainerResp(response),
+				getContent(response),
 				java.util.List.class,
 				org.minnal.examples.petclinic.domain.Visit.class)
 				.size(), pet.getVisits().size());
@@ -208,9 +209,10 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 				"/owners/" + owner.getId() + "/pets/"
 						+ pet.getId() + "/visits/"
 						+ visit.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserialize(
-				getByteBufferFromContainerResp(response),
+				getContent(response),
 				org.minnal.examples.petclinic.domain.Visit.class)
 				.getId(), visit.getId());
 	}
@@ -228,7 +230,7 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 						+ pet.getId() + "/visits/",
 				HttpMethod.POST, serialize(visit)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_CREATED);
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -250,7 +252,7 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 						+ visit.getId(),
 				HttpMethod.PUT, serialize(modifiedvisit)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		visit.merge();
 		assertTrue(compare(modifiedvisit, visit, 1));
 	}
@@ -271,12 +273,12 @@ public class OwnerResourceTest extends BaseMinnalResourceTest {
 						+ visit.getId(),
 				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/owners/" + owner.getId() + "/pets/"
 				+ pet.getId() + "/visits/" + visit.getId(),
 				HttpMethod.GET, serialize(visit)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NOT_FOUND);
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 }

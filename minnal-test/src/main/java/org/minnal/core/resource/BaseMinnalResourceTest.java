@@ -3,7 +3,6 @@
  */
 package org.minnal.core.resource;
 
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.minnal.core.Application;
@@ -33,13 +32,12 @@ public abstract class BaseMinnalResourceTest extends BaseJPAResourceTest {
     public void beforeSuite() {
         container.init();
         container.start();
+        Application<ApplicationConfiguration> application = container.getApplications().iterator().next();
+        init(application.getResourceConfig());
     }
 
     @BeforeMethod
     public void beforeMethod() {
-        Application<ApplicationConfiguration> application = container.getApplications().iterator().next();
-        application.getObjectMapper().registerModule(new JodaModule());
-        init(application.getResourceConfig());
         setup();
     }
 
@@ -64,7 +62,7 @@ public abstract class BaseMinnalResourceTest extends BaseJPAResourceTest {
     }
 
     @Override
-    protected ByteBuffer getByteBufferFromContainerResp(ContainerResponse response) {
-        return super.getByteBufferFromContainerResp(response);
+    protected ByteBuffer getContent(ContainerResponse response) {
+        return super.getContent(response);
     }
 }

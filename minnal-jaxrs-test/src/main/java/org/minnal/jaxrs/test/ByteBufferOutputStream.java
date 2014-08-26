@@ -1,21 +1,30 @@
 package org.minnal.jaxrs.test;
 
-import com.fasterxml.jackson.databind.util.ByteBufferBackedOutputStream;
-
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-public class ByteBufferOutputStream extends ByteBufferBackedOutputStream {
+public class ByteBufferOutputStream extends OutputStream {
+    protected final ByteBuffer buffer;
 
-    public ByteBufferOutputStream(ByteBuffer buf) {
-        super(buf);
+    public ByteBufferOutputStream(ByteBuffer buffer) {
+        this.buffer = buffer;
     }
 
-    public ByteBufferOutputStream(OutputStream outputStream) {
-        super(((ByteBufferOutputStream) outputStream).getByteBuffer());
+    @Override
+    public void write(int b) throws IOException {
+        buffer.put((byte) b);
     }
 
-    public ByteBuffer getByteBuffer() {
-        return _b;
+    @Override
+    public void write(byte[] bytes, int off, int len) throws IOException {
+        buffer.put(bytes, off, len);
+    }
+
+    /**
+     * @return buffer
+     */
+    public ByteBuffer getBuffer() {
+        return buffer;
     }
 }

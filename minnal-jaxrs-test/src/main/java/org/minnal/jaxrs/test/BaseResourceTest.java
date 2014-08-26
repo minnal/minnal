@@ -2,9 +2,7 @@ package org.minnal.jaxrs.test;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ClassUtil;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
@@ -44,17 +42,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-;
-
-
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class BaseResourceTest {
     private static final Logger logger = LoggerFactory.getLogger(BaseResourceTest.class);
     private static final int MAX_DEPTH = 20;
     private static final int BUFFER_CAPACITY = 10240000;
     private static AutoPojoFactory factory;
-    private JacksonProvider provider;
-    private ApplicationHandler handler;
+    private JacksonProvider provider = new JacksonProvider();
+    private static ApplicationHandler handler;
 
     static {
         Set<Class<? extends Annotation>> excludeAnnotations = new HashSet<Class<? extends Annotation>>();
@@ -91,16 +86,21 @@ public abstract class BaseResourceTest {
     public void afterSuite() {
     }
 
+    public JacksonProvider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(JacksonProvider provider) {
+        this.provider = provider;
+    }
+
     /**
      * init method
      *
      * @param resourceConfig
      */
     protected void init(ResourceConfig resourceConfig) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JodaModule());
-        this.provider = new JacksonProvider(mapper);
-        this.handler = createApplicationHandler(resourceConfig);
+        handler = createApplicationHandler(resourceConfig);
     }
 
     protected void setup() {
@@ -168,7 +168,6 @@ public abstract class BaseResourceTest {
         return provider.serialize(value, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
 
-
     public <T> T deserialize(ByteBuffer byteBuf, Class<T> type) {
         return (T) provider.deserialize(byteBuf, type, javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE);
     }
@@ -213,7 +212,7 @@ public abstract class BaseResourceTest {
      * @param response
      * @return
      */
-    protected ByteBuffer getByteBufferFromContainerResp(ContainerResponse response) {
-        return ((ByteBufferOutputStream) response.getEntityStream()).getByteBuffer();
+    protected ByteBuffer getContent(ContainerResponse response) {
+        return ((ByteBufferOutputStream) response.getEntityStream()).getBuffer();
     }
 }

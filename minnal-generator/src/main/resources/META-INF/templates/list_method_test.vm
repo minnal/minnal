@@ -38,12 +38,12 @@ public void $method_name() {
 	${field_name}.persist(); 
 #end
 	ContainerResponse response = call(request($url, HttpMethod.GET));
-	assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
+	assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
 	#if ($path.size() > 1)
 		#set($collection = "get" + $resource_name.substring(0, 1).toUpperCase() + $resource_name.substring(1) + "()")
-		assertEquals(deserializeCollection(getByteBufferFromContainerResp(response), java.util.List.class, ${model_class}.class).size(), ${parent}.${collection}.size());
+		assertEquals(deserializeCollection(getContent(response), java.util.List.class, ${model_class}.class).size(), ${parent}.${collection}.size());
 	#else
-		assertEquals(deserializeCollection(getByteBufferFromContainerResp(response), java.util.List.class, ${model_class}.class).size(), (int) ${model_class}.count());
+		assertEquals(deserializeCollection(getContent(response), java.util.List.class, ${model_class}.class).size(), (int) ${model_class}.count());
 	#end
 #set ($parent = false)
 }

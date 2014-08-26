@@ -39,7 +39,7 @@ public void $method_name() {
 	${field_name}.persist(); 
 #end
 	ContainerResponse response = call(request($url, HttpMethod.GET));
-	assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
-	assertEquals(deserialize(getByteBufferFromContainerResp(response), ${model_class}.class).getId(), ${field_name}.getId());
+	assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+	assertEquals(deserialize(getContent(response), ${model_class}.class).getId(), ${field_name}.getId());
 #set ($parent = false)
 }

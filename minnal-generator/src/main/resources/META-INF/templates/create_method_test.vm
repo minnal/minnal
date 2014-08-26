@@ -35,6 +35,6 @@ public void $method_name() {
 	$model_class $field_name = createDomain(${model_class}.class); 
 #end
 	ContainerResponse response = call(request($url, HttpMethod.POST, serialize(${field_name})));
-	assertEquals(response.getStatus(), HttpServletResponse.SC_CREATED);
+	assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
 #set ($parent = false)
 }

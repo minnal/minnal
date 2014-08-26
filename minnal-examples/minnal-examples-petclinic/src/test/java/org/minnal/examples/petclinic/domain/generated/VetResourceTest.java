@@ -3,10 +3,8 @@ package org.minnal.examples.petclinic.domain.generated;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.minnal.core.resource.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.HttpMethod;
-
+import javax.ws.rs.core.Response;
 import static org.testng.Assert.*;
 
 /**
@@ -19,9 +17,9 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 		vet.persist();
 		ContainerResponse response = call(request("/vets/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
-		assertEquals(deserializeCollection(
-				getByteBufferFromContainerResp(response),
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
+		assertEquals(deserializeCollection(getContent(response),
 				java.util.List.class,
 				org.minnal.examples.petclinic.domain.Vet.class)
 				.size(),
@@ -35,9 +33,9 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 		vet.persist();
 		ContainerResponse response = call(request(
 				"/vets/" + vet.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
-		assertEquals(deserialize(
-				getByteBufferFromContainerResp(response),
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
+		assertEquals(deserialize(getContent(response),
 				org.minnal.examples.petclinic.domain.Vet.class)
 				.getId(), vet.getId());
 	}
@@ -48,7 +46,7 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request("/vets/",
 				HttpMethod.POST, serialize(vet)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_CREATED);
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -62,7 +60,7 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 				"/vets/" + vet.getId(), HttpMethod.PUT,
 				serialize(modifiedvet)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		vet.merge();
 		assertTrue(compare(modifiedvet, vet, 1));
 	}
@@ -74,11 +72,11 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request(
 				"/vets/" + vet.getId(), HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/vets/" + vet.getId(), HttpMethod.GET,
 				serialize(vet)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NOT_FOUND);
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 	@Test
@@ -93,9 +91,10 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request(
 				"/vets/" + vet.getId() + "/specialties/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserializeCollection(
-				getByteBufferFromContainerResp(response),
+				getContent(response),
 				java.util.List.class,
 				org.minnal.examples.petclinic.domain.Specialty.class)
 				.size(), vet.getSpecialties().size());
@@ -112,9 +111,10 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 				"/vets/" + vet.getId() + "/specialties/"
 						+ specialty.getId(),
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserialize(
-				getByteBufferFromContainerResp(response),
+				getContent(response),
 				org.minnal.examples.petclinic.domain.Specialty.class)
 				.getId(), specialty.getId());
 	}
@@ -128,7 +128,7 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 				"/vets/" + vet.getId() + "/specialties/",
 				HttpMethod.POST, serialize(specialty)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_CREATED);
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -146,7 +146,7 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 						+ specialty.getId(),
 				HttpMethod.PUT, serialize(modifiedspecialty)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		specialty.merge();
 		assertTrue(compare(modifiedspecialty, specialty, 1));
 	}
@@ -163,12 +163,12 @@ public class VetResourceTest extends BaseMinnalResourceTest {
 						+ specialty.getId(),
 				HttpMethod.DELETE));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NO_CONTENT);
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/vets/" + vet.getId()
 				+ "/specialties/" + specialty.getId(),
 				HttpMethod.GET, serialize(specialty)));
 		assertEquals(response.getStatus(),
-				HttpServletResponse.SC_NOT_FOUND);
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 }

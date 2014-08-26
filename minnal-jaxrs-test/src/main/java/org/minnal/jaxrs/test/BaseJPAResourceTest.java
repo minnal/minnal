@@ -65,7 +65,7 @@ public abstract class BaseJPAResourceTest extends BaseResourceTest {
     }
 
     @Override
-    protected ByteBuffer getByteBufferFromContainerResp(ContainerResponse response) {
-        return super.getByteBufferFromContainerResp(response);
+    protected ByteBuffer getContent(ContainerResponse response) {
+        return super.getContent(response);
     }
 }

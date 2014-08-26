@@ -3,20 +3,12 @@
  */
 package org.minnal.examples.petclinic.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.LocalDateTime;
 import org.minnal.jpa.entity.BaseDomain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
  * @author ganeshs
@@ -27,8 +19,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Access(AccessType.FIELD)
 public class Visit extends BaseDomain {
 
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
-	private LocalDateTime date;
+	private Timestamp date;
 
 	@NotEmpty
 	@Column(name = "description")
@@ -42,14 +33,14 @@ public class Visit extends BaseDomain {
 	/**
 	 * @return the date
 	 */
-	public LocalDateTime getDate() {
+	public Timestamp getDate() {
 		return date;
 	}
 
 	/**
 	 * @param date the date to set
 	 */
-	public void setDate(LocalDateTime date) {
+	public void setDate(Timestamp date) {
 		this.date = date;
 	}
 
