@@ -1,7 +1,7 @@
 package org.minnal.examples.oms.domain.generated;
 
 import org.glassfish.jersey.server.ContainerResponse;
-import org.minnal.core.resource.BaseMinnalResourceTest;
+import org.minnal.test.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
@@ -17,8 +17,8 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		order.persist();
 		ContainerResponse response = call(request("/orders/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), Response.Status.OK
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserializeCollection(getContent(response),
 				java.util.List.class,
 				org.minnal.examples.oms.domain.Order.class)
@@ -31,10 +31,10 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 	public void readOrderTest() {
 		org.minnal.examples.oms.domain.Order order = createDomain(org.minnal.examples.oms.domain.Order.class);
 		order.persist();
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), Response.Status.OK
-				.getStatusCode());
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId(), HttpMethod.GET));
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserialize(getContent(response),
 				org.minnal.examples.oms.domain.Order.class)
 				.getId(), order.getId());
@@ -45,8 +45,8 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		org.minnal.examples.oms.domain.Order order = createDomain(org.minnal.examples.oms.domain.Order.class);
 		ContainerResponse response = call(request("/orders/",
 				HttpMethod.POST, serialize(order)));
-		assertEquals(response.getStatus(), Response.Status.CREATED
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -55,11 +55,11 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		order.persist();
 		org.minnal.examples.oms.domain.Order modifiedorder = createDomain(
 				org.minnal.examples.oms.domain.Order.class, 1);
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId(), HttpMethod.PUT,
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId(), HttpMethod.PUT,
 				serialize(modifiedorder)));
-		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.NO_CONTENT.getStatusCode());
 		order.merge();
 		assertTrue(compare(modifiedorder, order, 1));
 	}
@@ -68,14 +68,14 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 	public void deleteOrderTest() {
 		org.minnal.examples.oms.domain.Order order = createDomain(org.minnal.examples.oms.domain.Order.class);
 		order.persist();
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId(), HttpMethod.DELETE));
-		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
-				.getStatusCode());
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId(), HttpMethod.DELETE));
+		assertEquals(response.getStatus(),
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/orders/" + order.getId(),
 				HttpMethod.GET, serialize(order)));
-		assertEquals(response.getStatus(), Response.Status.NOT_FOUND
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 	@Test
@@ -87,10 +87,11 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		order.collection("payments").add(payment);
 		order.persist();
 
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/payments/", HttpMethod.GET));
-		assertEquals(response.getStatus(), Response.Status.OK
-				.getStatusCode());
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/payments/",
+				HttpMethod.GET));
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserializeCollection(getContent(response),
 				java.util.List.class,
 				org.minnal.examples.oms.domain.Payment.class)
@@ -104,11 +105,12 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		org.minnal.examples.oms.domain.Payment payment = createDomain(org.minnal.examples.oms.domain.Payment.class);
 		order.collection("payments").add(payment);
 		order.persist();
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/payments/"
-				+ payment.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), Response.Status.OK
-				.getStatusCode());
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/payments/"
+						+ payment.getId(),
+				HttpMethod.GET));
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserialize(getContent(response),
 				org.minnal.examples.oms.domain.Payment.class)
 				.getId(), payment.getId());
@@ -119,11 +121,11 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		org.minnal.examples.oms.domain.Order order = createDomain(org.minnal.examples.oms.domain.Order.class);
 		order.persist();
 		org.minnal.examples.oms.domain.Payment payment = createDomain(org.minnal.examples.oms.domain.Payment.class);
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/payments/",
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/payments/",
 				HttpMethod.POST, serialize(payment)));
-		assertEquals(response.getStatus(), Response.Status.CREATED
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -135,12 +137,12 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		order.persist();
 		org.minnal.examples.oms.domain.Payment modifiedpayment = createDomain(
 				org.minnal.examples.oms.domain.Payment.class, 1);
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/payments/"
-				+ payment.getId(), HttpMethod.PUT,
-				serialize(modifiedpayment)));
-		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
-				.getStatusCode());
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/payments/"
+						+ payment.getId(),
+				HttpMethod.PUT, serialize(modifiedpayment)));
+		assertEquals(response.getStatus(),
+				Response.Status.NO_CONTENT.getStatusCode());
 		payment.merge();
 		assertTrue(compare(modifiedpayment, payment, 1));
 	}
@@ -152,16 +154,17 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		org.minnal.examples.oms.domain.Payment payment = createDomain(org.minnal.examples.oms.domain.Payment.class);
 		order.collection("payments").add(payment);
 		order.persist();
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/payments/"
-				+ payment.getId(), HttpMethod.DELETE));
-		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
-				.getStatusCode());
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/payments/"
+						+ payment.getId(),
+				HttpMethod.DELETE));
+		assertEquals(response.getStatus(),
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/orders/" + order.getId()
 				+ "/payments/" + payment.getId(),
 				HttpMethod.GET, serialize(payment)));
-		assertEquals(response.getStatus(), Response.Status.NOT_FOUND
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 	@Test
@@ -173,11 +176,11 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		order.collection("orderItems").add(orderItem);
 		order.persist();
 
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/order_items/",
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/order_items/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), Response.Status.OK
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserializeCollection(getContent(response),
 				java.util.List.class,
 				org.minnal.examples.oms.domain.OrderItem.class)
@@ -191,11 +194,12 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		org.minnal.examples.oms.domain.OrderItem orderItem = createDomain(org.minnal.examples.oms.domain.OrderItem.class);
 		order.collection("orderItems").add(orderItem);
 		order.persist();
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/order_items/"
-				+ orderItem.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), Response.Status.OK
-				.getStatusCode());
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/order_items/"
+						+ orderItem.getId(),
+				HttpMethod.GET));
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserialize(getContent(response),
 				org.minnal.examples.oms.domain.OrderItem.class)
 				.getId(), orderItem.getId());
@@ -206,11 +210,11 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		org.minnal.examples.oms.domain.Order order = createDomain(org.minnal.examples.oms.domain.Order.class);
 		order.persist();
 		org.minnal.examples.oms.domain.OrderItem orderItem = createDomain(org.minnal.examples.oms.domain.OrderItem.class);
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/order_items/",
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/order_items/",
 				HttpMethod.POST, serialize(orderItem)));
-		assertEquals(response.getStatus(), Response.Status.CREATED
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -223,12 +227,12 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		org.minnal.examples.oms.domain.OrderItem modifiedorderItem = createDomain(
 				org.minnal.examples.oms.domain.OrderItem.class,
 				1);
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/order_items/"
-				+ orderItem.getId(), HttpMethod.PUT,
-				serialize(modifiedorderItem)));
-		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
-				.getStatusCode());
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/order_items/"
+						+ orderItem.getId(),
+				HttpMethod.PUT, serialize(modifiedorderItem)));
+		assertEquals(response.getStatus(),
+				Response.Status.NO_CONTENT.getStatusCode());
 		orderItem.merge();
 		assertTrue(compare(modifiedorderItem, orderItem, 1));
 	}
@@ -240,16 +244,17 @@ public class OrderResourceTest extends BaseMinnalResourceTest {
 		org.minnal.examples.oms.domain.OrderItem orderItem = createDomain(org.minnal.examples.oms.domain.OrderItem.class);
 		order.collection("orderItems").add(orderItem);
 		order.persist();
-		ContainerResponse response = call(request("/orders/"
-				+ order.getId() + "/order_items/"
-				+ orderItem.getId(), HttpMethod.DELETE));
-		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
-				.getStatusCode());
+		ContainerResponse response = call(request(
+				"/orders/" + order.getId() + "/order_items/"
+						+ orderItem.getId(),
+				HttpMethod.DELETE));
+		assertEquals(response.getStatus(),
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/orders/" + order.getId()
 				+ "/order_items/" + orderItem.getId(),
 				HttpMethod.GET, serialize(orderItem)));
-		assertEquals(response.getStatus(), Response.Status.NOT_FOUND
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 }

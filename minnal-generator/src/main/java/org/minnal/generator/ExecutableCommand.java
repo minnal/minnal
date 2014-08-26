@@ -3,14 +3,13 @@
  */
 package org.minnal.generator;
 
+import com.google.common.base.Charsets;
+import org.minnal.generator.exception.MinnalGeneratorException;
+
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
-
-import org.minnal.core.MinnalException;
-
-import com.google.common.base.Charsets;
 
 /**
  * @author ganeshs
@@ -25,7 +24,7 @@ public abstract class ExecutableCommand implements Command {
 			inheritIO(p.getInputStream(), System.out);
 			inheritIO(p.getErrorStream(), System.err);
 		} catch (Exception e) {
-			throw new MinnalException("Failed while starting the project", e);
+			throw new MinnalGeneratorException("Failed while starting the project", e);
 		}
 	}
 	

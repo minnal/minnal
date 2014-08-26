@@ -1,7 +1,6 @@
 package org.minnal.examples.petclinic.domain.generated;
 
 import org.glassfish.jersey.server.ContainerResponse;
-import org.minnal.core.resource.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
@@ -10,7 +9,7 @@ import static org.testng.Assert.*;
 /**
  * This is an auto generated test class by minnal-generator
  */
-public class PetTypeResourceTest extends BaseMinnalResourceTest {
+public class PetTypeResourceTest extends org.minnal.test.BaseMinnalResourceTest {
 	@Test
 	public void listPetTypeTest() {
 		org.minnal.examples.petclinic.domain.PetType petType = createDomain(org.minnal.examples.petclinic.domain.PetType.class);

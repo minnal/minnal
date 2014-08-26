@@ -1,10 +1,7 @@
 /**
- * 
+ *
  */
 package org.minnal.generator.util;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
@@ -13,38 +10,40 @@ import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
-import org.minnal.core.MinnalException;
+import org.minnal.generator.exception.MinnalGeneratorException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ganeshs
- * 
  */
 public class CodeUtils {
-	
-	private static final Map<String, String> formatterOptions = new HashMap<String, String>();
-	
-	static {
-		formatterOptions.put(JavaCore.COMPILER_SOURCE, "1.5");
-		formatterOptions.put(JavaCore.COMPILER_COMPLIANCE, "1.5");
-		formatterOptions.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.5");
-	}
-	
-	public static String format(String code) {
-		return format(code, formatterOptions);
-	}
 
-	public static String format(String code, Map<String, String> options) {
-		DefaultCodeFormatterOptions cfOptions = DefaultCodeFormatterOptions.getJavaConventionsSettings();
-		cfOptions.tab_char = DefaultCodeFormatterOptions.TAB;
-		CodeFormatter cf = new DefaultCodeFormatter(cfOptions, options);
-		TextEdit te = cf.format(CodeFormatter.K_UNKNOWN, code, 0, code.length(), 0, null);
-		IDocument dc = new Document(code);
-		
-		try {
-			te.apply(dc);
-		} catch (Exception e) {
-			throw new MinnalException("Failed while formatting the code", e);
-		}
-		return dc.get();
-	}
+    private static final Map<String, String> formatterOptions = new HashMap<String, String>();
+
+    static {
+        formatterOptions.put(JavaCore.COMPILER_SOURCE, "1.5");
+        formatterOptions.put(JavaCore.COMPILER_COMPLIANCE, "1.5");
+        formatterOptions.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.5");
+    }
+
+    public static String format(String code) {
+        return format(code, formatterOptions);
+    }
+
+    public static String format(String code, Map<String, String> options) {
+        DefaultCodeFormatterOptions cfOptions = DefaultCodeFormatterOptions.getJavaConventionsSettings();
+        cfOptions.tab_char = DefaultCodeFormatterOptions.TAB;
+        CodeFormatter cf = new DefaultCodeFormatter(cfOptions, options);
+        TextEdit te = cf.format(CodeFormatter.K_UNKNOWN, code, 0, code.length(), 0, null);
+        IDocument dc = new Document(code);
+
+        try {
+            te.apply(dc);
+        } catch (Exception e) {
+            throw new MinnalGeneratorException("Failed while formatting the code", e);
+        }
+        return dc.get();
+    }
 }

@@ -1,7 +1,6 @@
 package org.minnal.examples.petclinic.domain.generated;
 
 import org.glassfish.jersey.server.ContainerResponse;
-import org.minnal.core.resource.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
@@ -10,7 +9,7 @@ import static org.testng.Assert.*;
 /**
  * This is an auto generated test class by minnal-generator
  */
-public class OwnerResourceTest extends BaseMinnalResourceTest {
+public class OwnerResourceTest extends org.minnal.test.BaseMinnalResourceTest {
 	@Test
 	public void listOwnerTest() {
 		org.minnal.examples.petclinic.domain.Owner owner = createDomain(org.minnal.examples.petclinic.domain.Owner.class);
