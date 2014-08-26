@@ -3,6 +3,8 @@
  */
 package org.minnal.test;
 
+import java.nio.ByteBuffer;
+
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.minnal.core.Application;
@@ -13,8 +15,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-
-import java.nio.ByteBuffer;
 
 /**
  * @author ganeshs

@@ -3,6 +3,13 @@
  */
 package org.minnal.generator.test;
 
+import java.io.File;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.HttpMethod;
+
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.javalite.common.Inflector;
@@ -15,12 +22,6 @@ import org.minnal.instrument.entity.EntityNode;
 import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.utils.Node.PathVisitor;
 import org.minnal.utils.route.RoutePattern;
-
-import javax.ws.rs.HttpMethod;
-import java.io.File;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author ganeshs

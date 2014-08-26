@@ -14,7 +14,6 @@
 		<module>minnal-jpa</module>
 		<module>minnal-test</module>
 		<module>minnal-instrumentation</module>
-		<module>minnal-instrumentation-jaxrs</module>
 		<module>minnal-security</module>
 		<module>minnal-migrations</module>
 		<module>minnal-generator</module>
@@ -22,8 +21,8 @@
 		<module>minnal-metrics</module>
 		<module>minnal-utils</module>
 		<module>minnal-validation</module>
-        <module>minnal-jaxrs-test</module>
-    </modules>
+        	<module>minnal-jaxrs</module>
+	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

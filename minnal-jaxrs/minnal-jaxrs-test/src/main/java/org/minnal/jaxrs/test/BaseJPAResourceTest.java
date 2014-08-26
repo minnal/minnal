@@ -3,6 +3,9 @@
  */
 package org.minnal.jaxrs.test;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.activejpa.enhancer.ActiveJpaAgentLoader;
 import org.activejpa.jpa.JPA;
 import org.activejpa.jpa.JPAContext;
@@ -12,9 +15,6 @@ import org.testng.IObjectFactory;
 import org.testng.ITestContext;
 import org.testng.annotations.ObjectFactory;
 import org.testng.internal.ObjectFactoryImpl;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 /**
  * @author ganeshs

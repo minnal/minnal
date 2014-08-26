@@ -3,12 +3,12 @@
  */
 package org.minnal.generator.core;
 
+import java.io.File;
+
 import org.minnal.generator.CommandNew;
 import org.minnal.generator.exception.MinnalGeneratorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
 
 /**
  * @author ganeshs

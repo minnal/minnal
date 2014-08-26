@@ -3,13 +3,14 @@
  */
 package org.minnal.generator;
 
-import com.google.common.base.Charsets;
-import org.minnal.generator.exception.MinnalGeneratorException;
-
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
+
+import org.minnal.generator.exception.MinnalGeneratorException;
+
+import com.google.common.base.Charsets;
 
 /**
  * @author ganeshs

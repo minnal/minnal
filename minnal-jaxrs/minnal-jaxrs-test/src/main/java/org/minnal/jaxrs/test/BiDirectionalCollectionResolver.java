@@ -1,7 +1,9 @@
 package org.minnal.jaxrs.test;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.beans.PropertyDescriptor;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.minnal.autopojo.AttributeMetaData;
 import org.minnal.autopojo.resolver.CollectionResolver;
@@ -9,9 +11,8 @@ import org.minnal.autopojo.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.PropertyDescriptor;
-import java.util.Collection;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * @author ganeshs

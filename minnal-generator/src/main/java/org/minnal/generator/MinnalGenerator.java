@@ -3,15 +3,17 @@
  */
 package org.minnal.generator;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
-import com.google.common.base.Strings;
-import edu.emory.mathcs.backport.java.util.Arrays;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.minnal.generator.exception.MinnalGeneratorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
+import com.google.common.base.Strings;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * @author ganeshs

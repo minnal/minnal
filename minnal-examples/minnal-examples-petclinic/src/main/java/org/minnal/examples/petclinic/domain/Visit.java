@@ -3,12 +3,20 @@
  */
 package org.minnal.examples.petclinic.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.sql.Timestamp;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.minnal.jpa.entity.BaseDomain;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
  * @author ganeshs

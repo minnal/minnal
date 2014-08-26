@@ -3,8 +3,19 @@
  */
 package org.minnal.generator.core;
 
-import com.google.common.base.Charsets;
-import org.apache.maven.model.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
+import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -12,12 +23,7 @@ import org.minnal.generator.exception.MinnalGeneratorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.HashSet;
-import java.util.Set;
+import com.google.common.base.Charsets;
 
 /**
  * @author ganeshs

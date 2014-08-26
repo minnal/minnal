@@ -3,13 +3,13 @@
  */
 package org.minnal.generator.test;
 
+import java.io.File;
+import java.util.Arrays;
+
 import org.minnal.generator.core.AbstractGenerator;
 import org.minnal.instrument.entity.AggregateRootScanner;
 import org.minnal.utils.scanner.Scanner;
 import org.minnal.utils.scanner.Scanner.Listener;
-
-import java.io.File;
-import java.util.Arrays;
 
 /**
  * @author ganeshs

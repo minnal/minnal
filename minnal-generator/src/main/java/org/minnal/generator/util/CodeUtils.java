@@ -3,6 +3,9 @@
  */
 package org.minnal.generator.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatter;
@@ -11,9 +14,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 import org.minnal.generator.exception.MinnalGeneratorException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author ganeshs

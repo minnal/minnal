@@ -3,13 +3,14 @@
  */
 package org.minnal.generator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.base.Joiner;
-import edu.emory.mathcs.backport.java.util.Arrays;
 
-import java.util.ArrayList;
-import java.util.List;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * @author ganeshs
