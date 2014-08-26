@@ -1,15 +1,19 @@
 package org.minnal.examples.oms.domain.generated;
 
 import org.glassfish.jersey.server.ContainerResponse;
+import org.minnal.test.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
+
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
-import static org.testng.Assert.*;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * This is an auto generated test class by minnal-generator
  */
-public class ProductResourceTest extends org.minnal.test.BaseMinnalResourceTest {
+public class ProductResourceTest extends BaseMinnalResourceTest {
 	@Test
 	public void listProductTest() {
 		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);

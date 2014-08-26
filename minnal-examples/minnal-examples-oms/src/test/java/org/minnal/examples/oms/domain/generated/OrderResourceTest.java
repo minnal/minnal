@@ -1,6 +1,7 @@
 package org.minnal.examples.oms.domain.generated;
 
 import org.glassfish.jersey.server.ContainerResponse;
+import org.minnal.test.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
@@ -9,7 +10,7 @@ import static org.testng.Assert.*;
 /**
  * This is an auto generated test class by minnal-generator
  */
-public class OrderResourceTest extends org.minnal.test.BaseMinnalResourceTest {
+public class OrderResourceTest extends BaseMinnalResourceTest {
 	@Test
 	public void listOrderTest() {
 		org.minnal.examples.oms.domain.Order order = createDomain(org.minnal.examples.oms.domain.Order.class);
