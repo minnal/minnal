@@ -26,6 +26,11 @@
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
+        <dependency>
+            <groupId>org.minnal</groupId>
+            <artifactId>minnal-jaxrs-test</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.activejpa</groupId>
 			<artifactId>activejpa-test</artifactId>
@@ -37,5 +42,5 @@
 			<artifactId>autopojo</artifactId>
 			<version>0.0.8</version>
 		</dependency>
-	</dependencies>
+    </dependencies>
 </project>
