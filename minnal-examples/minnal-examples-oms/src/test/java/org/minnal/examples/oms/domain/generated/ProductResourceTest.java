@@ -1,7 +1,6 @@
 package org.minnal.examples.oms.domain.generated;
 
 import org.glassfish.jersey.server.ContainerResponse;
-import org.minnal.core.resource.BaseMinnalResourceTest;
 import org.testng.annotations.Test;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
@@ -10,15 +9,15 @@ import static org.testng.Assert.*;
 /**
  * This is an auto generated test class by minnal-generator
  */
-public class ProductResourceTest extends BaseMinnalResourceTest {
+public class ProductResourceTest extends org.minnal.test.BaseMinnalResourceTest {
 	@Test
 	public void listProductTest() {
 		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		product.persist();
 		ContainerResponse response = call(request("/products/",
 				HttpMethod.GET));
-		assertEquals(response.getStatus(), Response.Status.OK
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserializeCollection(getContent(response),
 				java.util.List.class,
 				org.minnal.examples.oms.domain.Product.class)
@@ -33,8 +32,8 @@ public class ProductResourceTest extends BaseMinnalResourceTest {
 		product.persist();
 		ContainerResponse response = call(request("/products/"
 				+ product.getId(), HttpMethod.GET));
-		assertEquals(response.getStatus(), Response.Status.OK
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.OK.getStatusCode());
 		assertEquals(deserialize(getContent(response),
 				org.minnal.examples.oms.domain.Product.class)
 				.getId(), product.getId());
@@ -45,8 +44,8 @@ public class ProductResourceTest extends BaseMinnalResourceTest {
 		org.minnal.examples.oms.domain.Product product = createDomain(org.minnal.examples.oms.domain.Product.class);
 		ContainerResponse response = call(request("/products/",
 				HttpMethod.POST, serialize(product)));
-		assertEquals(response.getStatus(), Response.Status.CREATED
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.CREATED.getStatusCode());
 	}
 
 	@Test
@@ -58,8 +57,8 @@ public class ProductResourceTest extends BaseMinnalResourceTest {
 		ContainerResponse response = call(request("/products/"
 				+ product.getId(), HttpMethod.PUT,
 				serialize(modifiedproduct)));
-		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.NO_CONTENT.getStatusCode());
 		product.merge();
 		assertTrue(compare(modifiedproduct, product, 1));
 	}
@@ -70,12 +69,12 @@ public class ProductResourceTest extends BaseMinnalResourceTest {
 		product.persist();
 		ContainerResponse response = call(request("/products/"
 				+ product.getId(), HttpMethod.DELETE));
-		assertEquals(response.getStatus(), Response.Status.NO_CONTENT
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.NO_CONTENT.getStatusCode());
 		response = call(request("/products/" + product.getId(),
 				HttpMethod.GET, serialize(product)));
-		assertEquals(response.getStatus(), Response.Status.NOT_FOUND
-				.getStatusCode());
+		assertEquals(response.getStatus(),
+				Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 }

@@ -3,8 +3,6 @@ package org.minnal.jaxrs.test;
 import org.activejpa.enhancer.ActiveJpaAgentLoader;
 import org.activejpa.jpa.JPA;
 import org.activejpa.jpa.JPAContext;
-import org.glassfish.jersey.server.ContainerResponse;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.testng.IObjectFactory;
 import org.testng.ITestContext;
 import org.testng.annotations.ObjectFactory;
@@ -12,7 +10,6 @@ import org.testng.internal.ObjectFactoryImpl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.nio.ByteBuffer;
 
 public abstract class BaseJPAResourceTest extends BaseResourceTest {
 
@@ -27,15 +24,6 @@ public abstract class BaseJPAResourceTest extends BaseResourceTest {
     public IObjectFactory getObjectFactory(ITestContext context) throws Exception {
         ActiveJpaAgentLoader.instance().loadAgent();
         return new ObjectFactoryImpl();
-    }
-
-    /**
-     * init method
-     *
-     * @param resourceConfig
-     */
-    protected void init(ResourceConfig resourceConfig) {
-        super.init(resourceConfig);
     }
 
     protected void setup() {
@@ -62,10 +50,5 @@ public abstract class BaseJPAResourceTest extends BaseResourceTest {
      */
     protected boolean disableForeignKeyChecks() {
         return true;
-    }
-
-    @Override
-    protected ByteBuffer getContent(ContainerResponse response) {
-        return super.getContent(response);
     }
 }

@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.minnal.core.resource;
+package org.minnal.test;
 
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.ResourceConfig;

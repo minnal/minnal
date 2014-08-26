@@ -3,15 +3,15 @@
  */
 package org.minnal.generator.core;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.minnal.core.Application;
 import org.minnal.utils.serializer.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ganeshs
@@ -26,7 +26,7 @@ public class ApplicationSpiGenerator extends AbstractGenerator {
 	private static final Logger logger = LoggerFactory.getLogger(ApplicationSpiGenerator.class);
 	
 	/**
-	 * @param applications
+	 * @param baseDir
 	 */
 	public ApplicationSpiGenerator(File baseDir) {
 		super(baseDir);
