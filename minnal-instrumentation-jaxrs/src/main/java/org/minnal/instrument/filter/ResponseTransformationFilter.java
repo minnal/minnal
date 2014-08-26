@@ -3,6 +3,18 @@
  */
 package org.minnal.instrument.filter;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.MultivaluedMap;
+
+import org.minnal.instrument.NamingStrategy;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -14,16 +26,6 @@ import com.fasterxml.jackson.jaxrs.cfg.ObjectWriterModifier;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import org.minnal.instrument.NamingStrategy;
-
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.core.MultivaluedMap;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author ganeshs
@@ -38,7 +40,7 @@ public class ResponseTransformationFilter implements ContainerResponseFilter {
 	private NamingStrategy namingStrategy;
 	
 	private List<String> propertiesToExclude;
-
+	
 	/**
 	 * @param propertiesToExclude
 	 */

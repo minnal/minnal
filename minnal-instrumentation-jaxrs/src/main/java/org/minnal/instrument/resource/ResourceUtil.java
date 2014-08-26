@@ -94,7 +94,7 @@ public class ResourceUtil {
 		MessageBodyReader<T> reader = providers.getMessageBodyReader(type, genericType, annotations, httpHeaders.getMediaType());
 		try {
 			return reader.readFrom(type, genericType, annotations, httpHeaders.getMediaType(), httpHeaders.getRequestHeaders(), inputStream);
-		} catch (Exception e) {
+		} catch (Exception e) {e.printStackTrace();
 			throw new MinnalInstrumentationException("Failed while getting the content from the request stream", e);
 		}
 	}
@@ -112,13 +112,13 @@ public class ResourceUtil {
 	 */
 	public static Object getContent(byte[] raw, Providers providers, HttpHeaders httpHeaders, Class<?> type) {
 		try {
-			return getContent(new ByteArrayInputStream(raw), providers, httpHeaders, type, type, null);
+			return getContent(new ByteArrayInputStream(raw), providers, httpHeaders, type, type, new Annotation[] {});
 		} catch (MinnalInstrumentationException e) {
 			logger.trace("Failed while getting the content from the request stream", e);
 			Throwable ex = e;
 			while (ex.getCause() != null) {
 				if (ex.getCause() instanceof IOException) {
-					return getContent(new ByteArrayInputStream(raw), providers, httpHeaders, List.class, listType(type).getType(), null);
+					return getContent(new ByteArrayInputStream(raw), providers, httpHeaders, List.class, listType(type).getType(), new Annotation[]{});
 				}
 				ex = ex.getCause();
 			}

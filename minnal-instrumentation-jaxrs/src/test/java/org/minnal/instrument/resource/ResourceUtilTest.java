@@ -80,11 +80,11 @@ public class ResourceUtilTest {
 		HttpHeaders httpHeaders = mock(HttpHeaders.class);
 		when(httpHeaders.getMediaType()).thenReturn(mediaType);
 		MessageBodyReader reader = mock(MessageBodyReader.class);
-		when(reader.readFrom(eq(String.class), eq(String.class), isNull(Annotation[].class), eq(mediaType), isNull(MultivaluedMap.class), any(InputStream.class))).thenThrow(IOException.class);
-		when(reader.readFrom(eq(List.class), any(Type.class), isNull(Annotation[].class), eq(mediaType), isNull(MultivaluedMap.class), any(InputStream.class))).thenReturn(list);
+		when(reader.readFrom(eq(String.class), eq(String.class), eq(new Annotation[]{}), eq(mediaType), isNull(MultivaluedMap.class), any(InputStream.class))).thenThrow(IOException.class);
+		when(reader.readFrom(eq(List.class), any(Type.class), eq(new Annotation[]{}), eq(mediaType), isNull(MultivaluedMap.class), any(InputStream.class))).thenReturn(list);
 		Providers providers = mock(Providers.class);
-		when(providers.getMessageBodyReader(String.class, String.class, null, mediaType)).thenReturn(reader);
-		when(providers.getMessageBodyReader(List.class, ResourceUtil.listType(String.class).getType(), null, mediaType)).thenReturn(reader);
+		when(providers.getMessageBodyReader(String.class, String.class, new Annotation[]{}, mediaType)).thenReturn(reader);
+		when(providers.getMessageBodyReader(List.class, ResourceUtil.listType(String.class).getType(), new Annotation[]{}, mediaType)).thenReturn(reader);
 		Object content = ResourceUtil.getContent(bytes, providers, httpHeaders, String.class);
 		assertTrue(content instanceof List);
 		assertEquals(content, list);
@@ -99,9 +99,9 @@ public class ResourceUtilTest {
 		HttpHeaders httpHeaders = mock(HttpHeaders.class);
 		when(httpHeaders.getMediaType()).thenReturn(mediaType);
 		MessageBodyReader reader = mock(MessageBodyReader.class);
-		when(reader.readFrom(eq(Map.class), eq(Map.class), isNull(Annotation[].class), eq(mediaType), isNull(MultivaluedMap.class), any(InputStream.class))).thenReturn(map);
+		when(reader.readFrom(eq(Map.class), eq(Map.class), eq(new Annotation[]{}), eq(mediaType), isNull(MultivaluedMap.class), any(InputStream.class))).thenReturn(map);
 		Providers providers = mock(Providers.class);
-		when(providers.getMessageBodyReader(Map.class, Map.class, null, mediaType)).thenReturn(reader);
+		when(providers.getMessageBodyReader(Map.class, Map.class, new Annotation[]{}, mediaType)).thenReturn(reader);
 		Object content = ResourceUtil.getContent(bytes, providers, httpHeaders, Map.class);
 		assertTrue(content instanceof Map);
 		assertEquals(content, map);
