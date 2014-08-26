@@ -5,10 +5,10 @@ packagesToScan:
 instrumentationEnabled: true
 basePath: "/"
 db:
-  url: "jdbc:hsqldb:mem:."
+  driverClass: org.h2.Driver
+  url: jdbc:h2:mem:petclinic;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
   username: "sa"
   password: ""
-  driverClass: "org.hsqldb.jdbcDriver"
   idleConnectionTestPeriod: 300
   maxSize: 10
   minSize: 5
@@ -17,6 +17,6 @@ db:
   providerProperties:
     hibernate.hbm2ddl.auto: "create-drop"
     hibernate.current_session_context_class: "thread"
-    hibernate.dialect: "org.hibernate.dialect.HSQLDialect"
+    hibernate.dialect: org.hibernate.dialect.MySQLDialect
     hibernate.ejb.naming_strategy: "org.hibernate.cfg.ImprovedNamingStrategy"
   readOnly: false

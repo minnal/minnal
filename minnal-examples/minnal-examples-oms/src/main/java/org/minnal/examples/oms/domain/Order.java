@@ -13,7 +13,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -48,13 +47,12 @@ public class Order extends Model {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
-	@JoinColumn(name="orderId")
-	@JsonManagedReference
+	@OneToMany(mappedBy="order", cascade=CascadeType.ALL, orphanRemoval=true)
+	@JsonManagedReference("items")
 	private Set<OrderItem> orderItems = new HashSet<OrderItem>();
 	
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
-	@JoinColumn(name="orderId")
+	@OneToMany(mappedBy="order", cascade=CascadeType.ALL, orphanRemoval=true)
+	@JsonManagedReference("payments")
 	private Set<Payment> payments = new HashSet<Payment>();
 	
 	@Searchable
@@ -153,6 +151,11 @@ public class Order extends Model {
 	public void addOrderItem(OrderItem orderItem) {
 		orderItem.setOrder(this);
 		this.orderItems.add(orderItem);
+	}
+	
+	public void addPayment(Payment payment) {
+		payment.setOrder(this);
+		this.payments.add(payment);
 	}
 	
 	// This method will expose the route /orders/{order_id}/cancel

@@ -48,7 +48,7 @@ public abstract class BaseJPAResourceTest extends BaseResourceTest {
         context.beginTxn();
         try {
             EntityManager manager = context.getEntityManager();
-            Query query = manager.createNativeQuery("SET DATABASE REFERENTIAL INTEGRITY FALSE");
+            Query query = manager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE");
             query.executeUpdate();
         } finally {
             context.closeTxn(false);

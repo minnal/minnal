@@ -23,11 +23,13 @@ public class MigrationsPlugin implements Plugin {
 	protected Flyway flyway;
 	
 	public MigrationsPlugin() {
-		flyway = new Flyway();
+		this(new Flyway());
 	}
 	
 	public MigrationsPlugin(Flyway flyway) {
 		this.flyway = flyway;
+		this.flyway.setInitOnMigrate(true);
+		this.flyway.setSchemas("PUBLIC");
 	}
 
 	public void init(Application<? extends ApplicationConfiguration> application) {

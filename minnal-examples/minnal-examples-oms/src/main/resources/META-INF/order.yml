@@ -1,15 +1,15 @@
 # The name of the application
 name: order
 db:
-  driverClass: org.hsqldb.jdbcDriver
-  url: jdbc:hsqldb:mem:.
+  driverClass: org.h2.Driver
+  url: jdbc:h2:mem:oms;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
   username: sa
   providerProperties:
     hibernate.ejb.naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
     hibernate.show_sql: true
     hibernate.format_sql: false
     hibernate.current_session_context_class: thread
-    hibernate.dialect: org.hibernate.dialect.HSQLDialect
+    hibernate.dialect: org.hibernate.dialect.MySQLDialect
     hibernate.hbm2ddl.auto: create-drop
   packagesToScan:
     - org.minnal.examples.oms
