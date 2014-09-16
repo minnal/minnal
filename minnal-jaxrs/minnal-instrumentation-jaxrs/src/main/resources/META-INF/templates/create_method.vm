@@ -1,20 +1,7 @@
 #set($method_name = "create$path.getName()")
 public javax.ws.rs.core.Response $method_name(javax.ws.rs.core.HttpHeaders httpHeaders, javax.ws.rs.core.UriInfo uriInfo, javax.ws.rs.ext.Providers jaxrsProviders, byte[] rawContent) {
 #set($i = 0)
-#set($search_params = "new java.util.ArrayList()")
-#if ($path.getQueryParams().size() > 0)
-	#set($search_params = "new java.util.ArrayList(new String[]{")
-	#set($j = 0)
-	#foreach($queryParam in $path.getQueryParams())
-		#if ($j == 0)
-			#set($search_params = ${search_params} + '"' + $queryParam.getName() + '"')
-		#else
-			#set($search_params = ${search_params} + ', "' + $queryParam.getName() + '"')
-		#end
-		#set($j = $j + 1)
-	#end
-	#set($search_params = ${search_params} + '})')
-#end
+java.util.List payload = null;
 #if ($path.size() > 1)
 	#foreach($node in $path)
 		#if ($param_names.size() > $i)
@@ -31,8 +18,10 @@ public javax.ws.rs.core.Response $method_name(javax.ws.rs.core.HttpHeaders httpH
 				while(iterator.hasNext()) {
 					${parent}.collection("$resource_name").add((${model_class}) iterator.next());
 				}
+				payload = body;
 			} else {
 				${parent}.collection("$resource_name").add((${model_class}) body);
+				payload = java.util.Arrays.asList(new Object[] {body});
 			}
 			${parent}.persist();
 		#else
@@ -71,10 +60,12 @@ public javax.ws.rs.core.Response $method_name(javax.ws.rs.core.HttpHeaders httpH
 		} finally {
 			context.closeTxn(failed);
 		}
+		payload = body;
 	} else {
 		((${model_class}) body).persist();
+		payload = java.util.Arrays.asList(new Object[] {body});
 	}
 #end
-return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.CREATED).entity(body).build();
+return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.CREATED).entity(payload).build();
 #set ($parent = false)
 }

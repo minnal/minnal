@@ -120,6 +120,7 @@ public class ResourceClassCreator {
 	protected Annotation getApiAnnotation(ConstPool constPool) {
 		Annotation apiAnnotation = new Annotation(Api.class.getCanonicalName(), constPool);
 		apiAnnotation.addMemberValue("value", new StringMemberValue(path, constPool));
+		apiAnnotation.addMemberValue("description", new StringMemberValue("Operations about " + namingStrategy.getResourceName(entityClass), constPool));
 		return apiAnnotation;
 	}
 }

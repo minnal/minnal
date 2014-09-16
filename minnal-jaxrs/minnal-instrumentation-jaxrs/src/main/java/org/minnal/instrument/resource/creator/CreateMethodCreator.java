@@ -81,6 +81,7 @@ public class CreateMethodCreator extends AbstractMethodCreator {
 		Annotation annotation = new Annotation(ApiOperation.class.getCanonicalName(), constPool);
 		annotation.addMemberValue("value", new StringMemberValue("Create " + metaData.getName(), constPool));
 		annotation.addMemberValue("response", new ClassMemberValue(metaData.getEntityClass().getCanonicalName(), constPool));
+		annotation.addMemberValue("responseContainer", new StringMemberValue("List", constPool));
 		return annotation;
 	}
 
@@ -97,7 +98,7 @@ public class CreateMethodCreator extends AbstractMethodCreator {
 		Annotation annotation = new Annotation(ApiImplicitParam.class.getCanonicalName(), getCtClass().getClassFile().getConstPool());
 		annotation.addMemberValue("name", new StringMemberValue("body", getCtClass().getClassFile().getConstPool()));
 		annotation.addMemberValue("paramType", new StringMemberValue("body", getCtClass().getClassFile().getConstPool()));
-		annotation.addMemberValue("dataType", new StringMemberValue(metaData.getEntityClass().getCanonicalName(), getCtClass().getClassFile().getConstPool()));
+		annotation.addMemberValue("dataType", new StringMemberValue("Array[" + metaData.getEntityClass().getCanonicalName() + "]", getCtClass().getClassFile().getConstPool()));
 		annotation.addMemberValue("value", new StringMemberValue(metaData.getName() + " payload", getCtClass().getClassFile().getConstPool()));
 		return annotation;
 	}
