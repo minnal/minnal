@@ -45,7 +45,6 @@ import org.minnal.instrument.resource.metadata.ResourceMetaData;
 import org.minnal.instrument.resource.metadata.ResourceMethodMetaData;
 import org.minnal.instrument.util.JavassistUtils;
 import org.minnal.utils.http.HttpUtil;
-import org.minnal.utils.route.QueryParam;
 import org.minnal.utils.route.RoutePattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -299,16 +298,7 @@ public abstract class AbstractMethodCreator {
 	 * @return
 	 */
 	protected List<Annotation> getApiQueryParamAnnotations() {
-		List<Annotation> annotations = new ArrayList<Annotation>();
-		for (QueryParam param : getResourcePath().getNodePath().getQueryParams()) {
-			Annotation annotation = new Annotation(ApiImplicitParam.class.getCanonicalName(), ctClass.getClassFile().getConstPool());
-			annotation.addMemberValue("name", new StringMemberValue(param.getName(), ctClass.getClassFile().getConstPool()));
-			annotation.addMemberValue("paramType", new StringMemberValue("query", ctClass.getClassFile().getConstPool()));
-			annotation.addMemberValue("dataType", new StringMemberValue(param.getType().name(), ctClass.getClassFile().getConstPool()));
-			annotation.addMemberValue("value", new StringMemberValue(param.getDescription(), ctClass.getClassFile().getConstPool()));
-			annotations.add(annotation);
-		}
-		return annotations;
+		return Lists.newArrayList();
 	}
 	
 	protected List<Annotation> getApiAdditionalParamAnnotations() {

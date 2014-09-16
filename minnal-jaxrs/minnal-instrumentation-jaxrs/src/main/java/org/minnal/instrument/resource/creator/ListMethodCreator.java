@@ -3,6 +3,7 @@
  */
 package org.minnal.instrument.resource.creator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javassist.CtClass;
@@ -16,6 +17,7 @@ import org.minnal.instrument.entity.EntityNode.EntityNodePath;
 import org.minnal.instrument.entity.metadata.EntityMetaData;
 import org.minnal.instrument.resource.ResourceWrapper.ResourcePath;
 import org.minnal.instrument.resource.metadata.ResourceMetaData;
+import org.minnal.utils.route.QueryParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,5 +88,18 @@ public class ListMethodCreator extends ReadMethodCreator {
 		EntityNodePath path = getResourcePath().getNodePath();
 		EntityMetaData metaData = path.get(path.size() - 1).getEntityMetaData();
 		return Lists.newArrayList(getOkResponseAnnotation(metaData.getEntityClass()));
+	}
+	
+	protected List<Annotation> getApiQueryParamAnnotations() {
+		List<Annotation> annotations = new ArrayList<Annotation>();
+		for (QueryParam param : getResourcePath().getNodePath().getQueryParams()) {
+			Annotation annotation = new Annotation(ApiImplicitParam.class.getCanonicalName(), getCtClass().getClassFile().getConstPool());
+			annotation.addMemberValue("name", new StringMemberValue(param.getName(), getCtClass().getClassFile().getConstPool()));
+			annotation.addMemberValue("paramType", new StringMemberValue("query", getCtClass().getClassFile().getConstPool()));
+			annotation.addMemberValue("dataType", new StringMemberValue(param.getType().name(), getCtClass().getClassFile().getConstPool()));
+			annotation.addMemberValue("value", new StringMemberValue(param.getDescription(), getCtClass().getClassFile().getConstPool()));
+			annotations.add(annotation);
+		}
+		return annotations;
 	}
 }
