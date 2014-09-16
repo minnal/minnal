@@ -87,4 +87,9 @@ public class DeleteMethodCreator extends AbstractMethodCreator {
 	protected Class<?> getHttpAnnotation() {
 		return DELETE.class;
 	}
+	
+	@Override
+	protected List<Annotation> getApiAdditionalParamAnnotations() {
+		return Lists.newArrayList();
+	}
 }

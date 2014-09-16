@@ -75,4 +75,9 @@ public class UpdateMethodCreator extends CreateMethodCreator {
 	protected Class<?> getHttpAnnotation() {
 		return PUT.class;
 	}
+	
+	@Override
+	protected List<Annotation> getApiAdditionalParamAnnotations() {
+		return Lists.newArrayList();
+	}
 }
