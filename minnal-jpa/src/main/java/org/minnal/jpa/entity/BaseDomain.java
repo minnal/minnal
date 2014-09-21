@@ -3,6 +3,8 @@
  */
 package org.minnal.jpa.entity;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +17,7 @@ import org.activejpa.entity.Model;
  *
  */
 @MappedSuperclass
+@Access(AccessType.PROPERTY)
 public class BaseDomain extends Model {
 	
 	private Long id;
