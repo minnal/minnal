@@ -19,7 +19,9 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 
 import org.minnal.core.config.DatabaseConfiguration;
+import org.minnal.jpa.entity.ConverterScanner;
 import org.minnal.jpa.entity.EntityScanner;
+import org.minnal.utils.scanner.Scanner;
 import org.minnal.utils.scanner.Scanner.Listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,17 +56,18 @@ public class MinnalPersistenceUnitInfo implements PersistenceUnitInfo {
 	private void init() {
 		properties.putAll(configuration.getProviderProperties());
 		dataSource = configuration.getDataSourceProvider().getDataSource();
-		scanForEntities();
+		String[] packagesToScan = configuration.getPackagesToScan().toArray(new String[0]);
+		scanForManagedClasses(new ConverterScanner(packagesToScan));
+		scanForManagedClasses(new EntityScanner(packagesToScan));
 	}
 	
-	private void scanForEntities() {
-		EntityScanner scanner = new EntityScanner(configuration.getPackagesToScan().toArray(new String[0]));
-		scanner.scan(new Listener<Class<?>>() {
-			public void handle(Class<?> entity) {
-				managedClasses.add(entity.getName());
-			}
-		});
-	}
+	private void scanForManagedClasses(Scanner<Class<?>> scanner) {
+        scanner.scan(new Listener<Class<?>>() {
+            public void handle(Class<?> entity) {
+                managedClasses.add(entity.getName());
+            }
+        });
+    }
 
 	public String getPersistenceUnitName() {
 		return unitName;
