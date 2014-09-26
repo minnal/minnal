@@ -3,12 +3,8 @@
  */
 package org.minnal.core.server;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.ssl.SslHandler;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.FutureListener;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,20 +51,7 @@ public class HttpsConnector extends AbstractHttpConnector {
 		engine.setUseClientMode(false);
 		pipeline.addFirst("ssl", new SslHandler(engine));
 	}
-	
-	@Override
-	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-		logger.trace("Performing a handshake on channel connect");
-		final SslHandler sslHandler = ctx.pipeline().get(SslHandler.class);
-		Future<Channel> future = sslHandler.handshakeFuture();
-		future.addListener(new FutureListener<Channel>() {
-			@Override
-			public void operationComplete(Future<Channel> future) throws Exception {
-				future.get().close();
-			}
-		});
-	}
-	
+
 	/**
 	 * @return
 	 */
