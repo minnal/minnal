@@ -23,6 +23,8 @@ public class AbstractSecurityFilter {
 	
 	public static final String AUTH_COOKIE = "_session_id";
 	
+	public static final String SESSION = "session";
+	
 	/**
 	 * @param configuration
 	 */
@@ -43,7 +45,10 @@ public class AbstractSecurityFilter {
 	 * @return
 	 */
 	protected Session getSession(ContainerRequestContext request, boolean create) {
-		Session session = null;
+		Session session = (Session) request.getProperty(SESSION);
+		if (session != null) {
+		    return session;
+		}
 		Cookie sessionCookie = request.getCookies().get(AUTH_COOKIE);
 		
 		if (sessionCookie != null) {

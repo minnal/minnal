@@ -3,12 +3,15 @@
  */
 package org.minnal.security.filter;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -35,13 +38,13 @@ import com.google.common.base.Strings;
  *
  */
 @Priority(Priorities.AUTHENTICATION)
-public class AuthenticationFilter extends AbstractSecurityFilter implements ContainerRequestFilter {
+public class AuthenticationFilter extends AbstractSecurityFilter implements ContainerRequestFilter, ContainerResponseFilter {
 	
 	private Clients clients;
 	
 	public static final String PRINCIPAL = "principal";
 	
-	public static final String SESSION = "session";
+	protected AuthenticationListener listener;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 	
@@ -63,25 +66,21 @@ public class AuthenticationFilter extends AbstractSecurityFilter implements Cont
 
 	@Override
 	public void filter(ContainerRequestContext request) {
+	    Session session = getSession(request, true);
+        request.setProperty(SESSION, session);
+        
 		if (isWhiteListed(request)) {
+		    logger.debug("Request path {} is in whitelisted set of urls. Skipping authentication", request.getUriInfo());
 			return;
 		}
-		
-		Session session = getSession(request, true);
-		request.setProperty(SESSION, session);
 		if (isAuthenticated(session)) {
+		    logger.debug("Session is already authenticated. Skipping authentication");
 			return;
 		}
-		
+
 		JaxrsWebContext context = getContext(request, session);
-		
-		Client client = null;
-		try {
-			client = getClient(context);
-		} catch (TechnicalException e) {
-			logger.error("Failed while getiing the client", e);
-		}
-		
+		Client client = getClient(context);
+
 		if (client != null) {
 			session.addAttribute(Clients.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
 			getConfiguration().getSessionStore().save(session);
@@ -97,6 +96,12 @@ public class AuthenticationFilter extends AbstractSecurityFilter implements Cont
 		}
 		context.setResponseHeader(HttpHeaders.SET_COOKIE, new NewCookie(AUTH_COOKIE, session.getId()).toString());
 		request.abortWith(context.getResponse());
+	}
+	
+	@Override
+	public void filter(ContainerRequestContext request, ContainerResponseContext response) throws IOException {
+	    Session session = getSession(request, true);
+	    response.getHeaders().add(HttpHeaders.SET_COOKIE, new NewCookie(AUTH_COOKIE, session.getId()).toString());
 	}
 	
 	/**
@@ -128,7 +133,6 @@ public class AuthenticationFilter extends AbstractSecurityFilter implements Cont
 		if (profile == null) {
 			return null;
 		}
-		
 		Client client = getClient(session);
 		Class<UserProfile> type = Generics.getTypeParameter(client.getClass(), UserProfile.class);
 		if (type.isAssignableFrom(profile.getClass())) {
@@ -145,19 +149,29 @@ public class AuthenticationFilter extends AbstractSecurityFilter implements Cont
 		return null;
 	}
 	
-	protected Client getClient(Session session) {
-		String clientName = session.getAttribute(Clients.DEFAULT_CLIENT_NAME_PARAMETER);
-		if (Strings.isNullOrEmpty(clientName)) {
-			return null;
-		}
-		return clients.findClient(clientName);
-	}
+    protected Client getClient(Session session) {
+        String clientName = session.getAttribute(Clients.DEFAULT_CLIENT_NAME_PARAMETER);
+        if (Strings.isNullOrEmpty(clientName)) {
+            return null;
+        }
+        return clients.findClient(clientName);
+    }
 	
 	protected Client getClient(JaxrsWebContext context) {
-		String clientName = context.getRequestParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER);
-		if (Strings.isNullOrEmpty(clientName)) {
-			return null;
-		}
-		return clients.findClient(clientName);
+	    try {
+	        return clients.findClient(context);
+	    } catch (TechnicalException e) {
+	        logger.debug("Error while getting the client from the context", e);
+	        return null;
+	    }
+	}
+	
+	/**
+	 * Registers the authentication listener
+	 * 
+	 * @param listener
+	 */
+	public void registerListener(AuthenticationListener listener) {
+	    this.listener = listener;
 	}
 }

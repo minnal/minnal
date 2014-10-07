@@ -44,17 +44,21 @@ public class CallbackFilterTest {
 	
 	private SessionStore sessionStore;
 	
+	private AuthenticationListener listener;
+	
 	private Client client;
 	
 	@BeforeMethod
 	public void setup() {
 		client = mock(Client.class);
+		listener = mock(AuthenticationListener.class);
 		when(client.getName()).thenReturn("client1");
 		clients = new Clients("/callback", client);
 		sessionStore = mock(SessionStore.class);
 		configuration = mock(SecurityConfiguration.class);
 		when(configuration.getSessionStore()).thenReturn(sessionStore);
 		filter = spy(new CallbackFilter(clients, configuration));
+		filter.registerListener(listener);
 		context = mock(ContainerRequestContext.class);
 		uriInfo = mock(UriInfo.class);
 		when(uriInfo.getPath()).thenReturn("/callback");
@@ -80,6 +84,7 @@ public class CallbackFilterTest {
 		filter.filter(context);
 		verify(webContext).setResponseStatus(422);
 		verify(context).abortWith(response);
+		verify(listener).authFailed(session);
 	}
 	
 	@Test
@@ -97,8 +102,10 @@ public class CallbackFilterTest {
 		when(client.getUserProfile(credentials, webContext)).thenReturn(profile);
 		filter.filter(context);
 		verify(session).addAttribute(AuthenticationFilter.PRINCIPAL, profile);
+		verify(session).addAttribute(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "client1");
 		verify(sessionStore).save(session);
 		verify(webContext).setResponseStatus(Response.Status.OK.getStatusCode());
+		verify(listener).authSuccess(session, profile);
 		verify(context).abortWith(response);
 	}
 }

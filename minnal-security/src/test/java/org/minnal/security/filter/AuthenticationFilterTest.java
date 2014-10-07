@@ -146,6 +146,14 @@ public class AuthenticationFilterTest {
 	}
 	
 	@Test
+    public void shouldReturnSessionIfAlreadySetToRequestProperty() {
+        Session session = mock(Session.class);
+        when(context.getProperty(AuthenticationFilter.SESSION)).thenReturn(session);
+        assertEquals(filter.getSession(context, true), session);
+        verify(sessionStore, never()).createSession(any(String.class));
+    }
+	
+	@Test
 	public void shouldReturnSessionIfAuthCookieIsFoundAndSessionHasNotExpired() {
 		when(configuration.getSessionExpiryTimeInSecs()).thenReturn(100L);
 		Map<String, Cookie> cookies = new HashMap<String, Cookie>();
@@ -160,17 +168,17 @@ public class AuthenticationFilterTest {
 	}
 	
 	@Test
-	public void shouldReturnNullClientFromRequestContextIfClientNameAttributeIsNotSet() {
+	public void shouldReturnNullFromRequestContextIfClientNameAttributeIsNotSet() {
 		JaxrsWebContext context = mock(JaxrsWebContext.class);
 		when(context.getRequestParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER)).thenReturn(null);
 		assertNull(filter.getClient(context));
 	}
 	
-	@Test(expectedExceptions=TechnicalException.class)
+	@Test
 	public void shouldThrowExceptionIfClientNameIsNotFoundInRequestContext() {
 		JaxrsWebContext context = mock(JaxrsWebContext.class);
 		when(context.getRequestParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER)).thenReturn("unknownClient");
-		filter.getClient(context);
+		assertNull(filter.getClient(context));
 	}
 	
 	@Test
@@ -248,7 +256,8 @@ public class AuthenticationFilterTest {
 	public void shouldNotFilterWhiteListedUrls() {
 		doReturn(true).when(filter).isWhiteListed(context);
 		filter.filter(context);
-		verify(filter, never()).getSession(context, true);
+		verify(filter).getSession(context, true);
+		verify(filter, never()).getContext(eq(context), any(Session.class));
 	}
 	
 	@Test
