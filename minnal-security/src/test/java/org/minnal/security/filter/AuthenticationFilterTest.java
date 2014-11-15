@@ -313,7 +313,7 @@ public class AuthenticationFilterTest {
 		filter.filter(context);
 		verify(basicClient).redirect(webContext, false, false);
 		verify(webContext, atLeast(1)).setResponseHeader(eq(HttpHeaders.LOCATION), any(String.class));
-		verify(webContext).setResponseHeader(HttpHeaders.SET_COOKIE, new NewCookie(AuthenticationFilter.AUTH_COOKIE, session.getId()).toString());
+		verify(webContext).setResponseHeader(HttpHeaders.SET_COOKIE, new NewCookie(AuthenticationFilter.AUTH_COOKIE, session.getId(), "/", null, null, NewCookie.DEFAULT_MAX_AGE, false).toString());
 		verify(context).abortWith(response);
 	}
 }
