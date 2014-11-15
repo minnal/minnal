@@ -94,14 +94,24 @@ public class AuthenticationFilter extends AbstractSecurityFilter implements Cont
 		} else {
 			context.setResponseStatus(Response.Status.UNAUTHORIZED.getStatusCode());
 		}
-		context.setResponseHeader(HttpHeaders.SET_COOKIE, new NewCookie(AUTH_COOKIE, session.getId()).toString());
+		context.setResponseHeader(HttpHeaders.SET_COOKIE, createSessionCookie(session).toString());
 		request.abortWith(context.getResponse());
 	}
 	
 	@Override
 	public void filter(ContainerRequestContext request, ContainerResponseContext response) throws IOException {
 	    Session session = getSession(request, true);
-	    response.getHeaders().add(HttpHeaders.SET_COOKIE, new NewCookie(AUTH_COOKIE, session.getId()).toString());
+	    response.getHeaders().add(HttpHeaders.SET_COOKIE, createSessionCookie(session).toString());
+	}
+	
+	/**
+	 * Creates a session cookie
+	 * 
+	 * @param session
+	 * @return
+	 */
+	private NewCookie createSessionCookie(Session session) {
+	    return new NewCookie(AUTH_COOKIE, session.getId(), "/", null, null, NewCookie.DEFAULT_MAX_AGE, false);
 	}
 	
 	/**
