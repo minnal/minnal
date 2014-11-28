@@ -8,7 +8,6 @@
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
 		<class>org.minnal.security.session.JpaSession</class>
-		<class>org.minnal.security.auth.cas.CasPgtIou</class>
 		 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
