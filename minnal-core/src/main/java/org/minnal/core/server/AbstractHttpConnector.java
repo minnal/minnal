@@ -68,13 +68,15 @@ public abstract class AbstractHttpConnector extends SimpleChannelUpstreamHandler
 		}
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			public ChannelPipeline getPipeline() throws Exception {
-				ChannelPipeline pipeline = Channels.pipeline(new HttpRequestDecoder(), new HttpResponseEncoder(), new HttpChunkAggregator(65536), 
+				ChannelPipeline pipeline = Channels.pipeline(new HttpRequestDecoder(), new HttpResponseEncoder(), new HttpChunkAggregator(configuration.getMaxContentLength()),
 						new HttpContentDecompressor(), new HttpContentCompressor(), AbstractHttpConnector.this);
 				addChannelHandlers(pipeline);
 				return pipeline;
 			}
 		});
 	}
+
+
 	
 	protected abstract void addChannelHandlers(ChannelPipeline pipeline);
 
