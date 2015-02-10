@@ -79,7 +79,7 @@ public abstract class AbstractHttpConnector extends SimpleChannelInboundHandler<
         .childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(new HttpRequestDecoder(), new HttpResponseEncoder(), new HttpObjectAggregator(65536), AbstractHttpConnector.this);
+                ch.pipeline().addLast(new HttpRequestDecoder(), new HttpResponseEncoder(), new HttpObjectAggregator(configuration.getMaxContentLength()), AbstractHttpConnector.this);
                 addChannelHandlers(ch.pipeline());
             }
         });

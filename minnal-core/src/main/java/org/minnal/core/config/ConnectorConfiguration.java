@@ -25,6 +25,8 @@ public class ConnectorConfiguration {
 	private int ioWorkerThreadCount;
 	
 	private int executorThreadCount = 2;
+
+    private int maxContentLength = 65536;
 	
 	public ConnectorConfiguration() {
 	}
@@ -42,6 +44,22 @@ public class ConnectorConfiguration {
 		this.sslConfiguration = configuration;
 		this.ioWorkerThreadCount = ioWorkerThreadCount;
 	}
+
+    /**
+     * @param port
+     * @param scheme
+     * @param sslConfiguration
+     * @param ioWorkerThreadCount
+     * @param maxContentLength
+     */
+    public ConnectorConfiguration(int port, Scheme scheme,
+                                  SSLConfiguration configuration, int ioWorkerThreadCount, int maxContentLength) {
+        this.port = port;
+        this.scheme = scheme;
+        this.sslConfiguration = configuration;
+        this.ioWorkerThreadCount = ioWorkerThreadCount;
+        this.maxContentLength = maxContentLength;
+    }
 
 	/**
 	 * @return the port
@@ -112,4 +130,21 @@ public class ConnectorConfiguration {
 	public void setExecutorThreadCount(int executorThreadCount) {
 		this.executorThreadCount = executorThreadCount;
 	}
+
+    /**
+     * @return the maxContentLength
+     */
+    public int getMaxContentLength() {
+        return maxContentLength;
+    }
+
+    /**
+     * @param maxContentLength the max length accepted in payload
+     */
+    public void setMaxContentLength(int maxContentLength) {
+        this.maxContentLength = maxContentLength;
+    }
+
+
+
 }
