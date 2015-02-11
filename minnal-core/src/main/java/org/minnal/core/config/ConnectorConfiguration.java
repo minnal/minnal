@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.minnal.core.config;
 
@@ -10,24 +10,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class ConnectorConfiguration {
-	
+
 	public enum Scheme {
 		http, https
 	}
 
 	private int port;
-	
+
 	private Scheme scheme = Scheme.http;
-	
+
 	@JsonProperty("ssl")
 	private SSLConfiguration sslConfiguration;
-	
+
 	private int ioWorkerThreadCount;
-	
+
 	private int executorThreadCount = 2;
 
-    private int maxContentLength = 65536;
-	
+	private int maxContentLength = 65536;
+
 	public ConnectorConfiguration() {
 	}
 
@@ -45,21 +45,22 @@ public class ConnectorConfiguration {
 		this.ioWorkerThreadCount = ioWorkerThreadCount;
 	}
 
-    /**
-     * @param port
-     * @param scheme
-     * @param sslConfiguration
-     * @param ioWorkerThreadCount
-     * @param maxContentLength
-     */
-    public ConnectorConfiguration(int port, Scheme scheme,
-                                  SSLConfiguration configuration, int ioWorkerThreadCount, int maxContentLength) {
-        this.port = port;
-        this.scheme = scheme;
-        this.sslConfiguration = configuration;
-        this.ioWorkerThreadCount = ioWorkerThreadCount;
-        this.maxContentLength = maxContentLength;
-    }
+
+	/**
+	 * @param port
+	 * @param scheme
+	 * @param sslConfiguration
+	 * @param ioWorkerThreadCount
+	 * @param maxContentLength
+	 */
+	public ConnectorConfiguration(int port, Scheme scheme,
+			SSLConfiguration configuration, int ioWorkerThreadCount, int maxContentLength) {
+		this.port = port;
+		this.scheme = scheme;
+		this.sslConfiguration = configuration;
+		this.ioWorkerThreadCount = ioWorkerThreadCount;
+		this.maxContentLength = maxContentLength;
+	}
 
 	/**
 	 * @return the port
